@@ -15,13 +15,15 @@ jobs:
         with: { node-version: 22, cache: 'pnpm' }
       - run: corepack enable
       - run: pnpm install
-      - run: pnpm build
+      - run: pnpm run build:prod
       - uses: actions/upload-pages-artifact@v3
         with: { path: dist }
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment: { name: github-pages, url: ${{ steps.deployment.outputs.page_url }} }
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - id: deployment
         uses: actions/deploy-pages@v4
