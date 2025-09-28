@@ -1,14 +1,24 @@
 ---
-import ArchivePanel from "@components/ArchivePanel.svelte";
-import I18nKey from "@i18n/i18nKey";
-import { i18n } from "@i18n/translation";
-import MainGridLayout from "@layouts/MainGridLayout.astro";
-import { getSortedPostsList } from "../utils/content-utils";
-
-const sortedPostsList = await getSortedPostsList();
+import { getPosts } from "../data/hashnode";
+const posts = await getPosts(300);
 ---
-
-<MainGridLayout title={i18n(I18nKey.archive)}>
-    <ArchivePanel sortedPosts={sortedPostsList} client:only="svelte"></ArchivePanel>
-</MainGridLayout>
-
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width" />
+    <title>Archive</title>
+    <link rel="stylesheet" href="/src/styles/global.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Archive</h1>
+      <ul class="archive">
+        {posts.map((p:any) => (
+          <li><a href={`/p/${p.slug}/`}>{p.title}</a>
+            <span class="meta"> — {new Date(p.publishedAt).toLocaleDateString()}</span>
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>
