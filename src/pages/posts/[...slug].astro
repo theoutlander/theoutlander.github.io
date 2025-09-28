@@ -3,7 +3,7 @@ import { getPosts, getPost } from "../../data/hashnode";
 import sanitizeHtml from "sanitize-html";
 
 export async function getStaticPaths() {
-  const posts = await getPosts(100);
+  const posts = await getPosts(50);
   return posts.map((p: any) => ({ params: { slug: p.slug } }));
 }
 

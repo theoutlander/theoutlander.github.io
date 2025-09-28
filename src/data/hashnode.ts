@@ -19,7 +19,7 @@ async function gql<T>(query: string, variables: Record<string, any>): Promise<T>
 
 export async function getPosts(limit = 24) {
   const q = `
-    query ($pubId: ID!, $first: Int!) {
+    query ($pubId: ObjectId!, $first: Int!) {
       publication(id: $pubId) {
         posts(first: $first) {
           edges { node { id slug title brief publishedAt coverImage { url } tags { name slug } } }
@@ -32,7 +32,7 @@ export async function getPosts(limit = 24) {
 
 export async function getPost(slug: string) {
   const q = `
-    query ($pubId: ID!, $slug: String!) {
+    query ($pubId: ObjectId!, $slug: String!) {
       publication(id: $pubId) {
         post(slug: $slug) {
           id title subtitle publishedAt coverImage { url } content { html } tags { name slug }
