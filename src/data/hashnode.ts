@@ -1,6 +1,6 @@
 const ENDPOINT = "https://gql.hashnode.com";
-const TOKEN = process.env.HASHNODE_TOKEN;
-const PUB_ID = process.env.PUBLICATION_ID;
+const TOKEN = process.env.HASHNODE_TOKEN || "f221f0f1-5a6f-44ea-a272-39c88e05794f";
+const PUB_ID = process.env.PUBLICATION_ID || "68d5e360b5ea70a47e408afd";
 
 async function gql<T>(query: string, variables: Record<string, any>): Promise<T> {
   if (!TOKEN || !PUB_ID) {
