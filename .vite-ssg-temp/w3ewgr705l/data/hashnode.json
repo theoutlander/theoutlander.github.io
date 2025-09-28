@@ -1,0 +1,44 @@
+[
+  {
+    "id": "1",
+    "slug": "welcome-to-my-blog",
+    "title": "Welcome to My Blog",
+    "excerpt": "This is a sample blog post to demonstrate the blog functionality. In a real setup, this would be fetched from Hashnode.",
+    "url": "https://example.com/welcome-to-my-blog",
+    "date": "2025-09-28T23:13:24.450Z",
+    "cover": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=800&h=400&fit=crop",
+    "tags": [
+      "welcome",
+      "blog",
+      "introduction"
+    ]
+  },
+  {
+    "id": "2",
+    "slug": "getting-started-with-tanstack-router",
+    "title": "Getting Started with TanStack Router",
+    "excerpt": "Learn how to set up and use TanStack Router in your React applications with this comprehensive guide.",
+    "url": "https://example.com/getting-started-with-tanstack-router",
+    "date": "2025-09-27T23:13:24.451Z",
+    "cover": "https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=800&h=400&fit=crop",
+    "tags": [
+      "react",
+      "routing",
+      "tutorial"
+    ]
+  },
+  {
+    "id": "3",
+    "slug": "building-modern-web-apps",
+    "title": "Building Modern Web Applications",
+    "excerpt": "Explore the latest trends and best practices for building modern, scalable web applications.",
+    "url": "https://example.com/building-modern-web-apps",
+    "date": "2025-09-26T23:13:24.451Z",
+    "cover": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800&h=400&fit=crop",
+    "tags": [
+      "web-development",
+      "modern",
+      "best-practices"
+    ]
+  }
+]
