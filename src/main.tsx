@@ -8,7 +8,27 @@ import { routeTree } from "./routeTree.gen";
 const router = createRouter({
 	routeTree,
 	defaultPreload: "intent",
+	// Handle GitHub Pages SPA redirect
+	context: {
+		// This will be set by the redirect script
+		redirectPath: undefined as string | undefined,
+	},
 });
+
+// Handle GitHub Pages SPA redirect
+if (typeof window !== "undefined") {
+	// Check if we're coming from a GitHub Pages 404 redirect
+	const urlParams = new URLSearchParams(window.location.search);
+	const redirectPath = urlParams.get("/");
+
+	if (redirectPath) {
+		// Clean up the URL and navigate to the correct path
+		const cleanPath = redirectPath.replace(/~and~/g, "&");
+		window.history.replaceState({}, "", cleanPath);
+		// Navigate to the correct route
+		router.navigate({ to: cleanPath });
+	}
+}
 
 // Register the router instance for type safety
 declare module "@tanstack/react-router" {
