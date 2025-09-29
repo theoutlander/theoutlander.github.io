@@ -63,12 +63,6 @@ export default function BlogList({ filterTag }: { filterTag?: string }) {
 					content="Read my latest thoughts on software engineering, AI, and technology."
 				/>
 			</Helmet>
-			<Heading
-				size="lg"
-				mb={6}
-			>
-				Blog
-			</Heading>
 
 			{!posts ? (
 				<SimpleGrid

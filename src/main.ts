@@ -4,7 +4,7 @@ import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { HelmetProvider } from "react-helmet-async";
 import { routeTree } from "./routeTree.gen";
-import { theme } from "./theme";
+// import { theme } from "./theme";
 
 const router = createRouter({
 	routeTree,

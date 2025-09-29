@@ -26,8 +26,6 @@ export const Route = createFileRoute("/about")({
 		if (!res.ok)
 			throw new Error(`About JSON not found: ${url} (${res.status})`);
 		const page = (await res.json()) as { title: string; html: string };
-		// Remove a trailing © line if present
-		page.html = page.html.replace(/<p>©[^<]*<\/p>\s*$/i, "").trim();
 		return page;
 	},
 	component: AboutPage,
@@ -306,16 +304,6 @@ function AboutPage() {
 						</Card.Root>
 					</VStack>
 				</SimpleGrid>
-
-				{/* Single footer line (we'll remove the duplicate from Hashnode content below) */}
-				<Box
-					textAlign="center"
-					mt={10}
-					color={muted}
-					fontSize="sm"
-				>
-					© {new Date().getFullYear()} Nick Karnik
-				</Box>
 			</Box>
 		</>
 	);

@@ -1,10 +1,5 @@
 import React from "react";
-import {
-	Outlet,
-	createRootRoute,
-	Link,
-	useRouterState,
-} from "@tanstack/react-router";
+import { Outlet, createRootRoute, Link } from "@tanstack/react-router";
 import { Box, Container, Flex, HStack, Heading } from "@chakra-ui/react";
 import { Helmet } from "react-helmet-async";
 import Footer from "../components/layout/Footer";

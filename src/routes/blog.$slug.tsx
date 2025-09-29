@@ -7,12 +7,12 @@ export const Route = createFileRoute("/blog/$slug")({
 		const res = await fetch(url, { headers: { "cache-control": "no-cache" } });
 		if (!res.ok) {
 			// Fallback to main hashnode.json for dev safety
-			const list = await fetch("/data/hashnode.json").then(r => r.json());
+			const list = await fetch("/data/hashnode.json").then((r) => r.json());
 			const fallback = list.find((p: any) => p.slug === params.slug);
 			if (!fallback) throw new Error(`No post data for slug: ${params.slug}`);
-			return { 
-				...fallback, 
-				html: fallback.contentHtml || "<p>Full body not available in dev.</p>" 
+			return {
+				...fallback,
+				html: fallback.contentHtml || "<p>Full body not available in dev.</p>",
 			};
 		}
 		return (await res.json()) as {
@@ -25,7 +25,7 @@ export const Route = createFileRoute("/blog/$slug")({
 			tags: string[];
 		};
 	},
-	component: () => {
+	component: function BlogPost() {
 		const post = Route.useLoaderData();
 		return <PostView post={post} />;
 	},

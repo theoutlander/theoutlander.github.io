@@ -1,6 +1,7 @@
 name: Release Blog
 on:
-  push: { branches: [main] }
+  # Disabled - using local build and gh-pages branch instead
+  # push: { branches: [main] }
   workflow_dispatch:
 
 permissions:

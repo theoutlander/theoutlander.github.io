@@ -4,22 +4,10 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "pnpm run prebuild && pnpm run build && vite",
-		"lint": "eslint .",
-		"lint:fix": "eslint . --fix",
-		"preview": "vite preview",
-		"prebuild": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts",
-		"build": "NODE_ENV=${NODE_ENV:-production} vite build",
-		"postbuild": "SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
-		"build:prod": "pnpm run prebuild && pnpm run build && pnpm run postbuild",
-		"deploy": "pnpm run build:prod && echo 'Build complete! Deploy the dist/ folder to nick.karnik.io'",
-		"typecheck": "tsc --noEmit",
-		"dev:full": "pnpm run prebuild && pnpm run build && pnpm run dev",
-		"commit:all": "git add . && git commit -m 'chore: update build and dev changes'",
-		"dev:commit": "pnpm run prebuild && pnpm run build && pnpm run commit:all && pnpm run dev",
-		"redirects": "tsx scripts/generate-redirects.ts",
-		"redirects:html": "tsx scripts/generate-redirect-html.ts",
-		"deploy:full": "pnpm run prebuild && pnpm run build:prod && pnpm run lint:fix && pnpm run typecheck && git add . && git commit -m 'chore: update build and deploy' && git push"
+		"dev": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
+		"build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"check": "eslint . --fix && tsc --noEmit",
+		"deploy": "./scripts/deploy-gh-pages.sh"
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^3.27.0",

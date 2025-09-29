@@ -1,0 +1,1 @@
+import{u as s,j as o,O as e}from"./index-DtgySzW7.js";import{B as r}from"./BlogList-B1XXINT6.js";import"./image-fKpmD3ZB.js";function i(n){return s({select:t=>t.location})}const p=function(){return i().pathname==="/blog"?o.jsx(r,{}):o.jsx(e,{})};export{p as component};
