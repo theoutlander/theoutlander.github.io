@@ -1,1 +1,0 @@
-import{J as t,j as n}from"./index-DtgySzW7.js";import{B as s}from"./BlogList-B1XXINT6.js";import"./image-fKpmD3ZB.js";const p=function(){const{tag:o}=t.useParams();return n.jsx(s,{filterTag:o})};export{p as component};

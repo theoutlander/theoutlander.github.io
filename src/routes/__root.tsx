@@ -43,6 +43,8 @@ function Header() {
 					<HStack gap={6}>
 						<NavLink to="/blog">Blog</NavLink>
 						<NavLink to="/about">About</NavLink>
+						<NavLink to="/resume">Resume</NavLink>
+						<NavLink to="/landing-hybrid">Landing</NavLink>
 					</HStack>
 				</Flex>
 			</Container>

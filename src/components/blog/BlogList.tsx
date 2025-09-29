@@ -1,13 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-	Box,
-	Heading,
-	Text,
-	SimpleGrid,
-	Image,
-	Card,
-	Skeleton,
-} from "@chakra-ui/react";
+import { Box, Text, SimpleGrid, Image, Card, Skeleton } from "@chakra-ui/react";
 import { Link as RouterLink } from "@tanstack/react-router";
 import { Helmet } from "react-helmet-async";
 import type { Post } from "./RoutePost";

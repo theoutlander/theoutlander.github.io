@@ -48,10 +48,19 @@ export async function fetchAllPosts(): Promise<PostNode[]> {
 	// Hashnode caps per-page; loop to fetch all
 
 	while (true) {
-		const data = await client.request<any>(POSTS, { host: HOST, page });
-		const edges = data?.publication?.posts?.edges ?? [];
-		out.push(...edges.map((e: any) => e.node as PostNode));
-		if (!data?.publication?.posts?.pageInfo?.hasNextPage) break;
+		const data = await client.request<Record<string, unknown>>(POSTS, {
+			host: HOST,
+			page,
+		});
+		const publication = data?.publication as Record<string, unknown>;
+		const posts = publication?.posts as Record<string, unknown>;
+		const edges = (posts?.edges as Record<string, unknown>[]) ?? [];
+		out.push(...edges.map((e: Record<string, unknown>) => e.node as PostNode));
+		const pageInfo = (posts as Record<string, unknown>)?.pageInfo as Record<
+			string,
+			unknown
+		>;
+		if (!pageInfo?.hasNextPage) break;
 		page++;
 	}
 	return out;

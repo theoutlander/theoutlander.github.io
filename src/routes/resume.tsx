@@ -6,7 +6,6 @@ import {
 	HStack,
 	VStack,
 	Avatar,
-	Button,
 	Link as CLink,
 	SimpleGrid,
 	Card,
@@ -14,15 +13,9 @@ import {
 	Separator,
 	useToken,
 	Badge,
-	Flex,
 } from "@chakra-ui/react";
-import {
-	FiMail,
-	FiExternalLink,
-	FiDownload,
-	FiMapPin,
-	FiCalendar,
-} from "react-icons/fi";
+import { FiMail, FiExternalLink, FiDownload, FiCalendar } from "react-icons/fi";
+import { Helmet } from "react-helmet-async";
 
 export const Route = createFileRoute("/resume")({
 	component: ResumePage,
@@ -34,12 +27,8 @@ function ResumePage() {
 	const muted = useToken("colors", "gray.600");
 
 	return (
-		<Box
-			maxW="4xl"
-			mx="auto"
-			p={6}
-		>
-			<head>
+		<>
+			<Helmet>
 				<title>Resume — Nick Karnik</title>
 				<meta
 					name="description"
@@ -49,636 +38,831 @@ function ResumePage() {
 					rel="canonical"
 					href="https://nick.karnik.io/resume"
 				/>
-			</head>
-
-			{/* Header */}
-			<Card.Root
-				border="1px solid"
-				borderColor={cardBorder}
-				p={8}
-				borderRadius="2xl"
-				mb={8}
+			</Helmet>
+			<Box
+				maxW="4xl"
+				mx="auto"
+				p={6}
 			>
-				<HStack
-					justify="space-between"
-					align="start"
-					wrap="wrap"
-					gap={6}
+				{/* Header */}
+				<Card.Root
+					border="1px solid"
+					borderColor={cardBorder}
+					p={8}
+					borderRadius="2xl"
+					mb={8}
 				>
 					<HStack
-						gap={6}
+						justify="space-between"
 						align="start"
+						wrap="wrap"
+						gap={6}
 					>
-						<Avatar
-							name="Nick Karnik"
-							size="2xl"
-						/>
-						<VStack
+						<HStack
+							gap={6}
 							align="start"
-							spacing={2}
 						>
-							<Heading size="xl">Nick Karnik</Heading>
-							<Text
-								fontSize="lg"
-								color={muted}
-							>
-								Engineer & Engineering Manager
-							</Text>
-							<HStack
+							<Avatar.Root size="2xl">
+								<Avatar.Image
+									src={undefined}
+									alt="Nick Karnik"
+								/>
+								<Avatar.Fallback>NK</Avatar.Fallback>
+							</Avatar.Root>
+							<VStack
+								align="start"
 								gap={2}
-								wrap="wrap"
 							>
-								<Tag
-									size="md"
-									variant="subtle"
-									colorScheme="blue"
+								<Heading size="xl">Nick Karnik</Heading>
+								<Text
+									fontSize="lg"
+									color={muted}
 								>
-									TypeScript
-								</Tag>
-								<Tag
-									size="md"
-									variant="subtle"
-									colorScheme="green"
+									Engineer & Engineering Manager
+								</Text>
+								<HStack
+									gap={2}
+									wrap="wrap"
 								>
-									React
-								</Tag>
-								<Tag
-									size="md"
-									variant="subtle"
-									colorScheme="purple"
+									<Tag.Root
+										size="md"
+										variant="subtle"
+										colorPalette="blue"
+									>
+										TypeScript
+									</Tag.Root>
+									<Tag.Root
+										size="md"
+										variant="subtle"
+										colorPalette="green"
+									>
+										React
+									</Tag.Root>
+									<Tag.Root
+										size="md"
+										variant="subtle"
+										colorPalette="purple"
+									>
+										DX
+									</Tag.Root>
+									<Tag.Root
+										size="md"
+										variant="subtle"
+										colorPalette="orange"
+									>
+										AI
+									</Tag.Root>
+								</HStack>
+							</VStack>
+						</HStack>
+						<VStack
+							align="end"
+							gap={3}
+						>
+							<CLink
+								href="/assets/Resume_Nick_Karnik_Sep_2025.pdf"
+								target="_blank"
+								display="inline-flex"
+								alignItems="center"
+								gap={2}
+								px={4}
+								py={2}
+								border="1px solid"
+								borderColor="blue.200"
+								borderRadius="md"
+								color="blue.600"
+								_hover={{ bg: "blue.50" }}
+							>
+								<FiDownload />
+								Download PDF
+							</CLink>
+							<HStack gap={2}>
+								<CLink
+									href="mailto:nick@karnik.io"
+									display="inline-flex"
+									alignItems="center"
+									gap={2}
+									px={3}
+									py={2}
+									borderRadius="md"
+									color="gray.600"
+									_hover={{ bg: "gray.50" }}
 								>
-									DX
-								</Tag>
-								<Tag
-									size="md"
-									variant="subtle"
-									colorScheme="orange"
+									<FiMail />
+									Email
+								</CLink>
+								<CLink
+									href="https://www.linkedin.com/in/theoutlander"
+									target="_blank"
+									display="inline-flex"
+									alignItems="center"
+									gap={2}
+									px={3}
+									py={2}
+									borderRadius="md"
+									color="gray.600"
+									_hover={{ bg: "gray.50" }}
 								>
-									AI
-								</Tag>
+									<FiExternalLink />
+									LinkedIn
+								</CLink>
 							</HStack>
 						</VStack>
 					</HStack>
-					<VStack
-						align="end"
-						gap={3}
-					>
-						<Button
-							as={CLink}
-							href="/assets/Resume_Nick_Karnik_Sep_2025.pdf"
-							leftIcon={<FiDownload />}
-							colorScheme="blue"
-							variant="outline"
-						>
-							Download PDF
-						</Button>
-						<HStack gap={2}>
-							<Button
-								as={CLink}
-								href="mailto:nick@karnik.io"
-								leftIcon={<FiMail />}
-								size="sm"
-								variant="ghost"
-							>
-								Email
-							</Button>
-							<Button
-								as={CLink}
-								href="https://www.linkedin.com/in/theoutlander"
-								isExternal
-								leftIcon={<FiExternalLink />}
-								size="sm"
-								variant="ghost"
-							>
-								LinkedIn
-							</Button>
-						</HStack>
-					</VStack>
-				</HStack>
-			</Card.Root>
+				</Card.Root>
 
-			{/* Main Content */}
-			<SimpleGrid
-				columns={{ base: 1, lg: 3 }}
-				gap={8}
-			>
-				{/* Left Column - Experience */}
-				<Box gridColumn={{ lg: "span 2" }}>
-					{/* Experience */}
-					<Card.Root
-						border="1px solid"
-						borderColor={cardBorder}
-						p={6}
-						borderRadius="2xl"
-						mb={6}
-					>
-						<Heading
-							size="lg"
+				{/* Main Content */}
+				<SimpleGrid
+					columns={{ base: 1, lg: 3 }}
+					gap={8}
+				>
+					{/* Left Column - Experience */}
+					<Box gridColumn={{ lg: "span 2" }}>
+						{/* Experience */}
+						<Card.Root
+							border="1px solid"
+							borderColor={cardBorder}
+							p={6}
+							borderRadius="2xl"
 							mb={6}
-							color={accent}
 						>
-							Experience
-						</Heading>
-
-						{/* Current Role */}
-						<Box mb={6}>
-							<HStack
-								justify="space-between"
-								align="start"
-								mb={2}
+							<Heading
+								size="lg"
+								mb={6}
+								color={accent}
 							>
-								<VStack
+								Experience
+							</Heading>
+
+							{/* Current Role */}
+							<Box mb={6}>
+								<HStack
+									justify="space-between"
 									align="start"
-									spacing={1}
+									mb={2}
 								>
-									<Heading size="md">Engineering Advisor</Heading>
-									<Text
-										color={muted}
-										fontSize="sm"
+									<VStack
+										align="start"
+										gap={1}
 									>
-										Plutonic Consulting
-									</Text>
-								</VStack>
-								<Badge
-									colorScheme="green"
-									variant="subtle"
+										<Heading size="md">Founder & Fractional CTO</Heading>
+										<Text
+											color={muted}
+											fontSize="sm"
+										>
+											Plutonic Consulting
+										</Text>
+									</VStack>
+									<Badge
+										colorPalette="green"
+										variant="subtle"
+									>
+										Current
+									</Badge>
+								</HStack>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={3}
 								>
-									Current
-								</Badge>
-							</HStack>
-							<Text
-								fontSize="sm"
-								color={muted}
-								mb={3}
-							>
-								Sep 2024 - Present
-							</Text>
-							<Text mb={3}>
-								Advising founders on pragmatic AI integration and developer
-								experience optimization. Helping teams move faster with clear
-								product bets, strong execution, and maintainable systems.
-							</Text>
-							<HStack
-								wrap="wrap"
-								gap={2}
-							>
-								{[
-									"AI Strategy",
-									"Technical Leadership",
-									"Product Development",
-									"Team Building",
-								].map((skill) => (
-									<Tag
-										key={skill}
-										size="sm"
-										variant="outline"
-									>
-										{skill}
-									</Tag>
-								))}
-							</HStack>
-						</Box>
-
-						<Separator my={6} />
-
-						{/* Previous Roles */}
-						<Box mb={6}>
-							<HStack
-								justify="space-between"
-								align="start"
-								mb={2}
-							>
-								<VStack
-									align="start"
-									spacing={1}
+									May 2025 - Present
+								</Text>
+								<Text mb={3}>
+									Providing fractional CTO support, AI strategy, and scaling
+									guidance to founders. Helping teams move faster with clear
+									product bets, strong execution, and systems that are simple to
+									maintain. Focus on pragmatic AI integration and developer
+									experience optimization.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
 								>
-									<Heading size="md">Senior Engineering Manager</Heading>
-									<Text
-										color={muted}
-										fontSize="sm"
-									>
-										Previous Company
-									</Text>
-								</VStack>
-							</HStack>
-							<Text
-								fontSize="sm"
-								color={muted}
-								mb={3}
-							>
-								Jan 2022 - Aug 2024
-							</Text>
-							<Text mb={3}>
-								Led engineering teams building scalable web applications.
-								Focused on developer experience, code quality, and team
-								productivity improvements.
-							</Text>
-							<HStack
-								wrap="wrap"
-								gap={2}
-							>
-								{[
-									"Team Leadership",
-									"React",
-									"Node.js",
-									"TypeScript",
-									"AWS",
-								].map((skill) => (
-									<Tag
-										key={skill}
-										size="sm"
-										variant="outline"
-									>
-										{skill}
-									</Tag>
-								))}
-							</HStack>
-						</Box>
-
-						<Separator my={6} />
-
-						<Box>
-							<HStack
-								justify="space-between"
-								align="start"
-								mb={2}
-							>
-								<VStack
-									align="start"
-									spacing={1}
-								>
-									<Heading size="md">Senior Software Engineer</Heading>
-									<Text
-										color={muted}
-										fontSize="sm"
-									>
-										Previous Company
-									</Text>
-								</VStack>
-							</HStack>
-							<Text
-								fontSize="sm"
-								color={muted}
-								mb={3}
-							>
-								Mar 2020 - Dec 2021
-							</Text>
-							<Text mb={3}>
-								Built and maintained high-performance web applications.
-								Contributed to architecture decisions and mentored junior
-								developers.
-							</Text>
-							<HStack
-								wrap="wrap"
-								gap={2}
-							>
-								{["JavaScript", "React", "GraphQL", "PostgreSQL", "Docker"].map(
-									(skill) => (
-										<Tag
+									{[
+										"AI Strategy",
+										"Technical Leadership",
+										"Fractional CTO",
+										"Team Scaling",
+									].map((skill) => (
+										<Tag.Root
 											key={skill}
 											size="sm"
 											variant="outline"
 										>
 											{skill}
-										</Tag>
-									)
-								)}
-							</HStack>
-						</Box>
-					</Card.Root>
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
 
-					{/* Projects */}
-					<Card.Root
-						border="1px solid"
-						borderColor={cardBorder}
-						p={6}
-						borderRadius="2xl"
-						mb={6}
-					>
-						<Heading
-							size="lg"
+							<Separator my={6} />
+
+							{/* Previous Roles */}
+							<Box mb={6}>
+								<HStack
+									justify="space-between"
+									align="start"
+									mb={2}
+								>
+									<VStack
+										align="start"
+										gap={1}
+									>
+										<Heading size="md">
+											Staff Software Engineer / Engineering Manager
+										</Heading>
+										<Text
+											color={muted}
+											fontSize="sm"
+										>
+											Google
+										</Text>
+									</VStack>
+								</HStack>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={3}
+								>
+									May 2022 - Apr 2025
+								</Text>
+								<Text mb={3}>
+									Led technical direction and hands-on engineering for Gemini
+									Code Assist, integrated into VSCode and IntelliJ IDEs.
+									Implemented a symbol table generator across multiple
+									languages, increasing context for LLM, reducing tokens, and
+									significantly improving code completion acceptance rates.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
+								>
+									{[
+										"Go",
+										"TypeScript",
+										"Node.js",
+										"Kubernetes",
+										"GCP",
+										"LLM",
+									].map((skill) => (
+										<Tag.Root
+											key={skill}
+											size="sm"
+											variant="outline"
+										>
+											{skill}
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
+
+							<Separator my={6} />
+
+							<Box mb={6}>
+								<HStack
+									justify="space-between"
+									align="start"
+									mb={2}
+								>
+									<VStack
+										align="start"
+										gap={1}
+									>
+										<Heading size="md">Sr. Engineering Manager</Heading>
+										<Text
+											color={muted}
+											fontSize="sm"
+										>
+											Tableau Software
+										</Text>
+									</VStack>
+								</HStack>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={3}
+								>
+									Oct 2019 - Apr 2022
+								</Text>
+								<Text mb={3}>
+									Built a robust CI/CD pipeline (TACO) enabling over 100
+									partners to test and deploy Tableau connectors efficiently.
+									Delivered REST and native Salesforce connectors and owned the
+									Web Data Connector platform. Managed a 17-person team.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
+								>
+									{[
+										"TypeScript",
+										"Node.js",
+										"Chromium",
+										"CI/CD",
+										"Team Leadership",
+									].map((skill) => (
+										<Tag.Root
+											key={skill}
+											size="sm"
+											variant="outline"
+										>
+											{skill}
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
+
+							<Separator my={6} />
+
+							<Box>
+								<HStack
+									justify="space-between"
+									align="start"
+									mb={2}
+								>
+									<VStack
+										align="start"
+										gap={1}
+									>
+										<Heading size="md">Director Of Engineering</Heading>
+										<Text
+											color={muted}
+											fontSize="sm"
+										>
+											T-Mobile
+										</Text>
+									</VStack>
+								</HStack>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={3}
+								>
+									Nov 2018 - Oct 2019
+								</Text>
+								<Text mb={3}>
+									Managed multiple Retail Mobility projects. Expanded the team
+									in record time by hiring 25 diverse engineers within six
+									weeks. Worked with Apple to implement remote device management
+									across ~7500 T-Mobile stores.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
+								>
+									{[
+										"Team Leadership",
+										"Rapid Hiring",
+										"Apple Integration",
+										"Retail Systems",
+										"Project Management",
+									].map((skill) => (
+										<Tag.Root
+											key={skill}
+											size="sm"
+											variant="outline"
+										>
+											{skill}
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
+						</Card.Root>
+
+						{/* Projects */}
+						<Card.Root
+							border="1px solid"
+							borderColor={cardBorder}
+							p={6}
+							borderRadius="2xl"
 							mb={6}
-							color={accent}
 						>
-							Notable Projects
-						</Heading>
-
-						<Box mb={4}>
 							<Heading
-								size="md"
-								mb={2}
+								size="lg"
+								mb={6}
+								color={accent}
 							>
-								Developer Experience Platform
+								Notable Projects
 							</Heading>
-							<Text
-								fontSize="sm"
-								color={muted}
-								mb={2}
-							>
-								2023 - 2024
-							</Text>
-							<Text mb={3}>
-								Built a comprehensive DX platform that reduced developer
-								onboarding time by 60% and improved code quality metrics across
-								the organization.
-							</Text>
-							<HStack
-								wrap="wrap"
-								gap={2}
-							>
-								{["TypeScript", "Vite", "Chakra UI", "Monorepo", "CI/CD"].map(
-									(tech) => (
-										<Tag
+
+							<Box mb={4}>
+								<Heading
+									size="md"
+									mb={2}
+								>
+									Gemini Code Assist
+								</Heading>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={2}
+								>
+									2022 - 2025
+								</Text>
+								<Text mb={3}>
+									Led technical direction and hands-on engineering for Google's
+									AI coding assistant, integrated into VSCode and IntelliJ IDEs.
+									Implemented a symbol table generator across multiple
+									languages, increasing context for LLM, reducing tokens, and
+									significantly improving code completion acceptance rates.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
+								>
+									{[
+										"Go",
+										"TypeScript",
+										"Node.js",
+										"Kubernetes",
+										"GCP",
+										"LLM",
+									].map((tech) => (
+										<Tag.Root
 											key={tech}
 											size="sm"
 											variant="subtle"
 										>
 											{tech}
-										</Tag>
-									)
-								)}
-							</HStack>
-						</Box>
-
-						<Separator my={4} />
-
-						<Box>
-							<Heading
-								size="md"
-								mb={2}
-							>
-								AI-Powered Code Review Tool
-							</Heading>
-							<Text
-								fontSize="sm"
-								color={muted}
-								mb={2}
-							>
-								2024
-							</Text>
-							<Text mb={3}>
-								Developed an AI tool that automates code review processes,
-								reducing review time by 40% while maintaining high code quality
-								standards.
-							</Text>
-							<HStack
-								wrap="wrap"
-								gap={2}
-							>
-								{[
-									"OpenAI API",
-									"React",
-									"Node.js",
-									"GitHub API",
-									"Machine Learning",
-								].map((tech) => (
-									<Tag
-										key={tech}
-										size="sm"
-										variant="subtle"
-									>
-										{tech}
-									</Tag>
-								))}
-							</HStack>
-						</Box>
-					</Card.Root>
-				</Box>
-
-				{/* Right Column - Skills & Info */}
-				<VStack
-					align="stretch"
-					gap={6}
-				>
-					{/* Skills */}
-					<Card.Root
-						border="1px solid"
-						borderColor={cardBorder}
-						p={6}
-						borderRadius="2xl"
-					>
-						<Heading
-							size="lg"
-							mb={4}
-							color={accent}
-						>
-							Technical Skills
-						</Heading>
-
-						<VStack
-							align="stretch"
-							gap={4}
-						>
-							<Box>
-								<Text
-									fontWeight="semibold"
-									mb={2}
-								>
-									Languages
-								</Text>
-								<HStack
-									wrap="wrap"
-									gap={2}
-								>
-									{["TypeScript", "JavaScript", "Python", "SQL"].map((lang) => (
-										<Tag
-											key={lang}
-											size="sm"
-											variant="outline"
-										>
-											{lang}
-										</Tag>
+										</Tag.Root>
 									))}
 								</HStack>
 							</Box>
 
-							<Box>
-								<Text
-									fontWeight="semibold"
+							<Separator my={4} />
+
+							<Box mb={4}>
+								<Heading
+									size="md"
 									mb={2}
 								>
-									Frontend
+									TACO Toolkit & Connector SDK
+								</Heading>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={2}
+								>
+									2019 - 2022
+								</Text>
+								<Text mb={3}>
+									Built a robust CI/CD pipeline (TACO) enabling over 100
+									partners to test and deploy Tableau connectors efficiently.
+									Created a Connector SDK widely adopted across Tableau's
+									ecosystem, simplifying web data connector development.
 								</Text>
 								<HStack
 									wrap="wrap"
 									gap={2}
 								>
-									{["React", "Next.js", "Vite", "Chakra UI", "Tailwind"].map(
-										(tech) => (
-											<Tag
+									{[
+										"TypeScript",
+										"Node.js",
+										"Chromium",
+										"CI/CD",
+										"SDK Development",
+									].map((tech) => (
+										<Tag.Root
+											key={tech}
+											size="sm"
+											variant="subtle"
+										>
+											{tech}
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
+
+							<Separator my={4} />
+
+							<Box>
+								<Heading
+									size="md"
+									mb={2}
+								>
+									RoomToday Platform
+								</Heading>
+								<Text
+									fontSize="sm"
+									color={muted}
+									mb={2}
+								>
+									2014 - 2016
+								</Text>
+								<Text mb={3}>
+									Co-founded and built a real-time, last-minute hotel booking
+									platform. Raised $1.6M and led the acquisition by Simasindo
+									and Northcliff Ventures. Developed mobile apps and real-time
+									property management systems used by hotel partners across Asia
+									and Europe.
+								</Text>
+								<HStack
+									wrap="wrap"
+									gap={2}
+								>
+									{[
+										"React Native",
+										"Real-time Systems",
+										"Mobile Apps",
+										"Startup Leadership",
+										"Fundraising",
+									].map((tech) => (
+										<Tag.Root
+											key={tech}
+											size="sm"
+											variant="subtle"
+										>
+											{tech}
+										</Tag.Root>
+									))}
+								</HStack>
+							</Box>
+						</Card.Root>
+					</Box>
+
+					{/* Right Column - Skills & Info */}
+					<VStack
+						align="stretch"
+						gap={6}
+					>
+						{/* Skills */}
+						<Card.Root
+							border="1px solid"
+							borderColor={cardBorder}
+							p={6}
+							borderRadius="2xl"
+						>
+							<Heading
+								size="lg"
+								mb={4}
+								color={accent}
+							>
+								Technical Skills
+							</Heading>
+
+							<VStack
+								align="stretch"
+								gap={4}
+							>
+								<Box>
+									<Text
+										fontWeight="semibold"
+										mb={2}
+									>
+										Languages
+									</Text>
+									<HStack
+										wrap="wrap"
+										gap={2}
+									>
+										{[
+											"Go",
+											"TypeScript",
+											"JavaScript",
+											"C#",
+											"C++",
+											"Python",
+										].map((lang) => (
+											<Tag.Root
+												key={lang}
+												size="sm"
+												variant="outline"
+											>
+												{lang}
+											</Tag.Root>
+										))}
+									</HStack>
+								</Box>
+
+								<Box>
+									<Text
+										fontWeight="semibold"
+										mb={2}
+									>
+										Frontend & Mobile
+									</Text>
+									<HStack
+										wrap="wrap"
+										gap={2}
+									>
+										{[
+											"React",
+											"React Native",
+											"VSCode Extensions",
+											"IntelliJ Extensions",
+											"Chrome Extensions",
+										].map((tech) => (
+											<Tag.Root
 												key={tech}
 												size="sm"
 												variant="outline"
 											>
 												{tech}
-											</Tag>
-										)
-									)}
-								</HStack>
-							</Box>
+											</Tag.Root>
+										))}
+									</HStack>
+								</Box>
 
-							<Box>
-								<Text
-									fontWeight="semibold"
-									mb={2}
-								>
-									Backend
-								</Text>
-								<HStack
-									wrap="wrap"
-									gap={2}
-								>
-									{["Node.js", "Express", "GraphQL", "PostgreSQL", "Redis"].map(
-										(tech) => (
-											<Tag
+								<Box>
+									<Text
+										fontWeight="semibold"
+										mb={2}
+									>
+										Backend & Cloud
+									</Text>
+									<HStack
+										wrap="wrap"
+										gap={2}
+									>
+										{[
+											"Node.js",
+											"Kubernetes",
+											"Google Cloud",
+											"Azure",
+											"GraphQL",
+											"PostgreSQL",
+										].map((tech) => (
+											<Tag.Root
 												key={tech}
 												size="sm"
 												variant="outline"
 											>
 												{tech}
-											</Tag>
-										)
-									)}
-								</HStack>
-							</Box>
+											</Tag.Root>
+										))}
+									</HStack>
+								</Box>
 
-							<Box>
-								<Text
-									fontWeight="semibold"
-									mb={2}
-								>
-									Tools & Platforms
-								</Text>
-								<HStack
-									wrap="wrap"
-									gap={2}
-								>
-									{["AWS", "Docker", "Git", "GitHub Actions", "Vercel"].map(
-										(tool) => (
-											<Tag
+								<Box>
+									<Text
+										fontWeight="semibold"
+										mb={2}
+									>
+										AI & Leadership
+									</Text>
+									<HStack
+										wrap="wrap"
+										gap={2}
+									>
+										{[
+											"Large Language Models",
+											"Generative AI",
+											"Engineering Management",
+											"Team Leadership",
+											"CI/CD",
+										].map((tool) => (
+											<Tag.Root
 												key={tool}
 												size="sm"
 												variant="outline"
 											>
 												{tool}
-											</Tag>
-										)
-									)}
-								</HStack>
-							</Box>
-						</VStack>
-					</Card.Root>
+											</Tag.Root>
+										))}
+									</HStack>
+								</Box>
+							</VStack>
+						</Card.Root>
 
-					{/* Education */}
-					<Card.Root
-						border="1px solid"
-						borderColor={cardBorder}
-						p={6}
-						borderRadius="2xl"
-					>
-						<Heading
-							size="lg"
-							mb={4}
-							color={accent}
+						{/* Education */}
+						<Card.Root
+							border="1px solid"
+							borderColor={cardBorder}
+							p={6}
+							borderRadius="2xl"
 						>
-							Education
-						</Heading>
-
-						<Box>
 							<Heading
-								size="md"
-								mb={1}
+								size="lg"
+								mb={4}
+								color={accent}
 							>
-								Bachelor of Science
+								Education
 							</Heading>
-							<Text
-								color={muted}
-								fontSize="sm"
-								mb={2}
-							>
-								Computer Science
-							</Text>
-							<Text
-								fontSize="sm"
-								color={muted}
-							>
-								2016 - 2020
-							</Text>
-						</Box>
-					</Card.Root>
 
-					{/* Contact */}
-					<Card.Root
-						border="1px solid"
-						borderColor={cardBorder}
-						p={6}
-						borderRadius="2xl"
-					>
-						<Heading
-							size="lg"
-							mb={4}
-							color={accent}
+							<Box>
+								<Heading
+									size="md"
+									mb={1}
+								>
+									Computer Science
+								</Heading>
+								<Text
+									color={muted}
+									fontSize="sm"
+									mb={2}
+								>
+									Self-directed learning and industry experience
+								</Text>
+								<Text
+									fontSize="sm"
+									color={muted}
+								>
+									Ongoing
+								</Text>
+							</Box>
+						</Card.Root>
+
+						{/* Contact */}
+						<Card.Root
+							border="1px solid"
+							borderColor={cardBorder}
+							p={6}
+							borderRadius="2xl"
 						>
-							Contact
-						</Heading>
+							<Heading
+								size="lg"
+								mb={4}
+								color={accent}
+							>
+								Contact
+							</Heading>
 
-						<VStack
-							align="stretch"
-							gap={3}
-						>
-							<Button
-								as={CLink}
-								href="mailto:nick@karnik.io"
-								leftIcon={<FiMail />}
-								variant="outline"
-								justifyContent="start"
+							<VStack
+								align="stretch"
+								gap={3}
 							>
-								nick@karnik.io
-							</Button>
-							<Button
-								as={CLink}
-								href="https://www.linkedin.com/in/theoutlander"
-								isExternal
-								leftIcon={<FiExternalLink />}
-								variant="outline"
-								justifyContent="start"
-							>
-								LinkedIn
-							</Button>
-							<Button
-								as={CLink}
-								href="https://github.com/theoutlander"
-								isExternal
-								leftIcon={<FiExternalLink />}
-								variant="outline"
-								justifyContent="start"
-							>
-								GitHub
-							</Button>
-							<Button
-								as={CLink}
-								href="https://calendly.com/nick-karnik"
-								isExternal
-								leftIcon={<FiCalendar />}
-								variant="outline"
-								justifyContent="start"
-							>
-								Schedule Call
-							</Button>
-						</VStack>
-					</Card.Root>
-				</VStack>
-			</SimpleGrid>
+								<CLink
+									href="mailto:nick@karnik.io"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									justifyContent="start"
+									_hover={{ bg: "gray.50" }}
+								>
+									<FiMail />
+									nick@karnik.io
+								</CLink>
+								<CLink
+									href="https://www.linkedin.com/in/theoutlander"
+									target="_blank"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									justifyContent="start"
+									_hover={{ bg: "gray.50" }}
+								>
+									<FiExternalLink />
+									LinkedIn
+								</CLink>
+								<CLink
+									href="https://github.com/theoutlander"
+									target="_blank"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									justifyContent="start"
+									_hover={{ bg: "gray.50" }}
+								>
+									<FiExternalLink />
+									GitHub
+								</CLink>
+								<CLink
+									href="https://calendly.com/nick-karnik"
+									target="_blank"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									justifyContent="start"
+									_hover={{ bg: "gray.50" }}
+								>
+									<FiCalendar />
+									Schedule Call
+								</CLink>
+							</VStack>
+						</Card.Root>
+					</VStack>
+				</SimpleGrid>
 
-			{/* Footer */}
-			<Box
-				textAlign="center"
-				mt={10}
-				color={muted}
-				fontSize="sm"
-			>
-				© {new Date().getFullYear()} Nick Karnik
+				{/* Footer */}
+				<Box
+					textAlign="center"
+					mt={10}
+					color={muted}
+					fontSize="sm"
+				>
+					© {new Date().getFullYear()} Nick Karnik
+				</Box>
 			</Box>
-		</Box>
+		</>
 	);
 }

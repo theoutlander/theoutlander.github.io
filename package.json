@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
-		"build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && tsx scripts/generate-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
 		"check": "eslint . --fix && tsc --noEmit",
 		"deploy": "./scripts/deploy-gh-pages.sh"
 	},

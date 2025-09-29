@@ -2,6 +2,8 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
+import { redirectPlugin } from "./src/plugins/vite-redirect-plugin";
+import ssrSsg from "vite-plugin-ssr-ssg";
 
 export default defineConfig({
 	base: "/",
@@ -12,6 +14,11 @@ export default defineConfig({
 			autoCodeSplitting: true,
 		}),
 		react(),
+		redirectPlugin(),
+		ssrSsg({
+			render: "react",
+			entry: "./src/ssg.ts",
+		}),
 	],
 	build: {
 		outDir: "dist",

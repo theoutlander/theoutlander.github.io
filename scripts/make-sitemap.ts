@@ -9,7 +9,9 @@ async function run() {
 	let posts: Post[] = [];
 	try {
 		posts = JSON.parse(await readFile("public/data/hashnode.json", "utf8"));
-	} catch {}
+	} catch {
+		// Ignore error if file doesn't exist
+	}
 
 	const urls = [
 		...baseRoutes.map((p) => `${BASE}${p}`),

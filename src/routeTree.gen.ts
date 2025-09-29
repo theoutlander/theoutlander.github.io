@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResumeRouteImport } from './routes/resume'
+import { Route as LandingHybridRouteImport } from './routes/landing-hybrid'
 import { Route as CvRouteImport } from './routes/cv'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
@@ -20,6 +21,11 @@ import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 const ResumeRoute = ResumeRouteImport.update({
   id: '/resume',
   path: '/resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LandingHybridRoute = LandingHybridRouteImport.update({
+  id: '/landing-hybrid',
+  path: '/landing-hybrid',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CvRoute = CvRouteImport.update({
@@ -58,6 +64,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
+  '/landing-hybrid': typeof LandingHybridRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
@@ -67,6 +74,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
+  '/landing-hybrid': typeof LandingHybridRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
@@ -77,6 +85,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
+  '/landing-hybrid': typeof LandingHybridRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
@@ -88,6 +97,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/cv'
+    | '/landing-hybrid'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
@@ -97,6 +107,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/cv'
+    | '/landing-hybrid'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
@@ -106,6 +117,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/blog'
     | '/cv'
+    | '/landing-hybrid'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
@@ -116,6 +128,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRouteWithChildren
   CvRoute: typeof CvRoute
+  LandingHybridRoute: typeof LandingHybridRoute
   ResumeRoute: typeof ResumeRoute
 }
 
@@ -126,6 +139,13 @@ declare module '@tanstack/react-router' {
       path: '/resume'
       fullPath: '/resume'
       preLoaderRoute: typeof ResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/landing-hybrid': {
+      id: '/landing-hybrid'
+      path: '/landing-hybrid'
+      fullPath: '/landing-hybrid'
+      preLoaderRoute: typeof LandingHybridRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cv': {
@@ -190,6 +210,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   BlogRoute: BlogRouteWithChildren,
   CvRoute: CvRoute,
+  LandingHybridRoute: LandingHybridRoute,
   ResumeRoute: ResumeRoute,
 }
 export const routeTree = rootRouteImport

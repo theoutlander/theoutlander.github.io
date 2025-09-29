@@ -5,7 +5,6 @@ import {
 	Image,
 	Text,
 	HStack,
-	Link as CLink,
 	Tag,
 	Container,
 } from "@chakra-ui/react";

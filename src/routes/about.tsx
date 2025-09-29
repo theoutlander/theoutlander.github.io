@@ -13,11 +13,13 @@ import {
 	Separator,
 	useToken,
 } from "@chakra-ui/react";
-import { FiMail, FiExternalLink } from "react-icons/fi";
+import { FiMail, FiExternalLink, FiDownload } from "react-icons/fi";
 import { Helmet } from "react-helmet-async";
 
 const HASHNODE_ABOUT_SLUG = "about";
-const BUILD_ID = (import.meta as any).env?.VITE_BUILD_ID ?? "dev";
+const BUILD_ID =
+	(import.meta as { env?: Record<string, string> }).env?.["VITE_BUILD_ID"] ??
+	"dev";
 
 export const Route = createFileRoute("/about")({
 	loader: async () => {
@@ -229,6 +231,22 @@ function AboutPage() {
 								>
 									GitHub
 									<FiExternalLink />
+								</CLink>
+								<CLink
+									href="/resume"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="blue.200"
+									borderRadius="md"
+									color="blue.600"
+									_hover={{ bg: "blue.50" }}
+								>
+									<FiDownload />
+									Resume
 								</CLink>
 							</VStack>
 						</Card.Root>
