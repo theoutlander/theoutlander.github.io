@@ -10,6 +10,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
+import { prose } from "./PostProse";
 
 type Post = {
 	title: string;
@@ -30,22 +31,20 @@ export default function PostView({ post }: { post: Post }) {
 		<>
 			<Helmet>
 				<title>{post.title}</title>
+				<meta
+					name="description"
+					content={post.excerpt || ""}
+				/>
 				<link
 					rel="canonical"
-					href={postUrl}
+					href={typeof window === "undefined" ? "" : window.location.href}
 				/>
-				{post.excerpt && (
-					<meta
-						name="description"
-						content={post.excerpt}
-					/>
-				)}
-				{post.cover && (
+				{post.cover ? (
 					<meta
 						property="og:image"
 						content={post.cover}
 					/>
-				)}
+				) : null}
 				<meta
 					property="og:title"
 					content={post.title}
@@ -55,35 +54,9 @@ export default function PostView({ post }: { post: Post }) {
 					content="article"
 				/>
 				<meta
-					property="og:url"
-					content={postUrl}
-				/>
-				{post.excerpt && (
-					<meta
-						property="og:description"
-						content={post.excerpt}
-					/>
-				)}
-				<meta
 					name="twitter:card"
 					content="summary_large_image"
 				/>
-				<meta
-					name="twitter:title"
-					content={post.title}
-				/>
-				{post.excerpt && (
-					<meta
-						name="twitter:description"
-						content={post.excerpt}
-					/>
-				)}
-				{post.cover && (
-					<meta
-						name="twitter:image"
-						content={post.cover}
-					/>
-				)}
 			</Helmet>
 			<ProgressTop />
 			{/* Structured data */}
@@ -148,6 +121,7 @@ export default function PostView({ post }: { post: Post }) {
 
 				{/* Full article content */}
 				<Box
+					css={prose}
 					maxW="none"
 					lineHeight="1.7"
 					fontSize="lg"

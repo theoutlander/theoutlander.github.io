@@ -84,7 +84,7 @@ async function fetchAll(host: string): Promise<Post[]> {
 		slug: p.slug,
 		title: p.title,
 		excerpt: p.brief ?? "",
-		url: p.url,
+		url: `https://nick.karnik.io/blog/${p.slug}`,
 		date: p.publishedAt ?? null,
 		cover: p.coverImage?.url ?? null,
 		tags: (p.tags ?? []).map((t: { name: string }) => t.name),
