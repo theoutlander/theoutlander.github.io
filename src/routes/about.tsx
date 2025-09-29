@@ -82,7 +82,8 @@ function AboutPage() {
 					>
 						<Heading size="lg">Nick Karnik</Heading>
 						<Text color={muted}>
-							Engineer and EM, shipping fast with TypeScript
+							Engineering Leader & Staff Software Engineer, shipping fast with
+							Node, React, and TypeScript
 						</Text>
 						<HStack
 							pt={1}

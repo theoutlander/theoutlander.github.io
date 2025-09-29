@@ -91,6 +91,11 @@ export const redirects: Redirect[] = [
 		destination: "https://nick.karnik.io/rss.xml",
 		statusCode: 308,
 	},
+	{
+		source: "/resume.pdf",
+		destination: "https://nick.karnik.io/resume-nick-karnik.pdf",
+		statusCode: 308,
+	},
 	// Resume routes now serve actual pages instead of redirecting to PDF
 ];
 

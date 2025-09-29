@@ -6,9 +6,10 @@ export const Route = createFileRoute("/blog/$slug")({
 		// Check if we have pre-populated data from static generation
 		if (
 			typeof window !== "undefined" &&
-			(window as any).__INITIAL_POST_DATA__
+			(window as unknown as Record<string, unknown>).__INITIAL_POST_DATA__
 		) {
-			const data = (window as any).__INITIAL_POST_DATA__;
+			const data = (window as unknown as Record<string, unknown>)
+				.__INITIAL_POST_DATA__ as Record<string, unknown>;
 			return {
 				title: data.title,
 				date: data.date,
@@ -36,6 +37,7 @@ export const Route = createFileRoute("/blog/$slug")({
 			};
 		}
 		return (await res.json()) as {
+			id?: string;
 			title: string;
 			date: string | null;
 			cover: string | null;

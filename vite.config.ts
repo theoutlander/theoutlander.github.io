@@ -3,6 +3,7 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import { redirectPlugin } from "./src/plugins/vite-redirect-plugin";
+// @ts-expect-error - vite-plugin-ssr-ssg has type declaration issues
 import ssrSsg from "vite-plugin-ssr-ssg";
 
 export default defineConfig({

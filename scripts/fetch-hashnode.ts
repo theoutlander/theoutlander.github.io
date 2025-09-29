@@ -136,6 +136,7 @@ await writeFile("public/data/hashnode.json", JSON.stringify(posts, null, 2));
 // Write individual post files
 for (const post of posts) {
 	const postData = {
+		id: post.id,
 		title: post.title,
 		date: post.date,
 		cover: post.cover,

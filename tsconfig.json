@@ -13,6 +13,7 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "baseUrl": ".",
+    "forceConsistentCasingInFileNames": true,
     "types": [
       "node"
     ]

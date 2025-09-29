@@ -12,7 +12,6 @@ import {
 	SimpleGrid,
 	Card,
 	Tag,
-	Separator,
 	useToken,
 } from "@chakra-ui/react";
 import {
@@ -42,8 +41,6 @@ export const Route = createFileRoute("/landing-hybrid")({
 
 function HybridLanding() {
 	const [posts, setPosts] = useState<Post[] | null>(null);
-	const accent = "blue.600";
-	const cardBorder = useToken("colors", "gray.200");
 	const muted = useToken("colors", "gray.600");
 
 	useEffect(() => {
@@ -119,7 +116,7 @@ function HybridLanding() {
 					<SimpleGrid
 						columns={{ base: 1, lg: 2 }}
 						gap={12}
-						align="center"
+						alignItems="center"
 					>
 						<VStack
 							align="start"
@@ -194,10 +191,10 @@ function HybridLanding() {
 										bg="blue.500"
 										color="white"
 										_hover={{ bg: "blue.600", transform: "translateY(-1px)" }}
-										rightIcon={<FiArrowRight />}
 										shadow="lg"
 									>
 										Read My Blog
+										<FiArrowRight style={{ marginLeft: "8px" }} />
 									</Button>
 								</RouterLink>
 								<RouterLink to="/about">
@@ -726,10 +723,10 @@ function HybridLanding() {
 						<Button
 							size="lg"
 							variant="outline"
-							rightIcon={<FiArrowRight />}
 							_hover={{ bg: "blue.50", borderColor: "blue.300" }}
 						>
 							View All Posts
+							<FiArrowRight style={{ marginLeft: "8px" }} />
 						</Button>
 					</RouterLink>
 				</Box>
@@ -929,7 +926,7 @@ function HybridLanding() {
 								Email Me
 							</CLink>
 							<CLink
-								href="/assets/documents/resume-nick-karnik.pdf"
+								href="/resume.pdf"
 								target="_blank"
 								display="inline-flex"
 								alignItems="center"

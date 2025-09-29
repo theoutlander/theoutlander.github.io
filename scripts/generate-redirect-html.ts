@@ -1,4 +1,4 @@
-import { writeFileSync, mkdirSync } from "node:fs";
+import { writeFileSync, mkdirSync, existsSync, unlinkSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { redirects } from "../src/redirects";
 
@@ -86,13 +86,26 @@ redirects.forEach((redirect) => {
 		redirect.statusCode
 	);
 
-	// Create directory if it doesn't exist
-	const filePath = join(process.cwd(), "dist", redirect.source, "index.html");
-	const dir = dirname(filePath);
-	mkdirSync(dir, { recursive: true });
+	// Handle file redirects (like /resume.pdf) differently
+	const isFileRedirect = redirect.source.includes(".");
 
-	// Write HTML file
-	writeFileSync(filePath, htmlContent);
+	if (isFileRedirect) {
+		// For file redirects, create the redirect file directly
+		const filePath = join(process.cwd(), "dist", redirect.source);
+
+		// Remove existing file if it exists (like resume.pdf)
+		if (existsSync(filePath)) {
+			unlinkSync(filePath);
+		}
+
+		writeFileSync(filePath, htmlContent);
+	} else {
+		// For directory redirects, create index.html in a subdirectory
+		const filePath = join(process.cwd(), "dist", redirect.source, "index.html");
+		const dir = dirname(filePath);
+		mkdirSync(dir, { recursive: true });
+		writeFileSync(filePath, htmlContent);
+	}
 
 	console.log(`  ✅ ${redirect.source} → ${redirect.destination}`);
 });

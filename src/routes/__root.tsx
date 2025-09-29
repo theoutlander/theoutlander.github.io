@@ -44,7 +44,6 @@ function Header() {
 						<NavLink to="/blog">Blog</NavLink>
 						<NavLink to="/about">About</NavLink>
 						<NavLink to="/resume">Resume</NavLink>
-						<NavLink to="/landing-hybrid">Landing</NavLink>
 					</HStack>
 				</Flex>
 			</Container>
@@ -57,18 +56,20 @@ export const Route = createRootRoute({
 		return (
 			<>
 				<Helmet>
-					<title>Nick Karnik - Software Engineer & Tech Leader</title>
+					<title>
+						Nick Karnik - Staff Software Engineer & Engineering Leader
+					</title>
 					<meta
 						name="description"
-						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+						content="Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
 					/>
 					<meta
 						property="og:title"
-						content="Nick Karnik - Software Engineer & Tech Leader"
+						content="Nick Karnik - Staff Software Engineer & Engineering Leader"
 					/>
 					<meta
 						property="og:description"
-						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+						content="Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
 					/>
 					<meta
 						property="og:type"
@@ -84,11 +85,11 @@ export const Route = createRootRoute({
 					/>
 					<meta
 						name="twitter:title"
-						content="Nick Karnik - Software Engineer & Tech Leader"
+						content="Nick Karnik - Staff Software Engineer & Engineering Leader"
 					/>
 					<meta
 						name="twitter:description"
-						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+						content="Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
 					/>
 				</Helmet>
 				<Box

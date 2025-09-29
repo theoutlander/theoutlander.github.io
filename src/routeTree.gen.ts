@@ -10,10 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ResumeRouteImport } from './routes/resume'
+import { Route as LostRouteImport } from './routes/lost'
 import { Route as LandingHybridRouteImport } from './routes/landing-hybrid'
 import { Route as CvRouteImport } from './routes/cv'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as R404RouteImport } from './routes/404'
+import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
@@ -21,6 +24,11 @@ import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 const ResumeRoute = ResumeRouteImport.update({
   id: '/resume',
   path: '/resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LostRoute = LostRouteImport.update({
+  id: '/lost',
+  path: '/lost',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LandingHybridRoute = LandingHybridRouteImport.update({
@@ -43,6 +51,16 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R404Route = R404RouteImport.update({
+  id: '/404',
+  path: '/404',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SplatRoute = SplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,20 +79,26 @@ const BlogTTagRoute = BlogTTagRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
   '/landing-hybrid': typeof LandingHybridRoute
+  '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
   '/landing-hybrid': typeof LandingHybridRoute
+  '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
@@ -82,10 +106,13 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/$': typeof SplatRoute
+  '/404': typeof R404Route
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/cv': typeof CvRoute
   '/landing-hybrid': typeof LandingHybridRoute
+  '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
@@ -94,30 +121,39 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/$'
+    | '/404'
     | '/about'
     | '/blog'
     | '/cv'
     | '/landing-hybrid'
+    | '/lost'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/$'
+    | '/404'
     | '/about'
     | '/blog'
     | '/cv'
     | '/landing-hybrid'
+    | '/lost'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
   id:
     | '__root__'
     | '/'
+    | '/$'
+    | '/404'
     | '/about'
     | '/blog'
     | '/cv'
     | '/landing-hybrid'
+    | '/lost'
     | '/resume'
     | '/blog/$slug'
     | '/blog/t/$tag'
@@ -125,10 +161,13 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  SplatRoute: typeof SplatRoute
+  R404Route: typeof R404Route
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRouteWithChildren
   CvRoute: typeof CvRoute
   LandingHybridRoute: typeof LandingHybridRoute
+  LostRoute: typeof LostRoute
   ResumeRoute: typeof ResumeRoute
 }
 
@@ -139,6 +178,13 @@ declare module '@tanstack/react-router' {
       path: '/resume'
       fullPath: '/resume'
       preLoaderRoute: typeof ResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/lost': {
+      id: '/lost'
+      path: '/lost'
+      fullPath: '/lost'
+      preLoaderRoute: typeof LostRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/landing-hybrid': {
@@ -167,6 +213,20 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/404': {
+      id: '/404'
+      path: '/404'
+      fullPath: '/404'
+      preLoaderRoute: typeof R404RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -207,10 +267,13 @@ const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  SplatRoute: SplatRoute,
+  R404Route: R404Route,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRouteWithChildren,
   CvRoute: CvRoute,
   LandingHybridRoute: LandingHybridRoute,
+  LostRoute: LostRoute,
   ResumeRoute: ResumeRoute,
 }
 export const routeTree = rootRouteImport

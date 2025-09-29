@@ -11,8 +11,10 @@ import { Helmet } from "react-helmet-async";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
 import { proseStyles } from "./PostProse";
+import Comments from "./Comments";
 
 type Post = {
+	id?: string;
 	title: string;
 	date: string | null;
 	cover: string | null;
@@ -23,9 +25,11 @@ type Post = {
 };
 
 export default function PostView({ post }: { post: Post }) {
-	const postUrl = `https://nick.karnik.io/blog/${post.title
-		.toLowerCase()
-		.replace(/\s+/g, "-")}`;
+	const postUrl =
+		post.url ||
+		`https://nick.karnik.io/blog/${post.title
+			.toLowerCase()
+			.replace(/\s+/g, "-")}`;
 
 	return (
 		<>
@@ -138,6 +142,12 @@ export default function PostView({ post }: { post: Post }) {
 						</Text>
 					)}
 				</Box>
+
+				{/* Comments Section */}
+				<Comments
+					postTitle={post.title}
+					postUrl={postUrl}
+				/>
 			</Container>
 		</>
 	);

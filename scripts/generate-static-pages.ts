@@ -1,4 +1,4 @@
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from "node:fs";
 import { join } from "node:path";
 
 type Post = {
@@ -69,6 +69,21 @@ async function generateStaticPages() {
 	// Write the static HTML file
 	writeFileSync(join(aboutDir, "index.html"), aboutHtml);
 	console.log("✅ Generated static about page");
+
+	// Copy resume PDF to root for /resume.pdf access
+	console.log("📄 Copying resume PDF to root...");
+	copyFileSync(
+		"public/assets/documents/resume-nick-karnik.pdf",
+		"dist/resume.pdf"
+	);
+	// Also copy with SEO-friendly filename
+	copyFileSync(
+		"public/assets/documents/resume-nick-karnik.pdf",
+		"dist/resume-nick-karnik.pdf"
+	);
+	console.log(
+		"✅ Resume PDF copied to /resume.pdf and /resume-nick-karnik.pdf"
+	);
 }
 
 generateStaticPages().catch(console.error);

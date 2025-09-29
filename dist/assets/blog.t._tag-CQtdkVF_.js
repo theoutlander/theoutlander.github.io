@@ -1,0 +1,1 @@
+import{a3 as t,j as r}from"./index-CvJuAqlI.js";import{B as m}from"./BlogList-DI3fWCBU.js";import"./simple-grid-CW--DmE2.js";import"./create-slot-recipe-context-CmnEag0r.js";import"./image-D3lgLZ2K.js";const g=function(){const{tag:o}=t.useParams();return r.jsx(m,{filterTag:o})};export{g as component};
