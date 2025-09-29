@@ -1,14 +1,47 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
-		<meta charset="utf-8" />
-		<title>Loading...</title>
+		<meta charset="UTF-8" />
+
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="upgrade-insecure-requests"
+		/>
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="RSS"
+			href="https://theoutlander.hashnode.dev/rss.xml"
+		/>
+		<!-- Google Analytics -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"
+		></script>
 		<script>
-			// Load the main app for client-side routing
-			window.location.replace("/index.html" + window.location.pathname + window.location.search + window.location.hash);
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
+			gtag("config", "G-62FC7BDSGJ");
 		</script>
+		<title>blog</title>
 	</head>
 	<body>
-		<p>Loading...</p>
+		<div id="root">
+			<h1>Loading Blog...</h1>
+			<p>
+				If this message persists, please check the browser console for errors.
+			</p>
+		</div>
+		<script
+			type="module"
+			src="/src/main.tsx"
+		></script>
 	</body>
 </html>

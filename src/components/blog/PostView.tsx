@@ -10,7 +10,7 @@ import {
 import { Helmet } from "react-helmet-async";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
-import { prose } from "./PostProse";
+import { proseStyles } from "./PostProse";
 
 type Post = {
 	title: string;
@@ -121,7 +121,7 @@ export default function PostView({ post }: { post: Post }) {
 
 				{/* Full article content */}
 				<Box
-					css={prose}
+					sx={proseStyles}
 					maxW="none"
 					lineHeight="1.7"
 					fontSize="lg"

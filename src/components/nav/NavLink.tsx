@@ -10,7 +10,9 @@ export default function NavLink({
 	children: React.ReactNode;
 }) {
 	const { pathname } = useRouterState().location;
-	const active = pathname === to || pathname.startsWith(to + "/");
+	const active =
+		pathname === to ||
+		(typeof pathname === "string" && pathname.startsWith(to + "/"));
 	return (
 		<Link
 			to={to}
