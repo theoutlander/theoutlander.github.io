@@ -18,7 +18,8 @@
 		"commit:all": "git add . && git commit -m 'chore: update build and dev changes'",
 		"dev:commit": "pnpm run prebuild && pnpm run build && pnpm run commit:all && pnpm run dev",
 		"redirects": "tsx scripts/generate-redirects.ts",
-		"redirects:html": "tsx scripts/generate-redirect-html.ts"
+		"redirects:html": "tsx scripts/generate-redirect-html.ts",
+		"deploy:full": "pnpm run prebuild && pnpm run build:prod && pnpm run lint:fix && pnpm run typecheck && git add . && git commit -m 'chore: update build and deploy' && git push"
 	},
 	"dependencies": {
 		"@chakra-ui/react": "^3.27.0",
