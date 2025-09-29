@@ -105,7 +105,7 @@ export default function RoutePost({ slug }: { slug: string }) {
 						<Tag.Root
 							key={t}
 							size="sm"
-							colorScheme="gray"
+							variant="subtle"
 						>
 							{t}
 						</Tag.Root>
@@ -123,7 +123,6 @@ export default function RoutePost({ slug }: { slug: string }) {
 
 				{/* Full article content */}
 				<Box
-					prose
 					maxW="none"
 					lineHeight="1.7"
 					fontSize="lg"

@@ -42,7 +42,7 @@ type GraphQLResponse = {
 };
 
 // Your actual Hashnode subdomain
-const HOST = "nickkarnik.hashnode.dev";
+const HOST = process.env.HASHNODE_HOST || "theoutlander.hashnode.dev";
 const client = new GraphQLClient("https://gql.hashnode.com");
 
 const Q = gql/* GraphQL */ `
@@ -74,6 +74,9 @@ const Q = gql/* GraphQL */ `
 	}
 `;
 
+// Note: Hashnode GraphQL API doesn't support staticPages field
+// We'll create a fallback About page instead
+
 async function fetchAll(host: string): Promise<Post[]> {
 	const data = await client.request<GraphQLResponse>(Q, { host });
 	const edges = data?.publication?.posts?.edges ?? [];
@@ -91,6 +94,36 @@ async function fetchAll(host: string): Promise<Post[]> {
 		contentMarkdown: p.content?.markdown,
 		contentHtml: p.content?.html,
 	}));
+}
+
+async function createAboutPage() {
+	// Since Hashnode GraphQL API doesn't support staticPages,
+	// we'll create a fallback About page with your content
+	await mkdir("public/data/pages", { recursive: true });
+
+	const aboutContent = {
+		slug: "about",
+		title: "About",
+		html: `
+			<p>I help teams move faster without breaking things.</p>
+			<p>I've led engineering at Google, Microsoft, Salesforce, Tableau, IDM (now part of the Gates Foundation), TMobile, and startups. I care about clear decisions, strong execution, and code that ships.</p>
+			<p>On this blog I write about AI, engineering leadership, and building web products with React, Node.js, and TypeScript. I try to keep it practical so you can use it right away.</p>
+			<p>I also run Plutonic Consulting, where I work with founders on fractional CTO support, AI strategy, and scaling teams.</p>
+			<p>If you're hiring, wrestling with roadmap and architecture, or want a second set of eyes on your stack, I'm happy to help.</p>
+			<ul>
+				<li>Email: <a href="mailto:nick@karnik.io">nick@karnik.io</a></li>
+				<li>LinkedIn: <a href="https://www.linkedin.com/in/theoutlander" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/theoutlander</a></li>
+				<li>Plutonic Consulting: <a href="https://plutonic.consulting" target="_blank" rel="noopener noreferrer">https://plutonic.consulting</a></li>
+			</ul>
+		`,
+	};
+
+	await writeFile(
+		`public/data/pages/about.json`,
+		JSON.stringify(aboutContent, null, 2)
+	);
+
+	console.log("Created fallback About page at public/data/pages/about.json");
 }
 
 const posts = await fetchAll(HOST);
@@ -121,3 +154,6 @@ console.log(`Wrote ${posts.length} posts to public/data/hashnode.json`);
 console.log(
 	`Wrote ${posts.length} individual post files to public/data/posts/`
 );
+
+// Create About page (since Hashnode API doesn't support staticPages)
+await createAboutPage();

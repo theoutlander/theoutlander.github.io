@@ -1,6 +1,7 @@
 import React, { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
+import { HelmetProvider } from "react-helmet-async";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { routeTree } from "./routeTree.gen";
 
@@ -30,8 +31,12 @@ export const createApp = () => {
 					StrictMode,
 					null,
 					React.createElement(
-						ChakraProvider,
-						{ value: defaultSystem, children: React.createElement(RouterProvider, { router }) }
+						HelmetProvider,
+						null,
+						React.createElement(ChakraProvider, {
+							value: defaultSystem,
+							children: React.createElement(RouterProvider, { router }),
+						})
 					)
 				)
 			);

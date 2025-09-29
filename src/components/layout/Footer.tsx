@@ -1,7 +1,7 @@
 import { Box, Text } from "@chakra-ui/react";
 
 export default function Footer() {
-	const built = import.meta.env.VITE_BUILD_TIME ?? "";
+	const built = (import.meta as any).env?.VITE_BUILD_TIME ?? "";
 	return (
 		<Box
 			as="footer"

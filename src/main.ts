@@ -1,6 +1,8 @@
+import React from "react";
 import { createRoot } from "react-dom/client";
 import { ChakraProvider, defaultSystem } from "@chakra-ui/react";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { HelmetProvider } from "react-helmet-async";
 import { routeTree } from "./routeTree.gen";
 import { theme } from "./theme";
 
@@ -24,12 +26,14 @@ if (typeof document !== "undefined") {
 		console.log("Root element found, rendering app...");
 		try {
 			createRoot(rootElement).render(
-				<ChakraProvider
-					value={defaultSystem}
-					theme={theme}
-				>
-					<RouterProvider router={router} />
-				</ChakraProvider>
+				React.createElement(
+					HelmetProvider,
+					null,
+					React.createElement(ChakraProvider, {
+						value: defaultSystem,
+						children: React.createElement(RouterProvider, { router }),
+					})
+				)
 			);
 			console.log("App rendered successfully");
 		} catch (error) {

@@ -21,7 +21,10 @@ jobs:
         run: pnpm prebuild
         env:
           HASHNODE_HOST: theoutlander.hashnode.dev
-      - run: pnpm build
+      - name: Build application
+        run: pnpm build
+        env:
+          NODE_ENV: production
       - name: Generate sitemap
         run: pnpm postbuild
         env:

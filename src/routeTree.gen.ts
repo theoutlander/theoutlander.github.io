@@ -9,12 +9,24 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ResumeRouteImport } from './routes/resume'
+import { Route as CvRouteImport } from './routes/cv'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 
+const ResumeRoute = ResumeRouteImport.update({
+  id: '/resume',
+  path: '/resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CvRoute = CvRouteImport.update({
+  id: '/cv',
+  path: '/cv',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
   path: '/blog',
@@ -45,6 +57,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
+  '/cv': typeof CvRoute
+  '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
@@ -52,6 +66,8 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
+  '/cv': typeof CvRoute
+  '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
@@ -60,25 +76,65 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
+  '/cv': typeof CvRoute
+  '/resume': typeof ResumeRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/cv'
+    | '/resume'
+    | '/blog/$slug'
+    | '/blog/t/$tag'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
-  id: '__root__' | '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
+  to:
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/cv'
+    | '/resume'
+    | '/blog/$slug'
+    | '/blog/t/$tag'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/blog'
+    | '/cv'
+    | '/resume'
+    | '/blog/$slug'
+    | '/blog/t/$tag'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   BlogRoute: typeof BlogRouteWithChildren
+  CvRoute: typeof CvRoute
+  ResumeRoute: typeof ResumeRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/resume': {
+      id: '/resume'
+      path: '/resume'
+      fullPath: '/resume'
+      preLoaderRoute: typeof ResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cv': {
+      id: '/cv'
+      path: '/cv'
+      fullPath: '/cv'
+      preLoaderRoute: typeof CvRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/blog': {
       id: '/blog'
       path: '/blog'
@@ -133,6 +189,8 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   BlogRoute: BlogRouteWithChildren,
+  CvRoute: CvRoute,
+  ResumeRoute: ResumeRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

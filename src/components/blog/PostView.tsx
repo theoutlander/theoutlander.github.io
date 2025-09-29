@@ -103,7 +103,7 @@ export default function PostView({ post }: { post: Post }) {
 						<Tag.Root
 							key={t}
 							size="sm"
-							colorScheme="gray"
+							variant="subtle"
 						>
 							{t}
 						</Tag.Root>
@@ -121,11 +121,11 @@ export default function PostView({ post }: { post: Post }) {
 
 				{/* Full article content */}
 				<Box
-					sx={proseStyles}
 					maxW="none"
 					lineHeight="1.7"
 					fontSize="lg"
 					color="gray.800"
+					css={proseStyles}
 				>
 					{post.html ? (
 						<div dangerouslySetInnerHTML={{ __html: post.html }} />

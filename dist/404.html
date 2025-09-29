@@ -1,14 +1,285 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
-		<title>Redirecting...</title>
-		<script>
-			// Redirect to index.html for client-side routing
-			window.location.replace("/");
-		</script>
+		<meta
+			name="viewport"
+			content="width=device-width,initial-scale=1"
+		/>
+		<title>Page not found · Nick Karnik</title>
+		<meta
+			name="robots"
+			content="noindex"
+		/>
+		<style>
+			:root {
+				--bg: #f7fafc; /* gray.50 */
+				--card: #ffffff; /* white */
+				--text: #1a202c; /* gray.800 */
+				--muted: #4a5568; /* gray.600 */
+				--border: #e2e8f0; /* gray.200 */
+				--accent: #2563eb; /* blue.600 */
+			}
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--bg: #1a202c; /* gray.800 */
+					--card: #111827; /* gray.900-ish */
+					--text: #f7fafc; /* gray.50 */
+					--muted: #a0aec0; /* gray.400 */
+					--border: #2d3748; /* gray.700 */
+					--accent: #60a5fa; /* blue.300 */
+				}
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				height: 100%;
+			}
+			body {
+				margin: 0;
+				background: var(--bg);
+				color: var(--text);
+				font: 16px/1.6 system-ui, -apple-system, Segoe UI, Roboto, Inter,
+					sans-serif;
+			}
+			.wrap {
+				min-height: 100%;
+				display: grid;
+				place-items: center;
+				padding: 24px;
+			}
+			.card {
+				width: 100%;
+				max-width: 720px;
+				background: var(--card);
+				border: 1px solid var(--border);
+				border-radius: 16px;
+				padding: 28px;
+				box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+			}
+			.badge {
+				display: inline-block;
+				font-size: 12px;
+				padding: 4px 8px;
+				border: 1px solid var(--border);
+				border-radius: 999px;
+				color: var(--muted);
+				margin-bottom: 8px;
+			}
+			h1 {
+				font-size: clamp(28px, 4vw, 40px);
+				line-height: 1.1;
+				margin: 6px 0 8px;
+			}
+			p.lead {
+				color: var(--muted);
+				margin: 0 0 20px;
+			}
+			.actions {
+				display: flex;
+				gap: 12px;
+				flex-wrap: wrap;
+				margin: 12px 0 8px;
+			}
+			.btn {
+				appearance: none;
+				border: 1px solid var(--border);
+				background: transparent;
+				color: var(--text);
+				padding: 10px 14px;
+				border-radius: 12px;
+				text-decoration: none;
+				font-weight: 600;
+				transition: transform 0.05s ease, border-color 0.15s ease,
+					color 0.15s ease;
+			}
+			.btn:hover {
+				transform: translateY(-1px);
+				border-color: var(--accent);
+				color: var(--accent);
+			}
+			.btn.primary {
+				background: var(--accent);
+				color: white;
+				border-color: var(--accent);
+			}
+			.btn.primary:hover {
+				filter: brightness(1.05);
+				transform: translateY(-1px);
+			}
+			.hint {
+				font-size: 14px;
+				color: var(--muted);
+				margin-top: 20px;
+			}
+			.list {
+				margin-top: 18px;
+				display: grid;
+				gap: 10px;
+			}
+			.post {
+				display: block;
+				padding: 12px 14px;
+				border: 1px solid var(--border);
+				border-radius: 12px;
+				text-decoration: none;
+				color: var(--text);
+				transition: border-color 0.15s ease, transform 0.05s ease;
+			}
+			.post:hover {
+				border-color: var(--accent);
+				transform: translateY(-1px);
+			}
+			.post .title {
+				font-weight: 600;
+			}
+			.post .meta {
+				font-size: 13px;
+				color: var(--muted);
+			}
+			.search {
+				margin-top: 16px;
+				display: flex;
+				gap: 8px;
+				align-items: center;
+			}
+			.search input {
+				flex: 1;
+				padding: 10px 12px;
+				border: 1px solid var(--border);
+				border-radius: 10px;
+				background: transparent;
+				color: var(--text);
+			}
+			footer {
+				text-align: center;
+				color: var(--muted);
+				font-size: 13px;
+				margin-top: 18px;
+			}
+		</style>
 	</head>
 	<body>
-		<p>Redirecting...</p>
+		<div class="wrap">
+			<main
+				class="card"
+				role="main"
+				aria-labelledby="title"
+			>
+				<span class="badge">404</span>
+				<h1 id="title">Page not found</h1>
+				<p class="lead">The URL might be wrong or the page moved.</p>
+
+				<div class="actions">
+					<a
+						class="btn primary"
+						href="/"
+						>Go home</a
+					>
+					<a
+						class="btn"
+						href="/blog"
+						>View blog</a
+					>
+					<a
+						class="btn"
+						href="/about"
+						>About</a
+					>
+				</div>
+
+				<div
+					class="search"
+					aria-label="Search posts"
+				>
+					<input
+						id="q"
+						type="search"
+						placeholder="Search recent posts…"
+						autocomplete="off"
+					/>
+				</div>
+
+				<div
+					id="posts"
+					class="list"
+					aria-live="polite"
+				></div>
+
+				<p
+					class="hint"
+					id="hint"
+				>
+					Showing recent posts
+				</p>
+				<footer>© <span id="year"></span> Nick Karnik</footer>
+			</main>
+		</div>
+
+		<script>
+			// Set year
+			document.getElementById("year").textContent = new Date().getFullYear();
+
+			// Load recent posts from your prebuilt index
+			const postsEl = document.getElementById("posts");
+			const hintEl = document.getElementById("hint");
+			const qEl = document.getElementById("q");
+			let POSTS = [];
+
+			function fmtDate(s) {
+				if (!s) return "";
+				const d = new Date(s);
+				return d.toLocaleDateString(undefined, {
+					year: "numeric",
+					month: "short",
+					day: "numeric",
+				});
+			}
+
+			function render(list) {
+				postsEl.innerHTML = "";
+				list.slice(0, 8).forEach((p) => {
+					const a = document.createElement("a");
+					a.className = "post";
+					a.href = "/blog/" + p.slug;
+					a.innerHTML = `
+            <div class="title">${p.title}</div>
+            <div class="meta">${fmtDate(p.date)}${
+						p.tags?.length ? " · " + p.tags.slice(0, 3).join(", ") : ""
+					}</div>
+          `;
+					postsEl.appendChild(a);
+				});
+				hintEl.textContent = list.length
+					? qEl.value
+						? "Filtered results"
+						: "Showing recent posts"
+					: "No matches";
+			}
+
+			fetch("/data/hashnode.json", { cache: "no-store" })
+				.then((r) => (r.ok ? r.json() : []))
+				.then((data) => {
+					POSTS = Array.isArray(data) ? data : [];
+					// Sort newest first if dates exist
+					POSTS.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+					render(POSTS);
+				})
+				.catch(() => render([]));
+
+			qEl.addEventListener("input", () => {
+				const q = qEl.value.trim().toLowerCase();
+				if (!q) return render(POSTS);
+				const out = POSTS.filter(
+					(p) =>
+						(p.title || "").toLowerCase().includes(q) ||
+						(p.excerpt || "").toLowerCase().includes(q) ||
+						(p.tags || []).some((t) => (t || "").toLowerCase().includes(q))
+				);
+				render(out);
+			});
+		</script>
 	</body>
 </html>

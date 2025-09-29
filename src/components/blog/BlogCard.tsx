@@ -1,18 +1,17 @@
 // src/components/blog/BlogCard.tsx
 import { Card, Text, Image, HStack, Tag } from "@chakra-ui/react";
 import { Link as RouterLink } from "@tanstack/react-router";
-import { m } from "framer-motion";
 import type { Post } from "./RoutePost";
 
 export default function BlogCard({ post }: { post: Post }) {
 	return (
 		<Card.Root
-			as={m.article}
+			as="article"
 			borderRadius="2xl"
 			overflow="hidden"
 			shadow="sm"
-			whileHover={{ y: -2 }}
-			transition={{ type: "spring", stiffness: 320, damping: 30 }}
+			_hover={{ transform: "translateY(-2px)" }}
+			transition="transform 0.2s"
 		>
 			{post.cover ? (
 				<Image
@@ -57,7 +56,7 @@ export default function BlogCard({ post }: { post: Post }) {
 				{post.tags?.length ? (
 					<HStack
 						mt={4}
-						spacing={2}
+						gap={2}
 						wrap="wrap"
 					>
 						{post.tags.slice(0, 3).map((t) => (
@@ -66,14 +65,14 @@ export default function BlogCard({ post }: { post: Post }) {
 								to="/blog/t/$tag"
 								params={{ tag: t }}
 							>
-								<Tag
+								<Tag.Root
 									size="sm"
-									colorScheme="gray"
+									variant="subtle"
 									cursor="pointer"
 									_hover={{ bg: "gray.100" }}
 								>
-									{t}
-								</Tag>
+									<Tag.Label>{t}</Tag.Label>
+								</Tag.Root>
 							</RouterLink>
 						))}
 					</HStack>

@@ -5,20 +5,20 @@ const BASE = process.env.SITE_URL || "https://nick.karnik.io";
 type Post = { slug: string };
 
 async function run() {
-	const baseRoutes = ["/", "/blog", "/about"];
+	const baseRoutes = ["/", "/blog", "/about", "/resume"];
 	let posts: Post[] = [];
 	try {
 		posts = JSON.parse(await readFile("public/data/hashnode.json", "utf8"));
 	} catch {}
 
 	const urls = [
-		...baseRoutes.map(p => `${BASE}${p}`),
-		...posts.map(p => `${BASE}/blog/${p.slug}`),
+		...baseRoutes.map((p) => `${BASE}${p}`),
+		...posts.map((p) => `${BASE}/blog/${p.slug}`),
 	];
 
 	const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url><loc>${u}</loc></url>`).join("\n")}
+${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}
 </urlset>
 `;
 
@@ -27,4 +27,7 @@ ${urls.map(u => `  <url><loc>${u}</loc></url>`).join("\n")}
 	console.log(`sitemap.xml written with ${urls.length} URLs`);
 }
 
-run().catch(e => { console.error(e); process.exit(1); });
+run().catch((e) => {
+	console.error(e);
+	process.exit(1);
+});
