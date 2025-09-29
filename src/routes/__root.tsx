@@ -5,14 +5,8 @@ import {
 	Link,
 	useRouterState,
 } from "@tanstack/react-router";
-import {
-	Box,
-	Container,
-	Flex,
-	HStack,
-	Heading,
-	Link as CLink,
-} from "@chakra-ui/react";
+import { Box, Container, Flex, HStack, Heading } from "@chakra-ui/react";
+import { Helmet } from "react-helmet-async";
 import Footer from "../components/layout/Footer";
 import NavLink from "../components/nav/NavLink";
 
@@ -39,11 +33,9 @@ function Header() {
 					justify="space-between"
 					gap={6}
 				>
-					<CLink
-						as={Link}
+					<Link
 						to="/"
 						preload="intent"
-						_hover={{ textDecoration: "none" }}
 					>
 						<Heading
 							size="md"
@@ -51,7 +43,7 @@ function Header() {
 						>
 							{BRAND}
 						</Heading>
-					</CLink>
+					</Link>
 
 					<HStack gap={6}>
 						<NavLink to="/blog">Blog</NavLink>
@@ -66,20 +58,57 @@ function Header() {
 export const Route = createRootRoute({
 	component: () => {
 		return (
-			<Box
-				bg="gray.50"
-				minH="100vh"
-			>
-				<Header />
-				<Container
-					as="main"
-					maxW="6xl"
-					py={{ base: 6, md: 10 }}
+			<>
+				<Helmet>
+					<title>Nick Karnik - Software Engineer & Tech Leader</title>
+					<meta
+						name="description"
+						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+					/>
+					<meta
+						property="og:title"
+						content="Nick Karnik - Software Engineer & Tech Leader"
+					/>
+					<meta
+						property="og:description"
+						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+					/>
+					<meta
+						property="og:type"
+						content="website"
+					/>
+					<meta
+						property="og:url"
+						content="https://nick.karnik.io"
+					/>
+					<meta
+						name="twitter:card"
+						content="summary"
+					/>
+					<meta
+						name="twitter:title"
+						content="Nick Karnik - Software Engineer & Tech Leader"
+					/>
+					<meta
+						name="twitter:description"
+						content="Software engineer and tech leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences."
+					/>
+				</Helmet>
+				<Box
+					bg="gray.50"
+					minH="100vh"
 				>
-					<Outlet />
-				</Container>
-				<Footer />
-			</Box>
+					<Header />
+					<Container
+						as="main"
+						maxW="6xl"
+						py={{ base: 6, md: 10 }}
+					>
+						<Outlet />
+					</Container>
+					<Footer />
+				</Box>
+			</>
 		);
 	},
 });

@@ -9,6 +9,7 @@ import {
 	Skeleton,
 } from "@chakra-ui/react";
 import { Link as RouterLink } from "@tanstack/react-router";
+import { Helmet } from "react-helmet-async";
 import type { Post } from "./RoutePost";
 
 export default function BlogList({ filterTag }: { filterTag?: string }) {
@@ -27,6 +28,41 @@ export default function BlogList({ filterTag }: { filterTag?: string }) {
 
 	return (
 		<Box>
+			<Helmet>
+				<title>Blog - Nick Karnik</title>
+				<meta
+					name="description"
+					content="Read my latest thoughts on software engineering, AI, and technology."
+				/>
+				<meta
+					property="og:title"
+					content="Blog - Nick Karnik"
+				/>
+				<meta
+					property="og:description"
+					content="Read my latest thoughts on software engineering, AI, and technology."
+				/>
+				<meta
+					property="og:type"
+					content="website"
+				/>
+				<meta
+					property="og:url"
+					content="https://nick.karnik.io/blog"
+				/>
+				<meta
+					name="twitter:card"
+					content="summary"
+				/>
+				<meta
+					name="twitter:title"
+					content="Blog - Nick Karnik"
+				/>
+				<meta
+					name="twitter:description"
+					content="Read my latest thoughts on software engineering, AI, and technology."
+				/>
+			</Helmet>
 			<Heading
 				size="lg"
 				mb={6}

@@ -7,7 +7,7 @@ import {
 	Tag,
 	Container,
 } from "@chakra-ui/react";
-import ReactMarkdown from "react-markdown";
+import { Helmet } from "react-helmet-async";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
 
@@ -22,15 +22,74 @@ type Post = {
 };
 
 export default function PostView({ post }: { post: Post }) {
+	const postUrl = `https://nick.karnik.io/blog/${post.title
+		.toLowerCase()
+		.replace(/\s+/g, "-")}`;
+
 	return (
 		<>
+			<Helmet>
+				<title>{post.title}</title>
+				<link
+					rel="canonical"
+					href={postUrl}
+				/>
+				{post.excerpt && (
+					<meta
+						name="description"
+						content={post.excerpt}
+					/>
+				)}
+				{post.cover && (
+					<meta
+						property="og:image"
+						content={post.cover}
+					/>
+				)}
+				<meta
+					property="og:title"
+					content={post.title}
+				/>
+				<meta
+					property="og:type"
+					content="article"
+				/>
+				<meta
+					property="og:url"
+					content={postUrl}
+				/>
+				{post.excerpt && (
+					<meta
+						property="og:description"
+						content={post.excerpt}
+					/>
+				)}
+				<meta
+					name="twitter:card"
+					content="summary_large_image"
+				/>
+				<meta
+					name="twitter:title"
+					content={post.title}
+				/>
+				{post.excerpt && (
+					<meta
+						name="twitter:description"
+						content={post.excerpt}
+					/>
+				)}
+				{post.cover && (
+					<meta
+						name="twitter:image"
+						content={post.cover}
+					/>
+				)}
+			</Helmet>
 			<ProgressTop />
 			{/* Structured data */}
 			<PostJsonLd
 				title={post.title}
-				url={`https://nick.karnik.io/blog/${post.title
-					.toLowerCase()
-					.replace(/\s+/g, "-")}`}
+				url={postUrl}
 				date={post.date}
 				excerpt={post.excerpt}
 			/>
@@ -89,7 +148,6 @@ export default function PostView({ post }: { post: Post }) {
 
 				{/* Full article content */}
 				<Box
-					prose
 					maxW="none"
 					lineHeight="1.7"
 					fontSize="lg"
