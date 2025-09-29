@@ -65,7 +65,7 @@ function AboutPage() {
 					align="center"
 					gap={5}
 				>
-					<Avatar
+					<Avatar.Root
 						name="Nick Karnik"
 						size="xl"
 					/>
@@ -73,10 +73,10 @@ function AboutPage() {
 						align="start"
 						spacing={1}
 					>
-						<Heading size="lg">Nick Karnik</Heading>
-						<Text color={muted}>
+						<Heading.Root size="lg">Nick Karnik</Heading.Root>
+						<Text.Root color={muted}>
 							Engineer and EM, shipping fast with TypeScript
-						</Text>
+						</Text.Root>
 						<HStack
 							pt={1}
 							gap={2}
@@ -110,12 +110,12 @@ function AboutPage() {
 				>
 					{/* Main content */}
 					<Box gridColumn={{ md: "span 2" }}>
-						<Heading
-							size="md"
-							mb={3}
-						>
-							About
-						</Heading>
+					<Heading.Root
+						size="md"
+						mb={3}
+					>
+						About
+					</Heading.Root>
 						<Box
 							sx={{
 								"h1,h2,h3": { mt: "1.35rem", mb: ".5rem", lineHeight: 1.25 },
@@ -178,31 +178,31 @@ function AboutPage() {
 								align="stretch"
 								gap={2}
 							>
-								<Button
-									as={CLink}
-									href="mailto:nick@karnik.io"
-									leftIcon={<FiMail />}
-								>
-									Email
-								</Button>
-								<Button
-									as={CLink}
-									href="https://www.linkedin.com/in/theoutlander"
-									isExternal
-									rightIcon={<FiExternalLink />}
-									variant="outline"
-								>
-									LinkedIn
-								</Button>
-								<Button
-									as={CLink}
-									href="https://github.com/theoutlander"
-									isExternal
-									rightIcon={<FiExternalLink />}
-									variant="outline"
-								>
-									GitHub
-								</Button>
+							<Button.Root
+								as={CLink}
+								href="mailto:nick@karnik.io"
+								leftIcon={<FiMail />}
+							>
+								Email
+							</Button.Root>
+							<Button.Root
+								as={CLink}
+								href="https://www.linkedin.com/in/theoutlander"
+								isExternal
+								rightIcon={<FiExternalLink />}
+								variant="outline"
+							>
+								LinkedIn
+							</Button.Root>
+							<Button.Root
+								as={CLink}
+								href="https://github.com/theoutlander"
+								isExternal
+								rightIcon={<FiExternalLink />}
+								variant="outline"
+							>
+								GitHub
+							</Button.Root>
 							</VStack>
 						</Card.Root>
 
