@@ -23,9 +23,18 @@ type Post = {
 	tags: string[];
 };
 
-// Hashnode configuration
-const HASHNODE_KEY = "f221f0f1-5a6f-44ea-a272-39c88e05794f";
-const PUBLICATION_ID = "68d5e360b5ea70a47e408afd";
+type PostEdge = {
+	node: RawPost;
+};
+
+type GraphQLResponse = {
+	publication?: {
+		posts?: {
+			edges?: PostEdge[];
+		};
+	};
+};
+
 // Your actual Hashnode subdomain
 const HOST = "nickkarnik.hashnode.dev";
 const client = new GraphQLClient("https://gql.hashnode.com");
@@ -56,11 +65,11 @@ const Q = gql/* GraphQL */ `
 `;
 
 async function fetchAll(host: string): Promise<Post[]> {
-	const data = await client.request(Q, { host });
+	const data = await client.request<GraphQLResponse>(Q, { host });
 	const edges = data?.publication?.posts?.edges ?? [];
-	const rawPosts = edges.map((e: any) => e.node as RawPost);
+	const rawPosts = edges.map((e: PostEdge) => e.node as RawPost);
 
-	return rawPosts.map((p) => ({
+	return rawPosts.map((p: RawPost) => ({
 		id: p.id,
 		slug: p.slug,
 		title: p.title,
@@ -68,7 +77,7 @@ async function fetchAll(host: string): Promise<Post[]> {
 		url: p.url,
 		date: p.publishedAt ?? null,
 		cover: p.coverImage?.url ?? null,
-		tags: (p.tags ?? []).map((t) => t.name),
+		tags: (p.tags ?? []).map((t: { name: string }) => t.name),
 	}));
 }
 
