@@ -2,32 +2,42 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<link
-			rel="icon"
-			type="image/svg+xml"
-			href="/vite.svg"
-		/>
+
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0"
 		/>
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="upgrade-insecure-requests"
+		/>
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			href="https://theoutlander.hashnode.dev/rss.xml"
+		/>
+		<!-- Google Analytics -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
+			gtag("config", "G-62FC7BDSGJ");
+		</script>
 		<title>blog</title>
-		<script type="module" crossorigin src="/assets/index-BNYlo3t5.js"></script>
+		<script type="module" crossorigin src="/assets/index-3LQ3mW9z.js"></script>
 	</head>
 	<body>
 		<div id="root">
-			<div
-				style="
-					padding: 20px;
-					font-family: Arial, sans-serif;
-					text-align: center;
-				"
-			>
-				<h1>Loading Blog...</h1>
-				<p>
-					If this message persists, please check the browser console for errors.
-				</p>
-			</div>
+			<h1>Loading Blog...</h1>
+			<p>
+				If this message persists, please check the browser console for errors.
+			</p>
 		</div>
 	</body>
 </html>

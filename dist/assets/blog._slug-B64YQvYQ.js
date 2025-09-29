@@ -1,0 +1,1 @@
+import{j as r}from"./index-3LQ3mW9z.js";const o=({error:t})=>r.jsxs("div",{style:{padding:24},children:[r.jsx("h3",{children:"Couldn't load this post"}),r.jsx("pre",{style:{whiteSpace:"pre-wrap"},children:String(t)})]});export{o as errorComponent};

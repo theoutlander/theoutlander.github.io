@@ -3,67 +3,135 @@ import {
 	Box,
 	Heading,
 	Text,
-	VStack,
-	Link,
+	SimpleGrid,
 	Image,
 	Card,
+	Skeleton,
 } from "@chakra-ui/react";
+import { Link as RouterLink } from "@tanstack/react-router";
 import type { Post } from "./RoutePost";
 
-export default function BlogList() {
-	const [posts, setPosts] = useState<Post[]>([]);
+export default function BlogList({ filterTag }: { filterTag?: string }) {
+	const [posts, setPosts] = useState<Post[] | null>(null);
+
 	useEffect(() => {
 		fetch("/data/hashnode.json")
 			.then((r) => r.json())
 			.then(setPosts)
 			.catch(() => setPosts([]));
 	}, []);
+
+	const items = (posts ?? []).filter(
+		(p) => !filterTag || p.tags?.includes(filterTag)
+	);
+
 	return (
-		<Box
-			maxW="4xl"
-			mx="auto"
-			p={6}
-		>
+		<Box>
 			<Heading
 				size="lg"
-				mb={4}
+				mb={6}
 			>
 				Blog
 			</Heading>
-			<VStack
-				gap={4}
-				align="stretch"
-			>
-				{posts.map((p) => (
-					<Card.Root
-						key={p.slug}
-						p={4}
-					>
-						{p.cover ? (
-							<Image
-								src={p.cover}
-								alt=""
-								mb={3}
-								borderRadius="lg"
-							/>
-						) : null}
-						<Link
-							href={`/blog/${p.slug}`}
-							fontWeight="semibold"
-							textDecoration="underline"
+
+			{!posts ? (
+				<SimpleGrid
+					columns={{ base: 1, md: 2 }}
+					gap={6}
+				>
+					{Array.from({ length: 4 }).map((_, i) => (
+						<Card.Root
+							key={i}
+							borderRadius="2xl"
+							overflow="hidden"
 						>
-							{p.title}
-						</Link>
-						<Text
-							fontSize="sm"
-							opacity={0.7}
+							<Skeleton height="220px" />
+							<Box p={4}>
+								<Skeleton
+									height="20px"
+									mb={2}
+								/>
+								<Skeleton
+									height="14px"
+									width="40%"
+								/>
+								<Skeleton
+									height="48px"
+									mt={4}
+								/>
+							</Box>
+						</Card.Root>
+					))}
+				</SimpleGrid>
+			) : (
+				<SimpleGrid
+					columns={{ base: 1, md: 2 }}
+					gap={6}
+				>
+					{items.map((p) => (
+						<Card.Root
+							key={p.slug}
+							borderRadius="2xl"
+							overflow="hidden"
+							shadow="sm"
+							_hover={{ shadow: "md", transform: "translateY(-2px)" }}
+							transition="all 120ms"
 						>
-							{p.date ? new Date(p.date).toDateString() : ""}
-						</Text>
-						<Text mt={2}>{p.excerpt}</Text>
-					</Card.Root>
-				))}
-			</VStack>
+							{p.cover ? (
+								<Image
+									src={p.cover}
+									alt=""
+									objectFit="cover"
+									maxH="260px"
+									w="100%"
+								/>
+							) : null}
+
+							<Box p={4}>
+								<RouterLink
+									to="/blog/$slug"
+									params={{ slug: p.slug }}
+									preload="intent"
+								>
+									<Text
+										as="h2"
+										fontWeight="semibold"
+										fontSize="lg"
+										color="blue.700"
+									>
+										{p.title}
+									</Text>
+								</RouterLink>
+
+								<Text
+									fontSize="sm"
+									color="gray.600"
+									mt={1}
+								>
+									{p.date ? new Date(p.date).toDateString() : ""}
+									{p.excerpt
+										? ` · ${estimateReadingTime(p.excerpt)} min read`
+										: ""}
+								</Text>
+
+								{p.excerpt ? (
+									<Text
+										mt={3}
+										color="gray.800"
+									>
+										{p.excerpt}
+									</Text>
+								) : null}
+							</Box>
+						</Card.Root>
+					))}
+				</SimpleGrid>
+			)}
 		</Box>
 	);
+}
+
+function estimateReadingTime(text: string) {
+	const words = text.trim().split(/\s+/).length;
+	return Math.max(1, Math.round(words / 200));
 }

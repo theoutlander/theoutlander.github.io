@@ -3,12 +3,13 @@ import { readFileSync } from "node:fs";
 type Post = { slug: string };
 
 export async function paths(): Promise<string[]> {
+	const base = ["/", "/blog", "/about"];
 	let posts: Post[] = [];
 	try {
 		const raw = readFileSync("public/data/hashnode.json", "utf8");
 		posts = JSON.parse(raw) as Post[];
+		return [...base, ...posts.map((p) => `/blog/${p.slug}`)];
 	} catch {
-		// first build before fetch, default to top-level routes
+		return base;
 	}
-	return ["/", "/blog", ...posts.map((p) => `/blog/${p.slug}`)];
 }

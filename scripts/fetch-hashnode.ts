@@ -10,6 +10,10 @@ type RawPost = {
 	publishedAt?: string;
 	coverImage?: { url?: string | null } | null;
 	tags?: { name: string }[];
+	content?: {
+		markdown?: string;
+		html?: string;
+	};
 };
 
 type Post = {
@@ -21,6 +25,8 @@ type Post = {
 	date: string | null;
 	cover: string | null;
 	tags: string[];
+	contentMarkdown?: string;
+	contentHtml?: string;
 };
 
 type PostEdge = {
@@ -57,6 +63,10 @@ const Q = gql/* GraphQL */ `
 						tags {
 							name
 						}
+						content {
+							markdown
+							html
+						}
 					}
 				}
 			}
@@ -78,10 +88,36 @@ async function fetchAll(host: string): Promise<Post[]> {
 		date: p.publishedAt ?? null,
 		cover: p.coverImage?.url ?? null,
 		tags: (p.tags ?? []).map((t: { name: string }) => t.name),
+		contentMarkdown: p.content?.markdown,
+		contentHtml: p.content?.html,
 	}));
 }
 
 const posts = await fetchAll(HOST);
 await mkdir("public/data", { recursive: true });
+await mkdir("public/data/posts", { recursive: true });
+
+// Write the main hashnode.json file
 await writeFile("public/data/hashnode.json", JSON.stringify(posts, null, 2));
+
+// Write individual post files
+for (const post of posts) {
+	const postData = {
+		title: post.title,
+		date: post.date,
+		cover: post.cover,
+		excerpt: post.excerpt,
+		html: post.contentHtml || "",
+		url: post.url,
+		tags: post.tags,
+	};
+	await writeFile(
+		`public/data/posts/${post.slug}.json`,
+		JSON.stringify(postData, null, 2)
+	);
+}
+
 console.log(`Wrote ${posts.length} posts to public/data/hashnode.json`);
+console.log(
+	`Wrote ${posts.length} individual post files to public/data/posts/`
+);

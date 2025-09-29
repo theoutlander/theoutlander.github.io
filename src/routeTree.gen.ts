@@ -13,6 +13,7 @@ import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
+import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 
 const BlogRoute = BlogRouteImport.update({
   id: '/blog',
@@ -34,18 +35,25 @@ const BlogSlugRoute = BlogSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => BlogRoute,
 } as any)
+const BlogTTagRoute = BlogTTagRouteImport.update({
+  id: '/t/$tag',
+  path: '/t/$tag',
+  getParentRoute: () => BlogRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -53,13 +61,14 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/blog': typeof BlogRouteWithChildren
   '/blog/$slug': typeof BlogSlugRoute
+  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/blog' | '/blog/$slug'
+  fullPaths: '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/blog' | '/blog/$slug'
-  id: '__root__' | '/' | '/about' | '/blog' | '/blog/$slug'
+  to: '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
+  id: '__root__' | '/' | '/about' | '/blog' | '/blog/$slug' | '/blog/t/$tag'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -98,15 +107,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogSlugRouteImport
       parentRoute: typeof BlogRoute
     }
+    '/blog/t/$tag': {
+      id: '/blog/t/$tag'
+      path: '/t/$tag'
+      fullPath: '/blog/t/$tag'
+      preLoaderRoute: typeof BlogTTagRouteImport
+      parentRoute: typeof BlogRoute
+    }
   }
 }
 
 interface BlogRouteChildren {
   BlogSlugRoute: typeof BlogSlugRoute
+  BlogTTagRoute: typeof BlogTTagRoute
 }
 
 const BlogRouteChildren: BlogRouteChildren = {
   BlogSlugRoute: BlogSlugRoute,
+  BlogTTagRoute: BlogTTagRoute,
 }
 
 const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)

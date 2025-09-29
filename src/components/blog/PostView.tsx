@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
 import {
 	Box,
 	Heading,
 	Image,
 	Text,
 	HStack,
-	Link as CLink,
 	Tag,
 	Container,
 } from "@chakra-ui/react";
@@ -13,58 +11,26 @@ import ReactMarkdown from "react-markdown";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
 
-export type Post = {
-	slug: string;
+type Post = {
 	title: string;
+	date: string | null;
+	cover: string | null;
+	excerpt: string;
+	html: string;
 	url: string;
-	date?: string | null;
-	excerpt?: string;
-	cover?: string | null;
-	tags?: string[];
-	contentMarkdown?: string;
-	contentHtml?: string;
+	tags: string[];
 };
 
-export default function RoutePost({ slug }: { slug: string }) {
-	const [post, setPost] = useState<Post | null>(null);
-
-	useEffect(() => {
-		fetch("/data/hashnode.json")
-			.then((r) => r.json())
-			.then((all: Post[]) => setPost(all.find((p) => p.slug === slug) ?? null))
-			.catch(() => setPost(null));
-	}, [slug]);
-
-	if (!post) return <Box>Loading…</Box>;
-
+export default function PostView({ post }: { post: Post }) {
 	return (
 		<>
 			<ProgressTop />
-			{/* SEO basics for prerendered HTML */}
-			<head>
-				<title>{post.title}</title>
-				<link
-					rel="canonical"
-					href={`https://nick.karnik.io/blog/${post.slug}`}
-				/>
-				{post.excerpt ? (
-					<meta
-						name="description"
-						content={post.excerpt}
-					/>
-				) : null}
-				{post.cover ? (
-					<meta
-						property="og:image"
-						content={post.cover}
-					/>
-				) : null}
-			</head>
-
 			{/* Structured data */}
 			<PostJsonLd
 				title={post.title}
-				url={`https://nick.karnik.io/blog/${post.slug}`}
+				url={`https://nick.karnik.io/blog/${post.title
+					.toLowerCase()
+					.replace(/\s+/g, "-")}`}
 				date={post.date}
 				excerpt={post.excerpt}
 			/>
@@ -129,10 +95,8 @@ export default function RoutePost({ slug }: { slug: string }) {
 					fontSize="lg"
 					color="gray.800"
 				>
-					{post.contentMarkdown ? (
-						<ReactMarkdown>{post.contentMarkdown}</ReactMarkdown>
-					) : post.contentHtml ? (
-						<div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
+					{post.html ? (
+						<div dangerouslySetInnerHTML={{ __html: post.html }} />
 					) : (
 						<Text
 							color="gray.500"

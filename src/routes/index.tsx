@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
-import BlogList from "../components/blog/BlogList";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
-	component: BlogList,
+	beforeLoad: () => {
+		throw redirect({ to: "/blog" });
+	},
 });

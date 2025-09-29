@@ -48,7 +48,8 @@ export default function Post({ slug }: { slug: string }) {
 				Full post on Hashnode:{" "}
 				<Link
 					href={post.url}
-					isExternal
+					target="_blank"
+					rel="noopener noreferrer"
 				>
 					{post.url}
 				</Link>
