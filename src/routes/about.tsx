@@ -6,7 +6,6 @@ import {
 	HStack,
 	VStack,
 	Avatar,
-	Button,
 	Link as CLink,
 	SimpleGrid,
 	Card,
@@ -34,7 +33,12 @@ export const Route = createFileRoute("/about")({
 	component: AboutPage,
 	errorComponent: ({ error }) => (
 		<Box p={6}>
-			<pre sx={{ whiteSpace: "pre-wrap" }}>{String(error)}</pre>
+			<Box
+				as="pre"
+				whiteSpace="pre-wrap"
+			>
+				{String(error)}
+			</Box>
 		</Box>
 	),
 });
@@ -65,18 +69,21 @@ function AboutPage() {
 					align="center"
 					gap={5}
 				>
-					<Avatar.Root
-						name="Nick Karnik"
-						size="xl"
-					/>
+					<Avatar.Root size="xl">
+						<Avatar.Image
+							src={undefined}
+							alt="Nick Karnik"
+						/>
+						<Avatar.Fallback>NK</Avatar.Fallback>
+					</Avatar.Root>
 					<VStack
 						align="start"
-						spacing={1}
+						gap={1}
 					>
-						<Heading.Root size="lg">Nick Karnik</Heading.Root>
-						<Text.Root color={muted}>
+						<Heading size="lg">Nick Karnik</Heading>
+						<Text color={muted}>
 							Engineer and EM, shipping fast with TypeScript
-						</Text.Root>
+						</Text>
 						<HStack
 							pt={1}
 							gap={2}
@@ -110,14 +117,14 @@ function AboutPage() {
 				>
 					{/* Main content */}
 					<Box gridColumn={{ md: "span 2" }}>
-					<Heading.Root
-						size="md"
-						mb={3}
-					>
-						About
-					</Heading.Root>
+						<Heading
+							size="md"
+							mb={3}
+						>
+							About
+						</Heading>
 						<Box
-							sx={{
+							css={{
 								"h1,h2,h3": { mt: "1.35rem", mb: ".5rem", lineHeight: 1.25 },
 								p: { my: "1rem", lineHeight: 1.8 },
 								a: { color: accent, textDecoration: "underline" },
@@ -178,31 +185,53 @@ function AboutPage() {
 								align="stretch"
 								gap={2}
 							>
-							<Button.Root
-								as={CLink}
-								href="mailto:nick@karnik.io"
-								leftIcon={<FiMail />}
-							>
-								Email
-							</Button.Root>
-							<Button.Root
-								as={CLink}
-								href="https://www.linkedin.com/in/theoutlander"
-								isExternal
-								rightIcon={<FiExternalLink />}
-								variant="outline"
-							>
-								LinkedIn
-							</Button.Root>
-							<Button.Root
-								as={CLink}
-								href="https://github.com/theoutlander"
-								isExternal
-								rightIcon={<FiExternalLink />}
-								variant="outline"
-							>
-								GitHub
-							</Button.Root>
+								<CLink
+									href="mailto:nick@karnik.io"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									bg="blue.500"
+									color="white"
+									borderRadius="md"
+									_hover={{ bg: "blue.600" }}
+								>
+									<FiMail />
+									Email
+								</CLink>
+								<CLink
+									href="https://www.linkedin.com/in/theoutlander"
+									target="_blank"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									_hover={{ bg: "gray.50" }}
+								>
+									LinkedIn
+									<FiExternalLink />
+								</CLink>
+								<CLink
+									href="https://github.com/theoutlander"
+									target="_blank"
+									display="flex"
+									alignItems="center"
+									gap={2}
+									px={4}
+									py={2}
+									border="1px solid"
+									borderColor="gray.200"
+									borderRadius="md"
+									_hover={{ bg: "gray.50" }}
+								>
+									GitHub
+									<FiExternalLink />
+								</CLink>
 							</VStack>
 						</Card.Root>
 
