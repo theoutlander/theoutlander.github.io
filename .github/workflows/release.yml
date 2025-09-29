@@ -1,4 +1,4 @@
-name: Deploy Pages
+name: Release Blog
 on:
   push: { branches: [main] }
   workflow_dispatch:
