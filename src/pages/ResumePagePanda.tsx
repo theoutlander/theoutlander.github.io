@@ -4,6 +4,7 @@ import { container } from '../../styled-system/patterns/index.mjs';
 import { FiMail, FiExternalLink, FiDownload } from 'react-icons/fi';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import { CompanyLogo } from '../components/CompanyLogo';
 
 export function ResumePagePanda() {
   return (
@@ -239,8 +240,11 @@ export function ResumePagePanda() {
               Experience
             </h3>
 
-            {/* Current Role */}
-            <div className={css({ mb: 6 })}>
+            {/* Current Role - Plutonic Consulting */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='plutonic' width='120px' />
+              </div>
               <div
                 className={css({
                   display: 'flex',
@@ -253,58 +257,105 @@ export function ResumePagePanda() {
               >
                 <h4
                   className={css({
-                    fontSize: 'md',
+                    fontSize: 'lg',
                     fontWeight: 'semibold',
                     color: 'gray.800',
                     fontFamily: 'heading',
                   })}
                 >
-                  Engineering Advisor & Consultant
+                  Founder & Fractional CTO
                 </h4>
-                <span
+                <div
                   className={css({
-                    fontSize: 'sm',
-                    color: 'gray.600',
-                    fontWeight: 'medium',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 2,
                   })}
                 >
-                  2024 - Present
-                </span>
+                  <span
+                    className={css({
+                      fontSize: 'sm',
+                      color: 'gray.600',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    May 2025 - Present
+                  </span>
+                  <span
+                    className={css({
+                      bg: 'green.100',
+                      color: 'green.700',
+                      px: 2,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    Current
+                  </span>
+                </div>
               </div>
               <p
                 className={css({
-                  fontSize: 'sm',
+                  fontSize: 'md',
                   color: 'brand.600',
                   fontWeight: 'medium',
-                  mb: 3,
+                  mb: 4,
                 })}
               >
                 Plutonic Consulting
               </p>
-              <ul
+              <p
                 className={css({
                   color: 'gray.700',
                   fontSize: 'sm',
                   lineHeight: 1.6,
-                  pl: 4,
+                  mb: 4,
                 })}
               >
-                <li>
-                  Advising startups and enterprises on engineering strategy and
-                  technical architecture
-                </li>
-                <li>
-                  Helping teams adopt modern development practices and AI
-                  integration
-                </li>
-                <li>
-                  Building developer tools and improving developer experience
-                </li>
-              </ul>
+                Providing fractional CTO support, AI strategy, and scaling
+                guidance to founders. Helping teams move faster with clear
+                product bets, strong execution, and systems that are simple to
+                maintain. Focus on pragmatic AI integration and developer
+                experience optimization.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'AI Strategy',
+                  'Technical Leadership',
+                  'Fractional CTO',
+                  'Team Scaling',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'purple.100',
+                      color: 'purple.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
             </div>
 
-            {/* Previous Roles */}
-            <div className={css({ mb: 6 })}>
+            {/* Google */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='google' width='120px' />
+              </div>
               <div
                 className={css({
                   display: 'flex',
@@ -317,13 +368,13 @@ export function ResumePagePanda() {
               >
                 <h4
                   className={css({
-                    fontSize: 'md',
+                    fontSize: 'lg',
                     fontWeight: 'semibold',
                     color: 'gray.800',
                     fontFamily: 'heading',
                   })}
                 >
-                  Staff Software Engineer
+                  Staff Software Engineer / Engineering Manager
                 </h4>
                 <span
                   className={css({
@@ -332,18 +383,110 @@ export function ResumePagePanda() {
                     fontWeight: 'medium',
                   })}
                 >
-                  2020 - 2024
+                  May 2022 - Apr 2025
                 </span>
               </div>
               <p
                 className={css({
-                  fontSize: 'sm',
+                  fontSize: 'md',
                   color: 'brand.600',
                   fontWeight: 'medium',
-                  mb: 3,
+                  mb: 4,
                 })}
               >
-                Google, Microsoft, Salesforce, Tableau
+                Google
+              </p>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Led technical direction and hands-on engineering for Gemini Code
+                Assist, integrated into VSCode and IntelliJ IDEs. Implemented a
+                symbol table generator across multiple languages, increasing
+                context for LLM, reducing tokens, and significantly improving
+                code completion acceptance rates.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Go',
+                  'TypeScript',
+                  'Node.js',
+                  'Kubernetes',
+                  'GCP',
+                  'LLM',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'blue.100',
+                      color: 'blue.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Salesforce */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='salesforce' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Senior Engineering Manager
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Oct 2019 - Apr 2022
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                Salesforce
               </p>
               <ul
                 className={css({
@@ -351,22 +494,945 @@ export function ResumePagePanda() {
                   fontSize: 'sm',
                   lineHeight: 1.6,
                   pl: 4,
+                  mb: 4,
                 })}
               >
                 <li>
-                  Led engineering teams of 8-12 engineers across multiple
-                  companies
+                  Built a CI pipeline (TACO) for 100+ partners, delivering REST
+                  and native Salesforce connectors
                 </li>
                 <li>
-                  Built and scaled web applications serving millions of users
+                  Owned the Web Data Connector platform and managed a team of
+                  35+ engineers
                 </li>
                 <li>
-                  Implemented modern development practices and CI/CD pipelines
-                </li>
-                <li>
-                  Mentored junior engineers and established technical standards
+                  Drove hiring, mentoring, and technical strategy while creating
+                  a Connector SDK
                 </li>
               </ul>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'TypeScript',
+                  'Node.js',
+                  'Chromium',
+                  'CI/CD',
+                  'Team Leadership',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'blue.100',
+                      color: 'blue.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* T-Mobile */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='tmobile' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Director Of Engineering
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Nov 2018 - Oct 2019
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                T-Mobile
+              </p>
+              <ul
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  pl: 4,
+                  mb: 4,
+                })}
+              >
+                <li>
+                  Hired a diverse team of 25 engineers and managed four product
+                  teams (35+ engineers)
+                </li>
+                <li>
+                  Delivered custom desktop & mobile applications for the
+                  T-Mobile/Sprint merger
+                </li>
+                <li>
+                  Architected and implemented a portable Test Automation
+                  Framework
+                </li>
+              </ul>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Team Leadership',
+                  'Rapid Hiring',
+                  'Mobile Development',
+                  'Test Automation',
+                  'Project Management',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'pink.100',
+                      color: 'pink.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* FullStack Consulting */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='fullstack' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Principal / Founder
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Mar 2018 - Nov 2018
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                FullStack Consulting
+              </p>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Trained students, created technical content, and consulted on
+                MVPs and scale-up projects for various clients (Hims, ForHers,
+                CopBot, Sensei Ag). Built mobile applications with React Native.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'React Native',
+                  'GraphQL',
+                  'Training',
+                  'Consulting',
+                  'Mobile Apps',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'green.100',
+                      color: 'green.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* TREASURE */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='treasure' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  CTO
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Sep 2017 - Mar 2018
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                TREASURE
+              </p>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Built a fin-tech analytics product with integration to Plaid and
+                custom APIs. Accepted into the Nasdaq Entrepreneurial Program.
+                Led engineering and technical vision.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'FinTech',
+                  'Plaid API',
+                  'Banking Integration',
+                  'Technical Leadership',
+                  'Startup',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'yellow.100',
+                      color: 'yellow.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* jobbatical */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='jobbatical' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  CTO
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Apr 2017 - Aug 2017
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                jobbatical
+              </p>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Migrated a monolith to microservices, rebuilt CI/CD, monitoring,
+                and deployment pipelines. Led platform modernization and
+                organizational scaling.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Microservices',
+                  'CI/CD',
+                  'Platform Architecture',
+                  'DevOps',
+                  'Scaling',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'orange.100',
+                      color: 'orange.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* IDM */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='idm' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Senior Software Engineer
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Sep 2012 - Oct 2016
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                IDM (IV Labs, now part of Gates Foundation)
+              </p>
+              <ul
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  pl: 4,
+                  mb: 4,
+                })}
+              >
+                <li>
+                  Built simulation and visualization tools for diseases
+                  (malaria, HIV, TB, polio)
+                </li>
+                <li>
+                  Software and spatial models featured in Bill Gates' TED Talk
+                </li>
+                <li>
+                  Collaborated with organizations like WHO on global health
+                  initiatives
+                </li>
+              </ul>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Data Visualization',
+                  'Simulation',
+                  'Global Health',
+                  'Scientific Computing',
+                  'WHO Collaboration',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'teal.100',
+                      color: 'teal.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Microsoft */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='microsoft' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Software Development Engineer
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  Aug 2006 - Aug 2012
+                </span>
+              </div>
+              <p
+                className={css({
+                  fontSize: 'md',
+                  color: 'brand.600',
+                  fontWeight: 'medium',
+                  mb: 4,
+                })}
+              >
+                Microsoft
+              </p>
+              <ul
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  pl: 4,
+                  mb: 4,
+                })}
+              >
+                <li>
+                  Led multiple Bing teams and architected a Big Data Validation
+                  Framework
+                </li>
+                <li>Built JS memory profiling tools for Outlook Web Access</li>
+                <li>
+                  Developed Naive Bayes sentiment classifiers for Bing Shopping
+                </li>
+                <li>
+                  Designed and implemented tools for common development tasks
+                </li>
+              </ul>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Big Data',
+                  'JavaScript',
+                  'Machine Learning',
+                  'Outlook Web Access',
+                  'Bing',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'red.100',
+                      color: 'red.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Notable Projects */}
+          <div className={css({ mb: 8 })}>
+            <h3
+              className={css({
+                fontSize: 'lg',
+                fontWeight: 'semibold',
+                color: 'gray.800',
+                mb: 6,
+                fontFamily: 'heading',
+              })}
+            >
+              Notable Projects
+            </h3>
+
+            {/* Gemini Code Assist */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='gemini-code-assist' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Gemini Code Assist
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  2022 - 2025
+                </span>
+              </div>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Led technical direction and hands-on engineering for Google's AI
+                coding assistant, integrated into VSCode and IntelliJ IDEs.
+                Implemented a symbol table generator across multiple languages,
+                increasing context for LLM, reducing tokens, and significantly
+                improving code completion acceptance rates.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Go',
+                  'TypeScript',
+                  'Node.js',
+                  'Kubernetes',
+                  'GCP',
+                  'LLM',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'blue.100',
+                      color: 'blue.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* TACO Toolkit & Connector SDK */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='wdc-3' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  TACO Toolkit & Connector SDK
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  2019 - 2022
+                </span>
+              </div>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Built a robust CI/CD pipeline (TACO) enabling over 100 partners
+                to test and deploy Tableau connectors efficiently. Created a
+                widely adopted Connector SDK that simplified connector
+                development and improved partner onboarding.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'TypeScript',
+                  'Node.js',
+                  'Chromium',
+                  'CI/CD',
+                  'SDK Development',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'orange.100',
+                      color: 'orange.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Videoly Platform */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='ycombinator' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  Videoly Platform
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  2007 - 2009
+                </span>
+              </div>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Co-founded a video mail platform and was accepted into
+                YCombinator 2007. Experimented with various revenue models and
+                built a scalable video streaming platform.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {[
+                  'Ruby on Rails',
+                  'Flex',
+                  'Amazon EC2/S3',
+                  'YCombinator',
+                  'Video Streaming',
+                ].map(skill => (
+                  <span
+                    key={skill}
+                    className={css({
+                      bg: 'red.100',
+                      color: 'red.700',
+                      px: 3,
+                      py: 1,
+                      borderRadius: 'md',
+                      fontSize: 'xs',
+                      fontWeight: 'medium',
+                    })}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* RoomToday Platform */}
+            <div className={css({ mb: 8 })}>
+              <div className={css({ textAlign: 'center', mb: 4 })}>
+                <CompanyLogo company='roomtoday' width='120px' />
+              </div>
+              <div
+                className={css({
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'start',
+                  mb: 2,
+                  flexWrap: 'wrap',
+                  gap: 2,
+                })}
+              >
+                <h4
+                  className={css({
+                    fontSize: 'lg',
+                    fontWeight: 'semibold',
+                    color: 'gray.800',
+                    fontFamily: 'heading',
+                  })}
+                >
+                  RoomToday Platform
+                </h4>
+                <span
+                  className={css({
+                    fontSize: 'sm',
+                    color: 'gray.600',
+                    fontWeight: 'medium',
+                  })}
+                >
+                  2014 - 2016
+                </span>
+              </div>
+              <p
+                className={css({
+                  color: 'gray.700',
+                  fontSize: 'sm',
+                  lineHeight: 1.6,
+                  mb: 4,
+                })}
+              >
+                Co-founded a real-time, last-minute hotel booking platform.
+                Raised $1.6M, led an acquisition, and developed mobile apps and
+                property management systems.
+              </p>
+              <div
+                className={css({
+                  display: 'flex',
+                  gap: 2,
+                  flexWrap: 'wrap',
+                })}
+              >
+                {['React Native', 'Real-time Systems', 'Mobile Apps'].map(
+                  skill => (
+                    <span
+                      key={skill}
+                      className={css({
+                        bg: 'green.100',
+                        color: 'green.700',
+                        px: 3,
+                        py: 1,
+                        borderRadius: 'md',
+                        fontSize: 'xs',
+                        fontWeight: 'medium',
+                      })}
+                    >
+                      {skill}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
           </div>
 

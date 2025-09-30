@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lost in Space | Nick Karnik</title>
+    <meta
+      name="description"
+      content="Looks like you've wandered into the digital void! Let's get you back on track."
+    />
+    <meta name="robots" content="noindex, nofollow" />
+    <style>
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+      }
+      .container {
+        text-align: center;
+        padding: 2rem;
+        max-width: 600px;
+      }
+      .error-code {
+        font-size: 8rem;
+        font-weight: bold;
+        margin: 0;
+        background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+        background-size: 200% 200%;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: gradient 3s ease infinite;
+      }
+      .error-code h2 {
+        font-size: 3rem;
+        margin: 0.5rem 0 0 0;
+      }
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+      .message {
+        font-size: 1.5rem;
+        margin: 1rem 0;
+        opacity: 0.9;
+      }
+      .subtitle {
+        font-size: 1.1rem;
+        margin: 1rem 0 2rem;
+        opacity: 0.8;
+      }
+      .buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin: 2rem 0;
+      }
+      .btn {
+        display: inline-block;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+      }
+      .btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      }
+      .btn-primary {
+        background: rgba(255, 255, 255, 0.9);
+        color: #333;
+      }
+      .btn-primary:hover {
+        background: white;
+      }
+      .loading {
+        margin-top: 2rem;
+        font-size: 0.9rem;
+        opacity: 0.7;
+      }
+      .spinner {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        border-top-color: white;
+        animation: spin 1s ease-in-out infinite;
+        margin-right: 8px;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .fun-messages {
+        margin: 1rem 0;
+        font-style: italic;
+        opacity: 0.8;
+      }
+      @media (max-width: 600px) {
+        .error-code {
+          font-size: 6rem;
+        }
+        .message {
+          font-size: 1.2rem;
+        }
+        .buttons {
+          flex-direction: column;
+          align-items: center;
+        }
+        .btn {
+          width: 200px;
+        }
+      }
+    </style>
+    <script>
+      // Fun messages to show while redirecting
+      const funMessages = [
+        'Oops! This page went on a coffee break ☕',
+        "Looks like you've wandered into the digital void 🚀",
+        'This page is playing hide and seek... and winning! 🎯',
+        "The page you're looking for has been abducted by aliens 👽",
+        'This page decided to take a vacation to the Bahamas 🏝️',
+        'Lost in space, but we found this cool message instead! 🎉',
+        'This page is currently attending a virtual conference 📹',
+        'The page you seek has been moved to a parallel universe 🌌',
+        'Houston, we have a problem... this page is missing! 🛸',
+        'This page has gone where no page has gone before! 🌟',
+      ];
+
+      // Show a random fun message
+      function showFunMessage() {
+        const randomMessage =
+          funMessages[Math.floor(Math.random() * funMessages.length)];
+        const messageEl = document.getElementById('fun-message');
+        if (messageEl) {
+          messageEl.textContent = randomMessage;
+        }
+      }
+
+      // Initialize the page
+      document.addEventListener('DOMContentLoaded', function () {
+        showFunMessage();
+      });
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      <h1 class="error-code">🚀</h1>
+      <h2 class="error-code">Lost in Space</h2>
+      <div class="fun-messages" id="fun-message">Loading something fun...</div>
+      <p class="subtitle">
+        Don't worry, even astronauts get lost sometimes! Let's get you back to
+        something more interesting.
+      </p>
+
+      <div class="buttons">
+        <a href="/" class="btn btn-primary">🏠 Go Home</a>
+        <a href="/blog" class="btn">📝 Read Blog</a>
+        <a href="/about" class="btn">👨‍💻 About Me</a>
+      </div>
+    </div>
+  </body>
+</html>

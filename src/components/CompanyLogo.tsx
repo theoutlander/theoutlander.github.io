@@ -143,6 +143,26 @@ export function CompanyLogo({
         style={logoStyle}
       />
     ),
+    plutonic: (
+      <div
+        style={{
+          ...logoStyle,
+          width: '120px',
+          height: '120px',
+          backgroundColor: '#6366f1',
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '18px',
+          fontWeight: 'bold',
+          fontFamily: 'system-ui, sans-serif',
+        }}
+      >
+        Plutonic
+      </div>
+    ),
   };
 
   const logo = logos[company.toLowerCase()];
