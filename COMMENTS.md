@@ -32,9 +32,9 @@ All settings are centralized in `src/lib/comments.ts`:
 
 ```typescript
 export const COMMENTS_CONFIG = {
-	defaultSystem: "giscus", // or "utterances"
-	githubRepo: "theoutlander/theoutlander.github.io",
-	// ... other settings
+  defaultSystem: 'giscus', // or "utterances"
+  githubRepo: 'theoutlander/theoutlander.github.io',
+  // ... other settings
 };
 ```
 

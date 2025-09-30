@@ -1,87 +1,67 @@
 // src/components/blog/BlogCard.tsx
-import { Card, Text, Image, HStack, Tag } from "@chakra-ui/react";
-import { Link as RouterLink } from "@tanstack/react-router";
-import type { Post } from "./RoutePost";
+import { Card, Text, Image, HStack, Tag } from '@chakra-ui/react';
+import { Link as RouterLink } from '@tanstack/react-router';
+import type { Post } from './RoutePost';
 
 export default function BlogCard({ post }: { post: Post }) {
-	return (
-		<Card.Root
-			as="article"
-			borderRadius="2xl"
-			overflow="hidden"
-			shadow="sm"
-			_hover={{ transform: "translateY(-2px)" }}
-			transition="transform 0.2s"
-		>
-			{post.cover ? (
-				<Image
-					src={post.cover}
-					alt=""
-					objectFit="cover"
-					maxH="240px"
-					w="full"
-				/>
-			) : null}
-			<Card.Body>
-				<RouterLink
-					to="/blog/$slug"
-					params={{ slug: post.slug }}
-					preload="intent"
-				>
-					<Text
-						as="h2"
-						fontWeight="semibold"
-						fontSize="lg"
-						color="brand.700"
-					>
-						{post.title}
-					</Text>
-				</RouterLink>
-				<Text
-					fontSize="sm"
-					color="gray.600"
-					mt={1}
-				>
-					{post.date ? new Date(post.date).toDateString() : ""} ·{" "}
-					{estimateReadingTime(post.excerpt || "")} min read
-				</Text>
-				{post.excerpt ? (
-					<Text
-						mt={3}
-						color="gray.800"
-					>
-						{post.excerpt}
-					</Text>
-				) : null}
-				{post.tags?.length ? (
-					<HStack
-						mt={4}
-						gap={2}
-						wrap="wrap"
-					>
-						{post.tags.slice(0, 3).map((t) => (
-							<RouterLink
-								key={t}
-								to="/blog/t/$tag"
-								params={{ tag: t }}
-							>
-								<Tag.Root
-									size="sm"
-									variant="subtle"
-									cursor="pointer"
-									_hover={{ bg: "gray.100" }}
-								>
-									<Tag.Label>{t}</Tag.Label>
-								</Tag.Root>
-							</RouterLink>
-						))}
-					</HStack>
-				) : null}
-			</Card.Body>
-		</Card.Root>
-	);
+  return (
+    <Card.Root
+      as='article'
+      borderRadius='2xl'
+      overflow='hidden'
+      shadow='sm'
+      _hover={{ transform: 'translateY(-2px)' }}
+      transition='transform 0.2s'
+    >
+      {post.cover ? (
+        <Image
+          src={post.cover}
+          alt=''
+          objectFit='cover'
+          maxH='240px'
+          w='full'
+        />
+      ) : null}
+      <Card.Body>
+        <RouterLink
+          to='/blog/$slug'
+          params={{ slug: post.slug }}
+          preload='intent'
+        >
+          <Text as='h2' fontWeight='semibold' fontSize='lg' color='brand.700'>
+            {post.title}
+          </Text>
+        </RouterLink>
+        <Text fontSize='sm' color='gray.600' mt={1}>
+          {post.date ? new Date(post.date).toDateString() : ''} ·{' '}
+          {estimateReadingTime(post.excerpt || '')} min read
+        </Text>
+        {post.excerpt ? (
+          <Text mt={3} color='gray.800'>
+            {post.excerpt}
+          </Text>
+        ) : null}
+        {post.tags?.length ? (
+          <HStack mt={4} gap={2} wrap='wrap'>
+            {post.tags.slice(0, 3).map(t => (
+              <RouterLink key={t} to='/blog/t/$tag' params={{ tag: t }}>
+                <Tag.Root
+                  size='sm'
+                  variant='subtle'
+                  cursor='pointer'
+                  _hover={{ bg: 'gray.100' }}
+                >
+                  <Tag.Label>{t}</Tag.Label>
+                </Tag.Root>
+              </RouterLink>
+            ))}
+          </HStack>
+        ) : null}
+      </Card.Body>
+    </Card.Root>
+  );
 }
 function estimateReadingTime(text: string) {
-	const words = text.trim().split(/\s+/).length;
-	return Math.max(1, Math.round(words / 200));
+  const words = text.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
 }

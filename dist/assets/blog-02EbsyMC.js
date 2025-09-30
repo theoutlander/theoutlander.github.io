@@ -1,1 +1,0 @@
-import{u as r,j as o,O as s}from"./index-CvJuAqlI.js";import{B as e}from"./BlogList-DI3fWCBU.js";import"./simple-grid-CW--DmE2.js";import"./create-slot-recipe-context-CmnEag0r.js";import"./image-D3lgLZ2K.js";function i(n){return r({select:t=>t.location})}const l=function(){return i().pathname==="/blog"?o.jsx(e,{}):o.jsx(s,{})};export{l as component};
