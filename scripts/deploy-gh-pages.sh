@@ -1,52 +1,87 @@
 #!/bin/bash
 
 # Deploy to GitHub Pages using gh-pages branch
-# This script builds locally and pushes only the dist/ folder to gh-pages branch
+# This script: commits to main, switches to gh-pages, builds, commits, switches back
 
 set -e  # Exit on any error
 
 echo "🚀 Starting deployment to GitHub Pages..."
 
-# Build the project
+# Step 1: Ensure we're on main branch and commit all changes
+echo "📝 Committing all changes to main branch..."
+if ! git diff --quiet || ! git diff --cached --quiet; then
+    git add .
+    git commit -m "Update before deployment - $(date)"
+    echo "✅ Changes committed to main"
+else
+    echo "✅ No changes to commit in main"
+fi
+
+# Step 2: Push main branch to ensure it's up to date
+echo "📤 Pushing main branch..."
+git push origin main
+
+# Step 3: Switch to gh-pages branch
+echo "🔄 Switching to gh-pages branch..."
+git checkout gh-pages
+
+# Step 4: Build the project
 echo "📦 Building project..."
-pnpm run build:prod
+if ! pnpm run build:prod; then
+    echo "❌ Build failed. Switching back to main and exiting."
+    git checkout main
+    exit 1
+fi
 
-# Run quality checks
+# Step 5: Run quality checks
 echo "🔍 Running quality checks..."
-pnpm run check
+if ! pnpm run check; then
+    echo "❌ Quality checks failed. Switching back to main and exiting."
+    git checkout main
+    exit 1
+fi
 
-# Check if dist/ directory exists
+# Step 6: Check if dist/ directory exists
 if [ ! -d "dist" ]; then
-    echo "❌ Error: dist/ directory not found. Build failed."
+    echo "❌ Error: dist/ directory not found. Build failed. Switching back to main."
+    git checkout main
     exit 1
 fi
 
 echo "✅ Build completed successfully!"
 
-# Create a temporary directory for gh-pages
-TEMP_DIR=$(mktemp -d)
-echo "📁 Using temporary directory: $TEMP_DIR"
+# Step 7: Copy dist contents to root of gh-pages branch
+echo "📁 Copying built assets to root of gh-pages branch..."
+cp -r dist/* .
 
-# Copy dist/ contents to temp directory
-cp -r dist/* "$TEMP_DIR/"
+# Step 8: Ensure .nojekyll and CNAME files are present for GitHub Pages
+echo "" > .nojekyll
+echo "nick.karnik.io" > CNAME
 
-# Initialize git in temp directory
-cd "$TEMP_DIR"
-git init
+# Step 9: Add and commit all changes to gh-pages
+echo "💾 Committing built assets to gh-pages branch..."
 git add .
-git commit -m "Deploy to GitHub Pages - $(date)"
+if git diff --cached --quiet; then
+    echo "✅ No changes to commit in gh-pages"
+else
+    git commit -m "Deploy to GitHub Pages - $(date)"
+    echo "✅ Changes committed to gh-pages"
+fi
 
-# Add the gh-pages remote (this will be the same repo)
-git remote add origin "https://github.com/theoutlander/theoutlander.github.io.git"
+# Step 10: Push gh-pages branch
+echo "🚀 Pushing gh-pages branch..."
+if ! git push origin gh-pages; then
+    echo "❌ Push failed. Switching back to main."
+    git checkout main
+    exit 1
+fi
 
-# Force push to gh-pages branch
-echo "🚀 Pushing to gh-pages branch..."
-git push -f origin HEAD:gh-pages
-
-# Clean up
-cd - > /dev/null
-rm -rf "$TEMP_DIR"
+# Step 11: Switch back to main branch
+echo "🔄 Switching back to main branch..."
+git checkout main
 
 echo "✅ Deployment completed successfully!"
 echo "🌐 Your site should be available at: https://nick.karnik.io"
-echo "⏰ It may take a few minutes for GitHub Pages to update."
+echo "⏰ It may take 2-5 minutes for GitHub Pages to update."
+echo "💡 If you see 404 errors, wait a few minutes and refresh."
+echo "🔍 Check deployment status at: https://github.com/theoutlander/theoutlander.github.io/actions"

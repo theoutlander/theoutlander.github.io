@@ -158,38 +158,9 @@
         }
       }
 
-      // GitHub Pages SPA redirect
-      // This script takes the current URL and redirects to index.html
-      // with the path as a query parameter, then the React router handles it
-      function redirectToApp() {
-        var pathSegmentsToKeep = 0;
-        var l = window.location;
-        l.replace(
-          l.protocol +
-            '//' +
-            l.hostname +
-            (l.port ? ':' + l.port : '') +
-            l.pathname
-              .split('/')
-              .slice(0, 1 + pathSegmentsToKeep)
-              .join('/') +
-            '/?/' +
-            l.pathname
-              .slice(1)
-              .split('/')
-              .slice(pathSegmentsToKeep)
-              .join('/')
-              .replace(/&/g, '~and~') +
-            (l.search ? '&' + l.search.slice(1).replace(/&/g, '~and~') : '') +
-            l.hash
-        );
-      }
-
       // Initialize the page
       document.addEventListener('DOMContentLoaded', function () {
         showFunMessage();
-        // Redirect after a short delay to show the fun message
-        setTimeout(redirectToApp, 2000);
       });
     </script>
   </head>
@@ -209,10 +180,6 @@
         <a href="/about" class="btn">👨‍💻 About Me</a>
       </div>
 
-      <div class="loading">
-        <div class="spinner"></div>
-        Redirecting to the main app...
-      </div>
     </div>
   </body>
 </html>
