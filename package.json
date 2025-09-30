@@ -4,8 +4,8 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
-    "build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+    "dev": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
+    "build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
     "check": "eslint . --fix && prettier --write . && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

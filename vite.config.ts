@@ -3,8 +3,6 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
 import { redirectPlugin } from './src/plugins/vite-redirect-plugin';
-// @ts-expect-error - vite-plugin-ssr-ssg has type declaration issues
-import ssrSsg from 'vite-plugin-ssr-ssg';
 
 export default defineConfig({
   base: '/',
@@ -16,11 +14,6 @@ export default defineConfig({
     }),
     react(),
     redirectPlugin(),
-    ssrSsg({
-      render: 'react',
-      entry: './src/ssg.ts',
-      prerender: true,
-    }),
   ],
   build: {
     outDir: 'dist',
@@ -28,7 +21,22 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: undefined,
+        // Inline all CSS into the HTML
+        assetFileNames: assetInfo => {
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name].[hash][extname]';
+          }
+          return 'assets/[name].[hash][extname]';
+        },
       },
     },
+    // Ensure CSS is inlined
+    cssCodeSplit: false,
+  },
+  // Disable client-side hydration for static generation
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(
+      process.env.NODE_ENV || 'production'
+    ),
   },
 });

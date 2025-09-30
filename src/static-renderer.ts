@@ -1,37 +1,27 @@
-<!doctype html>
-<html lang="en" class="chakra-ui-light">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
-    
-    <!-- SEO Meta Tags -->
-    <title>About - Nick Karnik</title>
-    <meta name="description" content="Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript." />
-    <meta property="og:title" content="About - Nick Karnik" />
-    <meta property="og:description" content="Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nick.karnik.io" />
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="About - Nick Karnik" />
-    <meta name="twitter:description" content="Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript." />
-    
-    <!-- RSS Feed -->
-    <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss" />
-    
-    <!-- Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag() { dataLayer.push(arguments); }
-      gtag('js', new Date());
-      gtag('config', 'G-62FC7BDSGJ');
-    </script>
-    
-    
-    
-    <!-- Inline CSS -->
-    
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
+import { join, dirname } from 'node:path';
+
+type Post = {
+  id?: string;
+  slug: string;
+  title: string;
+  excerpt: string;
+  url: string;
+  date: string;
+  cover: string;
+  tags: string[];
+};
+
+type AboutData = {
+  title: string;
+  html: string;
+};
+
+// Static renderer - no React dependencies needed
+
+// Generate CSS styles for Chakra UI
+const generateChakraStyles = () => {
+  return `
     <style>
       /* Chakra UI Reset and Base Styles */
       *, *::before, *::after {
@@ -255,10 +245,10 @@
       
       /* Responsive utilities */
       @media (min-width: 768px) {
-        .css-md\:grid-cols-2 {
+        .css-md\\:grid-cols-2 {
           grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-        .css-md\:py-10 {
+        .css-md\\:py-10 {
           padding-top: 2.5rem;
           padding-bottom: 2.5rem;
         }
@@ -541,11 +531,262 @@
         }
       }
     </style>
-  
+  `;
+};
+
+// Generate the base HTML template
+const generateBaseHTML = (
+  title: string,
+  description: string,
+  content: string,
+  additionalHead?: string
+) => {
+  return `<!doctype html>
+<html lang="en" class="chakra-ui-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    
+    <!-- SEO Meta Tags -->
+    <title>${title}</title>
+    <meta name="description" content="${description}" />
+    <meta property="og:title" content="${title}" />
+    <meta property="og:description" content="${description}" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nick.karnik.io" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="${title}" />
+    <meta name="twitter:description" content="${description}" />
+    
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss" />
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-62FC7BDSGJ');
+    </script>
+    
+    ${additionalHead || ''}
+    
+    <!-- Inline CSS -->
+    ${generateChakraStyles()}
   </head>
   <body>
     <div id="root">
-      
+      ${content}
+    </div>
+  </body>
+</html>`;
+};
+
+// Generate home page content
+const generateHomePageContent = (posts: Post[]) => {
+  const latestPosts = posts.slice(0, 2);
+
+  return `
+    <!-- Header -->
+    <header class="css-header">
+      <div class="css-container css-py-3">
+        <div class="css-flex css-align-center css-justify-between css-gap-6">
+          <a href="/" class="css-link">
+            <h1 class="css-heading css-heading-md" style="color: #1a202c; margin: 0;">Nick Karnik</h1>
+          </a>
+          <div class="css-hstack">
+            <a href="/blog" class="css-link">Blog</a>
+            <a href="/about" class="css-link">About</a>
+            <a href="/resume" class="css-link">Resume</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="css-main">
+      <div class="css-container css-py-6">
+        <!-- Hero Section -->
+        <div class="css-hero">
+          <div class="css-hero-bg-1"></div>
+          <div class="css-hero-bg-2"></div>
+          <div style="max-width: 1200px; margin: 0 auto; padding: 0 1.5rem; position: relative;">
+            <div class="css-grid" style="grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center;">
+              <div>
+                <h1 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #1a202c;">Hi, I'm Nick Karnik</h1>
+                <p class="css-text css-text-lg" style="margin-bottom: 1.5rem; color: #718096;">
+                  Engineer and EM, shipping fast with TypeScript. I help teams move faster with clear product bets, strong execution, and systems that are simple to maintain.
+                </p>
+                <div class="css-flex css-gap-4" style="margin-bottom: 1.5rem; flex-wrap: wrap;">
+                  ${['TypeScript', 'React', 'DX', 'AI']
+                    .map(tag => `<span class="css-tag-primary">${tag}</span>`)
+                    .join('')}
+                </div>
+                <div class="css-flex css-gap-6" style="flex-wrap: wrap;">
+                  <a href="/blog" class="css-button css-button-primary">Read My Blog →</a>
+                  <a href="/about" class="css-button css-button-secondary">About Me</a>
+                </div>
+              </div>
+              <div style="text-align: center;">
+                <div class="css-avatar css-avatar-lg" style="margin: 0 auto 1.5rem;">NK</div>
+                <p class="css-text css-text-lg" style="color: #718096; font-weight: 500;">Currently: Advising founders on pragmatic AI and DX</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Stats Section -->
+        <div style="margin-bottom: 4rem;">
+          <h2 class="css-heading css-heading-lg" style="text-align: center; margin-bottom: 2.5rem; color: #1a202c;">Professional Experience</h2>
+          <div class="css-grid css-grid-auto-fit css-gap-8">
+            <div class="css-stats-card">
+              <p class="css-stats-label">Years Experience</p>
+              <h3 class="css-stats-number" style="color: #3182ce;">8+</h3>
+              <p class="css-stats-description">Engineering & Leadership</p>
+            </div>
+            <div class="css-stats-card">
+              <p class="css-stats-label">Technologies</p>
+              <h3 class="css-stats-number" style="color: #38a169;">15+</h3>
+              <p class="css-stats-description">TypeScript, React, Node, AI</p>
+            </div>
+            <div class="css-stats-card">
+              <p class="css-stats-label">Teams Led</p>
+              <h3 class="css-stats-number" style="color: #805ad5;">5+</h3>
+              <p class="css-stats-description">Engineering Teams</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Latest Posts Section -->
+        <div style="margin-bottom: 4rem;">
+          <div style="text-align: center; margin-bottom: 2.5rem;">
+            <h2 class="css-heading css-heading-lg" style="margin-bottom: 0.75rem; color: #1a202c;">Latest Thoughts</h2>
+            <p class="css-text css-text-lg" style="color: #718096; max-width: 600px; margin: 0 auto;">
+              Sharing insights on engineering, AI, and technology from my experience building and leading teams.
+            </p>
+          </div>
+          <div class="css-grid css-grid-auto-fit css-gap-8">
+            ${latestPosts
+              .map(
+                post => `
+              <div class="css-blog-card">
+                <div class="css-card-body css-p-8">
+                  <a href="/blog/${post.slug}" class="css-blog-title">
+                    <h3 style="font-size: 1.25rem; margin: 0 0 0.75rem 0;">${post.title}</h3>
+                  </a>
+                  <div class="css-flex css-gap-4" style="margin-bottom: 1rem;">
+                    <span class="css-text css-text-sm" style="font-weight: 500;">
+                      ${post.date ? new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : ''}
+                    </span>
+                    <span style="color: #e2e8f0;">•</span>
+                    <span class="css-text css-text-sm">
+                      ${Math.max(1, Math.round(post.excerpt.split(' ').length / 200))} min read
+                    </span>
+                  </div>
+                  ${post.excerpt ? `<p class="css-blog-excerpt">${post.excerpt}</p>` : ''}
+                </div>
+              </div>
+            `
+              )
+              .join('')}
+          </div>
+          <div style="text-align: center; margin-top: 2rem;">
+            <a href="/blog" class="css-button css-button-secondary">View All Posts →</a>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 2rem 0; margin-top: 4rem;">
+      <div class="css-container">
+        <div class="css-flex css-align-center css-justify-between">
+          <p class="css-text css-text-sm" style="margin: 0; color: #718096;">© 2024 Nick Karnik. All rights reserved.</p>
+          <div class="css-hstack">
+            <a href="https://github.com/theoutlander" class="css-link css-text-sm">GitHub</a>
+            <a href="https://www.linkedin.com/in/theoutlander" class="css-link css-text-sm">LinkedIn</a>
+            <a href="mailto:nick@karnik.io" class="css-link css-text-sm">Email</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  `;
+};
+
+// Generate blog index page content
+const generateBlogPageContent = (posts: Post[]) => {
+  return `
+    <!-- Header -->
+    <header class="css-header">
+      <div class="css-container css-py-3">
+        <div class="css-flex css-align-center css-justify-between css-gap-6">
+          <a href="/" class="css-link">
+            <h1 class="css-heading css-heading-md" style="color: #1a202c; margin: 0;">Nick Karnik</h1>
+          </a>
+          <div class="css-hstack">
+            <a href="/blog" class="css-link" style="color: #3182ce; font-weight: 500;">Blog</a>
+            <a href="/about" class="css-link">About</a>
+            <a href="/resume" class="css-link">Resume</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="css-main">
+      <div class="css-container css-py-6">
+        <div style="margin-bottom: 3rem;">
+          <h1 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #1a202c;">Blog</h1>
+          <p class="css-text css-text-lg" style="color: #718096; max-width: 600px;">
+            Thoughts on engineering, AI, and technology from my experience building and leading teams.
+          </p>
+        </div>
+        
+        <div class="css-grid css-grid-auto-fit css-gap-6">
+          ${posts
+            .map(
+              post => `
+            <div class="css-blog-card">
+              ${post.cover ? `<img src="${post.cover}" alt="" class="css-blog-image" />` : ''}
+              <div class="css-card-body">
+                <a href="/blog/${post.slug}" class="css-blog-title">
+                  <h2 style="font-size: 1.125rem; margin: 0 0 0.25rem 0;">${post.title}</h2>
+                </a>
+                <p class="css-blog-meta">
+                  ${post.date ? new Date(post.date).toDateString() : ''}
+                  ${post.excerpt ? ` · ${Math.max(1, Math.round(post.excerpt.split(' ').length / 200))} min read` : ''}
+                </p>
+                ${post.excerpt ? `<p class="css-blog-excerpt">${post.excerpt}</p>` : ''}
+              </div>
+            </div>
+          `
+            )
+            .join('')}
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 2rem 0; margin-top: 4rem;">
+      <div class="css-container">
+        <div class="css-flex css-align-center css-justify-between">
+          <p class="css-text css-text-sm" style="margin: 0; color: #718096;">© 2024 Nick Karnik. All rights reserved.</p>
+          <div class="css-hstack">
+            <a href="https://github.com/theoutlander" class="css-link css-text-sm">GitHub</a>
+            <a href="https://www.linkedin.com/in/theoutlander" class="css-link css-text-sm">LinkedIn</a>
+            <a href="mailto:nick@karnik.io" class="css-link css-text-sm">Email</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  `;
+};
+
+// Generate about page content
+const generateAboutPageContent = (aboutData: AboutData) => {
+  return `
     <!-- Header -->
     <header class="css-header">
       <div class="css-container css-py-3">
@@ -572,7 +813,9 @@
             <h1 class="css-heading css-heading-lg" style="margin: 0 0 0.5rem 0; color: #1a202c;">Nick Karnik</h1>
             <p class="css-text" style="color: #718096; margin: 0 0 0.5rem 0;">Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript</p>
             <div class="css-flex css-gap-4" style="flex-wrap: wrap;">
-              <span class="css-tag">TypeScript</span><span class="css-tag">React</span><span class="css-tag">DX</span>
+              ${['TypeScript', 'React', 'DX']
+                .map(tech => `<span class="css-tag">${tech}</span>`)
+                .join('')}
             </div>
           </div>
         </div>
@@ -583,18 +826,7 @@
           <div>
             <h2 class="css-heading css-heading-sm" style="margin-bottom: 0.75rem; color: #1a202c;">About</h2>
             <div class="css-text" style="line-height: 1.8;">
-              
-			<p>I help teams move faster without breaking things.</p>
-			<p>I've led engineering at Google, Microsoft, Salesforce, Tableau, IDM (now part of the Gates Foundation), TMobile, and startups. I care about clear decisions, strong execution, and code that ships.</p>
-			<p>On this blog I write about AI, engineering leadership, and building web products with React, Node.js, and TypeScript. I try to keep it practical so you can use it right away.</p>
-			<p>I also run Plutonic Consulting, where I work with founders on fractional CTO support, AI strategy, and scaling teams.</p>
-			<p>If you're hiring, wrestling with roadmap and architecture, or want a second set of eyes on your stack, I'm happy to help.</p>
-			<ul>
-				<li>Email: <a href="mailto:nick@karnik.io">nick@karnik.io</a></li>
-				<li>LinkedIn: <a href="https://www.linkedin.com/in/theoutlander" target="_blank" rel="noopener noreferrer">https://www.linkedin.com/in/theoutlander</a></li>
-				<li>Plutonic Consulting: <a href="https://plutonic.consulting" target="_blank" rel="noopener noreferrer">https://plutonic.consulting</a></li>
-			</ul>
-		
+              ${aboutData.html}
             </div>
           </div>
 
@@ -623,7 +855,17 @@
             <div class="css-focus-card">
               <h3 class="css-focus-title">Focus</h3>
               <div class="css-focus-tags">
-                <span class="css-tag">TypeScript</span><span class="css-tag">React</span><span class="css-tag">Vite</span><span class="css-tag">Chakra</span><span class="css-tag">Node</span><span class="css-tag">GraphQL</span><span class="css-tag">AI</span>
+                ${[
+                  'TypeScript',
+                  'React',
+                  'Vite',
+                  'Chakra',
+                  'Node',
+                  'GraphQL',
+                  'AI',
+                ]
+                  .map(tech => `<span class="css-tag">${tech}</span>`)
+                  .join('')}
               </div>
               <hr class="css-focus-divider">
               <p class="css-focus-description">
@@ -657,7 +899,56 @@
         </div>
       </div>
     </footer>
-  
-    </div>
-  </body>
-</html>
+  `;
+};
+
+// Main function to render all static pages
+export async function renderAllStaticPages() {
+  console.log('🔄 Rendering all static pages...');
+
+  // Read the hashnode data
+  const hashnodeData = JSON.parse(
+    readFileSync('public/data/hashnode.json', 'utf8')
+  ) as Post[];
+
+  // Read the about page data
+  const aboutData = JSON.parse(
+    readFileSync('public/data/pages/about.json', 'utf8')
+  ) as AboutData;
+
+  // Render home page
+  console.log('📄 Rendering home page...');
+  const homeContent = generateHomePageContent(hashnodeData);
+  const homeHTML = generateBaseHTML(
+    'Nick Karnik - Staff Software Engineer & Engineering Leader',
+    'Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences.',
+    homeContent
+  );
+  writeFileSync('dist/index.html', homeHTML);
+
+  // Render blog index page
+  console.log('📄 Rendering blog index page...');
+  const blogDir = join('dist', 'blog');
+  mkdirSync(blogDir, { recursive: true });
+  const blogContent = generateBlogPageContent(hashnodeData);
+  const blogHTML = generateBaseHTML(
+    'Blog - Nick Karnik',
+    'Thoughts on engineering, AI, and technology from my experience building and leading teams.',
+    blogContent
+  );
+  writeFileSync(join(blogDir, 'index.html'), blogHTML);
+
+  // Render about page
+  console.log('📄 Rendering about page...');
+  const aboutDir = join('dist', 'about');
+  mkdirSync(aboutDir, { recursive: true });
+  const aboutContent = generateAboutPageContent(aboutData);
+  const aboutHTML = generateBaseHTML(
+    'About - Nick Karnik',
+    'Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript.',
+    aboutContent
+  );
+  writeFileSync(join(aboutDir, 'index.html'), aboutHTML);
+
+  console.log('✅ All static pages rendered successfully!');
+}
