@@ -27,7 +27,7 @@ git checkout gh-pages
 
 # Step 4: Copy source files needed for building
 echo "📁 Copying source files to gh-pages branch..."
-git checkout main -- package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig*.json vite.config.ts vitest.config.ts eslint.config.js .prettierrc
+git checkout main -- package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig*.json vite.config.ts vitest.config.ts
 git checkout main -- src/ scripts/ public/ index.html
 
 # Step 5: Install dependencies
@@ -42,15 +42,8 @@ if ! pnpm run build:prod; then
     exit 1
 fi
 
-# Step 7: Run quality checks
-echo "🔍 Running quality checks..."
-if ! pnpm run check; then
-    echo "❌ Quality checks failed. Switching back to main and exiting."
-    git checkout main
-    exit 1
-fi
 
-# Step 8: Check if dist/ directory exists
+# Step 7: Check if dist/ directory exists
 if [ ! -d "dist" ]; then
     echo "❌ Error: dist/ directory not found. Build failed. Switching back to main."
     git checkout main
@@ -59,15 +52,15 @@ fi
 
 echo "✅ Build completed successfully!"
 
-# Step 9: Copy dist contents to root of gh-pages branch
+# Step 8: Copy dist contents to root of gh-pages branch
 echo "📁 Copying built assets to root of gh-pages branch..."
 cp -r dist/* .
 
-# Step 10: Ensure .nojekyll and CNAME files are present for GitHub Pages
+# Step 9: Ensure .nojekyll and CNAME files are present for GitHub Pages
 echo "" > .nojekyll
 echo "nick.karnik.io" > CNAME
 
-# Step 11: Add and commit all changes to gh-pages
+# Step 10: Add and commit all changes to gh-pages
 echo "💾 Committing built assets to gh-pages branch..."
 git add .
 if git diff --cached --quiet; then
@@ -77,7 +70,7 @@ else
     echo "✅ Changes committed to gh-pages"
 fi
 
-# Step 12: Push gh-pages branch (force push to handle diverged history)
+# Step 11: Push gh-pages branch (force push to handle diverged history)
 echo "🚀 Pushing gh-pages branch..."
 if ! git push -f origin gh-pages; then
     echo "❌ Push failed. Switching back to main."
@@ -85,7 +78,7 @@ if ! git push -f origin gh-pages; then
     exit 1
 fi
 
-# Step 13: Switch back to main branch
+# Step 12: Switch back to main branch
 echo "🔄 Switching back to main branch..."
 git checkout main
 

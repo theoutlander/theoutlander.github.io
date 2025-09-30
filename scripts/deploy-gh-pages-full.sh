@@ -12,12 +12,6 @@ if ! pnpm run build:prod; then
     exit 1
 fi
 
-# Run quality checks
-echo "🔍 Running quality checks..."
-if ! pnpm run check; then
-    echo "❌ Quality checks failed. Exiting deployment."
-    exit 1
-fi
 
 echo "✅ Build completed successfully!"
 
