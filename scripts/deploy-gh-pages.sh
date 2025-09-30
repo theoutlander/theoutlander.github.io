@@ -25,7 +25,16 @@ git push origin main
 echo "🔄 Switching to gh-pages branch..."
 git checkout gh-pages
 
-# Step 4: Build the project
+# Step 4: Copy source files needed for building
+echo "📁 Copying source files to gh-pages branch..."
+git checkout main -- package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig*.json vite.config.ts vitest.config.ts eslint.config.js .prettierrc
+git checkout main -- src/ scripts/ public/ index.html
+
+# Step 5: Install dependencies
+echo "📦 Installing dependencies..."
+pnpm install
+
+# Step 6: Build the project
 echo "📦 Building project..."
 if ! pnpm run build:prod; then
     echo "❌ Build failed. Switching back to main and exiting."
@@ -33,7 +42,7 @@ if ! pnpm run build:prod; then
     exit 1
 fi
 
-# Step 5: Run quality checks
+# Step 7: Run quality checks
 echo "🔍 Running quality checks..."
 if ! pnpm run check; then
     echo "❌ Quality checks failed. Switching back to main and exiting."
@@ -41,7 +50,7 @@ if ! pnpm run check; then
     exit 1
 fi
 
-# Step 6: Check if dist/ directory exists
+# Step 8: Check if dist/ directory exists
 if [ ! -d "dist" ]; then
     echo "❌ Error: dist/ directory not found. Build failed. Switching back to main."
     git checkout main
@@ -50,15 +59,15 @@ fi
 
 echo "✅ Build completed successfully!"
 
-# Step 7: Copy dist contents to root of gh-pages branch
+# Step 9: Copy dist contents to root of gh-pages branch
 echo "📁 Copying built assets to root of gh-pages branch..."
 cp -r dist/* .
 
-# Step 8: Ensure .nojekyll and CNAME files are present for GitHub Pages
+# Step 10: Ensure .nojekyll and CNAME files are present for GitHub Pages
 echo "" > .nojekyll
 echo "nick.karnik.io" > CNAME
 
-# Step 9: Add and commit all changes to gh-pages
+# Step 11: Add and commit all changes to gh-pages
 echo "💾 Committing built assets to gh-pages branch..."
 git add .
 if git diff --cached --quiet; then
@@ -68,7 +77,7 @@ else
     echo "✅ Changes committed to gh-pages"
 fi
 
-# Step 10: Push gh-pages branch
+# Step 12: Push gh-pages branch
 echo "🚀 Pushing gh-pages branch..."
 if ! git push origin gh-pages; then
     echo "❌ Push failed. Switching back to main."
@@ -76,7 +85,7 @@ if ! git push origin gh-pages; then
     exit 1
 fi
 
-# Step 11: Switch back to main branch
+# Step 13: Switch back to main branch
 echo "🔄 Switching back to main branch..."
 git checkout main
 
