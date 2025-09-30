@@ -24,7 +24,14 @@ const items = [
 
 export default function CoreCompetencies() {
 	return (
-		<section className={css({ py: "24", bg: "background.section" })}>
+		<section
+			className={css({
+				bg: "gray.50",
+				borderTop: "1px solid",
+				borderColor: "gray.100",
+				py: "12",
+			})}
+		>
 			<div className={css({ textAlign: "center", mb: "16" })}>
 				<h2
 					className={css({

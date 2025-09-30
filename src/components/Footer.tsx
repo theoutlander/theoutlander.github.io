@@ -97,7 +97,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<MdEmail />
@@ -113,7 +113,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<FaGithub />
@@ -129,7 +129,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<FaLinkedin />
@@ -145,7 +145,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<FaTwitter />
@@ -161,7 +161,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<FaYoutube />
@@ -177,7 +177,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<FaStackOverflow />
@@ -193,7 +193,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "lg",
 									color: "fg.muted",
-									_hover: { color: "accent.600" },
+									_hover: { color: "brand.600" },
 								})}
 							>
 								<HiOutlineDocumentText />
@@ -207,7 +207,7 @@ export default function Footer() {
 							target="_blank"
 							rel="noopener"
 							className={css({
-								color: "accent.600",
+								color: "brand.600",
 								_hover: { textDecoration: "underline" },
 							})}
 						>

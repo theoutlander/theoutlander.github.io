@@ -1,5 +1,6 @@
 import { css } from "../../styled-system/css/index.mjs";
 import { flex, hstack } from "../../styled-system/patterns/index.mjs";
+import { cva } from "../../styled-system/css/index.mjs";
 
 export default function HeroSSR() {
 	return (
@@ -141,17 +142,36 @@ export default function HeroSSR() {
 							gap: { base: "3", md: "4" },
 							wrap: "wrap",
 							mb: { base: "8", md: "10" },
+							align: "center",
 						})}
 					>
-						<span className={chip({ variant: "ai" })}>AI</span>
-						<span className={chip({ variant: "react" })}>React</span>
-						<span className={chip({ variant: "typescript" })}>TypeScript</span>
-						<span className={chip({ variant: "node" })}>Node.js</span>
+						<span className={chip({ variant: "ai" })}>
+							<span>✨</span>
+							<span>AI</span>
+						</span>
+						<span className={chip({ variant: "react" })}>
+							<span>⚛️</span>
+							<span>React</span>
+						</span>
+						<span className={chip({ variant: "typescript" })}>
+							<span>📘</span>
+							<span>TypeScript</span>
+						</span>
+						<span className={chip({ variant: "node" })}>
+							<span>🌱</span>
+							<span>Node.js</span>
+						</span>
 					</div>
 
 					<a
 						href="/blogs"
-						className={primaryBtn()}
+						className={css({
+							color: "brand.600",
+							_hover: { color: "brand.700" },
+							fontSize: "lg",
+							fontWeight: "medium",
+							textDecoration: "none",
+						})}
 					>
 						Read the blog
 					</a>
@@ -162,62 +182,84 @@ export default function HeroSSR() {
 }
 
 /* tiny recipe helpers */
-const chip = ({
-	variant,
-}: {
-	variant: "ai" | "react" | "typescript" | "node";
-}) => {
-	const variants = {
-		ai: {
-			bg: "white",
-			color: "tech.ai",
-			borderColor: "tech.ai",
-			_hover: { bg: "gray.50" },
-		},
-		react: {
-			bg: "blue.50",
-			color: "tech.react",
-			borderColor: "tech.react",
-			_hover: { bg: "blue.100" },
-		},
-		typescript: {
-			bg: "white",
-			color: "tech.typescript",
-			borderColor: "tech.typescript",
-			_hover: { bg: "gray.50" },
-		},
-		node: {
-			bg: "white",
-			color: "tech.nodejs",
-			borderColor: "tech.nodejs",
-			_hover: { bg: "gray.50" },
-		},
-	};
-
-	return css({
-		...variants[variant],
+const chip = cva({
+	base: {
 		fontSize: { base: "sm", md: "md" },
 		fontWeight: "medium",
 		px: { base: "3", md: "4" },
 		py: { base: "1.5", md: "2" },
-		rounded: "md",
-		border: "1px solid",
+		rounded: "lg",
+		borderWidth: "1px",
+		borderStyle: "solid",
 		transition: "all 0.2s ease",
-		cursor: "default",
-	});
-};
+		cursor: "pointer",
+		boxShadow: "sm",
+		minWidth: "fit-content",
+		display: "inline-flex",
+		alignItems: "center",
+		gap: "2",
+		_hover: {
+			transform: "translateY(-2px)",
+			boxShadow: "md",
+		},
+	},
+	variants: {
+		variant: {
+			ai: {
+				bg: "#f4f4f5",
+				color: "#374151",
+				borderColor: "#d1d5db",
+				_hover: {
+					bg: "#e5e7eb",
+					color: "#1f2937",
+					borderColor: "#9ca3af",
+				},
+			},
+			react: {
+				bg: "#cffafe",
+				color: "#0e7490",
+				borderColor: "#06b6d4",
+				_hover: {
+					bg: "#a5f3fc",
+					color: "#155e75",
+					borderColor: "#0891b2",
+				},
+			},
+			typescript: {
+				bg: "#dbeafe",
+				color: "#1d4ed8",
+				borderColor: "#3b82f6",
+				_hover: {
+					bg: "#bfdbfe",
+					color: "#1e3a8a",
+					borderColor: "#2563eb",
+				},
+			},
+			node: {
+				bg: "#dcfce7",
+				color: "#166534",
+				borderColor: "#22c55e",
+				_hover: {
+					bg: "#bbf7d0",
+					color: "#14532d",
+					borderColor: "#16a34a",
+				},
+			},
+		},
+	},
+});
 
 const primaryBtn = () =>
 	css({
 		display: "inline-block",
-		bg: "accent.600",
+		bg: "brand.600",
 		color: "white",
 		rounded: "md",
 		px: { base: "6", md: "8" },
 		py: { base: "3", md: "4" },
 		fontSize: { base: "md", md: "lg" },
 		fontWeight: "medium",
-		_hover: { bg: "accent.700" },
+		_hover: { bg: "brand.700" },
 		transition: "all 0.2s ease",
 		textDecoration: "none",
 	});

@@ -19,14 +19,13 @@ export default defineConfig({
 						50: { value: "#eff6ff" },
 						100: { value: "#dbeafe" },
 						200: { value: "#bfdbfe" },
-						300: { value: "#a3cfff" },
+						300: { value: "#93c5fd" },
 						400: { value: "#60a5fa" },
-						500: { value: "#3b82f6" },
+						500: { value: "#3b82f6" }, // main blue
 						600: { value: "#2563eb" },
-						700: { value: "#173da6" },
-						800: { value: "#1a3478" },
-						900: { value: "#14204a" },
-						950: { value: "#0c142e" },
+						700: { value: "#1d4ed8" },
+						800: { value: "#1e40af" },
+						900: { value: "#1e3a8a" },
 					},
 					// Accent color for links and buttons
 					accent: {
@@ -49,6 +48,10 @@ export default defineConfig({
 						react: { value: "#3B82F6" }, // Medium blue
 						ai: { value: "#6B7280" }, // Dark gray
 					},
+					// Named tech brand colors for pills
+					tsBlue: { value: "#3178C6" },
+					nodeGreen: { value: "#3C873A" },
+					reactCyan: { value: "#61DAFB" },
 					// Add commonly used colors from inline styles
 					text: {
 						primary: { value: "#1a202c" },
