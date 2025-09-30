@@ -1,0 +1,24 @@
+---
+alwaysApply: true
+---
+
+Repository guardrails (MANDATORY)
+• Do not add, modify, or suggest Prettier/ESLint (packages, scripts, or config files).
+• Forbidden files (must not be created/edited):
+.prettierrc*, .prettierignore, prettier*.config._, eslint_.config._, .eslintrc_, .vscode/settings.json, .editorconfig.
+• Do not add Prettier/ESLint to package.json (dependencies, devDependencies, or scripts).
+• Do not create dotfiles unless I explicitly say: ALLOW_DOTFILES.
+• Never run or propose npm i, pnpm add, or yarn add unless I write ALLOW_INSTALL.
+• Never stage, commit, or push. If a change requires git actions, reply with the exact commands and wait for me to run them.
+• If any forbidden artifact is detected in the repo, remove it and explain why it reappeared.
+
+Style/formatting
+• Respect current project formatting; do not introduce new formatters or linters.
+• Keep changes minimal and localized; avoid repo-wide rewrites.
+
+Confirmation protocol
+• For any action that would: (1) install packages, (2) add scripts, (3) create dotfiles, or (4) touch CI/deploy—ask for confirmation and proceed only if I reply with the exact token:
+• ALLOW_INSTALL
+• ALLOW_DOTFILES
+• ALLOW_SCRIPT
+• ALLOW_DEPLOY_EDIT
