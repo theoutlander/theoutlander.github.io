@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en" class="chakra-ui-light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests" />
+    
+    <!-- SEO Meta Tags -->
+    <title>Resume — Nick Karnik</title>
+    <meta name="description" content="Nick Karnik - Staff Software Engineer & Engineering Leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups" />
+    <meta property="og:title" content="Resume — Nick Karnik" />
+    <meta property="og:description" content="Nick Karnik - Staff Software Engineer & Engineering Leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://nick.karnik.io" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Resume — Nick Karnik" />
+    <meta name="twitter:description" content="Nick Karnik - Staff Software Engineer & Engineering Leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups" />
+    
+    <!-- RSS Feed -->
+    <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss" />
+    
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() { dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-62FC7BDSGJ');
+    </script>
+    
+    <link rel="canonical" href="https://nick.karnik.io/resume" />
+    
+    <!-- Inline CSS -->
+    
+    <style>
+      /* Chakra UI Reset and Base Styles */
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+      
+      html {
+        line-height: 1.15;
+        -webkit-text-size-adjust: 100%;
+      }
+      
+      body {
+        margin: 0;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        background-color: #f7fafc;
+        color: #1a202c;
+      }
+      
+      /* Chakra UI Component Styles */
+      .chakra-ui-light {
+        color-scheme: light;
+      }
+      
+      /* Box component styles */
+      .css-box {
+        display: block;
+      }
+      
+      /* Container styles */
+      .css-container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 1rem;
+        padding-right: 1rem;
+        max-width: 1200px;
+      }
+      
+      /* Flex styles */
+      .css-flex {
+        display: flex;
+      }
+      
+      .css-flex-column {
+        flex-direction: column;
+      }
+      
+      .css-align-center {
+        align-items: center;
+      }
+      
+      .css-justify-between {
+        justify-content: space-between;
+      }
+      
+      .css-justify-center {
+        justify-content: center;
+      }
+      
+      /* HStack styles */
+      .css-hstack {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+      }
+      
+      /* Heading styles */
+      .css-heading {
+        font-weight: 600;
+        line-height: 1.2;
+        color: #1a202c;
+      }
+      
+      .css-heading-lg {
+        font-size: 2.25rem;
+        line-height: 1.2;
+      }
+      
+      .css-heading-md {
+        font-size: 1.5rem;
+        line-height: 1.2;
+      }
+      
+      .css-heading-sm {
+        font-size: 1.25rem;
+        line-height: 1.2;
+      }
+      
+      /* Text styles */
+      .css-text {
+        color: #4a5568;
+        line-height: 1.5;
+      }
+      
+      .css-text-lg {
+        font-size: 1.125rem;
+        line-height: 1.5;
+      }
+      
+      .css-text-sm {
+        font-size: 0.875rem;
+        line-height: 1.5;
+      }
+      
+      /* Link styles */
+      .css-link {
+        color: #3182ce;
+        text-decoration: none;
+        transition: color 0.2s;
+      }
+      
+      .css-link:hover {
+        color: #2c5282;
+        text-decoration: underline;
+      }
+      
+      /* Button styles */
+      .css-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1rem;
+        border-radius: 0.375rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+      
+      .css-button-primary {
+        background-color: #3182ce;
+        color: white;
+        border-color: #3182ce;
+      }
+      
+      .css-button-primary:hover {
+        background-color: #2c5282;
+        border-color: #2c5282;
+        color: white;
+        text-decoration: none;
+      }
+      
+      .css-button-secondary {
+        background-color: white;
+        color: #1a202c;
+        border-color: #e2e8f0;
+      }
+      
+      .css-button-secondary:hover {
+        background-color: #f7fafc;
+        border-color: #cbd5e0;
+        color: #1a202c;
+        text-decoration: none;
+      }
+      
+      /* Card styles */
+      .css-card {
+        background: white;
+        border-radius: 0.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+      }
+      
+      .css-card-body {
+        padding: 1rem;
+      }
+      
+      /* Grid styles */
+      .css-grid {
+        display: grid;
+      }
+      
+      .css-grid-cols-1 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+      
+      .css-grid-cols-2 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      
+      .css-grid-cols-3 {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+      
+      .css-grid-auto-fit {
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      }
+      
+      .css-gap-4 {
+        gap: 1rem;
+      }
+      
+      .css-gap-6 {
+        gap: 1.5rem;
+      }
+      
+      .css-gap-8 {
+        gap: 2rem;
+      }
+      
+      /* Spacing utilities */
+      .css-p-4 { padding: 1rem; }
+      .css-p-6 { padding: 1.5rem; }
+      .css-p-8 { padding: 2rem; }
+      .css-py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
+      .css-py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+      .css-py-8 { padding-top: 2rem; padding-bottom: 2rem; }
+      .css-px-4 { padding-left: 1rem; padding-right: 1rem; }
+      .css-px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
+      
+      .css-mb-4 { margin-bottom: 1rem; }
+      .css-mb-6 { margin-bottom: 1.5rem; }
+      .css-mb-8 { margin-bottom: 2rem; }
+      .css-mt-4 { margin-top: 1rem; }
+      .css-mt-6 { margin-top: 1.5rem; }
+      .css-mt-8 { margin-top: 2rem; }
+      
+      /* Responsive utilities */
+      @media (min-width: 768px) {
+        .css-md\:grid-cols-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+        .css-md\:py-10 {
+          padding-top: 2.5rem;
+          padding-bottom: 2.5rem;
+        }
+      }
+      
+      /* Layout specific styles */
+      .css-header {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: white;
+        border-bottom: 1px solid #e2e8f0;
+        backdrop-filter: saturate(180%) blur(8px);
+      }
+      
+      .css-main {
+        min-height: 100vh;
+        background-color: #f7fafc;
+      }
+      
+      /* Hero section styles */
+      .css-hero {
+        padding: 4rem 0;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 1.5rem;
+        margin-bottom: 4rem;
+        position: relative;
+        overflow: hidden;
+      }
+      
+      .css-hero-bg-1 {
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 300px;
+        height: 300px;
+        background: #bee3f8;
+        border-radius: 50%;
+        opacity: 0.3;
+      }
+      
+      .css-hero-bg-2 {
+        position: absolute;
+        bottom: -30%;
+        left: -10%;
+        width: 200px;
+        height: 200px;
+        background: #e9d8fd;
+        border-radius: 50%;
+        opacity: 0.2;
+      }
+      
+      /* Tag styles */
+      .css-tag {
+        background: #edf2f7;
+        color: #4a5568;
+        padding: 0.25rem 0.5rem;
+        border-radius: 0.25rem;
+        font-size: 0.75rem;
+        font-weight: 500;
+      }
+      
+      .css-tag-primary {
+        background: #3182ce;
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        font-size: 0.875rem;
+      }
+      
+      /* Avatar styles */
+      .css-avatar {
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        background: #3182ce;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-weight: bold;
+        font-size: 1.5rem;
+      }
+      
+      .css-avatar-lg {
+        width: 8rem;
+        height: 8rem;
+        font-size: 3rem;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        border: 4px solid white;
+      }
+      
+      /* Stats card styles */
+      .css-stats-card {
+        border: 1px solid #e2e8f0;
+        padding: 2rem;
+        border-radius: 1rem;
+        text-align: center;
+        transition: all 0.2s;
+      }
+      
+      .css-stats-number {
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin: 0 0 0.25rem 0;
+      }
+      
+      .css-stats-label {
+        font-size: 0.875rem;
+        color: #718096;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+      }
+      
+      .css-stats-description {
+        font-size: 0.875rem;
+        color: #718096;
+        margin: 0;
+      }
+      
+      /* Blog card styles */
+      .css-blog-card {
+        border-radius: 1rem;
+        overflow: hidden;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e2e8f0;
+        transition: all 0.2s;
+      }
+      
+      .css-blog-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transform: translateY(-2px);
+      }
+      
+      .css-blog-image {
+        object-fit: cover;
+        max-height: 260px;
+        width: 100%;
+      }
+      
+      .css-blog-title {
+        font-weight: 600;
+        font-size: 1.125rem;
+        color: #2b6cb0;
+        margin: 0 0 0.25rem 0;
+        text-decoration: none;
+      }
+      
+      .css-blog-title:hover {
+        color: #2c5282;
+        text-decoration: underline;
+      }
+      
+      .css-blog-meta {
+        font-size: 0.875rem;
+        color: #718096;
+        margin: 0.25rem 0 0.75rem 0;
+      }
+      
+      .css-blog-excerpt {
+        margin: 0.75rem 0 0 0;
+        color: #1a202c;
+        line-height: 1.6;
+      }
+      
+      /* Contact card styles */
+      .css-contact-card {
+        border: 1px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .css-contact-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        color: #1a202c;
+      }
+      
+      .css-contact-button {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        text-decoration: none;
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .css-contact-button-primary {
+        background: #3182ce;
+        color: white;
+      }
+      
+      .css-contact-button-secondary {
+        border: 1px solid #e2e8f0;
+        color: #1a202c;
+      }
+      
+      .css-contact-button-outline {
+        border: 1px solid #3182ce;
+        color: #3182ce;
+      }
+      
+      /* Focus card styles */
+      .css-focus-card {
+        border: 1px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 1rem;
+        margin-bottom: 1rem;
+      }
+      
+      .css-focus-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        color: #1a202c;
+      }
+      
+      .css-focus-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 0.75rem;
+      }
+      
+      .css-focus-divider {
+        border: none;
+        border-top: 1px solid #e2e8f0;
+        margin: 0.75rem 0;
+      }
+      
+      .css-focus-description {
+        font-size: 0.875rem;
+        color: #718096;
+        margin: 0;
+        line-height: 1.5;
+      }
+      
+      /* Currently card styles */
+      .css-currently-card {
+        border: 1px solid #e2e8f0;
+        padding: 1rem;
+        border-radius: 1rem;
+      }
+      
+      .css-currently-title {
+        font-size: 0.875rem;
+        margin-bottom: 0.75rem;
+        color: #1a202c;
+      }
+      
+      .css-currently-item {
+        font-size: 0.875rem;
+        margin: 0;
+        color: #1a202c;
+      }
+      
+      /* Responsive design */
+      @media (max-width: 768px) {
+        .css-hero {
+          padding: 2rem 0;
+        }
+        
+        .css-hero-content {
+          grid-template-columns: 1fr;
+          gap: 2rem;
+        }
+        
+        .css-stats-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .css-blog-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .css-about-layout {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  
+  </head>
+  <body>
+    <div id="root">
+      <link rel="preload" as="image" href="/assets/images/profile/nick-karnik.jpeg"/><link rel="preload" as="image" href="/assets/images/companies/google.svg"/><link rel="preload" as="image" href="/assets/images/companies/salesforce.svg"/><link rel="preload" as="image" href="/assets/images/companies/tmobile.jpeg"/><link rel="preload" as="image" href="/assets/images/companies/microsoft.png"/><link rel="preload" as="image" href="/assets/images/companies/umd.jpeg"/><style data-emotion="css-global ad1llf">@layer reset,base,tokens,recipes;</style><style data-emotion="css-global 1o127pf">@layer reset{html{line-height:1.5;--font-fallback:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,'Noto Sans',sans-serif,'Apple Color Emoji','Segoe UI Emoji','Segoe UI Symbol','Noto Color Emoji';-webkit-text-size-adjust:100%;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;text-rendering:optimizeLegibility;touch-action:manipulation;-moz-tab-size:4;tab-size:4;font-family:var(--global-font-body, var(--font-fallback));}*{margin:0px;padding:0px;font:inherit;word-wrap:break-word;-webkit-tap-highlight-color:transparent;}*,*::before,*::after,*::backdrop{box-sizing:border-box;border-width:0px;border-style:solid;border-color:var(--global-color-border, currentColor);}hr{height:0px;color:inherit;border-top-width:1px;}body{min-height:100dvh;position:relative;}img{border-style:none;}img,svg,video,canvas,audio,iframe,embed,object{display:block;vertical-align:middle;}iframe{border:none;}img,video{max-width:100%;height:auto;}p,h1,h2,h3,h4,h5,h6{overflow-wrap:break-word;}ol,ul{list-style:none;}code,kbd,pre,samp{font-size:1em;}button,[type='button'],[type='reset'],[type='submit']{-webkit-appearance:button;background-color:transparent;background-image:none;}button,input,optgroup,select,textarea{color:inherit;}button,select{text-transform:none;}table{text-indent:0px;border-color:inherit;border-collapse:collapse;}*::-webkit-input-placeholder{opacity:unset;color:#9ca3af;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}*::-moz-placeholder{opacity:unset;color:#9ca3af;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}*:-ms-input-placeholder{opacity:unset;color:#9ca3af;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}*::placeholder{opacity:unset;color:#9ca3af;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;}textarea{resize:vertical;}summary{display:-webkit-box;display:-webkit-list-item;display:-ms-list-itembox;display:list-item;}small{font-size:80%;}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline;}sub{bottom:-0.25em;}sup{top:-0.5em;}dialog{padding:0px;}a{color:inherit;-webkit-text-decoration:inherit;text-decoration:inherit;}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted;}b,strong{font-weight:bolder;}code,kbd,samp,pre{font-size:1em;--font-mono-fallback:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,'Liberation Mono','Courier New';font-family:var(--global-font-mono, var(--font-mono-fallback));}input[type="text"],input[type="email"],input[type="search"],input[type="password"]{-webkit-appearance:none;-moz-appearance:none;}input[type='search']{-webkit-appearance:textfield;outline-offset:-2px;}::-webkit-search-decoration,::-webkit-search-cancel-button{-webkit-appearance:none;}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit;}input[type="number"]::-webkit-inner-spin-button,input[type="number"]::-webkit-outer-spin-button{height:auto;}input[type='number']{-moz-appearance:textfield;}:-moz-ui-invalid{box-shadow:none;}:-moz-focusring{outline:auto;}[hidden]:where(:not([hidden='until-found'])){display:none!important;}}@layer base{@-webkit-keyframes spin{0%{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);transform:rotate(360deg);}}@keyframes spin{0%{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);transform:rotate(0deg);}100%{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);transform:rotate(360deg);}}@-webkit-keyframes pulse{50%{opacity:0.5;}}@keyframes pulse{50%{opacity:0.5;}}@-webkit-keyframes ping{75%,100%{-webkit-transform:scale(2);-moz-transform:scale(2);-ms-transform:scale(2);transform:scale(2);opacity:0;}}@keyframes ping{75%,100%{-webkit-transform:scale(2);-moz-transform:scale(2);-ms-transform:scale(2);transform:scale(2);opacity:0;}}@-webkit-keyframes bounce{0%,100%{-webkit-transform:translateY(-25%);-moz-transform:translateY(-25%);-ms-transform:translateY(-25%);transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(0.8,0,1,1);animation-timing-function:cubic-bezier(0.8,0,1,1);}50%{-webkit-transform:none;-moz-transform:none;-ms-transform:none;transform:none;-webkit-animation-timing-function:cubic-bezier(0,0,0.2,1);animation-timing-function:cubic-bezier(0,0,0.2,1);}}@keyframes bounce{0%,100%{-webkit-transform:translateY(-25%);-moz-transform:translateY(-25%);-ms-transform:translateY(-25%);transform:translateY(-25%);-webkit-animation-timing-function:cubic-bezier(0.8,0,1,1);animation-timing-function:cubic-bezier(0.8,0,1,1);}50%{-webkit-transform:none;-moz-transform:none;-ms-transform:none;transform:none;-webkit-animation-timing-function:cubic-bezier(0,0,0.2,1);animation-timing-function:cubic-bezier(0,0,0.2,1);}}@-webkit-keyframes bg-position{from{-webkit-background-position:var(--animate-from, 1rem) 0;background-position:var(--animate-from, 1rem) 0;}to{-webkit-background-position:var(--animate-to, 0) 0;background-position:var(--animate-to, 0) 0;}}@keyframes bg-position{from{-webkit-background-position:var(--animate-from, 1rem) 0;background-position:var(--animate-from, 1rem) 0;}to{-webkit-background-position:var(--animate-to, 0) 0;background-position:var(--animate-to, 0) 0;}}@-webkit-keyframes position{from{inset-inline-start:var(--animate-from-x);inset-block-start:var(--animate-from-y);}to{inset-inline-start:var(--animate-to-x);inset-block-start:var(--animate-to-y);}}@keyframes position{from{inset-inline-start:var(--animate-from-x);inset-block-start:var(--animate-from-y);}to{inset-inline-start:var(--animate-to-x);inset-block-start:var(--animate-to-y);}}@-webkit-keyframes circular-progress{0%{stroke-dasharray:1,400;stroke-dashoffset:0;}50%{stroke-dasharray:400,400;stroke-dashoffset:-100%;}100%{stroke-dasharray:400,400;stroke-dashoffset:-260%;}}@keyframes circular-progress{0%{stroke-dasharray:1,400;stroke-dashoffset:0;}50%{stroke-dasharray:400,400;stroke-dashoffset:-100%;}100%{stroke-dasharray:400,400;stroke-dashoffset:-260%;}}@-webkit-keyframes expand-height{from{height:0;}to{height:var(--height);}}@keyframes expand-height{from{height:0;}to{height:var(--height);}}@-webkit-keyframes collapse-height{from{height:var(--height);}to{height:0;}}@keyframes collapse-height{from{height:var(--height);}to{height:0;}}@-webkit-keyframes expand-width{from{width:0;}to{width:var(--width);}}@keyframes expand-width{from{width:0;}to{width:var(--width);}}@-webkit-keyframes collapse-width{from{height:var(--width);}to{height:0;}}@keyframes collapse-width{from{height:var(--width);}to{height:0;}}@-webkit-keyframes fade-in{from{opacity:0;}to{opacity:1;}}@keyframes fade-in{from{opacity:0;}to{opacity:1;}}@-webkit-keyframes fade-out{from{opacity:1;}to{opacity:0;}}@keyframes fade-out{from{opacity:1;}to{opacity:0;}}@-webkit-keyframes slide-from-left-full{from{-webkit-translate:-100% 0;-moz-translate:-100% 0;-ms-translate:-100% 0;translate:-100% 0;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@keyframes slide-from-left-full{from{-webkit-translate:-100% 0;-moz-translate:-100% 0;-ms-translate:-100% 0;translate:-100% 0;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@-webkit-keyframes slide-from-right-full{from{-webkit-translate:100% 0;-moz-translate:100% 0;-ms-translate:100% 0;translate:100% 0;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@keyframes slide-from-right-full{from{-webkit-translate:100% 0;-moz-translate:100% 0;-ms-translate:100% 0;translate:100% 0;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@-webkit-keyframes slide-from-top-full{from{-webkit-translate:0 -100%;-moz-translate:0 -100%;-ms-translate:0 -100%;translate:0 -100%;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@keyframes slide-from-top-full{from{-webkit-translate:0 -100%;-moz-translate:0 -100%;-ms-translate:0 -100%;translate:0 -100%;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@-webkit-keyframes slide-from-bottom-full{from{-webkit-translate:0 100%;-moz-translate:0 100%;-ms-translate:0 100%;translate:0 100%;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@keyframes slide-from-bottom-full{from{-webkit-translate:0 100%;-moz-translate:0 100%;-ms-translate:0 100%;translate:0 100%;}to{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}}@-webkit-keyframes slide-to-left-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:-100% 0;-moz-translate:-100% 0;-ms-translate:-100% 0;translate:-100% 0;}}@keyframes slide-to-left-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:-100% 0;-moz-translate:-100% 0;-ms-translate:-100% 0;translate:-100% 0;}}@-webkit-keyframes slide-to-right-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:100% 0;-moz-translate:100% 0;-ms-translate:100% 0;translate:100% 0;}}@keyframes slide-to-right-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:100% 0;-moz-translate:100% 0;-ms-translate:100% 0;translate:100% 0;}}@-webkit-keyframes slide-to-top-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:0 -100%;-moz-translate:0 -100%;-ms-translate:0 -100%;translate:0 -100%;}}@keyframes slide-to-top-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:0 -100%;-moz-translate:0 -100%;-ms-translate:0 -100%;translate:0 -100%;}}@-webkit-keyframes slide-to-bottom-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:0 100%;-moz-translate:0 100%;-ms-translate:0 100%;translate:0 100%;}}@keyframes slide-to-bottom-full{from{-webkit-translate:0 0;-moz-translate:0 0;-ms-translate:0 0;translate:0 0;}to{-webkit-translate:0 100%;-moz-translate:0 100%;-ms-translate:0 100%;translate:0 100%;}}@-webkit-keyframes slide-from-top{0%{-webkit-translate:0 -0.5rem;-moz-translate:0 -0.5rem;-ms-translate:0 -0.5rem;translate:0 -0.5rem;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@keyframes slide-from-top{0%{-webkit-translate:0 -0.5rem;-moz-translate:0 -0.5rem;-ms-translate:0 -0.5rem;translate:0 -0.5rem;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@-webkit-keyframes slide-from-bottom{0%{-webkit-translate:0 0.5rem;-moz-translate:0 0.5rem;-ms-translate:0 0.5rem;translate:0 0.5rem;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@keyframes slide-from-bottom{0%{-webkit-translate:0 0.5rem;-moz-translate:0 0.5rem;-ms-translate:0 0.5rem;translate:0 0.5rem;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@-webkit-keyframes slide-from-left{0%{-webkit-translate:-0.5rem 0;-moz-translate:-0.5rem 0;-ms-translate:-0.5rem 0;translate:-0.5rem 0;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@keyframes slide-from-left{0%{-webkit-translate:-0.5rem 0;-moz-translate:-0.5rem 0;-ms-translate:-0.5rem 0;translate:-0.5rem 0;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@-webkit-keyframes slide-from-right{0%{-webkit-translate:0.5rem 0;-moz-translate:0.5rem 0;-ms-translate:0.5rem 0;translate:0.5rem 0;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@keyframes slide-from-right{0%{-webkit-translate:0.5rem 0;-moz-translate:0.5rem 0;-ms-translate:0.5rem 0;translate:0.5rem 0;}to{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}}@-webkit-keyframes slide-to-top{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0 -0.5rem;-moz-translate:0 -0.5rem;-ms-translate:0 -0.5rem;translate:0 -0.5rem;}}@keyframes slide-to-top{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0 -0.5rem;-moz-translate:0 -0.5rem;-ms-translate:0 -0.5rem;translate:0 -0.5rem;}}@-webkit-keyframes slide-to-bottom{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0 0.5rem;-moz-translate:0 0.5rem;-ms-translate:0 0.5rem;translate:0 0.5rem;}}@keyframes slide-to-bottom{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0 0.5rem;-moz-translate:0 0.5rem;-ms-translate:0 0.5rem;translate:0 0.5rem;}}@-webkit-keyframes slide-to-left{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:-0.5rem 0;-moz-translate:-0.5rem 0;-ms-translate:-0.5rem 0;translate:-0.5rem 0;}}@keyframes slide-to-left{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:-0.5rem 0;-moz-translate:-0.5rem 0;-ms-translate:-0.5rem 0;translate:-0.5rem 0;}}@-webkit-keyframes slide-to-right{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0.5rem 0;-moz-translate:0.5rem 0;-ms-translate:0.5rem 0;translate:0.5rem 0;}}@keyframes slide-to-right{0%{-webkit-translate:0;-moz-translate:0;-ms-translate:0;translate:0;}to{-webkit-translate:0.5rem 0;-moz-translate:0.5rem 0;-ms-translate:0.5rem 0;translate:0.5rem 0;}}@-webkit-keyframes scale-in{from{scale:0.95;}to{scale:1;}}@keyframes scale-in{from{scale:0.95;}to{scale:1;}}@-webkit-keyframes scale-out{from{scale:1;}to{scale:0.95;}}@keyframes scale-out{from{scale:1;}to{scale:0.95;}}*{font-feature-settings:"cv11";--ring-inset:var(--chakra-empty,/**/ /*!*/)!important;--ring-offset-width:0px;--ring-offset-color:#fff;--ring-color:rgba(66, 153, 225, 0.6);--ring-offset-shadow:0 0 #0000;--ring-shadow:0 0 #0000;--brightness:var(--chakra-empty,/**/ /*!*/)!important;--contrast:var(--chakra-empty,/**/ /*!*/)!important;--grayscale:var(--chakra-empty,/**/ /*!*/)!important;--hue-rotate:var(--chakra-empty,/**/ /*!*/)!important;--invert:var(--chakra-empty,/**/ /*!*/)!important;--saturate:var(--chakra-empty,/**/ /*!*/)!important;--sepia:var(--chakra-empty,/**/ /*!*/)!important;--drop-shadow:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-blur:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-brightness:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-contrast:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-grayscale:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-hue-rotate:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-invert:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-opacity:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-saturate:var(--chakra-empty,/**/ /*!*/)!important;--backdrop-sepia:var(--chakra-empty,/**/ /*!*/)!important;--global-font-mono:var(--chakra-fonts-mono);--global-font-body:var(--chakra-fonts-body);--global-color-border:var(--chakra-colors-border);}html{color:var(--chakra-colors-fg);background:var(--chakra-colors-bg);--bg-currentcolor:var(--chakra-colors-bg);line-height:1.5;--chakra-colors-color-palette-50:var(--chakra-colors-gray-50);--chakra-colors-color-palette-100:var(--chakra-colors-gray-100);--chakra-colors-color-palette-200:var(--chakra-colors-gray-200);--chakra-colors-color-palette-300:var(--chakra-colors-gray-300);--chakra-colors-color-palette-400:var(--chakra-colors-gray-400);--chakra-colors-color-palette-500:var(--chakra-colors-gray-500);--chakra-colors-color-palette-600:var(--chakra-colors-gray-600);--chakra-colors-color-palette-700:var(--chakra-colors-gray-700);--chakra-colors-color-palette-800:var(--chakra-colors-gray-800);--chakra-colors-color-palette-900:var(--chakra-colors-gray-900);--chakra-colors-color-palette-950:var(--chakra-colors-gray-950);--chakra-colors-color-palette-contrast:var(--chakra-colors-gray-contrast);--chakra-colors-color-palette-fg:var(--chakra-colors-gray-fg);--chakra-colors-color-palette-subtle:var(--chakra-colors-gray-subtle);--chakra-colors-color-palette-muted:var(--chakra-colors-gray-muted);--chakra-colors-color-palette-emphasized:var(--chakra-colors-gray-emphasized);--chakra-colors-color-palette-solid:var(--chakra-colors-gray-solid);--chakra-colors-color-palette-focus-ring:var(--chakra-colors-gray-focus-ring);}*::-webkit-input-placeholder{--mix-color:color-mix(in srgb, var(--chakra-colors-fg-muted) 80%, transparent);color:var(--mix-color, var(--chakra-colors-fg-muted));}*::-moz-placeholder{--mix-color:color-mix(in srgb, var(--chakra-colors-fg-muted) 80%, transparent);color:var(--mix-color, var(--chakra-colors-fg-muted));}*:-ms-input-placeholder{--mix-color:color-mix(in srgb, var(--chakra-colors-fg-muted) 80%, transparent);color:var(--mix-color, var(--chakra-colors-fg-muted));}*::placeholder,*[data-placeholder]{--mix-color:color-mix(in srgb, var(--chakra-colors-fg-muted) 80%, transparent);color:var(--mix-color, var(--chakra-colors-fg-muted));}*::selection{--mix-background:color-mix(in srgb, var(--chakra-colors-color-palette-emphasized) 80%, transparent);background:var(--mix-background, var(--chakra-colors-color-palette-emphasized));--bg-currentcolor:var(--mix-background, var(--chakra-colors-color-palette-emphasized));}}@layer tokens{:where(html, .chakra-theme){--chakra-aspect-ratios-square:1/1;--chakra-aspect-ratios-landscape:4/3;--chakra-aspect-ratios-portrait:3/4;--chakra-aspect-ratios-wide:16/9;--chakra-aspect-ratios-ultrawide:18/5;--chakra-aspect-ratios-golden:1.618/1;--chakra-animations-spin:spin 1s linear infinite;--chakra-animations-ping:ping 1s cubic-bezier(0, 0, 0.2, 1) infinite;--chakra-animations-pulse:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;--chakra-animations-bounce:bounce 1s infinite;--chakra-blurs-sm:4px;--chakra-blurs-md:8px;--chakra-blurs-lg:12px;--chakra-blurs-xl:16px;--chakra-blurs-2xl:24px;--chakra-blurs-3xl:40px;--chakra-blurs-4xl:64px;--chakra-borders-xs:0.5px solid;--chakra-borders-sm:1px solid;--chakra-borders-md:2px solid;--chakra-borders-lg:4px solid;--chakra-borders-xl:8px solid;--chakra-colors-transparent:transparent;--chakra-colors-current:currentColor;--chakra-colors-black:#09090B;--chakra-colors-white:#FFFFFF;--chakra-colors-white-alpha-50:rgba(255, 255, 255, 0.04);--chakra-colors-white-alpha-100:rgba(255, 255, 255, 0.06);--chakra-colors-white-alpha-200:rgba(255, 255, 255, 0.08);--chakra-colors-white-alpha-300:rgba(255, 255, 255, 0.16);--chakra-colors-white-alpha-400:rgba(255, 255, 255, 0.24);--chakra-colors-white-alpha-500:rgba(255, 255, 255, 0.36);--chakra-colors-white-alpha-600:rgba(255, 255, 255, 0.48);--chakra-colors-white-alpha-700:rgba(255, 255, 255, 0.64);--chakra-colors-white-alpha-800:rgba(255, 255, 255, 0.80);--chakra-colors-white-alpha-900:rgba(255, 255, 255, 0.92);--chakra-colors-white-alpha-950:rgba(255, 255, 255, 0.95);--chakra-colors-black-alpha-50:rgba(0, 0, 0, 0.04);--chakra-colors-black-alpha-100:rgba(0, 0, 0, 0.06);--chakra-colors-black-alpha-200:rgba(0, 0, 0, 0.08);--chakra-colors-black-alpha-300:rgba(0, 0, 0, 0.16);--chakra-colors-black-alpha-400:rgba(0, 0, 0, 0.24);--chakra-colors-black-alpha-500:rgba(0, 0, 0, 0.36);--chakra-colors-black-alpha-600:rgba(0, 0, 0, 0.48);--chakra-colors-black-alpha-700:rgba(0, 0, 0, 0.64);--chakra-colors-black-alpha-800:rgba(0, 0, 0, 0.80);--chakra-colors-black-alpha-900:rgba(0, 0, 0, 0.92);--chakra-colors-black-alpha-950:rgba(0, 0, 0, 0.95);--chakra-colors-gray-50:#fafafa;--chakra-colors-gray-100:#f4f4f5;--chakra-colors-gray-200:#e4e4e7;--chakra-colors-gray-300:#d4d4d8;--chakra-colors-gray-400:#a1a1aa;--chakra-colors-gray-500:#71717a;--chakra-colors-gray-600:#52525b;--chakra-colors-gray-700:#3f3f46;--chakra-colors-gray-800:#27272a;--chakra-colors-gray-900:#18181b;--chakra-colors-gray-950:#111111;--chakra-colors-red-50:#fef2f2;--chakra-colors-red-100:#fee2e2;--chakra-colors-red-200:#fecaca;--chakra-colors-red-300:#fca5a5;--chakra-colors-red-400:#f87171;--chakra-colors-red-500:#ef4444;--chakra-colors-red-600:#dc2626;--chakra-colors-red-700:#991919;--chakra-colors-red-800:#511111;--chakra-colors-red-900:#300c0c;--chakra-colors-red-950:#1f0808;--chakra-colors-orange-50:#fff7ed;--chakra-colors-orange-100:#ffedd5;--chakra-colors-orange-200:#fed7aa;--chakra-colors-orange-300:#fdba74;--chakra-colors-orange-400:#fb923c;--chakra-colors-orange-500:#f97316;--chakra-colors-orange-600:#ea580c;--chakra-colors-orange-700:#92310a;--chakra-colors-orange-800:#6c2710;--chakra-colors-orange-900:#3b1106;--chakra-colors-orange-950:#220a04;--chakra-colors-yellow-50:#fefce8;--chakra-colors-yellow-100:#fef9c3;--chakra-colors-yellow-200:#fef08a;--chakra-colors-yellow-300:#fde047;--chakra-colors-yellow-400:#facc15;--chakra-colors-yellow-500:#eab308;--chakra-colors-yellow-600:#ca8a04;--chakra-colors-yellow-700:#845209;--chakra-colors-yellow-800:#713f12;--chakra-colors-yellow-900:#422006;--chakra-colors-yellow-950:#281304;--chakra-colors-green-50:#f0fdf4;--chakra-colors-green-100:#dcfce7;--chakra-colors-green-200:#bbf7d0;--chakra-colors-green-300:#86efac;--chakra-colors-green-400:#4ade80;--chakra-colors-green-500:#22c55e;--chakra-colors-green-600:#16a34a;--chakra-colors-green-700:#116932;--chakra-colors-green-800:#124a28;--chakra-colors-green-900:#042713;--chakra-colors-green-950:#03190c;--chakra-colors-teal-50:#f0fdfa;--chakra-colors-teal-100:#ccfbf1;--chakra-colors-teal-200:#99f6e4;--chakra-colors-teal-300:#5eead4;--chakra-colors-teal-400:#2dd4bf;--chakra-colors-teal-500:#14b8a6;--chakra-colors-teal-600:#0d9488;--chakra-colors-teal-700:#0c5d56;--chakra-colors-teal-800:#114240;--chakra-colors-teal-900:#032726;--chakra-colors-teal-950:#021716;--chakra-colors-blue-50:#eff6ff;--chakra-colors-blue-100:#dbeafe;--chakra-colors-blue-200:#bfdbfe;--chakra-colors-blue-300:#a3cfff;--chakra-colors-blue-400:#60a5fa;--chakra-colors-blue-500:#3b82f6;--chakra-colors-blue-600:#2563eb;--chakra-colors-blue-700:#173da6;--chakra-colors-blue-800:#1a3478;--chakra-colors-blue-900:#14204a;--chakra-colors-blue-950:#0c142e;--chakra-colors-cyan-50:#ecfeff;--chakra-colors-cyan-100:#cffafe;--chakra-colors-cyan-200:#a5f3fc;--chakra-colors-cyan-300:#67e8f9;--chakra-colors-cyan-400:#22d3ee;--chakra-colors-cyan-500:#06b6d4;--chakra-colors-cyan-600:#0891b2;--chakra-colors-cyan-700:#0c5c72;--chakra-colors-cyan-800:#134152;--chakra-colors-cyan-900:#072a38;--chakra-colors-cyan-950:#051b24;--chakra-colors-purple-50:#faf5ff;--chakra-colors-purple-100:#f3e8ff;--chakra-colors-purple-200:#e9d5ff;--chakra-colors-purple-300:#d8b4fe;--chakra-colors-purple-400:#c084fc;--chakra-colors-purple-500:#a855f7;--chakra-colors-purple-600:#9333ea;--chakra-colors-purple-700:#641ba3;--chakra-colors-purple-800:#4a1772;--chakra-colors-purple-900:#2f0553;--chakra-colors-purple-950:#1a032e;--chakra-colors-pink-50:#fdf2f8;--chakra-colors-pink-100:#fce7f3;--chakra-colors-pink-200:#fbcfe8;--chakra-colors-pink-300:#f9a8d4;--chakra-colors-pink-400:#f472b6;--chakra-colors-pink-500:#ec4899;--chakra-colors-pink-600:#db2777;--chakra-colors-pink-700:#a41752;--chakra-colors-pink-800:#6d0e34;--chakra-colors-pink-900:#45061f;--chakra-colors-pink-950:#2c0514;--chakra-durations-fastest:50ms;--chakra-durations-faster:100ms;--chakra-durations-fast:150ms;--chakra-durations-moderate:200ms;--chakra-durations-slow:300ms;--chakra-durations-slower:400ms;--chakra-durations-slowest:500ms;--chakra-easings-ease-in:cubic-bezier(0.42, 0, 1, 1);--chakra-easings-ease-out:cubic-bezier(0, 0, 0.58, 1);--chakra-easings-ease-in-out:cubic-bezier(0.42, 0, 0.58, 1);--chakra-easings-ease-in-smooth:cubic-bezier(0.32, 0.72, 0, 1);--chakra-fonts-heading:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";--chakra-fonts-body:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";--chakra-fonts-mono:SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;--chakra-font-sizes-2xs:0.625rem;--chakra-font-sizes-xs:0.75rem;--chakra-font-sizes-sm:0.875rem;--chakra-font-sizes-md:1rem;--chakra-font-sizes-lg:1.125rem;--chakra-font-sizes-xl:1.25rem;--chakra-font-sizes-2xl:1.5rem;--chakra-font-sizes-3xl:1.875rem;--chakra-font-sizes-4xl:2.25rem;--chakra-font-sizes-5xl:3rem;--chakra-font-sizes-6xl:3.75rem;--chakra-font-sizes-7xl:4.5rem;--chakra-font-sizes-8xl:6rem;--chakra-font-sizes-9xl:8rem;--chakra-font-weights-thin:100;--chakra-font-weights-extralight:200;--chakra-font-weights-light:300;--chakra-font-weights-normal:400;--chakra-font-weights-medium:500;--chakra-font-weights-semibold:600;--chakra-font-weights-bold:700;--chakra-font-weights-extrabold:800;--chakra-font-weights-black:900;--chakra-letter-spacings-tighter:-0.05em;--chakra-letter-spacings-tight:-0.025em;--chakra-letter-spacings-wide:0.025em;--chakra-letter-spacings-wider:0.05em;--chakra-letter-spacings-widest:0.1em;--chakra-line-heights-shorter:1.25;--chakra-line-heights-short:1.375;--chakra-line-heights-moderate:1.5;--chakra-line-heights-tall:1.625;--chakra-line-heights-taller:2;--chakra-radii-none:0;--chakra-radii-2xs:0.0625rem;--chakra-radii-xs:0.125rem;--chakra-radii-sm:0.25rem;--chakra-radii-md:0.375rem;--chakra-radii-lg:0.5rem;--chakra-radii-xl:0.75rem;--chakra-radii-2xl:1rem;--chakra-radii-3xl:1.5rem;--chakra-radii-4xl:2rem;--chakra-radii-full:9999px;--chakra-spacing-1:0.25rem;--chakra-spacing-2:0.5rem;--chakra-spacing-3:0.75rem;--chakra-spacing-4:1rem;--chakra-spacing-5:1.25rem;--chakra-spacing-6:1.5rem;--chakra-spacing-7:1.75rem;--chakra-spacing-8:2rem;--chakra-spacing-9:2.25rem;--chakra-spacing-10:2.5rem;--chakra-spacing-11:2.75rem;--chakra-spacing-12:3rem;--chakra-spacing-14:3.5rem;--chakra-spacing-16:4rem;--chakra-spacing-20:5rem;--chakra-spacing-24:6rem;--chakra-spacing-28:7rem;--chakra-spacing-32:8rem;--chakra-spacing-36:9rem;--chakra-spacing-40:10rem;--chakra-spacing-44:11rem;--chakra-spacing-48:12rem;--chakra-spacing-52:13rem;--chakra-spacing-56:14rem;--chakra-spacing-60:15rem;--chakra-spacing-64:16rem;--chakra-spacing-72:18rem;--chakra-spacing-80:20rem;--chakra-spacing-96:24rem;--chakra-spacing-0\.5:0.125rem;--chakra-spacing-1\.5:0.375rem;--chakra-spacing-2\.5:0.625rem;--chakra-spacing-3\.5:0.875rem;--chakra-spacing-4\.5:1.125rem;--chakra-sizes-1:0.25rem;--chakra-sizes-2:0.5rem;--chakra-sizes-3:0.75rem;--chakra-sizes-4:1rem;--chakra-sizes-5:1.25rem;--chakra-sizes-6:1.5rem;--chakra-sizes-7:1.75rem;--chakra-sizes-8:2rem;--chakra-sizes-9:2.25rem;--chakra-sizes-10:2.5rem;--chakra-sizes-11:2.75rem;--chakra-sizes-12:3rem;--chakra-sizes-14:3.5rem;--chakra-sizes-16:4rem;--chakra-sizes-20:5rem;--chakra-sizes-24:6rem;--chakra-sizes-28:7rem;--chakra-sizes-32:8rem;--chakra-sizes-36:9rem;--chakra-sizes-40:10rem;--chakra-sizes-44:11rem;--chakra-sizes-48:12rem;--chakra-sizes-52:13rem;--chakra-sizes-56:14rem;--chakra-sizes-60:15rem;--chakra-sizes-64:16rem;--chakra-sizes-72:18rem;--chakra-sizes-80:20rem;--chakra-sizes-96:24rem;--chakra-sizes-3xs:14rem;--chakra-sizes-2xs:16rem;--chakra-sizes-xs:20rem;--chakra-sizes-sm:24rem;--chakra-sizes-md:28rem;--chakra-sizes-lg:32rem;--chakra-sizes-xl:36rem;--chakra-sizes-2xl:42rem;--chakra-sizes-3xl:48rem;--chakra-sizes-4xl:56rem;--chakra-sizes-5xl:64rem;--chakra-sizes-6xl:72rem;--chakra-sizes-7xl:80rem;--chakra-sizes-8xl:90rem;--chakra-sizes-0\.5:0.125rem;--chakra-sizes-1\.5:0.375rem;--chakra-sizes-2\.5:0.625rem;--chakra-sizes-3\.5:0.875rem;--chakra-sizes-4\.5:1.125rem;--chakra-sizes-1\/2:50%;--chakra-sizes-1\/3:33.333333%;--chakra-sizes-2\/3:66.666667%;--chakra-sizes-1\/4:25%;--chakra-sizes-3\/4:75%;--chakra-sizes-1\/5:20%;--chakra-sizes-2\/5:40%;--chakra-sizes-3\/5:60%;--chakra-sizes-4\/5:80%;--chakra-sizes-1\/6:16.666667%;--chakra-sizes-2\/6:33.333333%;--chakra-sizes-3\/6:50%;--chakra-sizes-4\/6:66.666667%;--chakra-sizes-5\/6:83.333333%;--chakra-sizes-1\/12:8.333333%;--chakra-sizes-2\/12:16.666667%;--chakra-sizes-3\/12:25%;--chakra-sizes-4\/12:33.333333%;--chakra-sizes-5\/12:41.666667%;--chakra-sizes-6\/12:50%;--chakra-sizes-7\/12:58.333333%;--chakra-sizes-8\/12:66.666667%;--chakra-sizes-9\/12:75%;--chakra-sizes-10\/12:83.333333%;--chakra-sizes-11\/12:91.666667%;--chakra-sizes-max:max-content;--chakra-sizes-min:min-content;--chakra-sizes-fit:fit-content;--chakra-sizes-prose:60ch;--chakra-sizes-full:100%;--chakra-sizes-dvh:100dvh;--chakra-sizes-svh:100svh;--chakra-sizes-lvh:100lvh;--chakra-sizes-dvw:100dvw;--chakra-sizes-svw:100svw;--chakra-sizes-lvw:100lvw;--chakra-sizes-vw:100vw;--chakra-sizes-vh:100vh;--chakra-sizes-breakpoint-sm:480px;--chakra-sizes-breakpoint-md:768px;--chakra-sizes-breakpoint-lg:1024px;--chakra-sizes-breakpoint-xl:1280px;--chakra-sizes-breakpoint-2xl:1536px;--chakra-z-index-hide:-1;--chakra-z-index-base:0;--chakra-z-index-docked:10;--chakra-z-index-dropdown:1000;--chakra-z-index-sticky:1100;--chakra-z-index-banner:1200;--chakra-z-index-overlay:1300;--chakra-z-index-modal:1400;--chakra-z-index-popover:1500;--chakra-z-index-skip-nav:1600;--chakra-z-index-toast:1700;--chakra-z-index-tooltip:1800;--chakra-z-index-max:2147483647;--chakra-cursor-button:pointer;--chakra-cursor-checkbox:default;--chakra-cursor-disabled:not-allowed;--chakra-cursor-menuitem:default;--chakra-cursor-option:default;--chakra-cursor-radio:default;--chakra-cursor-slider:default;--chakra-cursor-switch:pointer;--chakra-breakpoints-sm:480px;--chakra-breakpoints-md:768px;--chakra-breakpoints-lg:1024px;--chakra-breakpoints-xl:1280px;--chakra-breakpoints-2xl:1536px;--chakra-radii-l1:var(--chakra-radii-xs);--chakra-radii-l2:var(--chakra-radii-sm);--chakra-radii-l3:var(--chakra-radii-md);}:root,.light{--chakra-colors-bg:var(--chakra-colors-white);--chakra-colors-bg-subtle:var(--chakra-colors-gray-50);--chakra-colors-bg-muted:var(--chakra-colors-gray-100);--chakra-colors-bg-emphasized:var(--chakra-colors-gray-200);--chakra-colors-bg-inverted:var(--chakra-colors-black);--chakra-colors-bg-panel:var(--chakra-colors-white);--chakra-colors-bg-error:var(--chakra-colors-red-50);--chakra-colors-bg-warning:var(--chakra-colors-orange-50);--chakra-colors-bg-success:var(--chakra-colors-green-50);--chakra-colors-bg-info:var(--chakra-colors-blue-50);--chakra-colors-fg:var(--chakra-colors-black);--chakra-colors-fg-muted:var(--chakra-colors-gray-600);--chakra-colors-fg-subtle:var(--chakra-colors-gray-400);--chakra-colors-fg-inverted:var(--chakra-colors-gray-50);--chakra-colors-fg-error:var(--chakra-colors-red-500);--chakra-colors-fg-warning:var(--chakra-colors-orange-600);--chakra-colors-fg-success:var(--chakra-colors-green-600);--chakra-colors-fg-info:var(--chakra-colors-blue-600);--chakra-colors-border:var(--chakra-colors-gray-200);--chakra-colors-border-muted:var(--chakra-colors-gray-100);--chakra-colors-border-subtle:var(--chakra-colors-gray-50);--chakra-colors-border-emphasized:var(--chakra-colors-gray-300);--chakra-colors-border-inverted:var(--chakra-colors-gray-800);--chakra-colors-border-error:var(--chakra-colors-red-500);--chakra-colors-border-warning:var(--chakra-colors-orange-500);--chakra-colors-border-success:var(--chakra-colors-green-500);--chakra-colors-border-info:var(--chakra-colors-blue-500);--chakra-colors-gray-contrast:var(--chakra-colors-white);--chakra-colors-gray-fg:var(--chakra-colors-gray-800);--chakra-colors-gray-subtle:var(--chakra-colors-gray-100);--chakra-colors-gray-muted:var(--chakra-colors-gray-200);--chakra-colors-gray-emphasized:var(--chakra-colors-gray-300);--chakra-colors-gray-solid:var(--chakra-colors-gray-900);--chakra-colors-gray-focus-ring:var(--chakra-colors-gray-400);--chakra-colors-red-contrast:white;--chakra-colors-red-fg:var(--chakra-colors-red-700);--chakra-colors-red-subtle:var(--chakra-colors-red-100);--chakra-colors-red-muted:var(--chakra-colors-red-200);--chakra-colors-red-emphasized:var(--chakra-colors-red-300);--chakra-colors-red-solid:var(--chakra-colors-red-600);--chakra-colors-red-focus-ring:var(--chakra-colors-red-500);--chakra-colors-orange-contrast:white;--chakra-colors-orange-fg:var(--chakra-colors-orange-700);--chakra-colors-orange-subtle:var(--chakra-colors-orange-100);--chakra-colors-orange-muted:var(--chakra-colors-orange-200);--chakra-colors-orange-emphasized:var(--chakra-colors-orange-300);--chakra-colors-orange-solid:var(--chakra-colors-orange-600);--chakra-colors-orange-focus-ring:var(--chakra-colors-orange-500);--chakra-colors-green-contrast:white;--chakra-colors-green-fg:var(--chakra-colors-green-700);--chakra-colors-green-subtle:var(--chakra-colors-green-100);--chakra-colors-green-muted:var(--chakra-colors-green-200);--chakra-colors-green-emphasized:var(--chakra-colors-green-300);--chakra-colors-green-solid:var(--chakra-colors-green-600);--chakra-colors-green-focus-ring:var(--chakra-colors-green-500);--chakra-colors-blue-contrast:white;--chakra-colors-blue-fg:var(--chakra-colors-blue-700);--chakra-colors-blue-subtle:var(--chakra-colors-blue-100);--chakra-colors-blue-muted:var(--chakra-colors-blue-200);--chakra-colors-blue-emphasized:var(--chakra-colors-blue-300);--chakra-colors-blue-solid:var(--chakra-colors-blue-600);--chakra-colors-blue-focus-ring:var(--chakra-colors-blue-500);--chakra-colors-yellow-contrast:black;--chakra-colors-yellow-fg:var(--chakra-colors-yellow-800);--chakra-colors-yellow-subtle:var(--chakra-colors-yellow-100);--chakra-colors-yellow-muted:var(--chakra-colors-yellow-200);--chakra-colors-yellow-emphasized:var(--chakra-colors-yellow-300);--chakra-colors-yellow-solid:var(--chakra-colors-yellow-300);--chakra-colors-yellow-focus-ring:var(--chakra-colors-yellow-500);--chakra-colors-teal-contrast:white;--chakra-colors-teal-fg:var(--chakra-colors-teal-700);--chakra-colors-teal-subtle:var(--chakra-colors-teal-100);--chakra-colors-teal-muted:var(--chakra-colors-teal-200);--chakra-colors-teal-emphasized:var(--chakra-colors-teal-300);--chakra-colors-teal-solid:var(--chakra-colors-teal-600);--chakra-colors-teal-focus-ring:var(--chakra-colors-teal-500);--chakra-colors-purple-contrast:white;--chakra-colors-purple-fg:var(--chakra-colors-purple-700);--chakra-colors-purple-subtle:var(--chakra-colors-purple-100);--chakra-colors-purple-muted:var(--chakra-colors-purple-200);--chakra-colors-purple-emphasized:var(--chakra-colors-purple-300);--chakra-colors-purple-solid:var(--chakra-colors-purple-600);--chakra-colors-purple-focus-ring:var(--chakra-colors-purple-500);--chakra-colors-pink-contrast:white;--chakra-colors-pink-fg:var(--chakra-colors-pink-700);--chakra-colors-pink-subtle:var(--chakra-colors-pink-100);--chakra-colors-pink-muted:var(--chakra-colors-pink-200);--chakra-colors-pink-emphasized:var(--chakra-colors-pink-300);--chakra-colors-pink-solid:var(--chakra-colors-pink-600);--chakra-colors-pink-focus-ring:var(--chakra-colors-pink-500);--chakra-colors-cyan-contrast:white;--chakra-colors-cyan-fg:var(--chakra-colors-cyan-700);--chakra-colors-cyan-subtle:var(--chakra-colors-cyan-100);--chakra-colors-cyan-muted:var(--chakra-colors-cyan-200);--chakra-colors-cyan-emphasized:var(--chakra-colors-cyan-300);--chakra-colors-cyan-solid:var(--chakra-colors-cyan-600);--chakra-colors-cyan-focus-ring:var(--chakra-colors-cyan-500);--chakra-shadows-xs:0px 1px 2px color-mix(in srgb, var(--chakra-colors-gray-900) 10%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 20%, transparent);--chakra-shadows-sm:0px 2px 4px color-mix(in srgb, var(--chakra-colors-gray-900) 10%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 30%, transparent);--chakra-shadows-md:0px 4px 8px color-mix(in srgb, var(--chakra-colors-gray-900) 10%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 30%, transparent);--chakra-shadows-lg:0px 8px 16px color-mix(in srgb, var(--chakra-colors-gray-900) 10%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 30%, transparent);--chakra-shadows-xl:0px 16px 24px color-mix(in srgb, var(--chakra-colors-gray-900) 10%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 30%, transparent);--chakra-shadows-2xl:0px 24px 40px color-mix(in srgb, var(--chakra-colors-gray-900) 16%, transparent),0px 0px 1px color-mix(in srgb, var(--chakra-colors-gray-900) 30%, transparent);--chakra-shadows-inner:inset 0 2px 4px 0 color-mix(in srgb, black 5%, transparent);--chakra-shadows-inset:inset 0 0 0 1px color-mix(in srgb, black 5%, transparent);}.dark,.dark .chakra-theme:not(.light){--chakra-colors-bg:var(--chakra-colors-black);--chakra-colors-bg-subtle:var(--chakra-colors-gray-950);--chakra-colors-bg-muted:var(--chakra-colors-gray-900);--chakra-colors-bg-emphasized:var(--chakra-colors-gray-800);--chakra-colors-bg-inverted:var(--chakra-colors-white);--chakra-colors-bg-panel:var(--chakra-colors-gray-950);--chakra-colors-bg-error:var(--chakra-colors-red-950);--chakra-colors-bg-warning:var(--chakra-colors-orange-950);--chakra-colors-bg-success:var(--chakra-colors-green-950);--chakra-colors-bg-info:var(--chakra-colors-blue-950);--chakra-colors-fg:var(--chakra-colors-gray-50);--chakra-colors-fg-muted:var(--chakra-colors-gray-400);--chakra-colors-fg-subtle:var(--chakra-colors-gray-500);--chakra-colors-fg-inverted:var(--chakra-colors-black);--chakra-colors-fg-error:var(--chakra-colors-red-400);--chakra-colors-fg-warning:var(--chakra-colors-orange-300);--chakra-colors-fg-success:var(--chakra-colors-green-300);--chakra-colors-fg-info:var(--chakra-colors-blue-300);--chakra-colors-border:var(--chakra-colors-gray-800);--chakra-colors-border-muted:var(--chakra-colors-gray-900);--chakra-colors-border-subtle:var(--chakra-colors-gray-950);--chakra-colors-border-emphasized:var(--chakra-colors-gray-700);--chakra-colors-border-inverted:var(--chakra-colors-gray-200);--chakra-colors-border-error:var(--chakra-colors-red-400);--chakra-colors-border-warning:var(--chakra-colors-orange-400);--chakra-colors-border-success:var(--chakra-colors-green-400);--chakra-colors-border-info:var(--chakra-colors-blue-400);--chakra-colors-gray-contrast:var(--chakra-colors-black);--chakra-colors-gray-fg:var(--chakra-colors-gray-200);--chakra-colors-gray-subtle:var(--chakra-colors-gray-900);--chakra-colors-gray-muted:var(--chakra-colors-gray-800);--chakra-colors-gray-emphasized:var(--chakra-colors-gray-700);--chakra-colors-gray-solid:var(--chakra-colors-white);--chakra-colors-gray-focus-ring:var(--chakra-colors-gray-400);--chakra-colors-red-contrast:white;--chakra-colors-red-fg:var(--chakra-colors-red-300);--chakra-colors-red-subtle:var(--chakra-colors-red-900);--chakra-colors-red-muted:var(--chakra-colors-red-800);--chakra-colors-red-emphasized:var(--chakra-colors-red-700);--chakra-colors-red-solid:var(--chakra-colors-red-600);--chakra-colors-red-focus-ring:var(--chakra-colors-red-500);--chakra-colors-orange-contrast:black;--chakra-colors-orange-fg:var(--chakra-colors-orange-300);--chakra-colors-orange-subtle:var(--chakra-colors-orange-900);--chakra-colors-orange-muted:var(--chakra-colors-orange-800);--chakra-colors-orange-emphasized:var(--chakra-colors-orange-700);--chakra-colors-orange-solid:var(--chakra-colors-orange-500);--chakra-colors-orange-focus-ring:var(--chakra-colors-orange-500);--chakra-colors-green-contrast:white;--chakra-colors-green-fg:var(--chakra-colors-green-300);--chakra-colors-green-subtle:var(--chakra-colors-green-900);--chakra-colors-green-muted:var(--chakra-colors-green-800);--chakra-colors-green-emphasized:var(--chakra-colors-green-700);--chakra-colors-green-solid:var(--chakra-colors-green-600);--chakra-colors-green-focus-ring:var(--chakra-colors-green-500);--chakra-colors-blue-contrast:white;--chakra-colors-blue-fg:var(--chakra-colors-blue-300);--chakra-colors-blue-subtle:var(--chakra-colors-blue-900);--chakra-colors-blue-muted:var(--chakra-colors-blue-800);--chakra-colors-blue-emphasized:var(--chakra-colors-blue-700);--chakra-colors-blue-solid:var(--chakra-colors-blue-600);--chakra-colors-blue-focus-ring:var(--chakra-colors-blue-500);--chakra-colors-yellow-contrast:black;--chakra-colors-yellow-fg:var(--chakra-colors-yellow-300);--chakra-colors-yellow-subtle:var(--chakra-colors-yellow-900);--chakra-colors-yellow-muted:var(--chakra-colors-yellow-800);--chakra-colors-yellow-emphasized:var(--chakra-colors-yellow-700);--chakra-colors-yellow-solid:var(--chakra-colors-yellow-300);--chakra-colors-yellow-focus-ring:var(--chakra-colors-yellow-500);--chakra-colors-teal-contrast:white;--chakra-colors-teal-fg:var(--chakra-colors-teal-300);--chakra-colors-teal-subtle:var(--chakra-colors-teal-900);--chakra-colors-teal-muted:var(--chakra-colors-teal-800);--chakra-colors-teal-emphasized:var(--chakra-colors-teal-700);--chakra-colors-teal-solid:var(--chakra-colors-teal-600);--chakra-colors-teal-focus-ring:var(--chakra-colors-teal-500);--chakra-colors-purple-contrast:white;--chakra-colors-purple-fg:var(--chakra-colors-purple-300);--chakra-colors-purple-subtle:var(--chakra-colors-purple-900);--chakra-colors-purple-muted:var(--chakra-colors-purple-800);--chakra-colors-purple-emphasized:var(--chakra-colors-purple-700);--chakra-colors-purple-solid:var(--chakra-colors-purple-600);--chakra-colors-purple-focus-ring:var(--chakra-colors-purple-500);--chakra-colors-pink-contrast:white;--chakra-colors-pink-fg:var(--chakra-colors-pink-300);--chakra-colors-pink-subtle:var(--chakra-colors-pink-900);--chakra-colors-pink-muted:var(--chakra-colors-pink-800);--chakra-colors-pink-emphasized:var(--chakra-colors-pink-700);--chakra-colors-pink-solid:var(--chakra-colors-pink-600);--chakra-colors-pink-focus-ring:var(--chakra-colors-pink-500);--chakra-colors-cyan-contrast:white;--chakra-colors-cyan-fg:var(--chakra-colors-cyan-300);--chakra-colors-cyan-subtle:var(--chakra-colors-cyan-900);--chakra-colors-cyan-muted:var(--chakra-colors-cyan-800);--chakra-colors-cyan-emphasized:var(--chakra-colors-cyan-700);--chakra-colors-cyan-solid:var(--chakra-colors-cyan-600);--chakra-colors-cyan-focus-ring:var(--chakra-colors-cyan-500);--chakra-shadows-xs:0px 1px 1px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 20%, transparent);--chakra-shadows-sm:0px 2px 4px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 30%, transparent);--chakra-shadows-md:0px 4px 8px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 30%, transparent);--chakra-shadows-lg:0px 8px 16px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 30%, transparent);--chakra-shadows-xl:0px 16px 24px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 30%, transparent);--chakra-shadows-2xl:0px 24px 40px color-mix(in srgb, black 64%, transparent),0px 0px 1px inset color-mix(in srgb, var(--chakra-colors-gray-300) 30%, transparent);--chakra-shadows-inner:inset 0 2px 4px 0 black;--chakra-shadows-inset:inset 0 0 0 1px color-mix(in srgb, var(--chakra-colors-gray-300) 5%, transparent);}}</style><style data-emotion="css 12zjz91">.css-12zjz91{background:var(--chakra-colors-gray-50);--bg-currentcolor:var(--chakra-colors-gray-50);min-height:100vh;}</style><div class="css-12zjz91"><style data-emotion="css 1q1mxky">.css-1q1mxky{position:-webkit-sticky;position:sticky;top:0;z-index:10;background:var(--chakra-colors-white);--bg-currentcolor:var(--chakra-colors-white);border-bottom:1px solid;border-color:var(--chakra-colors-gray-200);-webkit-backdrop-filter:saturate(180%) blur(8px);backdrop-filter:saturate(180%) blur(8px);}</style><header class="css-1q1mxky"><style data-emotion="css 1va5g4k">.css-1va5g4k{max-width:var(--chakra-sizes-6xl);padding-block:var(--chakra-spacing-3);}@layer recipes{.css-1va5g4k{position:relative;max-width:var(--chakra-sizes-8xl);width:100%;margin-inline:auto;padding-inline:var(--chakra-spacing-4);}@media screen and (min-width: 48rem){.css-1va5g4k{padding-inline:var(--chakra-spacing-6);}}@media screen and (min-width: 64rem){.css-1va5g4k{padding-inline:var(--chakra-spacing-8);}}}</style><div class="chakra-container css-1va5g4k"><style data-emotion="css hvi0xy">.css-hvi0xy{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;gap:var(--chakra-spacing-6);}</style><div class="css-hvi0xy"><a href="/"><style data-emotion="css 1al32d7">.css-1al32d7{color:var(--chakra-colors-gray-800);}@layer recipes{.css-1al32d7{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-md);line-height:1.5rem;}}</style><h2 class="chakra-heading css-1al32d7">Nick Karnik</h2></a><style data-emotion="css wubxq4">.css-wubxq4{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;gap:var(--chakra-spacing-6);}</style><div class="chakra-stack css-wubxq4"><a href="/blog"><style data-emotion="css 1gp1fjf">.css-1gp1fjf{color:var(--chakra-colors-gray-600);}@media (hover: hover){.css-1gp1fjf:is(:hover, [data-hover]):not(:disabled, [data-disabled]){color:var(--chakra-colors-blue-600);}}</style><p class="css-1gp1fjf">Blog</p></a><a href="/about"><p class="css-1gp1fjf">About</p></a><a href="/resume"><style data-emotion="css w1joxw">.css-w1joxw{color:var(--chakra-colors-blue-600);font-weight:500;}</style><p class="css-w1joxw">Resume</p></a></div></div></div></header><style data-emotion="css y055xn">.css-y055xn{max-width:var(--chakra-sizes-6xl);padding-block:var(--chakra-spacing-6);}@layer recipes{.css-y055xn{position:relative;max-width:var(--chakra-sizes-8xl);width:100%;margin-inline:auto;padding-inline:var(--chakra-spacing-4);}@media screen and (min-width: 48rem){.css-y055xn{padding-inline:var(--chakra-spacing-6);}}@media screen and (min-width: 64rem){.css-y055xn{padding-inline:var(--chakra-spacing-8);}}}@media screen and (min-width: 48rem){.css-y055xn{padding-block:var(--chakra-spacing-10);}}</style><main class="chakra-container css-y055xn"><style data-emotion="css wiga1t">.css-wiga1t{max-width:var(--chakra-sizes-4xl);margin-inline:auto;padding:var(--chakra-spacing-6);}</style><div class="css-wiga1t"><style data-emotion="css o24ino">.css-o24ino{border:1px solid;border-color:var(--chakra-colors-gray-200);padding:var(--chakra-spacing-8);border-radius:var(--chakra-radii-2xl);margin-bottom:var(--chakra-spacing-8);}@layer recipes{.css-o24ino{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;position:relative;min-width:0;word-wrap:break-word;border-radius:var(--chakra-radii-l3);color:var(--chakra-colors-fg);text-align:start;background:var(--chakra-colors-bg-panel);--bg-currentcolor:var(--chakra-colors-bg-panel);border-width:1px;border-color:var(--chakra-colors-border);--card-padding:var(--chakra-spacing-6);}}</style><div class="chakra-card__root css-o24ino"><style data-emotion="css a22ewo">.css-a22ewo{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:start;-webkit-box-align:start;-ms-flex-align:start;align-items:start;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;-webkit-box-flex-wrap:wrap;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;gap:var(--chakra-spacing-6);}</style><div class="css-a22ewo"><style data-emotion="css 19en13r">.css-19en13r{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:start;-webkit-box-align:start;-ms-flex-align:start;align-items:start;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;gap:var(--chakra-spacing-6);}</style><div class="chakra-stack css-19en13r"><style data-emotion="css 13ffr39">.css-13ffr39{width:var(--chakra-sizes-16);height:var(--chakra-sizes-16);border-radius:50%;background:var(--chakra-colors-blue-600);--bg-currentcolor:var(--chakra-colors-blue-600);display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:center;-ms-flex-pack:center;-webkit-justify-content:center;justify-content:center;color:var(--chakra-colors-white);font-weight:var(--chakra-font-weights-bold);font-size:var(--chakra-font-sizes-2xl);}</style><div class="css-13ffr39"><style data-emotion="css 1szkpcr">.css-1szkpcr{width:100%;height:100%;border-radius:50%;object-fit:cover;}</style><img src="/assets/images/profile/nick-karnik.jpeg" alt="Nick Karnik" class="css-1szkpcr"/></div><style data-emotion="css 1marwo3">.css-1marwo3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:start;-webkit-box-align:start;-ms-flex-align:start;align-items:start;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-2);}</style><div class="chakra-stack css-1marwo3"><style data-emotion="css 1xpw4tw">@layer recipes{.css-1xpw4tw{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-3xl);line-height:2.375rem;}}</style><h2 class="chakra-heading css-1xpw4tw">Nick Karnik</h2><style data-emotion="css 10fz6gi">.css-10fz6gi{font-size:var(--chakra-font-sizes-lg);color:var(--chakra-colors-gray-600);}</style><p class="css-10fz6gi">Staff Software Engineer &amp; Engineering Leader</p><style data-emotion="css 154r8jm">.css-154r8jm{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;-webkit-box-flex-wrap:wrap;-webkit-flex-wrap:wrap;-ms-flex-wrap:wrap;flex-wrap:wrap;gap:var(--chakra-spacing-2);}</style><div class="chakra-stack css-154r8jm"><style data-emotion="css 1uum8kh">.css-1uum8kh{--chakra-colors-color-palette-50:var(--chakra-colors-blue-50);--chakra-colors-color-palette-100:var(--chakra-colors-blue-100);--chakra-colors-color-palette-200:var(--chakra-colors-blue-200);--chakra-colors-color-palette-300:var(--chakra-colors-blue-300);--chakra-colors-color-palette-400:var(--chakra-colors-blue-400);--chakra-colors-color-palette-500:var(--chakra-colors-blue-500);--chakra-colors-color-palette-600:var(--chakra-colors-blue-600);--chakra-colors-color-palette-700:var(--chakra-colors-blue-700);--chakra-colors-color-palette-800:var(--chakra-colors-blue-800);--chakra-colors-color-palette-900:var(--chakra-colors-blue-900);--chakra-colors-color-palette-950:var(--chakra-colors-blue-950);--chakra-colors-color-palette-contrast:var(--chakra-colors-blue-contrast);--chakra-colors-color-palette-fg:var(--chakra-colors-blue-fg);--chakra-colors-color-palette-subtle:var(--chakra-colors-blue-subtle);--chakra-colors-color-palette-muted:var(--chakra-colors-blue-muted);--chakra-colors-color-palette-emphasized:var(--chakra-colors-blue-emphasized);--chakra-colors-color-palette-solid:var(--chakra-colors-blue-solid);--chakra-colors-color-palette-focus-ring:var(--chakra-colors-blue-focus-ring);}@layer recipes{.css-1uum8kh{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;vertical-align:top;max-width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-radius:var(--chakra-radii-l2);--focus-ring-color:var(--chakra-colors-color-palette-focus-ring);padding-inline:var(--chakra-spacing-1\.5);min-height:var(--chakra-sizes-5);gap:var(--chakra-spacing-1);--tag-avatar-size:var(--chakra-spacing-3\.5);--tag-element-size:var(--chakra-spacing-3\.5);--tag-element-offset:-2px;background:var(--chakra-colors-color-palette-subtle);--bg-currentcolor:var(--chakra-colors-color-palette-subtle);color:var(--chakra-colors-color-palette-fg);}.css-1uum8kh:is(:focus-visible, [data-focus-visible]){outline-width:var(--focus-ring-width, 2px);outline-offset:var(--focus-ring-offset, 2px);outline-style:var(--focus-ring-style, solid);outline-color:var(--focus-ring-color);}}</style><div class="chakra-tag__root css-1uum8kh">TypeScript</div><div class="chakra-tag__root css-1uum8kh">React</div><div class="chakra-tag__root css-1uum8kh">Developer Experience</div><div class="chakra-tag__root css-1uum8kh">NodeJS</div><div class="chakra-tag__root css-1uum8kh">AI</div></div></div></div><style data-emotion="css 1dcnyim">.css-1dcnyim{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:end;-webkit-box-align:end;-ms-flex-align:end;align-items:end;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-3);}</style><div class="chakra-stack css-1dcnyim"><a href="/resume.pdf" target="_blank" download="resume-nick-karnik.pdf"><style data-emotion="css 1758tav">.css-1758tav{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:var(--chakra-spacing-2);padding-inline:var(--chakra-spacing-4);padding-block:var(--chakra-spacing-2);border:1px solid;border-color:var(--chakra-colors-blue-200);border-radius:var(--chakra-radii-md);color:var(--chakra-colors-blue-600);}@media (hover: hover){.css-1758tav:is(:hover, [data-hover]):not(:disabled, [data-disabled]){background:var(--chakra-colors-blue-50);--bg-currentcolor:var(--chakra-colors-blue-50);}}</style><div class="css-1758tav"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>Download PDF</div></a><style data-emotion="css 1x0y7ph">.css-1x0y7ph{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;gap:var(--chakra-spacing-2);}</style><div class="chakra-stack css-1x0y7ph"><a href="mailto:nick@karnik.io"><style data-emotion="css 1dh2z1j">.css-1dh2z1j{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:var(--chakra-spacing-2);padding-inline:var(--chakra-spacing-3);padding-block:var(--chakra-spacing-2);border-radius:var(--chakra-radii-md);color:var(--chakra-colors-gray-600);}@media (hover: hover){.css-1dh2z1j:is(:hover, [data-hover]):not(:disabled, [data-disabled]){background:var(--chakra-colors-gray-50);--bg-currentcolor:var(--chakra-colors-gray-50);}}</style><div class="css-1dh2z1j"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>Email</div></a><a href="https://www.linkedin.com/in/theoutlander" target="_blank"><div class="css-1dh2z1j"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>LinkedIn</div></a></div></div></div></div><style data-emotion="css 8umsk3">.css-8umsk3{display:grid;grid-template-columns:repeat(1, minmax(0, 1fr));gap:var(--chakra-spacing-8);}@media screen and (min-width: 64rem){.css-8umsk3{grid-template-columns:repeat(3, minmax(0, 1fr));}}</style><div class="css-8umsk3"><style data-emotion="css 1a7xwc0">@media screen and (min-width: 64rem){.css-1a7xwc0{grid-column:span 2;}}</style><div class="css-1a7xwc0"><style data-emotion="css 67x7kq">.css-67x7kq{border:1px solid;border-color:var(--chakra-colors-gray-200);padding:var(--chakra-spacing-6);border-radius:var(--chakra-radii-2xl);margin-bottom:var(--chakra-spacing-6);}@layer recipes{.css-67x7kq{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;position:relative;min-width:0;word-wrap:break-word;border-radius:var(--chakra-radii-l3);color:var(--chakra-colors-fg);text-align:start;background:var(--chakra-colors-bg-panel);--bg-currentcolor:var(--chakra-colors-bg-panel);border-width:1px;border-color:var(--chakra-colors-border);--card-padding:var(--chakra-spacing-6);}}</style><div class="chakra-card__root css-67x7kq"><style data-emotion="css krcpcz">.css-krcpcz{margin-bottom:var(--chakra-spacing-6);color:var(--chakra-colors-blue-600);}@layer recipes{.css-krcpcz{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-lg);line-height:1.75rem;}}</style><h2 class="chakra-heading css-krcpcz">Experience</h2><div><style data-emotion="css 17rifoo">.css-17rifoo{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:start;-webkit-box-align:start;-ms-flex-align:start;align-items:start;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;margin-bottom:var(--chakra-spacing-2);}</style><div class="css-17rifoo"><style data-emotion="css 1jqo7jp">.css-1jqo7jp{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:start;-webkit-box-align:start;-ms-flex-align:start;align-items:start;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-1);}</style><div class="chakra-stack css-1jqo7jp"><style data-emotion="css 12sq6rj">@layer recipes{.css-12sq6rj{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-md);line-height:1.5rem;}}</style><h2 class="chakra-heading css-12sq6rj">Founder &amp; Fractional CTO</h2><style data-emotion="css 1rh4z59">.css-1rh4z59{color:var(--chakra-colors-gray-600);font-size:var(--chakra-font-sizes-sm);}</style><p class="css-1rh4z59">Plutonic Consulting</p></div><style data-emotion="css 1ufwwb4">.css-1ufwwb4{--chakra-colors-color-palette-50:var(--chakra-colors-green-50);--chakra-colors-color-palette-100:var(--chakra-colors-green-100);--chakra-colors-color-palette-200:var(--chakra-colors-green-200);--chakra-colors-color-palette-300:var(--chakra-colors-green-300);--chakra-colors-color-palette-400:var(--chakra-colors-green-400);--chakra-colors-color-palette-500:var(--chakra-colors-green-500);--chakra-colors-color-palette-600:var(--chakra-colors-green-600);--chakra-colors-color-palette-700:var(--chakra-colors-green-700);--chakra-colors-color-palette-800:var(--chakra-colors-green-800);--chakra-colors-color-palette-900:var(--chakra-colors-green-900);--chakra-colors-color-palette-950:var(--chakra-colors-green-950);--chakra-colors-color-palette-contrast:var(--chakra-colors-green-contrast);--chakra-colors-color-palette-fg:var(--chakra-colors-green-fg);--chakra-colors-color-palette-subtle:var(--chakra-colors-green-subtle);--chakra-colors-color-palette-muted:var(--chakra-colors-green-muted);--chakra-colors-color-palette-emphasized:var(--chakra-colors-green-emphasized);--chakra-colors-color-palette-solid:var(--chakra-colors-green-solid);--chakra-colors-color-palette-focus-ring:var(--chakra-colors-green-focus-ring);}@layer recipes{.css-1ufwwb4{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;border-radius:var(--chakra-radii-l2);gap:var(--chakra-spacing-1);font-weight:var(--chakra-font-weights-medium);font-variant-numeric:tabular-nums;white-space:nowrap;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background:var(--chakra-colors-color-palette-subtle);--bg-currentcolor:var(--chakra-colors-color-palette-subtle);color:var(--chakra-colors-color-palette-fg);font-size:var(--chakra-font-sizes-xs);line-height:1rem;padding-inline:var(--chakra-spacing-1\.5);min-height:var(--chakra-sizes-5);}}</style><span class="chakra-badge css-1ufwwb4">Current</span></div><style data-emotion="css 18vkzym">.css-18vkzym{font-size:var(--chakra-font-sizes-sm);color:var(--chakra-colors-gray-600);margin-bottom:var(--chakra-spacing-3);}</style><p class="css-18vkzym">May 2025 - Present</p><style data-emotion="css cdgtm1">.css-cdgtm1{margin-bottom:var(--chakra-spacing-3);}</style><p class="css-cdgtm1">Providing fractional CTO support, AI strategy, and scaling guidance to founders. Helping teams move faster with clear product bets, strong execution, and systems that are simple to maintain. Focus on pragmatic AI integration and developer experience optimization.</p><div class="chakra-stack css-154r8jm"><style data-emotion="css 1vgl66m">@layer recipes{.css-1vgl66m{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;vertical-align:top;max-width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-radius:var(--chakra-radii-l2);--focus-ring-color:var(--chakra-colors-color-palette-focus-ring);padding-inline:var(--chakra-spacing-1\.5);min-height:var(--chakra-sizes-4\.5);gap:var(--chakra-spacing-1);--tag-avatar-size:var(--chakra-spacing-3);--tag-element-size:var(--chakra-spacing-3);--tag-element-offset:-2px;color:var(--chakra-colors-color-palette-fg);box-shadow:inset 0 0 0px 1px var(--shadow-color);--shadow-color:var(--chakra-colors-color-palette-muted);}.css-1vgl66m:is(:focus-visible, [data-focus-visible]){outline-width:var(--focus-ring-width, 2px);outline-offset:var(--focus-ring-offset, 2px);outline-style:var(--focus-ring-style, solid);outline-color:var(--focus-ring-color);}}</style><div class="chakra-tag__root css-1vgl66m">AI Strategy</div><div class="chakra-tag__root css-1vgl66m">Technical Leadership</div><div class="chakra-tag__root css-1vgl66m">Fractional CTO</div><div class="chakra-tag__root css-1vgl66m">Team Scaling</div></div><style data-emotion="css 1kt3e0n">.css-1kt3e0n{margin-block:var(--chakra-spacing-6);}@layer recipes{.css-1kt3e0n{display:block;border-color:var(--chakra-colors-border);--separator-thickness:1px;border-style:solid;border-top-width:var(--separator-thickness);}}</style><span role="separator" aria-orientation="horizontal" class="chakra-separator css-1kt3e0n"></span></div><div><div class="css-17rifoo"><div class="chakra-stack css-1jqo7jp"><style data-emotion="css c1sqso">.css-c1sqso{margin-bottom:var(--chakra-spacing-2);}</style><div class="css-c1sqso"><style data-emotion="css 1mj0ve">.css-1mj0ve{height:20px;width:auto;}</style><img src="/assets/images/companies/google.svg" alt="google" class="css-1mj0ve"/></div><h2 class="chakra-heading css-12sq6rj">Staff Software Engineer / Engineering Manager</h2><p class="css-1rh4z59">Google</p></div></div><p class="css-18vkzym">May 2022 - Apr 2025</p><p class="css-cdgtm1">Led technical direction and hands-on engineering for Gemini Code Assist, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">Go</div><div class="chakra-tag__root css-1vgl66m">TypeScript</div><div class="chakra-tag__root css-1vgl66m">Node.js</div><div class="chakra-tag__root css-1vgl66m">Kubernetes</div><div class="chakra-tag__root css-1vgl66m">GCP</div><div class="chakra-tag__root css-1vgl66m">LLM</div></div><span role="separator" aria-orientation="horizontal" class="chakra-separator css-1kt3e0n"></span></div><div><div class="css-17rifoo"><div class="chakra-stack css-1jqo7jp"><div class="css-c1sqso"><img src="/assets/images/companies/salesforce.svg" alt="salesforce" class="css-1mj0ve"/></div><h2 class="chakra-heading css-12sq6rj">Senior Engineering Manager</h2><p class="css-1rh4z59">Salesforce</p></div></div><p class="css-18vkzym">Oct 2019 - Apr 2022</p><p class="css-cdgtm1">Built CI pipeline (TACO) enabling 100+ partners to test connectors across Tableau/Salesforce stack. Delivered REST and native Salesforce connectors; owned Web Data Connector platform. Managed a team of 35+; drove hiring, mentoring, and technical strategy. Created Connector SDK adopted across the Tableau ecosystem.</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">TypeScript</div><div class="chakra-tag__root css-1vgl66m">Node.js</div><div class="chakra-tag__root css-1vgl66m">Chromium</div><div class="chakra-tag__root css-1vgl66m">CI/CD</div><div class="chakra-tag__root css-1vgl66m">Team Leadership</div></div><span role="separator" aria-orientation="horizontal" class="chakra-separator css-1kt3e0n"></span></div><div><div class="css-17rifoo"><div class="chakra-stack css-1jqo7jp"><div class="css-c1sqso"><img src="/assets/images/companies/tmobile.jpeg" alt="tmobile" class="css-1mj0ve"/></div><h2 class="chakra-heading css-12sq6rj">Director Of Engineering</h2><p class="css-1rh4z59">T-Mobile</p></div></div><p class="css-18vkzym">Nov 2018 - Oct 2019</p><p class="css-cdgtm1">Hired a diverse team of 25 engineers in six weeks; managed four product teams totaling 35+ engineers across T-Mobile Retail Mobility. Delivered custom desktop &amp; mobile applications for the T-Mobile / Sprint merger. Architected and implemented a portable Test Automation Framework that runs in-app.</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">Team Leadership</div><div class="chakra-tag__root css-1vgl66m">Rapid Hiring</div><div class="chakra-tag__root css-1vgl66m">Mobile Development</div><div class="chakra-tag__root css-1vgl66m">Test Automation</div><div class="chakra-tag__root css-1vgl66m">Project Management</div></div><span role="separator" aria-orientation="horizontal" class="chakra-separator css-1kt3e0n"></span></div><div><div class="css-17rifoo"><div class="chakra-stack css-1jqo7jp"><div class="css-c1sqso"><img src="/assets/images/companies/microsoft.png" alt="microsoft" class="css-1mj0ve"/></div><h2 class="chakra-heading css-12sq6rj">Software Development Engineer</h2><p class="css-1rh4z59">Microsoft</p></div></div><p class="css-18vkzym">Aug 2006 - Aug 2012</p><p class="css-cdgtm1">Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee).</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">Big Data</div><div class="chakra-tag__root css-1vgl66m">JavaScript</div><div class="chakra-tag__root css-1vgl66m">Machine Learning</div><div class="chakra-tag__root css-1vgl66m">Outlook Web Access</div><div class="chakra-tag__root css-1vgl66m">Bing</div></div></div></div><div class="chakra-card__root css-67x7kq"><h2 class="chakra-heading css-krcpcz">Notable Projects</h2><div><style data-emotion="css k5qncm">.css-k5qncm{margin-bottom:var(--chakra-spacing-2);}@layer recipes{.css-k5qncm{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-md);line-height:1.5rem;}}</style><h2 class="chakra-heading css-k5qncm">Gemini Code Assist</h2><style data-emotion="css 71ci2c">.css-71ci2c{font-size:var(--chakra-font-sizes-sm);color:var(--chakra-colors-gray-600);margin-bottom:var(--chakra-spacing-2);}</style><p class="css-71ci2c">2022 - 2025</p><p class="css-cdgtm1">Led technical direction and hands-on engineering for Google&#x27;s AI coding assistant, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.</p><div class="chakra-stack css-154r8jm"><style data-emotion="css zuqjfd">@layer recipes{.css-zuqjfd{display:-webkit-inline-box;display:-webkit-inline-flex;display:-ms-inline-flexbox;display:inline-flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;vertical-align:top;max-width:100%;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;border-radius:var(--chakra-radii-l2);--focus-ring-color:var(--chakra-colors-color-palette-focus-ring);padding-inline:var(--chakra-spacing-1\.5);min-height:var(--chakra-sizes-4\.5);gap:var(--chakra-spacing-1);--tag-avatar-size:var(--chakra-spacing-3);--tag-element-size:var(--chakra-spacing-3);--tag-element-offset:-2px;background:var(--chakra-colors-color-palette-subtle);--bg-currentcolor:var(--chakra-colors-color-palette-subtle);color:var(--chakra-colors-color-palette-fg);}.css-zuqjfd:is(:focus-visible, [data-focus-visible]){outline-width:var(--focus-ring-width, 2px);outline-offset:var(--focus-ring-offset, 2px);outline-style:var(--focus-ring-style, solid);outline-color:var(--focus-ring-color);}}</style><div class="chakra-tag__root css-zuqjfd">Go</div><div class="chakra-tag__root css-zuqjfd">TypeScript</div><div class="chakra-tag__root css-zuqjfd">Node.js</div><div class="chakra-tag__root css-zuqjfd">Kubernetes</div><div class="chakra-tag__root css-zuqjfd">GCP</div><div class="chakra-tag__root css-zuqjfd">LLM</div></div><style data-emotion="css 9iezwp">.css-9iezwp{margin-block:var(--chakra-spacing-4);}@layer recipes{.css-9iezwp{display:block;border-color:var(--chakra-colors-border);--separator-thickness:1px;border-style:solid;border-top-width:var(--separator-thickness);}}</style><span role="separator" aria-orientation="horizontal" class="chakra-separator css-9iezwp"></span></div><div><h2 class="chakra-heading css-k5qncm">TACO Toolkit &amp; Connector SDK</h2><p class="css-71ci2c">2019 - 2022</p><p class="css-cdgtm1">Built a robust CI/CD pipeline (TACO) enabling over 100 partners to test and deploy Tableau connectors efficiently. Created a Connector SDK widely adopted across Tableau&#x27;s ecosystem, simplifying web data connector development.</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-zuqjfd">TypeScript</div><div class="chakra-tag__root css-zuqjfd">Node.js</div><div class="chakra-tag__root css-zuqjfd">Chromium</div><div class="chakra-tag__root css-zuqjfd">CI/CD</div><div class="chakra-tag__root css-zuqjfd">SDK Development</div></div></div></div></div><style data-emotion="css 1l03m6c">.css-1l03m6c{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:stretch;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-6);}</style><div class="chakra-stack css-1l03m6c"><div class="chakra-card__root css-67x7kq"><style data-emotion="css 1h8q1gh">.css-1h8q1gh{margin-bottom:var(--chakra-spacing-4);color:var(--chakra-colors-blue-600);}@layer recipes{.css-1h8q1gh{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-lg);line-height:1.75rem;}}</style><h2 class="chakra-heading css-1h8q1gh">Technical Skills</h2><style data-emotion="css 18abhre">.css-18abhre{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:stretch;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-4);}</style><div class="chakra-stack css-18abhre"><div><style data-emotion="css 1vjsryx">.css-1vjsryx{font-weight:var(--chakra-font-weights-semibold);margin-bottom:var(--chakra-spacing-2);}</style><p class="css-1vjsryx">Languages</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">TypeScript</div><div class="chakra-tag__root css-1vgl66m">JavaScript</div><div class="chakra-tag__root css-1vgl66m">Python</div><div class="chakra-tag__root css-1vgl66m">C#</div><div class="chakra-tag__root css-1vgl66m">Go</div><div class="chakra-tag__root css-1vgl66m">C++</div><div class="chakra-tag__root css-1vgl66m">Java</div></div></div><div><p class="css-1vjsryx">Web &amp; Mobile</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">NodeJS</div><div class="chakra-tag__root css-1vgl66m">Electron</div><div class="chakra-tag__root css-1vgl66m">Express</div><div class="chakra-tag__root css-1vgl66m">React</div><div class="chakra-tag__root css-1vgl66m">React Native</div><div class="chakra-tag__root css-1vgl66m">GraphQL</div><div class="chakra-tag__root css-1vgl66m">Playwright</div><div class="chakra-tag__root css-1vgl66m">VSCode Extensions</div></div></div><div><p class="css-1vjsryx">Databases &amp; Cloud</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">MongoDB</div><div class="chakra-tag__root css-1vgl66m">Docker</div><div class="chakra-tag__root css-1vgl66m">ElasticSearch</div><div class="chakra-tag__root css-1vgl66m">Neo4J</div><div class="chakra-tag__root css-1vgl66m">PostgreSQL</div><div class="chakra-tag__root css-1vgl66m">Redis</div><div class="chakra-tag__root css-1vgl66m">SQL Server</div><div class="chakra-tag__root css-1vgl66m">AWS</div><div class="chakra-tag__root css-1vgl66m">Google Cloud</div></div></div><div><p class="css-1vjsryx">AI &amp; Leadership</p><div class="chakra-stack css-154r8jm"><div class="chakra-tag__root css-1vgl66m">AI-Assisted Development</div><div class="chakra-tag__root css-1vgl66m">Large Language Models</div><div class="chakra-tag__root css-1vgl66m">Developer Tooling</div><div class="chakra-tag__root css-1vgl66m">Platform Architecture</div><div class="chakra-tag__root css-1vgl66m">Scalable Systems</div><div class="chakra-tag__root css-1vgl66m">Full-Stack Engineering</div><div class="chakra-tag__root css-1vgl66m">Mobile Development</div></div></div></div></div><div class="chakra-card__root css-67x7kq"><h2 class="chakra-heading css-1h8q1gh">Education</h2><div><div class="css-c1sqso"><img src="/assets/images/companies/umd.jpeg" alt="umd" class="css-1mj0ve"/></div><style data-emotion="css 1xmlsvx">.css-1xmlsvx{margin-bottom:var(--chakra-spacing-1);}@layer recipes{.css-1xmlsvx{font-family:var(--chakra-fonts-heading);font-weight:var(--chakra-font-weights-semibold);font-size:var(--chakra-font-sizes-md);line-height:1.5rem;}}</style><h2 class="chakra-heading css-1xmlsvx">B.S., Computer Science</h2><style data-emotion="css jreeuq">.css-jreeuq{color:var(--chakra-colors-gray-600);font-size:var(--chakra-font-sizes-sm);margin-bottom:var(--chakra-spacing-1);}</style><p class="css-jreeuq">University of Maryland, College Park</p><style data-emotion="css v0otzr">.css-v0otzr{font-size:var(--chakra-font-sizes-sm);color:var(--chakra-colors-gray-600);}</style><p class="css-v0otzr">Minor in Business</p></div></div><div class="chakra-card__root css-67x7kq"><h2 class="chakra-heading css-1h8q1gh">Contact</h2><style data-emotion="css 1ym5udh">.css-1ym5udh{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:stretch;-webkit-box-align:stretch;-ms-flex-align:stretch;align-items:stretch;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;gap:var(--chakra-spacing-3);}</style><div class="chakra-stack css-1ym5udh"><a href="mailto:nick@karnik.io"><style data-emotion="css 1hdqqi3">.css-1hdqqi3{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;gap:var(--chakra-spacing-2);padding-inline:var(--chakra-spacing-4);padding-block:var(--chakra-spacing-2);border:1px solid;border-color:var(--chakra-colors-gray-200);border-radius:var(--chakra-radii-md);}@media (hover: hover){.css-1hdqqi3:is(:hover, [data-hover]):not(:disabled, [data-disabled]){background:var(--chakra-colors-gray-50);--bg-currentcolor:var(--chakra-colors-gray-50);}}</style><div class="css-1hdqqi3"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>nick@karnik.io</div></a><a href="https://www.linkedin.com/in/theoutlander" target="_blank"><div class="css-1hdqqi3"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>LinkedIn</div></a><a href="https://github.com/theoutlander" target="_blank"><div class="css-1hdqqi3"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>GitHub</div></a><a href="https://calendly.com/nick-karnik" target="_blank"><div class="css-1hdqqi3"><svg stroke="currentColor" fill="none" stroke-width="2" viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>Schedule Call</div></a></div></div><style data-emotion="css l3k8b">.css-l3k8b{border:1px solid;border-color:var(--chakra-colors-gray-200);padding:var(--chakra-spacing-6);border-radius:var(--chakra-radii-2xl);}@layer recipes{.css-l3k8b{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-flex-direction:column;-ms-flex-direction:column;flex-direction:column;position:relative;min-width:0;word-wrap:break-word;border-radius:var(--chakra-radii-l3);color:var(--chakra-colors-fg);text-align:start;background:var(--chakra-colors-bg-panel);--bg-currentcolor:var(--chakra-colors-bg-panel);border-width:1px;border-color:var(--chakra-colors-border);--card-padding:var(--chakra-spacing-6);}}</style><div class="chakra-card__root css-l3k8b"><h2 class="chakra-heading css-1h8q1gh">Honors &amp; Highlights</h2><div class="chakra-stack css-1ym5udh"><style data-emotion="css l0zmib">.css-l0zmib{font-size:var(--chakra-font-sizes-sm);}</style><p class="css-l0zmib">• <!-- -->Patent: Intelligent Intent Detection from Social Network Messages</p><p class="css-l0zmib">• <!-- -->Microsoft Engineering Excellence Award Nominee</p><p class="css-l0zmib">• <!-- -->Winner: Bing Hackday Spring &#x27;10 for best idea</p><p class="css-l0zmib">• <!-- -->Bing Fall Hackday &#x27;10 project productized and patented</p><p class="css-l0zmib">• <!-- -->Accepted into Y Combinator (2007)</p><p class="css-l0zmib">• <!-- -->Mentor, blogger, open-source contributor</p></div></div></div></div></div></main><style data-emotion="css 1cgflpy">.css-1cgflpy{background:var(--chakra-colors-white);--bg-currentcolor:var(--chakra-colors-white);border-top:1px solid;border-color:var(--chakra-colors-gray-200);padding-block:var(--chakra-spacing-8);margin-top:var(--chakra-spacing-16);}</style><footer class="css-1cgflpy"><style data-emotion="css zc1oi5">.css-zc1oi5{max-width:var(--chakra-sizes-6xl);}@layer recipes{.css-zc1oi5{position:relative;max-width:var(--chakra-sizes-8xl);width:100%;margin-inline:auto;padding-inline:var(--chakra-spacing-4);}@media screen and (min-width: 48rem){.css-zc1oi5{padding-inline:var(--chakra-spacing-6);}}@media screen and (min-width: 64rem){.css-zc1oi5{padding-inline:var(--chakra-spacing-8);}}}</style><div class="chakra-container css-zc1oi5"><style data-emotion="css 1lekzkb">.css-1lekzkb{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-box-pack:justify;-webkit-justify-content:space-between;justify-content:space-between;}</style><div class="css-1lekzkb"><p class="css-v0otzr">© 2024 Nick Karnik. All rights reserved.</p><style data-emotion="css 1kydda">.css-1kydda{display:-webkit-box;display:-webkit-flex;display:-ms-flexbox;display:flex;-webkit-align-items:center;-webkit-box-align:center;-ms-flex-align:center;align-items:center;-webkit-flex-direction:row;-ms-flex-direction:row;flex-direction:row;gap:var(--chakra-spacing-4);}</style><div class="chakra-stack css-1kydda"><a href="https://github.com/theoutlander" target="_blank"><style data-emotion="css 1bsbu3c">.css-1bsbu3c{font-size:var(--chakra-font-sizes-sm);color:var(--chakra-colors-gray-600);}@media (hover: hover){.css-1bsbu3c:is(:hover, [data-hover]):not(:disabled, [data-disabled]){color:var(--chakra-colors-blue-600);}}</style><p class="css-1bsbu3c">GitHub</p></a><a href="https://www.linkedin.com/in/theoutlander" target="_blank"><p class="css-1bsbu3c">LinkedIn</p></a><a href="mailto:nick@karnik.io"><p class="css-1bsbu3c">Email</p></a></div></div></div></footer></div>
+    </div>
+  </body>
+</html>

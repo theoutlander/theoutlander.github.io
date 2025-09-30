@@ -1,10 +1,10 @@
-import { renderAllStaticPages } from '../src/static-renderer.js';
+import { renderAllStaticPagesSSR } from '../src/ssr-renderer.js';
 
 async function main() {
   try {
-    await renderAllStaticPages();
+    await renderAllStaticPagesSSR();
   } catch (error) {
-    console.error('Error rendering static pages:', error);
+    console.error('Error rendering static pages with SSR:', error);
     process.exit(1);
   }
 }

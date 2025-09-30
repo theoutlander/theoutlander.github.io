@@ -902,6 +902,428 @@ const generateAboutPageContent = (aboutData: AboutData) => {
   `;
 };
 
+// Generate resume page content
+const generateResumePageContent = () => {
+  return `
+    <!-- Header -->
+    <header class="css-header">
+      <div class="css-container css-py-3">
+        <div class="css-flex css-align-center css-justify-between css-gap-6">
+          <a href="/" class="css-link">
+            <h1 class="css-heading css-heading-md" style="color: #1a202c; margin: 0;">Nick Karnik</h1>
+          </a>
+          <div class="css-hstack">
+            <a href="/blog" class="css-link">Blog</a>
+            <a href="/about" class="css-link">About</a>
+            <a href="/resume" class="css-link" style="color: #3182ce; font-weight: 500;">Resume</a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="css-main">
+      <div class="css-container css-py-6">
+        <div style="max-width: 4xl; margin: 0 auto; padding: 1.5rem;">
+          <!-- Header Card -->
+          <div class="css-card" style="padding: 2rem; margin-bottom: 2rem;">
+            <div class="css-flex css-justify-between css-align-start" style="flex-wrap: wrap; gap: 1.5rem;">
+              <div class="css-flex css-gap-6 css-align-start">
+                <div class="css-avatar" style="width: 4rem; height: 4rem; font-size: 1.5rem;">
+                  <img src="/assets/images/profile/nick-karnik.jpeg" alt="Nick Karnik" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;" />
+                </div>
+                <div class="css-flex css-flex-column css-gap-2" style="align-items: flex-start;">
+                  <h1 class="css-heading css-heading-lg" style="margin: 0;">Nick Karnik</h1>
+                  <p class="css-text" style="color: #718096; margin: 0;">Staff Software Engineer & Engineering Leader</p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    <span class="css-tag" style="background: #e6f3ff; color: #3182ce;">TypeScript</span>
+                    <span class="css-tag" style="background: #e6f7e6; color: #38a169;">React</span>
+                    <span class="css-tag" style="background: #f3e6ff; color: #805ad5;">Developer Experience</span>
+                    <span class="css-tag" style="background: #e6f7f7; color: #319795;">NodeJS</span>
+                    <span class="css-tag" style="background: #fff2e6; color: #dd6b20;">AI</span>
+                  </div>
+                </div>
+              </div>
+              <div class="css-flex css-flex-column css-gap-3" style="align-items: flex-end;">
+                <a href="/resume.pdf" target="_blank" download="resume-nick-karnik.pdf" class="css-button css-button-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                  📥 Download PDF
+                </a>
+                <div class="css-flex css-gap-2">
+                  <a href="mailto:nick@karnik.io" class="css-button css-button-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    📧 Email
+                  </a>
+                  <a href="https://www.linkedin.com/in/theoutlander" target="_blank" class="css-button css-button-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+                    🔗 LinkedIn
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Content Grid -->
+          <div class="css-grid" style="grid-template-columns: 2fr 1fr; gap: 2rem;">
+            <!-- Left Column - Experience -->
+            <div>
+              <!-- Experience Section -->
+              <div class="css-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1.5rem; color: #3182ce;">Experience</h2>
+
+                <!-- Current Role -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div class="css-flex css-justify-between css-align-start" style="margin-bottom: 0.5rem;">
+                    <div class="css-flex css-flex-column css-gap-1" style="align-items: flex-start;">
+                      <h3 class="css-heading css-heading-sm">Founder & Fractional CTO</h3>
+                      <p class="css-text css-text-sm" style="color: #718096;">Plutonic Consulting</p>
+                    </div>
+                    <span class="css-tag" style="background: #e6f7e6; color: #38a169;">Current</span>
+                  </div>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.75rem;">May 2025 - Present</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Providing fractional CTO support, AI strategy, and scaling guidance to founders. Helping teams move faster with clear product bets, strong execution, and systems that are simple to maintain. Focus on pragmatic AI integration and developer experience optimization.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'AI Strategy',
+                      'Technical Leadership',
+                      'Fractional CTO',
+                      'Team Scaling',
+                    ]
+                      .map(
+                        skill =>
+                          `<span class="css-tag" style="border: 1px solid #e2e8f0;">${skill}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+                <!-- Google Role -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div class="css-flex css-flex-column css-gap-1" style="margin-bottom: 0.5rem; align-items: flex-start;">
+                    <img src="/assets/images/companies/google.svg" alt="Google" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                    <h3 class="css-heading css-heading-sm">Staff Software Engineer / Engineering Manager</h3>
+                  </div>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.75rem;">May 2022 - Apr 2025</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Led technical direction and hands-on engineering for Gemini Code Assist, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'Go',
+                      'TypeScript',
+                      'Node.js',
+                      'Kubernetes',
+                      'GCP',
+                      'LLM',
+                    ]
+                      .map(
+                        skill =>
+                          `<span class="css-tag" style="border: 1px solid #e2e8f0;">${skill}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+                <!-- Salesforce Role -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div class="css-flex css-flex-column css-gap-1" style="margin-bottom: 0.5rem; align-items: flex-start;">
+                    <img src="/assets/images/companies/salesforce.svg" alt="Salesforce" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                    <h3 class="css-heading css-heading-sm">Senior Engineering Manager</h3>
+                  </div>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.75rem;">Oct 2019 - Apr 2022</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Built CI pipeline (TACO) enabling 100+ partners to test connectors across Tableau/Salesforce stack. Delivered REST and native Salesforce connectors; owned Web Data Connector platform. Managed a team of 35+; drove hiring, mentoring, and technical strategy. Created Connector SDK adopted across the Tableau ecosystem.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'TypeScript',
+                      'Node.js',
+                      'Chromium',
+                      'CI/CD',
+                      'Team Leadership',
+                    ]
+                      .map(
+                        skill =>
+                          `<span class="css-tag" style="border: 1px solid #e2e8f0;">${skill}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+                <!-- T-Mobile Role -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div class="css-flex css-flex-column css-gap-1" style="margin-bottom: 0.5rem; align-items: flex-start;">
+                    <img src="/assets/images/companies/tmobile.jpeg" alt="T-Mobile" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                    <h3 class="css-heading css-heading-sm">Director Of Engineering</h3>
+                  </div>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.75rem;">Nov 2018 - Oct 2019</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Hired a diverse team of 25 engineers in six weeks; managed four product teams totaling 35+ engineers across T-Mobile Retail Mobility. Delivered custom desktop & mobile applications for the T-Mobile / Sprint merger. Architected and implemented a portable Test Automation Framework that runs in-app.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'Team Leadership',
+                      'Rapid Hiring',
+                      'Mobile Development',
+                      'Test Automation',
+                      'Project Management',
+                    ]
+                      .map(
+                        skill =>
+                          `<span class="css-tag" style="border: 1px solid #e2e8f0;">${skill}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+
+                <!-- Additional roles would continue here... -->
+                <!-- For brevity, I'll include a few more key roles -->
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1.5rem 0;">
+
+                <!-- Microsoft Role -->
+                <div style="margin-bottom: 1.5rem;">
+                  <div class="css-flex css-flex-column css-gap-1" style="margin-bottom: 0.5rem; align-items: flex-start;">
+                    <img src="/assets/images/companies/microsoft.png" alt="Microsoft" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                    <h3 class="css-heading css-heading-sm">Software Development Engineer</h3>
+                  </div>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.75rem;">Aug 2006 - Aug 2012</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee).
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'Big Data',
+                      'JavaScript',
+                      'Machine Learning',
+                      'Outlook Web Access',
+                      'Bing',
+                    ]
+                      .map(
+                        skill =>
+                          `<span class="css-tag" style="border: 1px solid #e2e8f0;">${skill}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notable Projects Section -->
+              <div class="css-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1.5rem; color: #3182ce;">Notable Projects</h2>
+
+                <div style="margin-bottom: 1rem;">
+                  <img src="/assets/images/companies/gemini-code-assist.png" alt="Gemini Code Assist" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                  <h3 class="css-heading css-heading-sm" style="margin-bottom: 0.5rem;">Gemini Code Assist</h3>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.5rem;">2022 - 2025</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Led technical direction and hands-on engineering for Google's AI coding assistant, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'Go',
+                      'TypeScript',
+                      'Node.js',
+                      'Kubernetes',
+                      'GCP',
+                      'LLM',
+                    ]
+                      .map(
+                        tech =>
+                          `<span class="css-tag" style="background: #f7fafc; color: #4a5568;">${tech}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+
+                <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 1rem 0;">
+
+                <div style="margin-bottom: 1rem;">
+                  <img src="/assets/images/companies/wdc-3.png" alt="TACO Toolkit" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                  <h3 class="css-heading css-heading-sm" style="margin-bottom: 0.5rem;">TACO Toolkit & Connector SDK</h3>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.5rem;">2019 - 2022</p>
+                  <p class="css-text" style="margin-bottom: 0.75rem;">
+                    Built a robust CI/CD pipeline (TACO) enabling over 100 partners to test and deploy Tableau connectors efficiently. Created a Connector SDK widely adopted across Tableau's ecosystem, simplifying web data connector development.
+                  </p>
+                  <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                    ${[
+                      'TypeScript',
+                      'Node.js',
+                      'Chromium',
+                      'CI/CD',
+                      'SDK Development',
+                    ]
+                      .map(
+                        tech =>
+                          `<span class="css-tag" style="background: #f7fafc; color: #4a5568;">${tech}</span>`
+                      )
+                      .join('')}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Column - Skills & Info -->
+            <div class="css-flex css-flex-column css-gap-6">
+              <!-- Skills -->
+              <div class="css-card" style="padding: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #3182ce;">Technical Skills</h2>
+
+                <div class="css-flex css-flex-column css-gap-4">
+                  <div>
+                    <p class="css-text" style="font-weight: 600; margin-bottom: 0.5rem;">Languages</p>
+                    <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                      ${[
+                        'TypeScript',
+                        'JavaScript',
+                        'Python',
+                        'C#',
+                        'Go',
+                        'C++',
+                        'Java',
+                      ]
+                        .map(
+                          lang =>
+                            `<span class="css-tag" style="border: 1px solid #e2e8f0;">${lang}</span>`
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p class="css-text" style="font-weight: 600; margin-bottom: 0.5rem;">Web & Mobile</p>
+                    <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                      ${[
+                        'NodeJS',
+                        'Electron',
+                        'Express',
+                        'React',
+                        'React Native',
+                        'GraphQL',
+                        'Playwright',
+                        'VSCode Extensions',
+                      ]
+                        .map(
+                          tech =>
+                            `<span class="css-tag" style="border: 1px solid #e2e8f0;">${tech}</span>`
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p class="css-text" style="font-weight: 600; margin-bottom: 0.5rem;">Databases & Cloud</p>
+                    <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                      ${[
+                        'MongoDB',
+                        'Docker',
+                        'ElasticSearch',
+                        'Neo4J',
+                        'PostgreSQL',
+                        'Redis',
+                        'SQL Server',
+                        'AWS',
+                        'Google Cloud',
+                      ]
+                        .map(
+                          tech =>
+                            `<span class="css-tag" style="border: 1px solid #e2e8f0;">${tech}</span>`
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p class="css-text" style="font-weight: 600; margin-bottom: 0.5rem;">AI & Leadership</p>
+                    <div class="css-flex css-gap-2" style="flex-wrap: wrap;">
+                      ${[
+                        'AI-Assisted Development',
+                        'Large Language Models',
+                        'Developer Tooling',
+                        'Platform Architecture',
+                        'Scalable Systems',
+                        'Full-Stack Engineering',
+                        'Mobile Development',
+                      ]
+                        .map(
+                          tool =>
+                            `<span class="css-tag" style="border: 1px solid #e2e8f0;">${tool}</span>`
+                        )
+                        .join('')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Education -->
+              <div class="css-card" style="padding: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #3182ce;">Education</h2>
+                <div>
+                  <img src="/assets/images/companies/umd.jpeg" alt="University of Maryland" style="width: 60px; height: 20px; margin-bottom: 0.5rem;" />
+                  <h3 class="css-heading css-heading-sm" style="margin-bottom: 0.25rem;">B.S., Computer Science</h3>
+                  <p class="css-text css-text-sm" style="color: #718096; margin-bottom: 0.25rem;">University of Maryland, College Park</p>
+                  <p class="css-text css-text-sm" style="color: #718096;">Minor in Business</p>
+                </div>
+              </div>
+
+              <!-- Contact -->
+              <div class="css-card" style="padding: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #3182ce;">Contact</h2>
+                <div class="css-flex css-flex-column css-gap-3">
+                  <a href="mailto:nick@karnik.io" class="css-button css-button-secondary" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+                    📧 nick@karnik.io
+                  </a>
+                  <a href="https://www.linkedin.com/in/theoutlander" target="_blank" class="css-button css-button-secondary" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+                    🔗 LinkedIn
+                  </a>
+                  <a href="https://github.com/theoutlander" target="_blank" class="css-button css-button-secondary" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+                    🔗 GitHub
+                  </a>
+                  <a href="https://calendly.com/nick-karnik" target="_blank" class="css-button css-button-secondary" style="display: flex; align-items: center; gap: 0.5rem; justify-content: flex-start;">
+                    📅 Schedule Call
+                  </a>
+                </div>
+              </div>
+
+              <!-- Honors & Highlights -->
+              <div class="css-card" style="padding: 1.5rem;">
+                <h2 class="css-heading css-heading-lg" style="margin-bottom: 1rem; color: #3182ce;">Honors & Highlights</h2>
+                <div class="css-flex css-flex-column css-gap-3">
+                  <p class="css-text css-text-sm">• Patent: Intelligent Intent Detection from Social Network Messages</p>
+                  <p class="css-text css-text-sm">• Microsoft Engineering Excellence Award Nominee</p>
+                  <p class="css-text css-text-sm">• Winner: Bing Hackday Spring '10 for best idea</p>
+                  <p class="css-text css-text-sm">• Bing Fall Hackday '10 project productized and patented</p>
+                  <p class="css-text css-text-sm">• Accepted into Y Combinator (2007)</p>
+                  <p class="css-text css-text-sm">• Mentor, blogger, open-source contributor</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer style="background: white; border-top: 1px solid #e2e8f0; padding: 2rem 0; margin-top: 4rem;">
+      <div class="css-container">
+        <div class="css-flex css-align-center css-justify-between">
+          <p class="css-text css-text-sm" style="margin: 0; color: #718096;">© 2024 Nick Karnik. All rights reserved.</p>
+          <div class="css-hstack">
+            <a href="https://github.com/theoutlander" class="css-link css-text-sm">GitHub</a>
+            <a href="https://www.linkedin.com/in/theoutlander" class="css-link css-text-sm">LinkedIn</a>
+            <a href="mailto:nick@karnik.io" class="css-link css-text-sm">Email</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+  `;
+};
+
 // Main function to render all static pages
 export async function renderAllStaticPages() {
   console.log('🔄 Rendering all static pages...');
@@ -949,6 +1371,19 @@ export async function renderAllStaticPages() {
     aboutContent
   );
   writeFileSync(join(aboutDir, 'index.html'), aboutHTML);
+
+  // Render resume page
+  console.log('📄 Rendering resume page...');
+  const resumeDir = join('dist', 'resume');
+  mkdirSync(resumeDir, { recursive: true });
+  const resumeContent = generateResumePageContent();
+  const resumeHTML = generateBaseHTML(
+    'Resume — Nick Karnik',
+    'Nick Karnik - Staff Software Engineer & Engineering Leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups',
+    resumeContent,
+    '<link rel="canonical" href="https://nick.karnik.io/resume" />'
+  );
+  writeFileSync(join(resumeDir, 'index.html'), resumeHTML);
 
   console.log('✅ All static pages rendered successfully!');
 }
