@@ -77,9 +77,9 @@ else
     echo "✅ Changes committed to gh-pages"
 fi
 
-# Step 12: Push gh-pages branch
+# Step 12: Push gh-pages branch (force push to handle diverged history)
 echo "🚀 Pushing gh-pages branch..."
-if ! git push origin gh-pages; then
+if ! git push -f origin gh-pages; then
     echo "❌ Push failed. Switching back to main."
     git checkout main
     exit 1
