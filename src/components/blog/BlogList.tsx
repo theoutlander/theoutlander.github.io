@@ -48,13 +48,13 @@ export default function BlogList({
 
 						<div className={css({ p: 4 })}>
 							<a
-								href={`/blog-post/${p.slug}`}
+								href={`/blog/${p.slug}`}
 								className={css({
 									textDecoration: "none",
-									color: "blue.700",
+									color: "accent.700",
 									fontWeight: "semibold",
 									fontSize: "lg",
-									_hover: { color: "blue.600" },
+									_hover: { color: "accent.600" },
 								})}
 							>
 								<h2>{p.title}</h2>

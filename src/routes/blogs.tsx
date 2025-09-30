@@ -12,7 +12,7 @@ type Post = {
 	tags: string[];
 };
 
-export const Route = createFileRoute("/blog")({
+export const Route = createFileRoute("/blogs")({
 	component: BlogPage,
 	loader: async (): Promise<{ posts: Post[] }> => {
 		try {

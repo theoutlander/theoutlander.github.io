@@ -30,7 +30,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 				padding: "16px",
 			})}
 		>
-			<HeaderSSR currentPage="blog" />
+			<HeaderSSR currentPage="blogs" />
 			<main
 				className={css({
 					maxW: "4xl",
@@ -198,8 +198,8 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 										key={tag}
 										href={`/blog/t/${tag}`}
 										className={css({
-											bg: "blue.100",
-											color: "blue.700",
+											bg: "accent.100",
+											color: "accent.700",
 											px: 3,
 											py: 1,
 											borderRadius: "full",

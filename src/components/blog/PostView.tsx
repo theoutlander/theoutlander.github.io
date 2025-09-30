@@ -1,9 +1,18 @@
 import { Helmet } from "react-helmet-async";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
-import { proseStyles } from "./PostProse";
 import Comments from "./Comments";
-import { css } from "../../styled-system/css";
+import { css } from "../../../styled-system/css/index.mjs";
+import {
+	blogPost,
+	blogTitle,
+	blogMeta,
+	blogDate,
+	blogTag,
+	blogExcerpt,
+	blogContent,
+	blogCover,
+} from "../../../styled-system/recipes/index.mjs";
 
 type Post = {
 	id?: string;
@@ -63,90 +72,45 @@ export default function PostView({ post }: { post: Post }) {
 				excerpt={post.excerpt}
 			/>
 
-			<div style={{ maxWidth: "768px", margin: "0 auto", padding: "0 24px" }}>
+			<div className={blogPost()}>
 				{post.cover ? (
 					<img
 						src={post.cover}
 						alt=""
-						style={{
-							marginBottom: "32px",
-							borderRadius: "12px",
-							width: "100%",
-						}}
+						className={blogCover()}
 					/>
 				) : null}
 
-				<h1
-					style={{
-						fontSize: "2.25rem",
-						fontWeight: "600",
-						lineHeight: "1.2",
-						marginBottom: "16px",
-						color: "#1a202c",
-					}}
-				>
-					{post.title}
-				</h1>
+				<h1 className={blogTitle()}>{post.title}</h1>
 
-				<div
-					style={{
-						display: "flex",
-						alignItems: "center",
-						gap: "12px",
-						marginBottom: "24px",
-						flexWrap: "wrap",
-					}}
-				>
-					<span
-						style={{
-							fontSize: "14px",
-							color: "#718096",
-						}}
-					>
+				<div className={blogMeta()}>
+					<span className={blogDate()}>
 						{post.date ? new Date(post.date).toDateString() : ""}
 					</span>
 					{post.tags?.slice(0, 4).map((t) => (
 						<span
 							key={t}
-							style={{
-								backgroundColor: "#edf2f7",
-								color: "#4a5568",
-								padding: "4px 8px",
-								borderRadius: "4px",
-								fontSize: "12px",
-								fontWeight: "500",
-							}}
+							className={blogTag()}
 						>
 							{t}
 						</span>
 					))}
 				</div>
 
-				<p
-					style={{
-						color: "#1a202c",
-						marginBottom: "32px",
-						fontSize: "18px",
-						lineHeight: "1.7",
-					}}
-				>
-					{post.excerpt}
-				</p>
+				<p className={blogExcerpt()}>{post.excerpt}</p>
 
 				{/* Full article content */}
 				<div
-					style={{
-						maxWidth: "none",
-						lineHeight: "1.7",
-						fontSize: "18px",
-						color: "#1a202c",
-						...proseStyles,
-					}}
+					className={css({
+						...blogContent(),
+					})}
 				>
 					{post.html ? (
 						<div dangerouslySetInnerHTML={{ __html: post.html }} />
 					) : (
-						<p style={{ color: "#718096", fontStyle: "italic" }}>
+						<p
+							className={css({ color: "text.secondary", fontStyle: "italic" })}
+						>
 							Content not available
 						</p>
 					)}
