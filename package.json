@@ -10,8 +10,7 @@
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
-		"deploy": "./deploy.sh",
-		"repl": "node repl-with-cmd-k.js"
+		"deploy": "./deploy.sh"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",

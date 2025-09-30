@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BlogPostPagePanda } from "../pages/BlogPostPagePanda";
 
-export const Route = createFileRoute("/blog/$slug")({
+export const Route = createFileRoute("/blog-post/$slug")({
 	component: BlogPostPage,
 	loader: async ({ params }): Promise<{ post: any }> => {
 		console.log("Blog loader called with params:", params);
