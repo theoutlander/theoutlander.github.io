@@ -28,12 +28,12 @@ const mockPost: Post = {
 
 const mockPostWithoutCover: Post = {
   ...mockPost,
-  cover: undefined,
+  cover: '',
 }
 
 const mockPostWithoutTags: Post = {
   ...mockPost,
-  tags: undefined,
+  tags: [],
 }
 
 describe('BlogCard', () => {
@@ -110,7 +110,7 @@ describe('BlogCard', () => {
   it('handles missing date gracefully', () => {
     const postWithoutDate: Post = {
       ...mockPost,
-      date: undefined,
+      date: '',
     }
     render(<BlogCard post={postWithoutDate} />)
     expect(screen.getByText(/min read/)).toBeInTheDocument()

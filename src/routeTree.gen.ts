@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as RssRouteImport } from './routes/rss'
 import { Route as ResumeRouteImport } from './routes/resume'
 import { Route as LostRouteImport } from './routes/lost'
 import { Route as LandingHybridRouteImport } from './routes/landing-hybrid'
@@ -21,6 +22,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
 import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 
+const RssRoute = RssRouteImport.update({
+  id: '/rss',
+  path: '/rss',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ResumeRoute = ResumeRouteImport.update({
   id: '/resume',
   path: '/resume',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/landing-hybrid': typeof LandingHybridRoute
   '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
+  '/rss': typeof RssRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/landing-hybrid': typeof LandingHybridRoute
   '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
+  '/rss': typeof RssRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/landing-hybrid': typeof LandingHybridRoute
   '/lost': typeof LostRoute
   '/resume': typeof ResumeRoute
+  '/rss': typeof RssRoute
   '/blog/$slug': typeof BlogSlugRoute
   '/blog/t/$tag': typeof BlogTTagRoute
 }
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/landing-hybrid'
     | '/lost'
     | '/resume'
+    | '/rss'
     | '/blog/$slug'
     | '/blog/t/$tag'
   fileRoutesByTo: FileRoutesByTo
@@ -142,6 +152,7 @@ export interface FileRouteTypes {
     | '/landing-hybrid'
     | '/lost'
     | '/resume'
+    | '/rss'
     | '/blog/$slug'
     | '/blog/t/$tag'
   id:
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/landing-hybrid'
     | '/lost'
     | '/resume'
+    | '/rss'
     | '/blog/$slug'
     | '/blog/t/$tag'
   fileRoutesById: FileRoutesById
@@ -169,10 +181,18 @@ export interface RootRouteChildren {
   LandingHybridRoute: typeof LandingHybridRoute
   LostRoute: typeof LostRoute
   ResumeRoute: typeof ResumeRoute
+  RssRoute: typeof RssRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/rss': {
+      id: '/rss'
+      path: '/rss'
+      fullPath: '/rss'
+      preLoaderRoute: typeof RssRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/resume': {
       id: '/resume'
       path: '/resume'
@@ -275,6 +295,7 @@ const rootRouteChildren: RootRouteChildren = {
   LandingHybridRoute: LandingHybridRoute,
   LostRoute: LostRoute,
   ResumeRoute: ResumeRoute,
+  RssRoute: RssRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

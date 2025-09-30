@@ -15,21 +15,9 @@ import {
 } from '@chakra-ui/react';
 import { FiMail, FiExternalLink, FiDownload } from 'react-icons/fi';
 import { Helmet } from 'react-helmet-async';
-
-const HASHNODE_ABOUT_SLUG = 'about';
-const BUILD_ID =
-  (import.meta as { env?: Record<string, string> }).env?.['VITE_BUILD_ID'] ??
-  'dev';
+import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/about')({
-  loader: async () => {
-    const url = `/data/pages/${HASHNODE_ABOUT_SLUG}.json?v=${BUILD_ID}`;
-    const res = await fetch(url, { headers: { 'cache-control': 'no-cache' } });
-    if (!res.ok)
-      throw new Error(`About JSON not found: ${url} (${res.status})`);
-    const page = (await res.json()) as { title: string; html: string };
-    return page;
-  },
   component: AboutPage,
   errorComponent: ({ error }) => (
     <Box p={6}>
@@ -40,11 +28,44 @@ export const Route = createFileRoute('/about')({
   ),
 });
 
+// Define the window interface for initial data
+declare global {
+  interface Window {
+    __INITIAL_ABOUT_DATA__?: { title: string; html: string };
+  }
+}
+
 function AboutPage() {
-  const page = Route.useLoaderData() as { title: string; html: string };
+  const [page, setPage] = useState<{ title: string; html: string } | null>(
+    () => {
+      // Initialize with pre-populated data if available
+      if (typeof window !== 'undefined' && window.__INITIAL_ABOUT_DATA__) {
+        return window.__INITIAL_ABOUT_DATA__;
+      }
+      return null;
+    }
+  );
+
+  useEffect(() => {
+    // Only fetch if we don't have pre-populated data
+    if (!page) {
+      fetch('/data/pages/about.json')
+        .then(r => r.json())
+        .then(setPage)
+        .catch(() =>
+          setPage({ title: 'About', html: '<p>About page not found.</p>' })
+        );
+    }
+  }, [page]);
+
+  // Move all hooks to the top, before any conditional returns
   const accent = 'blue.600';
   const cardBorder = useToken('colors', 'gray.200');
   const muted = useToken('colors', 'gray.600');
+
+  if (!page) {
+    return <Box p={6}>Loading...</Box>;
+  }
 
   return (
     <>

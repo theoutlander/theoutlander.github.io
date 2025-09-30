@@ -27,28 +27,46 @@ import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 
 type Post = {
+  id?: string;
   slug: string;
   title: string;
-  excerpt?: string;
-  date?: string;
-  cover?: string;
-  tags?: string[];
+  excerpt: string;
+  url: string;
+  date: string;
+  cover: string;
+  tags: string[];
 };
 
 export const Route = createFileRoute('/')({
   component: HomePage,
 });
 
+// Define the window interface for initial data
+declare global {
+  interface Window {
+    __INITIAL_BLOG_DATA__?: Post[];
+  }
+}
+
 function HomePage() {
-  const [posts, setPosts] = useState<Post[] | null>(null);
+  const [posts, setPosts] = useState<Post[] | null>(() => {
+    // Initialize with pre-populated data if available
+    if (typeof window !== 'undefined' && window.__INITIAL_BLOG_DATA__) {
+      return window.__INITIAL_BLOG_DATA__;
+    }
+    return null;
+  });
   const muted = useToken('colors', 'gray.600');
 
   useEffect(() => {
-    fetch('/data/hashnode.json')
-      .then(r => r.json())
-      .then(setPosts)
-      .catch(() => setPosts([]));
-  }, []);
+    // Only fetch if we don't have pre-populated data
+    if (!posts) {
+      fetch('/data/hashnode.json')
+        .then(r => r.json())
+        .then(setPosts)
+        .catch(() => setPosts([]));
+    }
+  }, [posts]);
 
   const latestPosts = (posts ?? []).slice(0, 2);
 

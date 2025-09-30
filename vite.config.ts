@@ -19,6 +19,7 @@ export default defineConfig({
     ssrSsg({
       render: 'react',
       entry: './src/ssg.ts',
+      prerender: true,
     }),
   ],
   build: {

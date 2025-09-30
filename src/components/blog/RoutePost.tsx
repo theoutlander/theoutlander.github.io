@@ -13,13 +13,14 @@ import ProgressTop from '../ui/ProgressTop';
 import PostJsonLd from '../seo/PostJsonLd';
 
 export type Post = {
+  id?: string;
   slug: string;
   title: string;
   url: string;
-  date?: string | null;
-  excerpt?: string;
-  cover?: string | null;
-  tags?: string[];
+  date: string;
+  excerpt: string;
+  cover: string;
+  tags: string[];
   contentMarkdown?: string;
   contentHtml?: string;
 };

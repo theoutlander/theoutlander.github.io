@@ -10,6 +10,7 @@ import { defineConfig, globalIgnores } from 'eslint/config';
 export default defineConfig([
   globalIgnores([
     'dist',
+    '.vite',
     '**/*.test.{ts,tsx}',
     '**/*.spec.{ts,tsx}',
     '**/__tests__/**',

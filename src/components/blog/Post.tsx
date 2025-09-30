@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react';
 import { Box, Heading, Text, Link, Image } from '@chakra-ui/react';
 
 type Post = {
+  id?: string;
   slug: string;
   title: string;
   url: string;
-  date?: string | null;
-  excerpt?: string;
-  cover?: string | null;
+  date: string;
+  excerpt: string;
+  cover: string;
+  tags: string[];
 };
 
 export default function Post({ slug }: { slug: string }) {

@@ -51,7 +51,7 @@ const mockPosts: Post[] = [
     title: 'Third Post',
     excerpt: 'This is the third post excerpt.',
     date: '2024-01-17',
-    cover: undefined,
+    cover: '',
     tags: ['react', 'typescript'],
     url: 'https://example.com/post-3',
   },
@@ -62,116 +62,55 @@ describe('BlogList', () => {
     vi.clearAllMocks()
   })
 
-  it('renders loading skeleton initially', () => {
-    mockFetch.mockImplementation(() => new Promise(() => {})) // Never resolves
+  it('renders posts when provided', () => {
+    render(<BlogList posts={mockPosts} />)
 
-    render(<BlogList />)
-    // Check for skeleton elements by their class names
-    const skeletons = document.querySelectorAll('.chakra-skeleton')
-    expect(skeletons).toHaveLength(16) // 4 cards × 4 skeleton elements each
+    expect(screen.getByText('First Post')).toBeInTheDocument()
+    expect(screen.getByText('Second Post')).toBeInTheDocument()
+    expect(screen.getByText('Third Post')).toBeInTheDocument()
   })
 
-  it('renders posts after loading', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
+  it('filters posts by tag when filterTag is provided', () => {
+    render(<BlogList posts={mockPosts} filterTag='react' />)
 
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.getByText('First Post')).toBeInTheDocument()
-      expect(screen.getByText('Second Post')).toBeInTheDocument()
-      expect(screen.getByText('Third Post')).toBeInTheDocument()
-    })
+    expect(screen.getByText('First Post')).toBeInTheDocument()
+    expect(screen.getByText('Third Post')).toBeInTheDocument()
+    expect(screen.queryByText('Second Post')).not.toBeInTheDocument()
   })
 
-  it('filters posts by tag when filterTag is provided', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
+  it('shows all posts when filterTag is not provided', () => {
+    render(<BlogList posts={mockPosts} />)
 
-    render(<BlogList filterTag='react' />)
-
-    await waitFor(() => {
-      expect(screen.getByText('First Post')).toBeInTheDocument()
-      expect(screen.getByText('Third Post')).toBeInTheDocument()
-      expect(screen.queryByText('Second Post')).not.toBeInTheDocument()
-    })
+    expect(screen.getByText('First Post')).toBeInTheDocument()
+    expect(screen.getByText('Second Post')).toBeInTheDocument()
+    expect(screen.getByText('Third Post')).toBeInTheDocument()
   })
 
-  it('shows all posts when filterTag is not provided', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
+  it('renders posts without cover images', () => {
+    render(<BlogList posts={mockPosts} />)
 
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.getByText('First Post')).toBeInTheDocument()
-      expect(screen.getByText('Second Post')).toBeInTheDocument()
-      expect(screen.getByText('Third Post')).toBeInTheDocument()
-    })
+    expect(screen.getByText('Third Post')).toBeInTheDocument()
+    // Third post has no cover image
+    const images = screen.getAllByRole('presentation')
+    expect(images).toHaveLength(2) // Only first two posts have cover images
   })
 
-  it('handles fetch error gracefully', async () => {
-    mockFetch.mockRejectedValueOnce(new Error('Fetch failed'))
+  it('displays formatted dates', () => {
+    render(<BlogList posts={mockPosts} />)
 
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.queryByText('First Post')).not.toBeInTheDocument()
-      expect(screen.queryByText('Second Post')).not.toBeInTheDocument()
-      expect(screen.queryByText('Third Post')).not.toBeInTheDocument()
-    })
+    expect(screen.getByText(/Jan 14 2024/)).toBeInTheDocument()
+    expect(screen.getByText(/Jan 15 2024/)).toBeInTheDocument()
+    expect(screen.getByText(/Jan 16 2024/)).toBeInTheDocument()
   })
 
-  it('renders posts without cover images', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
+  it('displays reading time estimates', () => {
+    render(<BlogList posts={mockPosts} />)
 
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.getByText('Third Post')).toBeInTheDocument()
-      // Third post has no cover image
-      const images = screen.getAllByRole('presentation')
-      expect(images).toHaveLength(2) // Only first two posts have cover images
-    })
-  })
-
-  it('displays formatted dates', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
-
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.getByText(/Jan 14 2024/)).toBeInTheDocument()
-      expect(screen.getByText(/Jan 15 2024/)).toBeInTheDocument()
-      expect(screen.getByText(/Jan 16 2024/)).toBeInTheDocument()
-    })
-  })
-
-  it('displays reading time estimates', async () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
-
-    render(<BlogList />)
-
-    await waitFor(() => {
-      expect(screen.getAllByText(/min read/)).toHaveLength(3)
-    })
+    expect(screen.getAllByText(/min read/)).toHaveLength(3)
   })
 
   it('renders SEO meta tags', () => {
-    mockFetch.mockResolvedValueOnce({
-      json: () => Promise.resolve(mockPosts),
-    })
-
-    render(<BlogList />)
+    render(<BlogList posts={mockPosts} />)
 
     expect(screen.getByTestId('helmet')).toBeInTheDocument()
   })

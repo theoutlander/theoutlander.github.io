@@ -27,12 +27,14 @@ import { Helmet } from 'react-helmet-async';
 import { useEffect, useState } from 'react';
 
 type Post = {
+  id?: string;
   slug: string;
   title: string;
-  excerpt?: string;
-  date?: string;
-  cover?: string;
-  tags?: string[];
+  excerpt: string;
+  url: string;
+  date: string;
+  cover: string;
+  tags: string[];
 };
 
 export const Route = createFileRoute('/landing-hybrid')({

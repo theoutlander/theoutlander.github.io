@@ -69,6 +69,12 @@ export const Route = createRootRoute({
             name='twitter:description'
             content='Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences.'
           />
+          <link
+            rel='alternate'
+            type='application/rss+xml'
+            title='RSS'
+            href='/rss'
+          />
         </Helmet>
         <Box bg='gray.50' minH='100vh'>
           <Header />

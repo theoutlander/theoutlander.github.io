@@ -46,19 +46,40 @@ export default function Footer() {
                 Engineering Leader & Staff Software Engineer
               </Text>
               <HStack gap={4}>
-                <HStack gap={2}>
+                <HStack
+                  gap={2}
+                  _hover={{
+                    transform: 'translateY(-1px)',
+                    transition: 'transform 0.2s ease-in-out',
+                  }}
+                  cursor='default'
+                >
                   <Icon as={FaNodeJs} color='green.500' boxSize={4} />
                   <Text fontSize='sm' color='gray.600'>
                     Node
                   </Text>
                 </HStack>
-                <HStack gap={2}>
+                <HStack
+                  gap={2}
+                  _hover={{
+                    transform: 'translateY(-1px)',
+                    transition: 'transform 0.2s ease-in-out',
+                  }}
+                  cursor='default'
+                >
                   <Icon as={FaReact} color='blue.400' boxSize={4} />
                   <Text fontSize='sm' color='gray.600'>
                     React
                   </Text>
                 </HStack>
-                <HStack gap={2}>
+                <HStack
+                  gap={2}
+                  _hover={{
+                    transform: 'translateY(-1px)',
+                    transition: 'transform 0.2s ease-in-out',
+                  }}
+                  cursor='default'
+                >
                   <Icon as={SiTypescript} color='blue.600' boxSize={4} />
                   <Text fontSize='sm' color='gray.600'>
                     TypeScript
@@ -72,11 +93,12 @@ export default function Footer() {
               <Text fontSize='sm' fontWeight='semibold' color='gray.800'>
                 Connect
               </Text>
-              <HStack gap={4}>
+              <HStack gap={6}>
                 <Link
                   href='mailto:nick@karnik.io'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='Send email to Nick Karnik'
                 >
                   <Icon as={FiMail} boxSize={5} />
                 </Link>
@@ -86,6 +108,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='Visit Nick Karnik on GitHub'
                 >
                   <Icon as={FiGithub} boxSize={5} />
                 </Link>
@@ -95,6 +118,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='Connect with Nick Karnik on LinkedIn'
                 >
                   <Icon as={FiLinkedin} boxSize={5} />
                 </Link>
@@ -104,6 +128,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='Follow Nick Karnik on Twitter'
                 >
                   <Icon as={FiTwitter} boxSize={5} />
                 </Link>
@@ -113,6 +138,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='Subscribe to Nick Karnik on YouTube'
                 >
                   <Icon as={FiYoutube} boxSize={5} />
                 </Link>
@@ -122,6 +148,7 @@ export default function Footer() {
                   rel='noopener noreferrer'
                   _hover={{ color: 'blue.500' }}
                   transition='color 0.2s'
+                  aria-label='View Nick Karnik on Stack Overflow'
                 >
                   <Icon as={FaStackOverflow} boxSize={5} />
                 </Link>

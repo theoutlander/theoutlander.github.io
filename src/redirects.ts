@@ -83,12 +83,12 @@ export const redirects: Redirect[] = [
   // Content & Resources
   {
     source: '/feed',
-    destination: 'https://nick.karnik.io/rss.xml',
+    destination: '/rss',
     statusCode: 308,
   },
   {
-    source: '/rss',
-    destination: 'https://nick.karnik.io/rss.xml',
+    source: '/rss.xml',
+    destination: '/rss',
     statusCode: 308,
   },
   {

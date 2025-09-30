@@ -46,6 +46,25 @@ async function generateStaticPages() {
 
   console.log(`✅ Generated ${hashnodeData.length} static blog post pages`);
 
+  // Generate static blog index page
+  console.log('📄 Generating static page for: blog');
+  const blogDir = join('dist', 'blog');
+  mkdirSync(blogDir, { recursive: true });
+
+  // Generate the HTML content for the blog index page
+  const blogHtml = baseHtml.replace(
+    '<div id="root"></div>',
+    `<div id="root"></div>
+		<script>
+			// Pre-populate the router with the blog posts data
+			window.__INITIAL_BLOG_DATA__ = ${JSON.stringify(hashnodeData)};
+		</script>`
+  );
+
+  // Write the static HTML file
+  writeFileSync(join(blogDir, 'index.html'), blogHtml);
+  console.log('✅ Generated static blog index page');
+
   // Generate static about page
   console.log('📄 Generating static page for: about');
   const aboutDir = join('dist', 'about');
@@ -84,6 +103,64 @@ async function generateStaticPages() {
   console.log(
     '✅ Resume PDF copied to /resume.pdf and /resume-nick-karnik.pdf'
   );
+
+  // Generate RSS feed
+  console.log('📄 Generating RSS feed...');
+  const rssDir = join('dist', 'rss');
+  mkdirSync(rssDir, { recursive: true });
+
+  // Generate RSS XML content
+  const rssXml = generateRssXml(hashnodeData);
+  writeFileSync(join(rssDir, 'index.html'), rssXml);
+  console.log('✅ Generated RSS feed');
+}
+
+function generateRssXml(posts: Post[]) {
+  const siteUrl = 'https://nick.karnik.io';
+  const blogUrl = `${siteUrl}/blog`;
+  const feedUrl = `${siteUrl}/rss`;
+
+  const rssItems = posts
+    .slice(0, 20) // Limit to 20 most recent posts
+    .map(post => {
+      const postUrl = `${blogUrl}/${post.slug}`;
+      const pubDate = post.date
+        ? new Date(post.date).toUTCString()
+        : new Date().toUTCString();
+
+      return `
+    <item>
+      <title><![CDATA[${post.title}]]></title>
+      <description><![CDATA[${post.excerpt || ''}]]></description>
+      <link>${postUrl}</link>
+      <guid isPermaLink="true">${postUrl}</guid>
+      <pubDate>${pubDate}</pubDate>
+      ${post.cover ? `<enclosure url="${post.cover}" type="image/jpeg" />` : ''}
+      ${post.tags?.map(tag => `<category>${tag}</category>`).join('') || ''}
+    </item>`;
+    })
+    .join('');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Nick Karnik - The Outlander</title>
+    <description>Engineering insights, AI tools, and technical writing from Nick Karnik</description>
+    <link>${blogUrl}</link>
+    <atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>
+    <language>en-us</language>
+    <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
+    <generator>TanStack Router + Hashnode</generator>
+    <managingEditor>nick@karnik.io (Nick Karnik)</managingEditor>
+    <webMaster>nick@karnik.io (Nick Karnik)</webMaster>
+    <image>
+      <url>${siteUrl}/assets/images/profile/nick-karnik.jpeg</url>
+      <title>Nick Karnik - The Outlander</title>
+      <link>${blogUrl}</link>
+    </image>
+${rssItems}
+  </channel>
+</rss>`;
 }
 
 generateStaticPages().catch(console.error);

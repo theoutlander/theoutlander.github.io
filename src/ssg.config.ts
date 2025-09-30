@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 type Post = { slug: string };
 
 export async function paths(): Promise<string[]> {
-  const base = ['/', '/blog', '/about'];
+  const base = ['/', '/blog', '/about', '/rss'];
   let posts: Post[] = [];
   try {
     const raw = readFileSync('public/data/hashnode.json', 'utf8');

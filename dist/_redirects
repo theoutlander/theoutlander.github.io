@@ -12,6 +12,6 @@
 /email mailto:nick@karnik.io 302
 /contact mailto:nick@karnik.io 302
 /consulting https://plutonic.consulting 308
-/feed https://nick.karnik.io/rss.xml 308
-/rss https://nick.karnik.io/rss.xml 308
+/feed /rss 308
+/rss.xml /rss 308
 /resume.pdf https://nick.karnik.io/resume-nick-karnik.pdf 308

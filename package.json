@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} vite build && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
-    "build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && tsx scripts/generate-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+    "build:prod": "HASHNODE_HOST=${HASHNODE_HOST:-nickkarnik.hashnode.dev} tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-production} vite build && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
     "check": "eslint . --fix && prettier --write . && tsc --noEmit",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -39,6 +39,7 @@
     "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "@vitejs/plugin-react": "^5.0.3",
+    "@vitejs/plugin-react-swc": "^4.1.0",
     "@vitest/coverage-v8": "^3.2.4",
     "eslint": "^9.36.0",
     "eslint-config-prettier": "^10.1.8",

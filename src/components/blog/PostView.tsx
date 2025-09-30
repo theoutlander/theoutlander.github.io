@@ -16,8 +16,8 @@ import Comments from './Comments';
 type Post = {
   id?: string;
   title: string;
-  date: string | null;
-  cover: string | null;
+  date: string;
+  cover: string;
   excerpt: string;
   html: string;
   url: string;
