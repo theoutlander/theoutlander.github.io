@@ -20,10 +20,22 @@ export default function RoutePost({ slug }: { slug: string }) {
   const [post, setPost] = useState<Post | null>(null);
 
   useEffect(() => {
+    console.log('RoutePost: Fetching data for slug:', slug);
     fetch('/data/hashnode.json')
-      .then(r => r.json())
-      .then((all: Post[]) => setPost(all.find(p => p.slug === slug) ?? null))
-      .catch(() => setPost(null));
+      .then(r => {
+        console.log('RoutePost: Fetch response:', r.status);
+        return r.json();
+      })
+      .then((all: Post[]) => {
+        console.log('RoutePost: Fetched posts:', all.length);
+        const foundPost = all.find(p => p.slug === slug);
+        console.log('RoutePost: Found post:', foundPost);
+        setPost(foundPost ?? null);
+      })
+      .catch(error => {
+        console.error('RoutePost: Fetch error:', error);
+        setPost(null);
+      });
   }, [slug]);
 
   if (!post) return <div>Loading…</div>;

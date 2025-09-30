@@ -297,14 +297,83 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Currently */}
+          {/* Now */}
           <div className={[card, sidebarCard].join(' ')}>
-            <div className={sidebarTitle}>Currently</div>
-            <p className={note}>
-              Advising founders on pragmatic AI and DX.
-              <br />
-              Building with React + Node, shipping weekly.
-            </p>
+            <div className={sidebarTitle}>Now</div>
+            <ul className={css({ listStyle: 'none', padding: 0, margin: 0 })}>
+              <li
+                className={css({
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 2,
+                  '&:last-child': { mb: 0 },
+                })}
+              >
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '4px',
+                    height: '4px',
+                    borderRadius: '50%',
+                    bg: '#3b82f6',
+                    mt: 2,
+                    mr: 2,
+                    flexShrink: 0,
+                  })}
+                />
+                <span className={note}>
+                  Advising founders on pragmatic AI & DX.
+                </span>
+              </li>
+              <li
+                className={css({
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 2,
+                  '&:last-child': { mb: 0 },
+                })}
+              >
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '4px',
+                    height: '4px',
+                    borderRadius: '50%',
+                    bg: '#3b82f6',
+                    mt: 2,
+                    mr: 2,
+                    flexShrink: 0,
+                  })}
+                />
+                <span className={note}>
+                  Building React + Node tools with TypeScript.
+                </span>
+              </li>
+              <li
+                className={css({
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 2,
+                  '&:last-child': { mb: 0 },
+                })}
+              >
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '4px',
+                    height: '4px',
+                    borderRadius: '50%',
+                    bg: '#3b82f6',
+                    mt: 2,
+                    mr: 2,
+                    flexShrink: 0,
+                  })}
+                />
+                <span className={note}>
+                  Writing weekly about engineering leadership.
+                </span>
+              </li>
+            </ul>
           </div>
         </aside>
       </section>

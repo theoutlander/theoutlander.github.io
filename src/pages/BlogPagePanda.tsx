@@ -1,6 +1,6 @@
 import React from 'react';
 import { css } from '../../styled-system/css/index.mjs';
-import Header from '../components/Header';
+import HeaderSSR from '../components/HeaderSSR';
 import Footer from '../components/Footer';
 import BlogList from '../components/blog/BlogList';
 
@@ -27,7 +27,7 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
         minH: '100vh',
       })}
     >
-      <Header currentPage='blog' />
+      <HeaderSSR currentPage='blog' />
       <main
         className={css({
           maxW: '6xl',

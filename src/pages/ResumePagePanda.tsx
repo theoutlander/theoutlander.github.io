@@ -1,5 +1,5 @@
 import { css } from '../../styled-system/css/index.mjs';
-import Header from '../components/Header';
+import HeaderSSR from '../components/HeaderSSR';
 import Footer from '../components/Footer';
 import Resume from '../components/Resume';
 import ResumePrintStyles from '../components/ResumePrintStyles';
@@ -14,7 +14,7 @@ export function ResumePagePanda() {
           minH: '100vh',
         })}
       >
-        <Header currentPage='resume' />
+        <HeaderSSR currentPage='resume' />
         <Resume />
         <Footer />
       </div>

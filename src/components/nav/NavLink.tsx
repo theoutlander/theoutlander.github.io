@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { css } from '../../../styled-system/css/index.mjs';
+import { Link } from '@tanstack/react-router';
 
 export default function NavLink({
   to,
@@ -18,8 +19,8 @@ export default function NavLink({
   }, [to]);
 
   return (
-    <a
-      href={to}
+    <Link
+      to={to}
       className={css({
         color: active ? 'blue.700' : 'gray.600',
         fontWeight: active ? 'semibold' : 'normal',
@@ -28,6 +29,6 @@ export default function NavLink({
       })}
     >
       {children}
-    </a>
+    </Link>
   );
 }

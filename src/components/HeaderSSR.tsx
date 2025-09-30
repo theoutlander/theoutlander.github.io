@@ -1,12 +1,11 @@
 import { css } from '../../styled-system/css/index.mjs';
 import { container } from '../../styled-system/patterns/index.mjs';
-import { Link } from '@tanstack/react-router';
 
 interface HeaderProps {
   currentPage?: 'home' | 'blog' | 'about' | 'resume';
 }
 
-export default function Header({ currentPage }: HeaderProps = {}) {
+export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
   const BRAND = 'Nick Karnik';
 
   return (
@@ -30,7 +29,7 @@ export default function Header({ currentPage }: HeaderProps = {}) {
             gap: 6,
           })}
         >
-          <Link to='/'>
+          <a href='/'>
             <h2
               className={css({
                 fontSize: 'md',
@@ -41,7 +40,7 @@ export default function Header({ currentPage }: HeaderProps = {}) {
             >
               {BRAND}
             </h2>
-          </Link>
+          </a>
 
           <div
             className={css({
@@ -50,7 +49,7 @@ export default function Header({ currentPage }: HeaderProps = {}) {
               gap: 6,
             })}
           >
-            <Link to='/blog'>
+            <a href='/blog'>
               <p
                 className={css({
                   color: currentPage === 'blog' ? 'brand.600' : 'gray.600',
@@ -60,8 +59,8 @@ export default function Header({ currentPage }: HeaderProps = {}) {
               >
                 Blog
               </p>
-            </Link>
-            <Link to='/about'>
+            </a>
+            <a href='/about'>
               <p
                 className={css({
                   color: currentPage === 'about' ? 'brand.600' : 'gray.600',
@@ -71,8 +70,8 @@ export default function Header({ currentPage }: HeaderProps = {}) {
               >
                 About
               </p>
-            </Link>
-            <Link to='/resume'>
+            </a>
+            <a href='/resume'>
               <p
                 className={css({
                   color: currentPage === 'resume' ? 'brand.600' : 'gray.600',
@@ -82,7 +81,7 @@ export default function Header({ currentPage }: HeaderProps = {}) {
               >
                 Resume
               </p>
-            </Link>
+            </a>
           </div>
         </div>
       </div>

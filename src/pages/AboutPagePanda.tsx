@@ -6,7 +6,7 @@ import {
   hstack,
   vstack,
 } from '../../styled-system/patterns/index.mjs';
-import Header from '../components/Header';
+import HeaderSSR from '../components/HeaderSSR';
 import Footer from '../components/Footer';
 import ContactSection from '../components/ContactSection';
 
@@ -27,7 +27,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
         minH: '100vh',
       })}
     >
-      <Header currentPage='about' />
+      <HeaderSSR currentPage='about' />
       <main className={container({ maxW: '6xl', py: { base: 6, md: 10 } })}>
         {/* Hero Section */}
         <div
@@ -138,7 +138,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
             </div>
           </div>
 
-          {/* Currently Card */}
+          {/* Now Card */}
           <div
             className={css({
               bg: 'white',
@@ -158,30 +158,109 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
                 fontFamily: 'heading',
               })}
             >
-              Currently
+              Now
             </h2>
-            <div className={vstack({ gap: 3, align: 'stretch' })}>
-              <p
+            <ul
+              className={css({
+                listStyle: 'none',
+                padding: 0,
+                margin: 0,
+              })}
+            >
+              <li
                 className={css({
-                  fontSize: 'md',
-                  color: 'gray.600',
-                  lineHeight: 1.6,
-                  mb: 0,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 3,
+                  '&:last-child': { mb: 0 },
                 })}
               >
-                Advising founders on pragmatic AI and DX.
-              </p>
-              <p
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    bg: 'brand.600',
+                    mt: 2,
+                    mr: 3,
+                    flexShrink: 0,
+                  })}
+                />
+                <p
+                  className={css({
+                    fontSize: 'md',
+                    color: 'gray.600',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  })}
+                >
+                  Advising founders on pragmatic AI & DX.
+                </p>
+              </li>
+              <li
                 className={css({
-                  fontSize: 'md',
-                  color: 'gray.600',
-                  lineHeight: 1.6,
-                  mb: 0,
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 3,
+                  '&:last-child': { mb: 0 },
                 })}
               >
-                Building with React + Node, shipping weekly.
-              </p>
-            </div>
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    bg: 'brand.600',
+                    mt: 2,
+                    mr: 3,
+                    flexShrink: 0,
+                  })}
+                />
+                <p
+                  className={css({
+                    fontSize: 'md',
+                    color: 'gray.600',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  })}
+                >
+                  Building React + Node tools with TypeScript.
+                </p>
+              </li>
+              <li
+                className={css({
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                  mb: 3,
+                  '&:last-child': { mb: 0 },
+                })}
+              >
+                <span
+                  className={css({
+                    display: 'inline-block',
+                    width: '6px',
+                    height: '6px',
+                    borderRadius: '50%',
+                    bg: 'brand.600',
+                    mt: 2,
+                    mr: 3,
+                    flexShrink: 0,
+                  })}
+                />
+                <p
+                  className={css({
+                    fontSize: 'md',
+                    color: 'gray.600',
+                    lineHeight: 1.6,
+                    margin: 0,
+                  })}
+                >
+                  Writing weekly about engineering leadership.
+                </p>
+              </li>
+            </ul>
           </div>
         </div>
       </main>
