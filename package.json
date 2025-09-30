@@ -10,9 +10,7 @@
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run",
 		"test:coverage": "vitest run --coverage",
-		"deploy": "./scripts/deploy-gh-pages.sh",
-		"deploy:worktree": "./scripts/deploy-gh-pages-worktree.sh",
-		"cleanup:worktree": "./scripts/cleanup-worktree.sh",
+		"deploy": "./deploy.sh",
 		"repl": "node repl-with-cmd-k.js"
 	},
 	"dependencies": {
