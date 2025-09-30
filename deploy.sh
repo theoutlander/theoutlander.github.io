@@ -7,12 +7,12 @@ if [ ! -d "./gh-pages/.git" ]; then
   git fetch origin gh-pages || true
   git worktree prune
   rm -rf ./gh-pages
-  git worktree add ./gh-pages gh-pages
+  git worktree add -f ./gh-pages gh-pages
 fi
 
 # 2. Build site
 echo "🏗️ Building site..."
-pnpm build
+pnpm build:prod
 
 # 3. Sync dist -> gh-pages
 echo "🔄 Syncing dist/ -> gh-pages/"
