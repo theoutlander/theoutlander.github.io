@@ -556,15 +556,7 @@ export default function Resume() {
           </article>
 
           {/* Contact */}
-          <ContactSection
-            className={css({
-              bg: { base: surface.light, _dark: surface.dark },
-              borderWidth: '1px',
-              borderColor: { base: border.light, _dark: border.dark },
-              borderRadius: 'xl',
-              boxShadow: { base: 'sm', _dark: 'none' },
-            })}
-          />
+          <ContactSection />
         </aside>
       </section>
 
