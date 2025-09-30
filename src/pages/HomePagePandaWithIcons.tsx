@@ -1,5 +1,5 @@
 import React from 'react';
-import { css, container } from '../../styled-system/css';
+import { css, container } from '../../styled-system/css/index.mjs';
 import { Post } from '../../lib/data';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -258,15 +258,15 @@ function HeroSection() {
           <div className={css({ textAlign: 'center' })}>
             <div
               className={css({
-                width: '8rem',
-                height: '8rem',
+                width: '12rem',
+                height: '12rem',
                 borderRadius: '50%',
                 bg: 'brand.600',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: '4xl',
+                fontSize: '5xl',
                 fontWeight: 'bold',
                 margin: '0 auto',
                 mb: 6,

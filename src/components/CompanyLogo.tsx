@@ -163,6 +163,33 @@ export function CompanyLogo({
         Plutonic
       </div>
     ),
+    'videoly platform': (
+      <div
+        style={{
+          ...logoStyle,
+          width: '120px',
+          height: '120px',
+          backgroundColor: '#ff6b6b',
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          color: 'white',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          fontFamily: 'system-ui, sans-serif',
+        }}
+      >
+        Videoly
+      </div>
+    ),
+    'roomtoday platform': (
+      <img
+        src='/assets/images/companies/room-today.png'
+        alt='RoomToday Platform'
+        style={logoStyle}
+      />
+    ),
   };
 
   const logo = logos[company.toLowerCase()];

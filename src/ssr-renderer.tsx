@@ -6,7 +6,7 @@ import { join } from 'node:path';
 // Import our Panda CSS page components
 import { HomePagePanda } from './pages/HomePagePanda';
 import { BlogPagePanda } from './pages/BlogPagePanda';
-import { AboutPagePanda } from './pages/AboutPagePanda';
+import AboutPage from './components/About';
 import { ResumePagePanda } from './pages/ResumePagePanda';
 import { BlogPostPagePanda } from './pages/BlogPostPagePanda';
 
@@ -41,7 +41,7 @@ const generateComprehensiveCSS = async (
   }> = [
     { name: 'home', component: HomePagePanda, props: { posts: hashnodeData } },
     { name: 'blog', component: BlogPagePanda, props: { posts: hashnodeData } },
-    { name: 'about', component: AboutPagePanda, props: { aboutData } },
+    { name: 'about', component: AboutPage, props: {} },
     { name: 'resume', component: ResumePagePanda, props: {} },
   ];
 
@@ -229,7 +229,7 @@ export async function renderAllStaticPagesSSR() {
   console.log('📄 Rendering about page with SSR...');
   const aboutDir = join('dist', 'about');
   mkdirSync(aboutDir, { recursive: true });
-  const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
+  const aboutResult = renderPageToHTML(AboutPage, {});
   const aboutHTMLWithStyles = generateBaseHTML(
     'About - Nick Karnik',
     'Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript.',

@@ -185,8 +185,8 @@ function HeroSection() {
           <div className={css({ textAlign: 'center' })}>
             <div
               className={css({
-                width: '8rem',
-                height: '8rem',
+                width: '12rem',
+                height: '12rem',
                 borderRadius: '50%',
                 margin: '0 auto',
                 mb: 6,

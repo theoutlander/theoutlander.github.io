@@ -36,13 +36,18 @@ export default function Footer() {
         <div
           className={css({
             display: 'flex',
-            alignItems: 'start',
-            justifyContent: 'space-between',
-            gap: 8,
+            flexDirection: { base: 'column', md: 'row' },
+            gap: 12,
+            alignItems: 'center',
+            justifyContent: 'center',
           })}
         >
-          {/* Left side - Nick Karnik info */}
-          <div>
+          {/* Left column - Nick Karnik info */}
+          <div
+            className={css({
+              minWidth: 0,
+            })}
+          >
             <h2
               className={css({
                 fontSize: 'lg',
@@ -69,6 +74,7 @@ export default function Footer() {
                 gap: 2,
                 flexWrap: 'wrap',
                 alignItems: 'center',
+                mb: 6,
               })}
             >
               <div
@@ -108,10 +114,24 @@ export default function Footer() {
                 </span>
               </div>
             </div>
+
+            {/* Copyright under first column */}
+            <p
+              className={css({
+                fontSize: 'sm',
+                color: 'gray.600',
+              })}
+            >
+              © 2025 Nick Karnik. All rights reserved.
+            </p>
           </div>
 
-          {/* Right side - Connect */}
-          <div>
+          {/* Right column - Connect */}
+          <div
+            className={css({
+              minWidth: 0,
+            })}
+          >
             <h3
               className={css({
                 fontSize: 'md',
@@ -274,23 +294,6 @@ export default function Footer() {
               </a>
             </p>
           </div>
-        </div>
-
-        {/* Copyright */}
-        <div
-          className={css({
-            mt: 12,
-            textAlign: 'center',
-          })}
-        >
-          <p
-            className={css({
-              fontSize: 'sm',
-              color: 'gray.600',
-            })}
-          >
-            © 2025 Nick Karnik. All rights reserved.
-          </p>
         </div>
       </div>
     </footer>
