@@ -1,3 +1,6 @@
 node_modules
 .tanstack/tmp
 .vite/
+## Panda
+styled-system
+styled-system-studio

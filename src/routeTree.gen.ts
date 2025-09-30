@@ -9,42 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as RssRouteImport } from './routes/rss'
 import { Route as ResumeRouteImport } from './routes/resume'
-import { Route as LostRouteImport } from './routes/lost'
-import { Route as LandingHybridRouteImport } from './routes/landing-hybrid'
-import { Route as CvRouteImport } from './routes/cv'
 import { Route as BlogRouteImport } from './routes/blog'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as R404RouteImport } from './routes/404'
-import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as BlogSlugRouteImport } from './routes/blog.$slug'
-import { Route as BlogTTagRouteImport } from './routes/blog.t.$tag'
 
-const RssRoute = RssRouteImport.update({
-  id: '/rss',
-  path: '/rss',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const ResumeRoute = ResumeRouteImport.update({
   id: '/resume',
   path: '/resume',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LostRoute = LostRouteImport.update({
-  id: '/lost',
-  path: '/lost',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LandingHybridRoute = LandingHybridRouteImport.update({
-  id: '/landing-hybrid',
-  path: '/landing-hybrid',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CvRoute = CvRouteImport.update({
-  id: '/cv',
-  path: '/cv',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BlogRoute = BlogRouteImport.update({
@@ -57,168 +29,53 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
-const R404Route = R404RouteImport.update({
-  id: '/404',
-  path: '/404',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const SplatRoute = SplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const BlogSlugRoute = BlogSlugRouteImport.update({
-  id: '/$slug',
-  path: '/$slug',
-  getParentRoute: () => BlogRoute,
-} as any)
-const BlogTTagRoute = BlogTTagRouteImport.update({
-  id: '/t/$tag',
-  path: '/t/$tag',
-  getParentRoute: () => BlogRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/cv': typeof CvRoute
-  '/landing-hybrid': typeof LandingHybridRoute
-  '/lost': typeof LostRoute
+  '/blog': typeof BlogRoute
   '/resume': typeof ResumeRoute
-  '/rss': typeof RssRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/cv': typeof CvRoute
-  '/landing-hybrid': typeof LandingHybridRoute
-  '/lost': typeof LostRoute
+  '/blog': typeof BlogRoute
   '/resume': typeof ResumeRoute
-  '/rss': typeof RssRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/$': typeof SplatRoute
-  '/404': typeof R404Route
   '/about': typeof AboutRoute
-  '/blog': typeof BlogRouteWithChildren
-  '/cv': typeof CvRoute
-  '/landing-hybrid': typeof LandingHybridRoute
-  '/lost': typeof LostRoute
+  '/blog': typeof BlogRoute
   '/resume': typeof ResumeRoute
-  '/rss': typeof RssRoute
-  '/blog/$slug': typeof BlogSlugRoute
-  '/blog/t/$tag': typeof BlogTTagRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/$'
-    | '/404'
-    | '/about'
-    | '/blog'
-    | '/cv'
-    | '/landing-hybrid'
-    | '/lost'
-    | '/resume'
-    | '/rss'
-    | '/blog/$slug'
-    | '/blog/t/$tag'
+  fullPaths: '/' | '/about' | '/blog' | '/resume'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/$'
-    | '/404'
-    | '/about'
-    | '/blog'
-    | '/cv'
-    | '/landing-hybrid'
-    | '/lost'
-    | '/resume'
-    | '/rss'
-    | '/blog/$slug'
-    | '/blog/t/$tag'
-  id:
-    | '__root__'
-    | '/'
-    | '/$'
-    | '/404'
-    | '/about'
-    | '/blog'
-    | '/cv'
-    | '/landing-hybrid'
-    | '/lost'
-    | '/resume'
-    | '/rss'
-    | '/blog/$slug'
-    | '/blog/t/$tag'
+  to: '/' | '/about' | '/blog' | '/resume'
+  id: '__root__' | '/' | '/about' | '/blog' | '/resume'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  SplatRoute: typeof SplatRoute
-  R404Route: typeof R404Route
   AboutRoute: typeof AboutRoute
-  BlogRoute: typeof BlogRouteWithChildren
-  CvRoute: typeof CvRoute
-  LandingHybridRoute: typeof LandingHybridRoute
-  LostRoute: typeof LostRoute
+  BlogRoute: typeof BlogRoute
   ResumeRoute: typeof ResumeRoute
-  RssRoute: typeof RssRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/rss': {
-      id: '/rss'
-      path: '/rss'
-      fullPath: '/rss'
-      preLoaderRoute: typeof RssRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/resume': {
       id: '/resume'
       path: '/resume'
       fullPath: '/resume'
       preLoaderRoute: typeof ResumeRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/lost': {
-      id: '/lost'
-      path: '/lost'
-      fullPath: '/lost'
-      preLoaderRoute: typeof LostRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/landing-hybrid': {
-      id: '/landing-hybrid'
-      path: '/landing-hybrid'
-      fullPath: '/landing-hybrid'
-      preLoaderRoute: typeof LandingHybridRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cv': {
-      id: '/cv'
-      path: '/cv'
-      fullPath: '/cv'
-      preLoaderRoute: typeof CvRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/blog': {
@@ -235,20 +92,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/404': {
-      id: '/404'
-      path: '/404'
-      fullPath: '/404'
-      preLoaderRoute: typeof R404RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/$': {
-      id: '/$'
-      path: '/$'
-      fullPath: '/$'
-      preLoaderRoute: typeof SplatRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -256,46 +99,14 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/blog/$slug': {
-      id: '/blog/$slug'
-      path: '/$slug'
-      fullPath: '/blog/$slug'
-      preLoaderRoute: typeof BlogSlugRouteImport
-      parentRoute: typeof BlogRoute
-    }
-    '/blog/t/$tag': {
-      id: '/blog/t/$tag'
-      path: '/t/$tag'
-      fullPath: '/blog/t/$tag'
-      preLoaderRoute: typeof BlogTTagRouteImport
-      parentRoute: typeof BlogRoute
-    }
   }
 }
 
-interface BlogRouteChildren {
-  BlogSlugRoute: typeof BlogSlugRoute
-  BlogTTagRoute: typeof BlogTTagRoute
-}
-
-const BlogRouteChildren: BlogRouteChildren = {
-  BlogSlugRoute: BlogSlugRoute,
-  BlogTTagRoute: BlogTTagRoute,
-}
-
-const BlogRouteWithChildren = BlogRoute._addFileChildren(BlogRouteChildren)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  SplatRoute: SplatRoute,
-  R404Route: R404Route,
   AboutRoute: AboutRoute,
-  BlogRoute: BlogRouteWithChildren,
-  CvRoute: CvRoute,
-  LandingHybridRoute: LandingHybridRoute,
-  LostRoute: LostRoute,
+  BlogRoute: BlogRoute,
   ResumeRoute: ResumeRoute,
-  RssRoute: RssRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

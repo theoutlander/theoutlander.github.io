@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Box, Heading, Text, Link, Image } from '@chakra-ui/react';
 
 type Post = {
   id?: string;
@@ -22,24 +21,57 @@ export default function Post({ slug }: { slug: string }) {
       .catch(() => setPost(null));
   }, [slug]);
 
-  if (!post) return <Box p={6}>Loading…</Box>;
+  if (!post) return <div style={{ padding: '24px' }}>Loading…</div>;
 
   return (
-    <Box maxW='3xl' mx='auto' p={6}>
+    <div
+      style={{
+        maxWidth: '768px',
+        margin: '0 auto',
+        padding: '24px',
+      }}
+    >
       {post.cover ? (
-        <Image src={post.cover} alt='' mb={4} borderRadius='xl' />
+        <img
+          src={post.cover}
+          alt=''
+          style={{
+            marginBottom: '16px',
+            borderRadius: '12px',
+            width: '100%',
+          }}
+        />
       ) : null}
-      <Heading size='lg'>{post.title}</Heading>
-      <Text opacity={0.7} mt={1}>
+      <h1
+        style={{
+          fontSize: '1.5rem',
+          fontWeight: '600',
+          margin: 0,
+        }}
+      >
+        {post.title}
+      </h1>
+      <p
+        style={{
+          opacity: 0.7,
+          marginTop: '4px',
+          margin: '4px 0 0 0',
+        }}
+      >
         {post.date ? new Date(post.date).toDateString() : ''}
-      </Text>
-      <Text mt={4}>{post.excerpt}</Text>
-      <Text mt={6}>
+      </p>
+      <p style={{ marginTop: '16px', margin: '16px 0 0 0' }}>{post.excerpt}</p>
+      <p style={{ marginTop: '24px', margin: '24px 0 0 0' }}>
         Full post on Hashnode:{' '}
-        <Link href={post.url} target='_blank' rel='noopener noreferrer'>
+        <a
+          href={post.url}
+          target='_blank'
+          rel='noopener noreferrer'
+          style={{ color: '#3182ce', textDecoration: 'underline' }}
+        >
           {post.url}
-        </Link>
-      </Text>
-    </Box>
+        </a>
+      </p>
+    </div>
   );
 }

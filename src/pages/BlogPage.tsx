@@ -1,16 +1,5 @@
 import React from 'react';
-// import { Helmet } from 'react-helmet-async';
-import {
-  Box,
-  Container,
-  Flex,
-  HStack,
-  Heading,
-  Text,
-  SimpleGrid,
-  Card,
-} from '@chakra-ui/react';
-// import { Link } from '@tanstack/react-router';
+import { Helmet } from 'react-helmet-async';
 
 type Post = {
   id?: string;
@@ -31,171 +20,274 @@ function Header() {
   const BRAND = 'Nick Karnik';
 
   return (
-    <Box
-      as='header'
-      position='sticky'
-      top={0}
-      zIndex={10}
-      bg='white'
-      borderBottom='1px solid'
-      borderColor='gray.200'
-      backdropFilter='saturate(180%) blur(8px)'
+    <header
+      style={{
+        position: 'sticky',
+        top: 0,
+        zIndex: 10,
+        backgroundColor: 'white',
+        borderBottom: '1px solid #e2e8f0',
+        backdropFilter: 'saturate(180%) blur(8px)',
+      }}
     >
-      <Container maxW='6xl' py={3}>
-        <Flex align='center' justify='space-between' gap={6}>
-          <Box as='a' href='/'>
-            <Heading size='md' color='gray.800'>
+      <div
+        style={{ maxWidth: '1200px', margin: '0 auto', padding: '12px 24px' }}
+      >
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: '24px',
+          }}
+        >
+          <a href='/' style={{ textDecoration: 'none' }}>
+            <h2
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: '600',
+                color: '#1a202c',
+                margin: 0,
+              }}
+            >
               {BRAND}
-            </Heading>
-          </Box>
+            </h2>
+          </a>
 
-          <HStack gap={6}>
-            <Box as='a' href='/blog'>
-              <Text color='blue.600' fontWeight='500'>
+          <div style={{ display: 'flex', gap: '24px' }}>
+            <a href='/blog' style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  color: '#3182ce',
+                  fontWeight: '500',
+                  fontSize: '16px',
+                }}
+              >
                 Blog
-              </Text>
-            </Box>
-            <Box as='a' href='/about'>
-              <Text color='gray.600' _hover={{ color: 'blue.600' }}>
+              </span>
+            </a>
+            <a href='/about' style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  color: '#718096',
+                  fontSize: '16px',
+                }}
+              >
                 About
-              </Text>
-            </Box>
-            <Box as='a' href='/resume'>
-              <Text color='gray.600' _hover={{ color: 'blue.600' }}>
+              </span>
+            </a>
+            <a href='/resume' style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  color: '#718096',
+                  fontSize: '16px',
+                }}
+              >
                 Resume
-              </Text>
-            </Box>
-          </HStack>
-        </Flex>
-      </Container>
-    </Box>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }
 
 function Footer() {
   return (
-    <Box
-      as='footer'
-      bg='white'
-      borderTop='1px solid'
-      borderColor='gray.200'
-      py={8}
-      mt={16}
+    <footer
+      style={{
+        backgroundColor: 'white',
+        borderTop: '1px solid #e2e8f0',
+        padding: '32px 0',
+        marginTop: '64px',
+      }}
     >
-      <Container maxW='6xl'>
-        <Flex align='center' justify='space-between'>
-          <Text fontSize='sm' color='gray.600'>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: '16px',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '14px',
+              color: '#718096',
+            }}
+          >
             © 2024 Nick Karnik. All rights reserved.
-          </Text>
-          <HStack gap={4}>
-            <Box as='a' href='https://github.com/theoutlander' target='_blank'>
-              <Text
-                fontSize='sm'
-                color='gray.600'
-                _hover={{ color: 'blue.600' }}
+          </span>
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <a
+              href='https://github.com/theoutlander'
+              target='_blank'
+              rel='noopener noreferrer'
+              style={{ textDecoration: 'none' }}
+            >
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: '#718096',
+                }}
               >
                 GitHub
-              </Text>
-            </Box>
-            <Box
-              as='a'
+              </span>
+            </a>
+            <a
               href='https://www.linkedin.com/in/theoutlander'
               target='_blank'
+              rel='noopener noreferrer'
+              style={{ textDecoration: 'none' }}
             >
-              <Text
-                fontSize='sm'
-                color='gray.600'
-                _hover={{ color: 'blue.600' }}
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: '#718096',
+                }}
               >
                 LinkedIn
-              </Text>
-            </Box>
-            <Box as='a' href='mailto:nick@karnik.io'>
-              <Text
-                fontSize='sm'
-                color='gray.600'
-                _hover={{ color: 'blue.600' }}
+              </span>
+            </a>
+            <a href='mailto:nick@karnik.io' style={{ textDecoration: 'none' }}>
+              <span
+                style={{
+                  fontSize: '14px',
+                  color: '#718096',
+                }}
               >
                 Email
-              </Text>
-            </Box>
-          </HStack>
-        </Flex>
-      </Container>
-    </Box>
+              </span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
   );
 }
 
 function BlogCard({ post }: { post: Post }) {
   return (
-    <Card.Root
-      borderRadius='2xl'
-      overflow='hidden'
-      boxShadow='0 1px 3px rgba(0,0,0,0.1)'
-      border='1px solid'
-      borderColor='gray.200'
+    <div
+      style={{
+        borderRadius: '16px',
+        overflow: 'hidden',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+        border: '1px solid #e2e8f0',
+        backgroundColor: 'white',
+        transition: 'all 0.2s ease',
+      }}
     >
       {post.cover && (
-        <Box>
-          <Box
-            as='img'
+        <div>
+          <img
             src={post.cover}
             alt=''
-            objectFit='cover'
-            maxHeight='260px'
-            width='100%'
+            style={{
+              objectFit: 'cover',
+              maxHeight: '260px',
+              width: '100%',
+            }}
           />
-        </Box>
+        </div>
       )}
-      <Card.Body p={4}>
-        <Box as='a' href={`/blog/${post.slug}`}>
-          <Heading
-            size='md'
-            color='blue.600'
-            mb={1}
-            _hover={{ color: 'blue.700' }}
+      <div style={{ padding: '16px' }}>
+        <a href={`/blog/${post.slug}`} style={{ textDecoration: 'none' }}>
+          <h3
+            style={{
+              fontSize: '1.125rem',
+              fontWeight: '600',
+              color: '#3182ce',
+              margin: '0 0 4px 0',
+            }}
           >
             {post.title}
-          </Heading>
-        </Box>
-        <Text fontSize='sm' color='gray.600' mb={3}>
+          </h3>
+        </a>
+        <p
+          style={{
+            fontSize: '14px',
+            color: '#718096',
+            margin: '0 0 12px 0',
+          }}
+        >
           {post.date ? new Date(post.date).toDateString() : ''}
           {post.excerpt
             ? ` · ${Math.max(1, Math.round(post.excerpt.split(' ').length / 200))} min read`
             : ''}
-        </Text>
+        </p>
         {post.excerpt && (
-          <Text color='gray.800' lineHeight={1.6}>
+          <p
+            style={{
+              color: '#1a202c',
+              lineHeight: 1.6,
+              margin: 0,
+            }}
+          >
             {post.excerpt}
-          </Text>
+          </p>
         )}
-      </Card.Body>
-    </Card.Root>
+      </div>
+    </div>
   );
 }
 
 export function BlogPage({ posts }: BlogPageProps) {
   return (
-    <Box bg='gray.50' minH='100vh'>
+    <div
+      style={{
+        backgroundColor: '#f7fafc',
+        minHeight: '100vh',
+      }}
+    >
       <Header />
-      <Container as='main' maxW='6xl' py={{ base: 6, md: 10 }}>
-        <Box mb={12}>
-          <Heading size='3xl' mb={4} color='gray.800'>
+      <main
+        style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '24px 24px 40px 24px',
+        }}
+      >
+        <div style={{ marginBottom: '48px' }}>
+          <h1
+            style={{
+              fontSize: '3rem',
+              fontWeight: '700',
+              margin: '0 0 16px 0',
+              color: '#1a202c',
+            }}
+          >
             Blog
-          </Heading>
-          <Text fontSize='lg' color='gray.600' maxW='600px'>
+          </h1>
+          <p
+            style={{
+              fontSize: '18px',
+              color: '#718096',
+              maxWidth: '600px',
+              margin: 0,
+            }}
+          >
             Thoughts on engineering, AI, and technology from my experience
             building and leading teams.
-          </Text>
-        </Box>
+          </p>
+        </div>
 
-        <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={6}>
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+            gap: '24px',
+          }}
+        >
           {posts.map(post => (
             <BlogCard key={post.slug} post={post} />
           ))}
-        </SimpleGrid>
-      </Container>
+        </div>
+      </main>
       <Footer />
-    </Box>
+    </div>
   );
 }

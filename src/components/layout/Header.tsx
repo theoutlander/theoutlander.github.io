@@ -1,44 +1,84 @@
-import {
-  Box,
-  Container,
-  Flex,
-  HStack,
-  Link as CLink,
-  Button,
-} from '@chakra-ui/react';
-import { Link } from '@tanstack/react-router';
+import { css } from '../../../styled-system/css/index.mjs';
 
 export default function Header() {
   return (
-    <Box as='header' borderBottom='1px solid' borderColor='gray.200' bg='white'>
-      <Container maxW='6xl' py={3}>
-        <Flex align='center' justify='space-between' gap={6}>
+    <header
+      className={css({
+        borderBottom: '1px solid',
+        borderColor: 'gray.200',
+        bg: 'white',
+      })}
+    >
+      <div
+        className={css({
+          maxW: '6xl',
+          py: 3,
+          mx: 'auto',
+          px: 4,
+        })}
+      >
+        <div
+          className={css({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 6,
+          })}
+        >
           {/* Brand: pick one label and keep it consistent */}
-          <Link to='/' preload='intent'>
-            <Button
-              variant='ghost'
-              size='sm'
-              fontWeight='bold'
-              px={3}
-              rounded='lg'
-            >
-              Nick Karnik
-            </Button>
-          </Link>
+          <a
+            href='/'
+            className={css({
+              textDecoration: 'none',
+              fontWeight: 'bold',
+              px: 3,
+              py: 2,
+              rounded: 'lg',
+              _hover: { bg: 'gray.100' },
+            })}
+          >
+            Nick Karnik
+          </a>
 
-          <HStack gap={4}>
-            <Link to='/' preload='intent'>
-              <CLink>Home</CLink>
-            </Link>
-            <Link to='/blog' preload='intent'>
-              <CLink>Blog</CLink>
-            </Link>
-            <Link to='/about' preload='intent'>
-              <CLink>About</CLink>
-            </Link>
-          </HStack>
-        </Flex>
-      </Container>
-    </Box>
+          <div
+            className={css({
+              display: 'flex',
+              gap: 4,
+            })}
+          >
+            <a
+              href='/'
+              className={css({
+                textDecoration: 'none',
+                color: 'gray.600',
+                _hover: { color: 'blue.700' },
+              })}
+            >
+              Home
+            </a>
+            <a
+              href='/about'
+              className={css({
+                textDecoration: 'none',
+                color: 'gray.600',
+                _hover: { color: 'blue.700' },
+              })}
+            >
+              About
+            </a>
+            <a
+              href='/resume'
+              className={css({
+                textDecoration: 'none',
+                color: 'gray.600',
+                _hover: { color: 'blue.700' },
+              })}
+            >
+              Resume
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
   );
 }

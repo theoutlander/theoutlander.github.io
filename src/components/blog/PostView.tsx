@@ -1,12 +1,3 @@
-import {
-  Box,
-  Heading,
-  Image,
-  Text,
-  HStack,
-  Tag,
-  Container,
-} from '@chakra-ui/react';
 import { Helmet } from 'react-helmet-async';
 import ProgressTop from '../ui/ProgressTop';
 import PostJsonLd from '../seo/PostJsonLd';
@@ -54,50 +45,98 @@ export default function PostView({ post }: { post: Post }) {
         excerpt={post.excerpt}
       />
 
-      <Container maxW='3xl' px={6}>
+      <div style={{ maxWidth: '768px', margin: '0 auto', padding: '0 24px' }}>
         {post.cover ? (
-          <Image src={post.cover} alt='' mb={8} borderRadius='xl' w='full' />
+          <img
+            src={post.cover}
+            alt=''
+            style={{
+              marginBottom: '32px',
+              borderRadius: '12px',
+              width: '100%',
+            }}
+          />
         ) : null}
 
-        <Heading size='xl' mb={4} lineHeight='1.2'>
+        <h1
+          style={{
+            fontSize: '2.25rem',
+            fontWeight: '600',
+            lineHeight: '1.2',
+            marginBottom: '16px',
+            color: '#1a202c',
+          }}
+        >
           {post.title}
-        </Heading>
+        </h1>
 
-        <HStack gap={3} mb={6}>
-          <Text fontSize='sm' color='gray.600'>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            marginBottom: '24px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <span
+            style={{
+              fontSize: '14px',
+              color: '#718096',
+            }}
+          >
             {post.date ? new Date(post.date).toDateString() : ''}
-          </Text>
+          </span>
           {post.tags?.slice(0, 4).map(t => (
-            <Tag.Root key={t} size='sm' variant='subtle'>
+            <span
+              key={t}
+              style={{
+                backgroundColor: '#edf2f7',
+                color: '#4a5568',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '12px',
+                fontWeight: '500',
+              }}
+            >
               {t}
-            </Tag.Root>
+            </span>
           ))}
-        </HStack>
+        </div>
 
-        <Text color='gray.800' mb={8} fontSize='lg' lineHeight='1.7'>
+        <p
+          style={{
+            color: '#1a202c',
+            marginBottom: '32px',
+            fontSize: '18px',
+            lineHeight: '1.7',
+          }}
+        >
           {post.excerpt}
-        </Text>
+        </p>
 
         {/* Full article content */}
-        <Box
-          maxW='none'
-          lineHeight='1.7'
-          fontSize='lg'
-          color='gray.800'
-          css={proseStyles}
+        <div
+          style={{
+            maxWidth: 'none',
+            lineHeight: '1.7',
+            fontSize: '18px',
+            color: '#1a202c',
+            ...proseStyles,
+          }}
         >
           {post.html ? (
             <div dangerouslySetInnerHTML={{ __html: post.html }} />
           ) : (
-            <Text color='gray.500' fontStyle='italic'>
+            <p style={{ color: '#718096', fontStyle: 'italic' }}>
               Content not available
-            </Text>
+            </p>
           )}
-        </Box>
+        </div>
 
         {/* Comments Section */}
         <Comments postTitle={post.title} postUrl={postUrl} />
-      </Container>
+      </div>
     </>
   );
 }

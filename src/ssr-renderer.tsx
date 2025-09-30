@@ -1,15 +1,14 @@
 import React from 'react';
 import { renderToString } from 'react-dom/server';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
-// import { HelmetProvider, Helmet } from 'react-helmet-async';
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-// Import our page components
-import { HomePage } from './pages/HomePage';
-import { BlogPage } from './pages/BlogPage';
-import { AboutPage } from './pages/AboutPage';
-import { ResumePage } from './pages/ResumePage';
+// Import our Panda CSS page components
+import { HomePagePanda } from './pages/HomePagePanda';
+import { BlogPagePanda } from './pages/BlogPagePanda';
+import { AboutPagePanda } from './pages/AboutPagePanda';
+import { ResumePagePanda } from './pages/ResumePagePanda';
+import { BlogPostPagePanda } from './pages/BlogPostPagePanda';
 
 type Post = {
   id?: string;
@@ -27,519 +26,78 @@ type AboutData = {
   html: string;
 };
 
-// Generate CSS styles for Chakra UI (same as before)
-const generateChakraStyles = () => {
-  return `
-    <style>
-      /* Chakra UI Reset and Base Styles */
-      *, *::before, *::after {
-        box-sizing: border-box;
-      }
-      
-      html {
-        line-height: 1.15;
-        -webkit-text-size-adjust: 100%;
-      }
-      
-      body {
-        margin: 0;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        background-color: #f7fafc;
-        color: #1a202c;
-      }
-      
-      /* Chakra UI Component Styles */
-      .chakra-ui-light {
-        color-scheme: light;
-      }
-      
-      /* Box component styles */
-      .css-box {
-        display: block;
-      }
-      
-      /* Container styles */
-      .css-container {
-        width: 100%;
-        margin-left: auto;
-        margin-right: auto;
-        padding-left: 1rem;
-        padding-right: 1rem;
-        max-width: 1200px;
-      }
-      
-      /* Flex styles */
-      .css-flex {
-        display: flex;
-      }
-      
-      .css-flex-column {
-        flex-direction: column;
-      }
-      
-      .css-align-center {
-        align-items: center;
-      }
-      
-      .css-justify-between {
-        justify-content: space-between;
-      }
-      
-      .css-justify-center {
-        justify-content: center;
-      }
-      
-      /* HStack styles */
-      .css-hstack {
-        display: flex;
-        align-items: center;
-        gap: 1.5rem;
-      }
-      
-      /* Heading styles */
-      .css-heading {
-        font-weight: 600;
-        line-height: 1.2;
-        color: #1a202c;
-      }
-      
-      .css-heading-lg {
-        font-size: 2.25rem;
-        line-height: 1.2;
-      }
-      
-      .css-heading-md {
-        font-size: 1.5rem;
-        line-height: 1.2;
-      }
-      
-      .css-heading-sm {
-        font-size: 1.25rem;
-        line-height: 1.2;
-      }
-      
-      /* Text styles */
-      .css-text {
-        color: #4a5568;
-        line-height: 1.5;
-      }
-      
-      .css-text-lg {
-        font-size: 1.125rem;
-        line-height: 1.5;
-      }
-      
-      .css-text-sm {
-        font-size: 0.875rem;
-        line-height: 1.5;
-      }
-      
-      /* Link styles */
-      .css-link {
-        color: #3182ce;
-        text-decoration: none;
-        transition: color 0.2s;
-      }
-      
-      .css-link:hover {
-        color: #2c5282;
-        text-decoration: underline;
-      }
-      
-      /* Button styles */
-      .css-button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        padding: 0.5rem 1rem;
-        border-radius: 0.375rem;
-        font-weight: 500;
-        text-decoration: none;
-        transition: all 0.2s;
-        border: 1px solid transparent;
-        cursor: pointer;
-      }
-      
-      .css-button-primary {
-        background-color: #3182ce;
-        color: white;
-        border-color: #3182ce;
-      }
-      
-      .css-button-primary:hover {
-        background-color: #2c5282;
-        border-color: #2c5282;
-        color: white;
-        text-decoration: none;
-      }
-      
-      .css-button-secondary {
-        background-color: white;
-        color: #1a202c;
-        border-color: #e2e8f0;
-      }
-      
-      .css-button-secondary:hover {
-        background-color: #f7fafc;
-        border-color: #cbd5e0;
-        color: #1a202c;
-        text-decoration: none;
-      }
-      
-      /* Card styles */
-      .css-card {
-        background: white;
-        border-radius: 0.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e2e8f0;
-        overflow: hidden;
-      }
-      
-      .css-card-body {
-        padding: 1rem;
-      }
-      
-      /* Grid styles */
-      .css-grid {
-        display: grid;
-      }
-      
-      .css-grid-cols-1 {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-      }
-      
-      .css-grid-cols-2 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-      
-      .css-grid-cols-3 {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-      }
-      
-      .css-grid-auto-fit {
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      }
-      
-      .css-gap-4 {
-        gap: 1rem;
-      }
-      
-      .css-gap-6 {
-        gap: 1.5rem;
-      }
-      
-      .css-gap-8 {
-        gap: 2rem;
-      }
-      
-      /* Spacing utilities */
-      .css-p-4 { padding: 1rem; }
-      .css-p-6 { padding: 1.5rem; }
-      .css-p-8 { padding: 2rem; }
-      .css-py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-      .css-py-6 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
-      .css-py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-      .css-px-4 { padding-left: 1rem; padding-right: 1rem; }
-      .css-px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-      
-      .css-mb-4 { margin-bottom: 1rem; }
-      .css-mb-6 { margin-bottom: 1.5rem; }
-      .css-mb-8 { margin-bottom: 2rem; }
-      .css-mt-4 { margin-top: 1rem; }
-      .css-mt-6 { margin-top: 1.5rem; }
-      .css-mt-8 { margin-top: 2rem; }
-      
-      /* Responsive utilities */
-      @media (min-width: 768px) {
-        .css-md\\:grid-cols-2 {
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        .css-md\\:py-10 {
-          padding-top: 2.5rem;
-          padding-bottom: 2.5rem;
-        }
-      }
-      
-      /* Layout specific styles */
-      .css-header {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: white;
-        border-bottom: 1px solid #e2e8f0;
-        backdrop-filter: saturate(180%) blur(8px);
-      }
-      
-      .css-main {
-        min-height: 100vh;
-        background-color: #f7fafc;
-      }
-      
-      /* Hero section styles */
-      .css-hero {
-        padding: 4rem 0;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        border-radius: 1.5rem;
-        margin-bottom: 4rem;
-        position: relative;
-        overflow: hidden;
-      }
-      
-      .css-hero-bg-1 {
-        position: absolute;
-        top: -50%;
-        right: -20%;
-        width: 300px;
-        height: 300px;
-        background: #bee3f8;
-        border-radius: 50%;
-        opacity: 0.3;
-      }
-      
-      .css-hero-bg-2 {
-        position: absolute;
-        bottom: -30%;
-        left: -10%;
-        width: 200px;
-        height: 200px;
-        background: #e9d8fd;
-        border-radius: 50%;
-        opacity: 0.2;
-      }
-      
-      /* Tag styles */
-      .css-tag {
-        background: #edf2f7;
-        color: #4a5568;
-        padding: 0.25rem 0.5rem;
-        border-radius: 0.25rem;
-        font-size: 0.75rem;
-        font-weight: 500;
-      }
-      
-      .css-tag-primary {
-        background: #3182ce;
-        color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        font-size: 0.875rem;
-      }
-      
-      /* Avatar styles */
-      .css-avatar {
-        width: 4rem;
-        height: 4rem;
-        border-radius: 50%;
-        background: #3182ce;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-        font-size: 1.5rem;
-      }
-      
-      .css-avatar-lg {
-        width: 8rem;
-        height: 8rem;
-        font-size: 3rem;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-        border: 4px solid white;
-      }
-      
-      /* Stats card styles */
-      .css-stats-card {
-        border: 1px solid #e2e8f0;
-        padding: 2rem;
-        border-radius: 1rem;
-        text-align: center;
-        transition: all 0.2s;
-      }
-      
-      .css-stats-number {
-        font-size: 2.25rem;
-        font-weight: bold;
-        margin: 0 0 0.25rem 0;
-      }
-      
-      .css-stats-label {
-        font-size: 0.875rem;
-        color: #718096;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-      }
-      
-      .css-stats-description {
-        font-size: 0.875rem;
-        color: #718096;
-        margin: 0;
-      }
-      
-      /* Blog card styles */
-      .css-blog-card {
-        border-radius: 1rem;
-        overflow: hidden;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border: 1px solid #e2e8f0;
-        transition: all 0.2s;
-      }
-      
-      .css-blog-card:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        transform: translateY(-2px);
-      }
-      
-      .css-blog-image {
-        object-fit: cover;
-        max-height: 260px;
-        width: 100%;
-      }
-      
-      .css-blog-title {
-        font-weight: 600;
-        font-size: 1.125rem;
-        color: #2b6cb0;
-        margin: 0 0 0.25rem 0;
-        text-decoration: none;
-      }
-      
-      .css-blog-title:hover {
-        color: #2c5282;
-        text-decoration: underline;
-      }
-      
-      .css-blog-meta {
-        font-size: 0.875rem;
-        color: #718096;
-        margin: 0.25rem 0 0.75rem 0;
-      }
-      
-      .css-blog-excerpt {
-        margin: 0.75rem 0 0 0;
-        color: #1a202c;
-        line-height: 1.6;
-      }
-      
-      /* Contact card styles */
-      .css-contact-card {
-        border: 1px solid #e2e8f0;
-        padding: 1rem;
-        border-radius: 1rem;
-        margin-bottom: 1rem;
-      }
-      
-      .css-contact-title {
-        font-size: 0.875rem;
-        margin-bottom: 0.75rem;
-        color: #1a202c;
-      }
-      
-      .css-contact-button {
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.5rem 1rem;
-        border-radius: 0.5rem;
-        text-decoration: none;
-        font-size: 0.875rem;
-        margin-bottom: 0.5rem;
-      }
-      
-      .css-contact-button-primary {
-        background: #3182ce;
-        color: white;
-      }
-      
-      .css-contact-button-secondary {
-        border: 1px solid #e2e8f0;
-        color: #1a202c;
-      }
-      
-      .css-contact-button-outline {
-        border: 1px solid #3182ce;
-        color: #3182ce;
-      }
-      
-      /* Focus card styles */
-      .css-focus-card {
-        border: 1px solid #e2e8f0;
-        padding: 1rem;
-        border-radius: 1rem;
-        margin-bottom: 1rem;
-      }
-      
-      .css-focus-title {
-        font-size: 0.875rem;
-        margin-bottom: 0.75rem;
-        color: #1a202c;
-      }
-      
-      .css-focus-tags {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 0.75rem;
-      }
-      
-      .css-focus-divider {
-        border: none;
-        border-top: 1px solid #e2e8f0;
-        margin: 0.75rem 0;
-      }
-      
-      .css-focus-description {
-        font-size: 0.875rem;
-        color: #718096;
-        margin: 0;
-        line-height: 1.5;
-      }
-      
-      /* Currently card styles */
-      .css-currently-card {
-        border: 1px solid #e2e8f0;
-        padding: 1rem;
-        border-radius: 1rem;
-      }
-      
-      .css-currently-title {
-        font-size: 0.875rem;
-        margin-bottom: 0.75rem;
-        color: #1a202c;
-      }
-      
-      .css-currently-item {
-        font-size: 0.875rem;
-        margin: 0;
-        color: #1a202c;
-      }
-      
-      /* Responsive design */
-      @media (max-width: 768px) {
-        .css-hero {
-          padding: 2rem 0;
-        }
-        
-        .css-hero-content {
-          grid-template-columns: 1fr;
-          gap: 2rem;
-        }
-        
-        .css-stats-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .css-blog-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .css-about-layout {
-          grid-template-columns: 1fr;
-        }
-      }
-    </style>
-  `;
+// Generate comprehensive CSS by rendering all pages and collecting all styles
+const generateComprehensiveCSS = async (
+  hashnodeData: Post[],
+  aboutData: AboutData
+) => {
+  console.log('🎨 Generating comprehensive CSS...');
+
+  // Render all pages to collect all CSS
+  const pages: Array<{
+    name: string;
+    component: any;
+    props: any;
+  }> = [
+    { name: 'home', component: HomePagePanda, props: { posts: hashnodeData } },
+    { name: 'blog', component: BlogPagePanda, props: { posts: hashnodeData } },
+    { name: 'about', component: AboutPagePanda, props: { aboutData } },
+    { name: 'resume', component: ResumePagePanda, props: {} },
+  ];
+
+  // Add blog post pages
+  for (const post of hashnodeData) {
+    const postDataPath = join('public', 'data', 'posts', `${post.slug}.json`);
+    let fullPostData;
+    try {
+      fullPostData = JSON.parse(readFileSync(postDataPath, 'utf8'));
+    } catch {
+      fullPostData = post;
+    }
+    pages.push({
+      name: `post-${post.slug}`,
+      component: BlogPostPagePanda as any,
+      props: { post: fullPostData },
+    });
+  }
+
+  // Collect all CSS from all pages
+  const allCSS = new Set<string>();
+
+  for (const page of pages) {
+    console.log(`  📄 Collecting CSS from ${page.name}...`);
+    const result = renderPageToHTML(page.component, page.props);
+    const html = generateBaseHTML('Test', 'Test', result.html, '');
+
+    // Extract CSS from this page
+    const styleRegex = /<style[^>]*>(.*?)<\/style>/gs;
+    const matches = html.match(styleRegex);
+
+    if (matches) {
+      console.log(`    Found ${matches.length} style blocks`);
+      matches.forEach(match => {
+        const css = match.replace(/<style[^>]*>/, '').replace(/<\/style>/, '');
+        allCSS.add(css);
+      });
+    } else {
+      console.log(`    No style blocks found`);
+    }
+  }
+
+  // Combine all unique CSS
+  const combinedCSS = Array.from(allCSS).join('\n\n');
+
+  // Write to dist
+  writeFileSync('dist/styles.css', combinedCSS);
+
+  console.log(
+    `✅ Generated comprehensive CSS file (${combinedCSS.length} characters)`
+  );
+};
+
+// Remove inline styles from HTML and return clean HTML
+const removeInlineStyles = (html: string) => {
+  return html.replace(/<style[^>]*>.*?<\/style>/gs, '');
 };
 
 // Generate the base HTML template
@@ -550,7 +108,7 @@ const generateBaseHTML = (
   additionalHead?: string
 ) => {
   return `<!doctype html>
-<html lang="en" class="chakra-ui-light">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -570,6 +128,9 @@ const generateBaseHTML = (
     <!-- RSS Feed -->
     <link rel="alternate" type="application/rss+xml" title="RSS" href="/rss" />
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"></script>
     <script>
@@ -581,8 +142,8 @@ const generateBaseHTML = (
     
     ${additionalHead || ''}
     
-    <!-- Inline CSS -->
-    ${generateChakraStyles()}
+    <!-- External CSS -->
+    <link rel="stylesheet" href="/styles.css">
   </head>
   <body>
     <div id="root">
@@ -593,23 +154,12 @@ const generateBaseHTML = (
 };
 
 // SSR wrapper component
-const SSRWrapper = ({ children }: { children: React.ReactNode }) => {
-  return React.createElement(ChakraProvider, {
-    value: defaultSystem,
-    children,
-  });
-};
-
 // Render a page component to HTML string
 const renderPageToHTML = (
   PageComponent: React.ComponentType<any>,
   props: any
 ) => {
-  const element = React.createElement(
-    SSRWrapper,
-    null,
-    React.createElement(PageComponent, props)
-  );
+  const element = React.createElement(PageComponent, props);
   const html = renderToString(element);
 
   return {
@@ -636,49 +186,65 @@ export async function renderAllStaticPagesSSR() {
     readFileSync('public/data/pages/about.json', 'utf8')
   ) as AboutData;
 
+  // Copy Panda CSS to dist folder
+  console.log('📋 Copying Panda CSS to dist folder...');
+  try {
+    const pandaCSS = readFileSync('styled-system/styles.css', 'utf8');
+    writeFileSync('dist/styles.css', pandaCSS);
+    console.log('✅ Panda CSS copied to dist/styles.css');
+  } catch (error) {
+    console.warn(
+      '⚠️  Could not copy Panda CSS, generating comprehensive CSS instead...'
+    );
+    await generateComprehensiveCSS(hashnodeData, aboutData);
+  }
+
   // Render home page
   console.log('📄 Rendering home page with SSR...');
-  const homeResult = renderPageToHTML(HomePage, { posts: hashnodeData });
-  const homeHTML = generateBaseHTML(
+  const homeResult = renderPageToHTML(HomePagePanda, { posts: hashnodeData });
+  const homeHTMLWithStyles = generateBaseHTML(
     'Nick Karnik - Staff Software Engineer & Engineering Leader',
     'Staff software engineer and engineering leader sharing insights on engineering, AI, and technology. Read my blog for the latest thoughts and experiences.',
     homeResult.html,
     homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link
   );
+  const homeHTML = removeInlineStyles(homeHTMLWithStyles);
   writeFileSync('dist/index.html', homeHTML);
 
   // Render blog index page
   console.log('📄 Rendering blog index page with SSR...');
   const blogDir = join('dist', 'blog');
   mkdirSync(blogDir, { recursive: true });
-  const blogResult = renderPageToHTML(BlogPage, { posts: hashnodeData });
-  const blogHTML = generateBaseHTML(
+  const blogResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
+  const blogHTMLWithStyles = generateBaseHTML(
     'Blog - Nick Karnik',
     'Thoughts on engineering, AI, and technology from my experience building and leading teams.',
     blogResult.html,
     blogResult.helmet.title + blogResult.helmet.meta + blogResult.helmet.link
   );
+  const blogHTML = removeInlineStyles(blogHTMLWithStyles);
   writeFileSync(join(blogDir, 'index.html'), blogHTML);
 
   // Render about page
   console.log('📄 Rendering about page with SSR...');
   const aboutDir = join('dist', 'about');
   mkdirSync(aboutDir, { recursive: true });
-  const aboutResult = renderPageToHTML(AboutPage, { aboutData });
-  const aboutHTML = generateBaseHTML(
+  const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
+  const aboutHTMLWithStyles = generateBaseHTML(
     'About - Nick Karnik',
     'Engineering Leader & Staff Software Engineer, shipping fast with Node, React, and TypeScript.',
     aboutResult.html,
     aboutResult.helmet.title + aboutResult.helmet.meta + aboutResult.helmet.link
   );
+  const aboutHTML = removeInlineStyles(aboutHTMLWithStyles);
   writeFileSync(join(aboutDir, 'index.html'), aboutHTML);
 
   // Render resume page
   console.log('📄 Rendering resume page with SSR...');
   const resumeDir = join('dist', 'resume');
   mkdirSync(resumeDir, { recursive: true });
-  const resumeResult = renderPageToHTML(ResumePage, {});
-  const resumeHTML = generateBaseHTML(
+  const resumeResult = renderPageToHTML(ResumePagePanda, {});
+  const resumeHTMLWithStyles = generateBaseHTML(
     'Resume — Nick Karnik',
     'Nick Karnik - Staff Software Engineer & Engineering Leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups',
     resumeResult.html,
@@ -687,7 +253,43 @@ export async function renderAllStaticPagesSSR() {
       resumeResult.helmet.link +
       '<link rel="canonical" href="https://nick.karnik.io/resume" />'
   );
+  const resumeHTML = removeInlineStyles(resumeHTMLWithStyles);
   writeFileSync(join(resumeDir, 'index.html'), resumeHTML);
+
+  // Render individual blog post pages
+  console.log('📄 Rendering individual blog post pages with SSR...');
+  for (const post of hashnodeData) {
+    const postDir = join('dist', 'blog', post.slug);
+    mkdirSync(postDir, { recursive: true });
+
+    // Read the full post data from the individual JSON file
+    const postDataPath = join('public', 'data', 'posts', `${post.slug}.json`);
+    let fullPostData;
+    try {
+      fullPostData = JSON.parse(readFileSync(postDataPath, 'utf8'));
+    } catch (error) {
+      console.warn(
+        `⚠️  Could not read post data for ${post.slug}, using basic data`
+      );
+      fullPostData = post;
+    }
+
+    const postResult = renderPageToHTML(BlogPostPagePanda, {
+      post: fullPostData,
+    });
+    const postHTMLWithStyles = generateBaseHTML(
+      `${post.title} - Nick Karnik`,
+      post.excerpt ||
+        `Read ${post.title} on Nick Karnik's blog about engineering, AI, and technology.`,
+      postResult.html,
+      postResult.helmet.title +
+        postResult.helmet.meta +
+        postResult.helmet.link +
+        `<link rel="canonical" href="https://nick.karnik.io/blog/${post.slug}" />`
+    );
+    const postHTML = removeInlineStyles(postHTMLWithStyles);
+    writeFileSync(join(postDir, 'index.html'), postHTML);
+  }
 
   console.log('✅ All static pages rendered successfully with SSR!');
 }

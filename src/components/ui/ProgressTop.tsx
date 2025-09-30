@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 
 export default function ProgressTop() {
@@ -14,21 +13,25 @@ export default function ProgressTop() {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   return (
-    <Box
-      position='fixed'
-      top={0}
-      left={0}
-      right={0}
-      zIndex={20}
-      height='4px'
-      bg='gray.100'
+    <div
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        zIndex: 20,
+        height: '4px',
+        backgroundColor: '#f7fafc',
+      }}
     >
-      <Box
-        height='100%'
-        bg='blue.500'
-        width={`${value}%`}
-        transition='width 0.1s ease-out'
+      <div
+        style={{
+          height: '100%',
+          backgroundColor: '#3182ce',
+          width: `${value}%`,
+          transition: 'width 0.1s ease-out',
+        }}
       />
-    </Box>
+    </div>
   );
 }

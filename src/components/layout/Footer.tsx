@@ -1,14 +1,4 @@
 import {
-  Box,
-  HStack,
-  Link,
-  Icon,
-  Text,
-  VStack,
-  Container,
-  Separator,
-} from '@chakra-ui/react';
-import {
   FiGithub,
   FiLinkedin,
   FiTwitter,
@@ -20,163 +10,242 @@ import { SiTypescript } from 'react-icons/si';
 
 export default function Footer() {
   return (
-    <Box
-      as='footer'
-      py={12}
-      bg='gray.50'
-      borderTop='1px solid'
-      borderColor='gray.200'
+    <footer
+      style={{
+        padding: '48px 0',
+        backgroundColor: '#f7fafc',
+        borderTop: '1px solid #e2e8f0',
+      }}
     >
-      <Container maxW='6xl'>
-        <VStack gap={8}>
+      <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 24px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
           {/* Main content row */}
-          <HStack
-            justify='space-between'
-            align='start'
-            w='full'
-            gap={8}
-            flexWrap='wrap'
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              width: '100%',
+              gap: '32px',
+              flexWrap: 'wrap',
+            }}
           >
             {/* Left: About */}
-            <VStack align='start' gap={4} flex='1' minW='300px'>
-              <Text fontSize='lg' fontWeight='semibold' color='gray.800'>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '16px',
+                flex: '1',
+                minWidth: '300px',
+              }}
+            >
+              <h3
+                style={{
+                  fontSize: '18px',
+                  fontWeight: '600',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
                 Nick Karnik
-              </Text>
-              <Text fontSize='sm' color='gray.600' lineHeight={1.6}>
+              </h3>
+              <p
+                style={{
+                  fontSize: '14px',
+                  color: '#718096',
+                  lineHeight: 1.6,
+                  margin: 0,
+                }}
+              >
                 Engineering Leader & Staff Software Engineer
-              </Text>
-              <HStack gap={4}>
-                <HStack
-                  gap={2}
-                  _hover={{
-                    transform: 'translateY(-1px)',
-                    transition: 'transform 0.2s ease-in-out',
+              </p>
+              <div style={{ display: 'flex', gap: '16px' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'default',
                   }}
-                  cursor='default'
                 >
-                  <Icon as={FaNodeJs} color='green.500' boxSize={4} />
-                  <Text fontSize='sm' color='gray.600'>
+                  <FaNodeJs size={16} color='#68d391' />
+                  <span style={{ fontSize: '14px', color: '#718096' }}>
                     Node
-                  </Text>
-                </HStack>
-                <HStack
-                  gap={2}
-                  _hover={{
-                    transform: 'translateY(-1px)',
-                    transition: 'transform 0.2s ease-in-out',
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'default',
                   }}
-                  cursor='default'
                 >
-                  <Icon as={FaReact} color='blue.400' boxSize={4} />
-                  <Text fontSize='sm' color='gray.600'>
+                  <FaReact size={16} color='#63b3ed' />
+                  <span style={{ fontSize: '14px', color: '#718096' }}>
                     React
-                  </Text>
-                </HStack>
-                <HStack
-                  gap={2}
-                  _hover={{
-                    transform: 'translateY(-1px)',
-                    transition: 'transform 0.2s ease-in-out',
+                  </span>
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    cursor: 'default',
                   }}
-                  cursor='default'
                 >
-                  <Icon as={SiTypescript} color='blue.600' boxSize={4} />
-                  <Text fontSize='sm' color='gray.600'>
+                  <SiTypescript size={16} color='#3182ce' />
+                  <span style={{ fontSize: '14px', color: '#718096' }}>
                     TypeScript
-                  </Text>
-                </HStack>
-              </HStack>
-            </VStack>
+                  </span>
+                </div>
+              </div>
+            </div>
 
             {/* Right: Social Links */}
-            <VStack align='start' gap={4} minW='200px'>
-              <Text fontSize='sm' fontWeight='semibold' color='gray.800'>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'flex-start',
+                gap: '16px',
+                minWidth: '200px',
+              }}
+            >
+              <h4
+                style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
                 Connect
-              </Text>
-              <HStack gap={6}>
-                <Link
+              </h4>
+              <div style={{ display: 'flex', gap: '24px' }}>
+                <a
                   href='mailto:nick@karnik.io'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='Send email to Nick Karnik'
                 >
-                  <Icon as={FiMail} boxSize={5} />
-                </Link>
-                <Link
+                  <FiMail size={20} />
+                </a>
+                <a
                   href='https://github.com/theoutlander'
                   target='_blank'
                   rel='noopener noreferrer'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='Visit Nick Karnik on GitHub'
                 >
-                  <Icon as={FiGithub} boxSize={5} />
-                </Link>
-                <Link
+                  <FiGithub size={20} />
+                </a>
+                <a
                   href='https://linkedin.com/in/theoutlander'
                   target='_blank'
                   rel='noopener noreferrer'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='Connect with Nick Karnik on LinkedIn'
                 >
-                  <Icon as={FiLinkedin} boxSize={5} />
-                </Link>
-                <Link
+                  <FiLinkedin size={20} />
+                </a>
+                <a
                   href='https://twitter.com/theoutlander'
                   target='_blank'
                   rel='noopener noreferrer'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='Follow Nick Karnik on Twitter'
                 >
-                  <Icon as={FiTwitter} boxSize={5} />
-                </Link>
-                <Link
+                  <FiTwitter size={20} />
+                </a>
+                <a
                   href='https://youtube.com/@nick-karnik'
                   target='_blank'
                   rel='noopener noreferrer'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='Subscribe to Nick Karnik on YouTube'
                 >
-                  <Icon as={FiYoutube} boxSize={5} />
-                </Link>
-                <Link
+                  <FiYoutube size={20} />
+                </a>
+                <a
                   href='https://stackoverflow.com/users/460472/nick'
                   target='_blank'
                   rel='noopener noreferrer'
-                  _hover={{ color: 'blue.500' }}
-                  transition='color 0.2s'
+                  style={{
+                    color: '#718096',
+                    textDecoration: 'none',
+                    transition: 'color 0.2s',
+                  }}
                   aria-label='View Nick Karnik on Stack Overflow'
                 >
-                  <Icon as={FaStackOverflow} boxSize={5} />
-                </Link>
-              </HStack>
-              <Text fontSize='xs' color='gray.500'>
+                  <FaStackOverflow size={20} />
+                </a>
+              </div>
+              <p
+                style={{
+                  fontSize: '12px',
+                  color: '#a0aec0',
+                  margin: 0,
+                }}
+              >
                 Available for consulting at{' '}
-                <Link
+                <a
                   href='https://plutonic.consulting'
                   target='_blank'
                   rel='noopener noreferrer'
-                  color='blue.500'
-                  _hover={{ color: 'blue.600' }}
-                  textDecoration='underline'
+                  style={{
+                    color: '#3182ce',
+                    textDecoration: 'underline',
+                  }}
                 >
                   Plutonic Consulting
-                </Link>
-              </Text>
-            </VStack>
-          </HStack>
+                </a>
+              </p>
+            </div>
+          </div>
 
-          <Separator />
+          <hr
+            style={{
+              border: 'none',
+              borderTop: '1px solid #e2e8f0',
+              margin: 0,
+            }}
+          />
 
           {/* Bottom: Copyright */}
-          <Text fontSize='xs' color='gray.500' textAlign='center'>
+          <p
+            style={{
+              fontSize: '12px',
+              color: '#a0aec0',
+              textAlign: 'center',
+              margin: 0,
+            }}
+          >
             © {new Date().getFullYear()} Nick Karnik. All rights reserved.
-          </Text>
-        </VStack>
-      </Container>
-    </Box>
+          </p>
+        </div>
+      </div>
+    </footer>
   );
 }

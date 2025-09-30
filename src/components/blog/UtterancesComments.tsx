@@ -1,16 +1,4 @@
 import { useEffect, useRef } from 'react';
-import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Button,
-  Icon,
-  Separator,
-  Container,
-  Badge,
-} from '@chakra-ui/react';
 import { FaComment, FaHeart } from 'react-icons/fa';
 import { COMMENTS_CONFIG } from '../../lib/comments';
 
@@ -55,71 +43,128 @@ export default function UtterancesComments({
   }, [postTitle, postUrl]);
 
   return (
-    <Box mt={12} pt={8}>
-      <Separator mb={8} />
+    <div style={{ marginTop: '48px', paddingTop: '32px' }}>
+      <hr
+        style={{
+          border: 'none',
+          borderTop: '1px solid #e2e8f0',
+          marginBottom: '32px',
+        }}
+      />
 
-      <Container maxW='3xl' px={0}>
-        <VStack align='stretch' gap={6}>
-          <HStack gap={3} align='center' justify='space-between'>
-            <HStack gap={3} align='center'>
-              <Icon as={FaComment} color='blue.500' boxSize={5} />
-              <Heading size='lg' color='gray.800'>
-                Comments
-              </Heading>
-              <Badge colorPalette='blue' variant='subtle'>
-                Live Comments
-              </Badge>
-            </HStack>
-            <Icon as={FaHeart} color='red.400' boxSize={4} />
-          </HStack>
-
-          <Text color='gray.600' fontSize='md' lineHeight='1.6'>
-            Share your thoughts and join the discussion! Leave a comment below.
-          </Text>
-
-          <Box
-            p={6}
-            bg='gradient-to-r'
-            bgGradient='linear(to-r, blue.50, purple.50)'
-            borderRadius='xl'
-            border='1px solid'
-            borderColor='blue.100'
+      <div style={{ maxWidth: '768px', margin: '0 auto', padding: '0' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+            }}
           >
-            <VStack gap={4} align='stretch'>
-              <HStack gap={3} align='center'>
-                <Icon as={FaComment} color='gray.700' boxSize={5} />
-                <Text fontSize='md' fontWeight='medium' color='gray.700'>
-                  Ready to join the conversation?
-                </Text>
-              </HStack>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <FaComment size={20} color='#3182ce' />
+              <h2
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
+                Comments
+              </h2>
+              <span
+                style={{
+                  backgroundColor: '#ebf8ff',
+                  color: '#3182ce',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                }}
+              >
+                Live Comments
+              </span>
+            </div>
+            <FaHeart size={16} color='#fc8181' />
+          </div>
 
-              <HStack gap={3} wrap='wrap'>
-                <Button
-                  size='sm'
-                  variant='outline'
+          <p
+            style={{
+              color: '#718096',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              margin: 0,
+            }}
+          >
+            Share your thoughts and join the discussion! Leave a comment below.
+          </p>
+
+          <div
+            style={{
+              padding: '24px',
+              background: 'linear-gradient(to right, #ebf8ff, #faf5ff)',
+              borderRadius: '12px',
+              border: '1px solid #bee3f8',
+            }}
+          >
+            <div
+              style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+            >
+              <div
+                style={{ display: 'flex', gap: '12px', alignItems: 'center' }}
+              >
+                <FaComment size={20} color='#4a5568' />
+                <p
+                  style={{
+                    fontSize: '16px',
+                    fontWeight: '500',
+                    color: '#4a5568',
+                    margin: 0,
+                  }}
+                >
+                  Ready to join the conversation?
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <button
+                  style={{
+                    padding: '8px 16px',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '6px',
+                    backgroundColor: 'white',
+                    color: '#1a202c',
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s',
+                  }}
                   onClick={() => {
                     // Scroll to comments section
                     commentsRef.current?.scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
                   Scroll to Comments
-                </Button>
-              </HStack>
-            </VStack>
-          </Box>
+                </button>
+              </div>
+            </div>
+          </div>
 
-          <Box
+          <div
             ref={commentsRef}
-            minH='300px'
-            borderRadius='xl'
-            overflow='hidden'
-            border='1px solid'
-            borderColor='gray.200'
-            boxShadow='sm'
-            bg='white'
+            style={{
+              minHeight: '300px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              backgroundColor: 'white',
+            }}
           />
-        </VStack>
-      </Container>
-    </Box>
+        </div>
+      </div>
+    </div>
   );
 }

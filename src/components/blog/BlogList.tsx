@@ -1,6 +1,5 @@
-import { Box, Text, SimpleGrid, Image, Card } from '@chakra-ui/react';
-import { Link as RouterLink } from '@tanstack/react-router';
-import { Helmet } from 'react-helmet-async';
+import { css } from '../../../styled-system/css/index.mjs';
+// import { Helmet } from 'react-helmet-async';
 import type { Post } from './RoutePost';
 
 export default function BlogList({
@@ -13,81 +12,82 @@ export default function BlogList({
   const items = posts.filter(p => !filterTag || p.tags?.includes(filterTag));
 
   return (
-    <Box>
-      <Helmet>
-        <title>Blog - Nick Karnik</title>
-        <meta
-          name='description'
-          content='Read my latest thoughts on software engineering, AI, and technology.'
-        />
-        <meta property='og:title' content='Blog - Nick Karnik' />
-        <meta
-          property='og:description'
-          content='Read my latest thoughts on software engineering, AI, and technology.'
-        />
-        <meta property='og:type' content='website' />
-        <meta property='og:url' content='https://nick.karnik.io/blog' />
-        <meta name='twitter:card' content='summary' />
-        <meta name='twitter:title' content='Blog - Nick Karnik' />
-        <meta
-          name='twitter:description'
-          content='Read my latest thoughts on software engineering, AI, and technology.'
-        />
-      </Helmet>
-
-      <SimpleGrid columns={{ base: 1, md: 2 }} gap={6}>
+    <div>
+      <div
+        className={css({
+          display: 'grid',
+          gridTemplateColumns: { base: '1fr', md: 'repeat(2, 1fr)' },
+          gap: 6,
+        })}
+      >
         {items.map(p => (
-          <Card.Root
+          <div
             key={p.slug}
-            borderRadius='2xl'
-            overflow='hidden'
-            shadow='sm'
-            _hover={{ shadow: 'md', transform: 'translateY(-2px)' }}
-            transition='all 120ms'
+            className={css({
+              borderRadius: '2xl',
+              overflow: 'hidden',
+              shadow: 'sm',
+              bg: 'white',
+              border: '1px solid',
+              borderColor: 'gray.200',
+              _hover: { shadow: 'md', transform: 'translateY(-2px)' },
+              transition: 'all 120ms',
+            })}
           >
             {p.cover ? (
-              <Image
+              <img
                 src={p.cover}
                 alt=''
-                objectFit='cover'
-                maxH='260px'
-                w='100%'
+                className={css({
+                  objectFit: 'cover',
+                  maxH: '260px',
+                  w: '100%',
+                })}
               />
             ) : null}
 
-            <Box p={4}>
-              <RouterLink
-                to='/blog/$slug'
-                params={{ slug: p.slug }}
-                preload='intent'
+            <div className={css({ p: 4 })}>
+              <a
+                href={`/blog/${p.slug}`}
+                className={css({
+                  textDecoration: 'none',
+                  color: 'blue.700',
+                  fontWeight: 'semibold',
+                  fontSize: 'lg',
+                  _hover: { color: 'blue.600' },
+                })}
               >
-                <Text
-                  as='h2'
-                  fontWeight='semibold'
-                  fontSize='lg'
-                  color='blue.700'
-                >
-                  {p.title}
-                </Text>
-              </RouterLink>
+                <h2>{p.title}</h2>
+              </a>
 
-              <Text fontSize='sm' color='gray.600' mt={1}>
+              <p
+                className={css({
+                  fontSize: 'sm',
+                  color: 'gray.600',
+                  mt: 1,
+                })}
+              >
                 {p.date ? new Date(p.date).toDateString() : ''}
                 {p.excerpt
                   ? ` · ${estimateReadingTime(p.excerpt)} min read`
                   : ''}
-              </Text>
+              </p>
 
               {p.excerpt ? (
-                <Text mt={3} color='gray.800'>
+                <p
+                  className={css({
+                    mt: 3,
+                    color: 'gray.800',
+                  })}
+                >
                   {p.excerpt}
-                </Text>
+                </p>
               ) : null}
-            </Box>
-          </Card.Root>
+            </div>
+          </div>
         ))}
-      </SimpleGrid>
-    </Box>
+      </div>
+    </div>
   );
 }
 

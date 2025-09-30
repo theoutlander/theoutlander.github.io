@@ -1,22 +1,4 @@
 import { useEffect, useState, useRef, useCallback } from 'react';
-import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Button,
-  Icon,
-  Separator,
-  Container,
-  Badge,
-  Avatar,
-  Textarea,
-  Input,
-  Field,
-  Alert,
-  Spinner,
-} from '@chakra-ui/react';
 import { FaComment, FaHeart, FaPaperPlane } from 'react-icons/fa';
 import { GraphQLClient, gql } from 'graphql-request';
 

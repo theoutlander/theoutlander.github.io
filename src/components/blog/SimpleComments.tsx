@@ -1,20 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  Box,
-  Heading,
-  Text,
-  VStack,
-  HStack,
-  Button,
-  Icon,
-  Separator,
-  Container,
-  Badge,
-  Textarea,
-  Input,
-  Field,
-  Alert,
-} from '@chakra-ui/react';
 import { FaComment, FaHeart, FaPaperPlane } from 'react-icons/fa';
 
 interface Comment {
@@ -91,61 +75,133 @@ export default function SimpleComments({
   };
 
   return (
-    <Box mt={12} pt={8}>
-      <Separator mb={8} />
+    <div style={{ marginTop: '48px', paddingTop: '32px' }}>
+      <hr
+        style={{
+          border: 'none',
+          borderTop: '1px solid #e2e8f0',
+          marginBottom: '32px',
+        }}
+      />
 
-      <Container maxW='3xl' px={0}>
-        <VStack align='stretch' gap={6}>
-          <HStack gap={3} align='center' justify='space-between'>
-            <HStack gap={3} align='center'>
-              <Icon as={FaComment} color='blue.500' boxSize={5} />
-              <Heading size='lg' color='gray.800'>
+      <div style={{ maxWidth: '768px', margin: '0 auto', padding: '0' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div
+            style={{
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+            }}
+          >
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+              <FaComment size={20} color='#3182ce' />
+              <h2
+                style={{
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: '#1a202c',
+                  margin: 0,
+                }}
+              >
                 Comments
-              </Heading>
-              <Badge colorPalette='blue' variant='subtle'>
+              </h2>
+              <span
+                style={{
+                  backgroundColor: '#ebf8ff',
+                  color: '#3182ce',
+                  padding: '4px 8px',
+                  borderRadius: '4px',
+                  fontSize: '12px',
+                  fontWeight: '500',
+                }}
+              >
                 {comments.length}{' '}
                 {comments.length === 1 ? 'Comment' : 'Comments'}
-              </Badge>
-            </HStack>
-            <Icon as={FaHeart} color='red.400' boxSize={4} />
-          </HStack>
+              </span>
+            </div>
+            <FaHeart size={16} color='#fc8181' />
+          </div>
 
-          <Text color='gray.600' fontSize='md' lineHeight='1.6'>
+          <p
+            style={{
+              color: '#718096',
+              fontSize: '16px',
+              lineHeight: '1.6',
+              margin: 0,
+            }}
+          >
             Share your thoughts and join the discussion! Leave a comment below.
-          </Text>
+          </p>
 
           {error && (
-            <Alert.Root status='error'>
-              <Alert.Indicator />
+            <div
+              style={{
+                padding: '12px 16px',
+                backgroundColor: '#fed7d7',
+                color: '#c53030',
+                borderRadius: '6px',
+                border: '1px solid #feb2b2',
+                fontSize: '14px',
+              }}
+            >
               {error}
-            </Alert.Root>
+            </div>
           )}
 
           {!showForm && (
-            <Button
-              variant='solid'
-              colorPalette='blue'
+            <button
+              style={{
+                padding: '8px 16px',
+                backgroundColor: '#3182ce',
+                color: 'white',
+                border: 'none',
+                borderRadius: '6px',
+                fontSize: '14px',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                alignSelf: 'flex-start',
+              }}
               onClick={() => setShowForm(true)}
-              alignSelf='flex-start'
             >
-              <Icon as={FaComment} mr={2} />
+              <FaComment size={14} />
               Add a Comment
-            </Button>
+            </button>
           )}
 
           {showForm && (
-            <Box
-              p={6}
-              bg='gray.50'
-              borderRadius='xl'
-              border='1px solid'
-              borderColor='gray.200'
+            <div
+              style={{
+                padding: '24px',
+                backgroundColor: '#f7fafc',
+                borderRadius: '12px',
+                border: '1px solid #e2e8f0',
+              }}
             >
               <form onSubmit={handleSubmitComment}>
-                <VStack gap={4} align='stretch'>
-                  <Field.Root required>
-                    <Field.Label fontSize='sm'>Name</Field.Label>
-                    <Input
+                <div
+                  style={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '16px',
+                  }}
+                >
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        marginBottom: '4px',
+                        color: '#1a202c',
+                      }}
+                    >
+                      Name *
+                    </label>
+                    <input
                       type='text'
                       value={formData.name}
                       onChange={e =>
@@ -155,11 +211,28 @@ export default function SimpleComments({
                         }))
                       }
                       placeholder='Your name'
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                      }}
                     />
-                  </Field.Root>
-                  <Field.Root required>
-                    <Field.Label fontSize='sm'>Comment</Field.Label>
-                    <Textarea
+                  </div>
+                  <div>
+                    <label
+                      style={{
+                        display: 'block',
+                        fontSize: '14px',
+                        fontWeight: '500',
+                        marginBottom: '4px',
+                        color: '#1a202c',
+                      }}
+                    >
+                      Comment *
+                    </label>
+                    <textarea
                       value={formData.content}
                       onChange={e =>
                         setFormData(prev => ({
@@ -169,78 +242,155 @@ export default function SimpleComments({
                       }
                       placeholder='Write your comment here...'
                       rows={4}
-                      resize='vertical'
+                      style={{
+                        width: '100%',
+                        padding: '8px 12px',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        resize: 'vertical',
+                      }}
                     />
-                  </Field.Root>
-                  <HStack gap={3}>
-                    <Button type='submit' variant='solid' colorPalette='blue'>
-                      <Icon as={FaPaperPlane} mr={2} />
+                  </div>
+                  <div style={{ display: 'flex', gap: '12px' }}>
+                    <button
+                      type='submit'
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: '#3182ce',
+                        color: 'white',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '8px',
+                      }}
+                    >
+                      <FaPaperPlane size={14} />
                       Post Comment
-                    </Button>
-                    <Button
-                      variant='outline'
+                    </button>
+                    <button
+                      type='button'
+                      style={{
+                        padding: '8px 16px',
+                        backgroundColor: 'white',
+                        color: '#1a202c',
+                        border: '1px solid #e2e8f0',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                      }}
                       onClick={() => setShowForm(false)}
                     >
                       Cancel
-                    </Button>
-                  </HStack>
-                </VStack>
+                    </button>
+                  </div>
+                </div>
               </form>
-            </Box>
+            </div>
           )}
 
-          <Box
-            minH='200px'
-            borderRadius='xl'
-            overflow='hidden'
-            border='1px solid'
-            borderColor='gray.200'
-            boxShadow='sm'
-            bg='white'
+          <div
+            style={{
+              minHeight: '200px',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              border: '1px solid #e2e8f0',
+              boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
+              backgroundColor: 'white',
+            }}
           >
             {comments.length === 0 ? (
-              <Box p={8} textAlign='center'>
-                <Icon as={FaComment} boxSize={12} color='gray.300' />
-                <Text mt={4} color='gray.600'>
+              <div
+                style={{
+                  padding: '32px',
+                  textAlign: 'center',
+                }}
+              >
+                <FaComment size={48} color='#cbd5e0' />
+                <p
+                  style={{
+                    marginTop: '16px',
+                    color: '#718096',
+                    margin: '16px 0 0 0',
+                  }}
+                >
                   No comments yet. Be the first to comment!
-                </Text>
-              </Box>
+                </p>
+              </div>
             ) : (
-              <VStack gap={0} align='stretch'>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
                 {comments.map(comment => (
-                  <Box
+                  <div
                     key={comment.id}
-                    p={6}
-                    borderBottom='1px solid'
-                    borderColor='gray.100'
-                    _last={{ borderBottom: 'none' }}
+                    style={{
+                      padding: '24px',
+                      borderBottom: '1px solid #f1f5f9',
+                    }}
                   >
-                    <VStack gap={3} align='stretch'>
-                      <HStack gap={3} align='start'>
-                        <VStack gap={1} align='start' flex={1}>
-                          <Text fontWeight='medium' fontSize='sm'>
+                    <div
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px',
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: 'flex',
+                          gap: '12px',
+                          alignItems: 'flex-start',
+                        }}
+                      >
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '4px',
+                            flex: 1,
+                          }}
+                        >
+                          <p
+                            style={{
+                              fontWeight: '500',
+                              fontSize: '14px',
+                              margin: 0,
+                              color: '#1a202c',
+                            }}
+                          >
                             {comment.name}
-                          </Text>
-                          <Text color='gray.500' fontSize='xs'>
+                          </p>
+                          <p
+                            style={{
+                              color: '#a0aec0',
+                              fontSize: '12px',
+                              margin: 0,
+                            }}
+                          >
                             {formatDate(comment.date)}
-                          </Text>
-                        </VStack>
-                      </HStack>
-                      <Text
-                        color='gray.800'
-                        lineHeight='1.6'
-                        whiteSpace='pre-wrap'
+                          </p>
+                        </div>
+                      </div>
+                      <p
+                        style={{
+                          color: '#1a202c',
+                          lineHeight: '1.6',
+                          whiteSpace: 'pre-wrap',
+                          margin: 0,
+                        }}
                       >
                         {comment.content}
-                      </Text>
-                    </VStack>
-                  </Box>
+                      </p>
+                    </div>
+                  </div>
                 ))}
-              </VStack>
+              </div>
             )}
-          </Box>
-        </VStack>
-      </Container>
-    </Box>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }

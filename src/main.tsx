@@ -1,6 +1,5 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { ChakraProvider, defaultSystem } from '@chakra-ui/react';
 import { createRouter, RouterProvider } from '@tanstack/react-router';
 import { HelmetProvider } from 'react-helmet-async';
 import { routeTree } from './routeTree.gen';
@@ -46,9 +45,7 @@ if (typeof document !== 'undefined') {
     try {
       createRoot(rootElement).render(
         <HelmetProvider>
-          <ChakraProvider value={defaultSystem}>
-            <RouterProvider router={router} />
-          </ChakraProvider>
+          <RouterProvider router={router} />
         </HelmetProvider>
       );
       console.log('App rendered successfully');
