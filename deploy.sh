@@ -47,38 +47,32 @@ fix_registry_if_needed() {
 }
 
 # --- Ensure the gh-pages worktree is present and on gh-pages branch ---
-if [ ! -d gh-pages ]; then
-  echo "📦 Creating gh-pages worktree…"
-  if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
-    if ! git worktree add -B gh-pages gh-pages origin/gh-pages 2>/tmp/wt_err.txt; then
-      fix_registry_if_needed
-      git worktree add -B gh-pages gh-pages origin/gh-pages
-    fi
-  else
-    if ! git worktree add -B gh-pages gh-pages gh-pages 2>/tmp/wt_err.txt; then
-      fix_registry_if_needed
-      git worktree add -B gh-pages gh-pages gh-pages
-    fi
+# Always remove and recreate the worktree to avoid branch conflicts
+if [ -d gh-pages ]; then
+  echo "🧹 Removing existing gh-pages worktree…"
+  rm -rf gh-pages || true
+  git worktree prune || true
+fi
+
+echo "📦 Creating gh-pages worktree…"
+if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
+  # Create worktree in detached HEAD state first
+  if ! git worktree add gh-pages origin/gh-pages 2>/tmp/wt_err.txt; then
+    fix_registry_if_needed
+    git worktree add gh-pages origin/gh-pages
   fi
+  # Switch to gh-pages branch in the worktree
+  cd gh-pages
+  if ! git checkout -b gh-pages origin/gh-pages 2>/tmp/wt_err.txt; then
+    # Branch already exists, just switch to it
+    git checkout gh-pages
+  fi
+  cd ..
 else
-  # Directory exists and is a worktree; ensure it's on gh-pages
-  current_branch=$(git -C gh-pages rev-parse --abbrev-ref HEAD || echo "")
-  if [ "$current_branch" != "gh-pages" ]; then
-    echo "🧹 Switching existing worktree to gh-pages…"
-    if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
-      if ! git -C gh-pages checkout -B gh-pages origin/gh-pages 2>/tmp/wt_err.txt; then
-        # Registry may be stale; recreate worktree
-        rm -rf gh-pages || true
-        fix_registry_if_needed
-        git worktree add -B gh-pages gh-pages origin/gh-pages
-      fi
-    else
-      if ! git -C gh-pages checkout -B gh-pages 2>/tmp/wt_err.txt; then
-        rm -rf gh-pages || true
-        fix_registry_if_needed
-        git worktree add -B gh-pages gh-pages gh-pages
-      fi
-    fi
+  # No remote branch, create local branch
+  if ! git worktree add -B gh-pages gh-pages gh-pages 2>/tmp/wt_err.txt; then
+    fix_registry_if_needed
+    git worktree add -B gh-pages gh-pages gh-pages
   fi
 fi
 
