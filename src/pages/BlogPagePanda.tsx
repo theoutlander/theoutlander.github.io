@@ -36,28 +36,6 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 					px: 4,
 				})}
 			>
-				<div className={css({ mb: 12 })}>
-					<h1
-						className={css({
-							fontSize: "3xl",
-							fontWeight: "bold",
-							mb: 4,
-							color: "gray.800",
-						})}
-					>
-						Blog
-					</h1>
-					<p
-						className={css({
-							fontSize: "lg",
-							color: "gray.600",
-							maxW: "600px",
-						})}
-					>
-						Read my latest thoughts on software engineering, AI, and technology.
-					</p>
-				</div>
-
 				<BlogList posts={posts} />
 			</main>
 			<Footer />

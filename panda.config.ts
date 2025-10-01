@@ -16,16 +16,16 @@ export default defineConfig({
 			tokens: {
 				colors: {
 					brand: {
-						50: { value: "#eff6ff" },
-						100: { value: "#dbeafe" },
-						200: { value: "#bfdbfe" },
-						300: { value: "#93c5fd" },
-						400: { value: "#60a5fa" },
-						500: { value: "#3b82f6" }, // main blue
-						600: { value: "#2563eb" },
-						700: { value: "#1d4ed8" },
-						800: { value: "#1e40af" },
-						900: { value: "#1e3a8a" },
+						50: { value: "#EEF2FF" },
+						100: { value: "#E0E7FF" },
+						200: { value: "#C7D2FE" },
+						300: { value: "#A5B4FC" },
+						400: { value: "#818CF8" },
+						500: { value: "#6366F1" },
+						600: { value: "#4F46E5" },
+						700: { value: "#4338CA" },
+						800: { value: "#3730A3" },
+						900: { value: "#312E81" },
 					},
 					// Accent color for links and buttons
 					accent: {
