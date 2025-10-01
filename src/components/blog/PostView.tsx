@@ -77,6 +77,7 @@ export default function PostView({ post }: { post: Post }) {
 					<img
 						src={post.cover}
 						alt=""
+						loading="lazy"
 						className={blogCover()}
 					/>
 				) : null}

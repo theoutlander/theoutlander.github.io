@@ -31,7 +31,7 @@ const pill = cva({
 	variants: {
 		tone: {
 			gray: { bg: "gray.50", borderColor: "gray.200", color: "gray.700" },
-			blue: { bg: "accent.50", borderColor: "accent.200", color: "accent.700" },
+			blue: { bg: "brand.50", borderColor: "brand.200", color: "brand.700" },
 			green: { bg: "green.50", borderColor: "green.200", color: "green.700" },
 			purple: {
 				bg: "purple.50",
@@ -57,11 +57,14 @@ const ghostBtn = cva({
 		borderRadius: "md",
 		transition: "all 0.2s ease",
 		textDecoration: "none",
+		"@media (prefers-reduced-motion: reduce)": {
+			transition: "none",
+		},
 	},
 	variants: {
 		variant: {
 			email: {
-				color: { base: "accent.700", _dark: "accent.300" },
+				color: { base: "brand.700", _dark: "brand.300" },
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
@@ -70,15 +73,25 @@ const ghostBtn = cva({
 						_dark: "0 4px 12px rgba(59, 130, 246, 0.1)",
 					},
 				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
 			},
 			linkedin: {
-				color: { base: "accent.600", _dark: "accent.400" },
+				color: { base: "brand.600", _dark: "brand.400" },
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(37, 99, 235, 0.15)",
 						_dark: "0 4px 12px rgba(37, 99, 235, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
 					},
 				},
 			},
@@ -92,6 +105,11 @@ const ghostBtn = cva({
 						_dark: "0 4px 12px rgba(255, 255, 255, 0.05)",
 					},
 				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
 			},
 			resume: {
 				color: { base: "purple.700", _dark: "purple.300" },
@@ -101,6 +119,11 @@ const ghostBtn = cva({
 					boxShadow: {
 						base: "0 4px 12px rgba(147, 51, 234, 0.15)",
 						_dark: "0 4px 12px rgba(147, 51, 234, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
 					},
 				},
 			},
@@ -211,10 +234,10 @@ export default function AboutPage() {
 								target="_blank"
 								rel="noopener noreferrer"
 								className={css({
-									color: { base: "accent.600", _dark: "accent.400" },
+									color: { base: "brand.600", _dark: "brand.400" },
 									textDecoration: "underline",
 									_hover: {
-										color: { base: "accent.700", _dark: "accent.300" },
+										color: { base: "brand.700", _dark: "brand.300" },
 										textDecoration: "none",
 									},
 								})}
@@ -321,7 +344,7 @@ export default function AboutPage() {
 										width: "4px",
 										height: "4px",
 										borderRadius: "50%",
-										bg: "#3b82f6",
+										bg: "brand.600",
 										mt: 2,
 										mr: 2,
 										flexShrink: 0,
@@ -345,7 +368,7 @@ export default function AboutPage() {
 										width: "4px",
 										height: "4px",
 										borderRadius: "50%",
-										bg: "#3b82f6",
+										bg: "brand.600",
 										mt: 2,
 										mr: 2,
 										flexShrink: 0,
@@ -369,7 +392,7 @@ export default function AboutPage() {
 										width: "4px",
 										height: "4px",
 										borderRadius: "50%",
-										bg: "#3b82f6",
+										bg: "brand.600",
 										mt: 2,
 										mr: 2,
 										flexShrink: 0,

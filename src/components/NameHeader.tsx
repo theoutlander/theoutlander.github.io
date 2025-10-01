@@ -28,7 +28,7 @@ const pill = cva({
 	variants: {
 		tone: {
 			gray: { bg: "gray.50", borderColor: "gray.200", color: "gray.700" },
-			blue: { bg: "accent.50", borderColor: "accent.200", color: "accent.700" },
+			blue: { bg: "brand.50", borderColor: "brand.200", color: "brand.700" },
 			green: { bg: "green.50", borderColor: "green.200", color: "green.700" },
 			purple: {
 				bg: "purple.50",
@@ -98,7 +98,7 @@ const iconButton = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-	color: { base: "accent.600", _dark: "accent.400" },
+	color: { base: "brand.600", _dark: "brand.400" },
 	textDecoration: "none",
 	px: 3,
 	py: 1.5,
@@ -118,7 +118,7 @@ const actionButton = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-	color: { base: "accent.600", _dark: "accent.400" },
+	color: { base: "brand.600", _dark: "brand.400" },
 	px: 3,
 	py: 1.5,
 	fontSize: "sm",
@@ -198,6 +198,7 @@ export default function NameHeader({
 				src="/assets/images/profile/nick-karnik.jpeg"
 				alt="Nick Karnik"
 				className={avatar}
+				loading="lazy"
 			/>
 			<div className={titleBox}>
 				<span className={nameCss}>Nick Karnik</span>

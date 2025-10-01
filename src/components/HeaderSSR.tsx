@@ -29,60 +29,112 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 						gap: 6,
 					})}
 				>
-					<a href="/">
-						<h2
+					<a
+						href="/"
+						aria-current={currentPage === "home" ? "page" : undefined}
+						className={css({
+							textDecoration: "none",
+							_focus: {
+								outline: "2px solid brand.600",
+								outlineOffset: "2px",
+								borderRadius: "4px",
+							},
+						})}
+					>
+						<h1
 							className={css({
 								fontSize: "md",
 								fontWeight: "semibold",
-								color: "gray.800",
+								color: { base: "gray.900", _dark: "dark.text" },
 								fontFamily: "heading",
+								margin: 0,
 							})}
 						>
 							{BRAND}
-						</h2>
+						</h1>
 					</a>
 
-					<div
+					<nav
 						className={css({
 							display: "flex",
 							alignItems: "center",
 							gap: 6,
 						})}
+						aria-label="Main navigation"
 					>
-						<a href="/blogs">
-							<p
-								className={css({
-									color: currentPage === "blogs" ? "brand.600" : "gray.600",
-									fontWeight: currentPage === "blogs" ? "medium" : "normal",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								Blog
-							</p>
+						<a
+							href="/blogs"
+							aria-current={currentPage === "blogs" ? "page" : undefined}
+							className={css({
+								color: currentPage === "blogs" ? "brand.600" : "gray.600",
+								fontWeight: currentPage === "blogs" ? "medium" : "normal",
+								textDecoration: "none",
+								padding: "8px 12px",
+								borderRadius: "4px",
+								minHeight: "44px",
+								display: "flex",
+								alignItems: "center",
+								_hover: {
+									color: "brand.600",
+									textDecoration: "underline",
+								},
+								_focus: {
+									outline: "2px solid brand.600",
+									outlineOffset: "2px",
+								},
+							})}
+						>
+							Blog
 						</a>
-						<a href="/about">
-							<p
-								className={css({
-									color: currentPage === "about" ? "brand.600" : "gray.600",
-									fontWeight: currentPage === "about" ? "medium" : "normal",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								About
-							</p>
+						<a
+							href="/about"
+							aria-current={currentPage === "about" ? "page" : undefined}
+							className={css({
+								color: currentPage === "about" ? "brand.600" : "gray.600",
+								fontWeight: currentPage === "about" ? "medium" : "normal",
+								textDecoration: "none",
+								padding: "8px 12px",
+								borderRadius: "4px",
+								minHeight: "44px",
+								display: "flex",
+								alignItems: "center",
+								_hover: {
+									color: "brand.600",
+									textDecoration: "underline",
+								},
+								_focus: {
+									outline: "2px solid brand.600",
+									outlineOffset: "2px",
+								},
+							})}
+						>
+							About
 						</a>
-						<a href="/resume">
-							<p
-								className={css({
-									color: currentPage === "resume" ? "brand.600" : "gray.600",
-									fontWeight: currentPage === "resume" ? "medium" : "normal",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								Resume
-							</p>
+						<a
+							href="/resume"
+							aria-current={currentPage === "resume" ? "page" : undefined}
+							className={css({
+								color: currentPage === "resume" ? "brand.600" : "gray.600",
+								fontWeight: currentPage === "resume" ? "medium" : "normal",
+								textDecoration: "none",
+								padding: "8px 12px",
+								borderRadius: "4px",
+								minHeight: "44px",
+								display: "flex",
+								alignItems: "center",
+								_hover: {
+									color: "brand.600",
+									textDecoration: "underline",
+								},
+								_focus: {
+									outline: "2px solid brand.600",
+									outlineOffset: "2px",
+								},
+							})}
+						>
+							Resume
 						</a>
-					</div>
+					</nav>
 				</div>
 			</div>
 		</header>

@@ -11,6 +11,92 @@ export default function BlogList({
 }) {
 	const items = posts.filter((p) => !filterTag || p.tags?.includes(filterTag));
 
+	// Empty state
+	if (items.length === 0) {
+		return (
+			<div
+				className={css({
+					textAlign: "center",
+					py: { base: "12", md: "16" },
+					px: "4",
+				})}
+			>
+				<div
+					className={css({
+						maxW: "md",
+						mx: "auto",
+					})}
+				>
+					<div
+						className={css({
+							fontSize: "6xl",
+							mb: "4",
+							opacity: "0.6",
+						})}
+					>
+						📝
+					</div>
+					<h2
+						className={css({
+							fontSize: { base: "xl", md: "2xl" },
+							fontWeight: "bold",
+							color: { base: "gray.900", _dark: "dark.text" },
+							mb: "2",
+						})}
+					>
+						{filterTag ? `No posts tagged "${filterTag}"` : "No posts yet"}
+					</h2>
+					<p
+						className={css({
+							fontSize: "lg",
+							color: { base: "gray.600", _dark: "dark.textSecondary" },
+							mb: "6",
+						})}
+					>
+						{filterTag
+							? "Try a different tag or check back later for new content."
+							: "I'm working on some great content. Check back soon!"}
+					</p>
+					{filterTag && (
+						<a
+							href="/blog"
+							className={css({
+								display: "inline-flex",
+								alignItems: "center",
+								gap: "2",
+								px: "4",
+								py: "2",
+								bg: "brand.600",
+								color: "white",
+								textDecoration: "none",
+								borderRadius: "md",
+								fontWeight: "medium",
+								_hover: {
+									bg: "brand.700",
+									transform: "translateY(-1px)",
+								},
+								_focus: {
+									outline: "2px solid brand.600",
+									outlineOffset: "2px",
+								},
+								transition: "all 200ms ease",
+								"@media (prefers-reduced-motion: reduce)": {
+									transition: "none",
+									_hover: {
+										transform: "none",
+									},
+								},
+							})}
+						>
+							<span>←</span>
+							<span>View all posts</span>
+						</a>
+					)}
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div>
 			<div
@@ -27,17 +113,24 @@ export default function BlogList({
 							borderRadius: "2xl",
 							overflow: "hidden",
 							shadow: "sm",
-							bg: "white",
+							bg: { base: "white", _dark: "dark.card" },
 							border: "1px solid",
-							borderColor: "gray.200",
+							borderColor: { base: "gray.200", _dark: "dark.border" },
 							_hover: { shadow: "md", transform: "translateY(-2px)" },
 							transition: "all 120ms",
+							"@media (prefers-reduced-motion: reduce)": {
+								transition: "none",
+								_hover: {
+									transform: "none",
+								},
+							},
 						})}
 					>
 						{p.cover ? (
 							<img
 								src={p.cover}
 								alt=""
+								loading="lazy"
 								className={css({
 									objectFit: "cover",
 									maxH: "260px",
@@ -51,10 +144,10 @@ export default function BlogList({
 								href={`/blog/${p.slug}`}
 								className={css({
 									textDecoration: "none",
-									color: "accent.700",
+									color: { base: "brand.700", _dark: "brand.400" },
 									fontWeight: "semibold",
 									fontSize: "lg",
-									_hover: { color: "accent.600" },
+									_hover: { color: { base: "brand.600", _dark: "brand.300" } },
 								})}
 							>
 								<h2>{p.title}</h2>
@@ -63,7 +156,7 @@ export default function BlogList({
 							<p
 								className={css({
 									fontSize: "sm",
-									color: "gray.600",
+									color: { base: "gray.600", _dark: "dark.textMuted" },
 									mt: 1,
 								})}
 							>
@@ -77,7 +170,7 @@ export default function BlogList({
 								<p
 									className={css({
 										mt: 3,
-										color: "gray.800",
+										color: { base: "gray.900", _dark: "dark.text" },
 									})}
 								>
 									{p.excerpt}

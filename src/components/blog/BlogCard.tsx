@@ -14,12 +14,19 @@ export default function BlogCard({ post }: { post: Post }) {
 				borderColor: "gray.200",
 				_hover: { transform: "translateY(-2px)", shadow: "md" },
 				transition: "transform 0.2s",
+				"@media (prefers-reduced-motion: reduce)": {
+					transition: "none",
+					_hover: {
+						transform: "none",
+					},
+				},
 			})}
 		>
 			{post.cover ? (
 				<img
 					src={post.cover}
 					alt=""
+					loading="lazy"
 					className={css({
 						objectFit: "cover",
 						maxH: "240px",
@@ -32,10 +39,10 @@ export default function BlogCard({ post }: { post: Post }) {
 					href={`/blog/${post.slug}`}
 					className={css({
 						textDecoration: "none",
-						color: "accent.700",
+						color: "brand.700",
 						fontWeight: "semibold",
 						fontSize: "lg",
-						_hover: { color: "accent.600" },
+						_hover: { color: "brand.600" },
 					})}
 				>
 					<h2>{post.title}</h2>
@@ -54,7 +61,7 @@ export default function BlogCard({ post }: { post: Post }) {
 					<p
 						className={css({
 							mt: 3,
-							color: "gray.800",
+							color: "gray.900",
 						})}
 					>
 						{post.excerpt}

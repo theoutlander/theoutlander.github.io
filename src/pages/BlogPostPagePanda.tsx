@@ -2,6 +2,7 @@ import React from "react";
 import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
+import SkipLink from "../components/SkipLink";
 
 type Post = {
 	id?: string;
@@ -27,11 +28,12 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 			className={css({
 				bg: "gray.50",
 				minH: "100vh",
-				padding: "16px",
 			})}
 		>
+			<SkipLink />
 			<HeaderSSR currentPage="blogs" />
 			<main
+				id="main-content"
 				className={css({
 					maxW: "4xl",
 					py: { base: 6, md: 10 },
@@ -95,6 +97,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							<img
 								src={post.cover}
 								alt=""
+								loading="lazy"
 								className={css({
 									width: "100%",
 									height: "300px",

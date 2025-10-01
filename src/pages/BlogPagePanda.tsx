@@ -3,6 +3,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import BlogList from "../components/blog/BlogList";
+import SkipLink from "../components/SkipLink";
 
 type Post = {
 	id?: string;
@@ -23,12 +24,14 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 	return (
 		<div
 			className={css({
-				bg: "gray.50",
+				bg: { base: "gray.50", _dark: "dark.bg" },
 				minH: "100vh",
 			})}
 		>
+			<SkipLink />
 			<HeaderSSR currentPage="blogs" />
 			<main
+				id="main-content"
 				className={css({
 					maxW: "6xl",
 					py: { base: 6, md: 10 },

@@ -78,6 +78,7 @@ export default function RoutePost({ slug }: { slug: string }) {
 					<img
 						src={post.cover}
 						alt=""
+						loading="lazy"
 						className={css({
 							mb: 8,
 							borderRadius: "12px",

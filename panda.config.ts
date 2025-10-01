@@ -27,31 +27,6 @@ export default defineConfig({
 						800: { value: "#3730A3" },
 						900: { value: "#312E81" },
 					},
-					// Accent color for links and buttons
-					accent: {
-						50: { value: "#f0f9ff" },
-						100: { value: "#e0f2fe" },
-						200: { value: "#bae6fd" },
-						300: { value: "#7dd3fc" },
-						400: { value: "#38bdf8" },
-						500: { value: "#0ea5e9" },
-						600: { value: "#0284c7" },
-						700: { value: "#0369a1" },
-						800: { value: "#075985" },
-						900: { value: "#0c4a6e" },
-						950: { value: "#082f49" },
-					},
-					// Tech brand colors
-					tech: {
-						typescript: { value: "#D2691E" }, // Rust brown/orange-brown
-						nodejs: { value: "#22C55E" }, // Medium green
-						react: { value: "#3B82F6" }, // Medium blue
-						ai: { value: "#6B7280" }, // Dark gray
-					},
-					// Named tech brand colors for pills
-					tsBlue: { value: "#3178C6" },
-					nodeGreen: { value: "#3C873A" },
-					reactCyan: { value: "#61DAFB" },
 					// Add commonly used colors from inline styles
 					text: {
 						primary: { value: "#1a202c" },
@@ -61,6 +36,16 @@ export default defineConfig({
 					background: {
 						tag: { value: "#edf2f7" },
 						section: { value: "#f8fafc" },
+					},
+					// Dark mode colors
+					dark: {
+						bg: { value: "#0f172a" },
+						surface: { value: "#1e293b" },
+						card: { value: "#334155" },
+						border: { value: "#475569" },
+						text: { value: "#f1f5f9" },
+						textSecondary: { value: "#cbd5e1" },
+						textMuted: { value: "#94a3b8" },
 					},
 				},
 				fonts: {
@@ -239,7 +224,22 @@ export default defineConfig({
 	// Static extraction for SSR
 	staticCss: {
 		recipes: {
-			// Add any recipe patterns you want to always include
+			// Include commonly used recipes
+			blogPost: ["*"],
+			blogTitle: ["*"],
+			blogMeta: ["*"],
+			blogDate: ["*"],
+			blogTag: ["*"],
+			blogExcerpt: ["*"],
+			blogContent: ["*"],
+			blogCover: ["*"],
+			commentsSection: ["*"],
+			commentsContainer: ["*"],
+			commentsHeader: ["*"],
+			commentsTitle: ["*"],
+			commentsContent: ["*"],
+			commentsActions: ["*"],
+			companyLogo: ["*"],
 		},
 	},
 });

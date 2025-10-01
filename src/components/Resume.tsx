@@ -64,7 +64,7 @@ const pill = cva({
 	variants: {
 		tone: {
 			default: {},
-			blue: { bg: "accent.50", borderColor: "accent.200", color: "accent.700" },
+			blue: { bg: "brand.50", borderColor: "brand.200", color: "brand.700" },
 			green: { bg: "green.50", borderColor: "green.200", color: "green.700" },
 			purple: {
 				bg: "purple.50",
@@ -145,7 +145,7 @@ const expSub = css({
 	fontSize: "sm",
 });
 const expMeta = css({
-	color: { base: "gray.500", _dark: "gray.400" },
+	color: { base: "gray.600", _dark: "gray.400" },
 	fontSize: "sm",
 });
 const tagRow = css({ display: "flex", gap: 2, flexWrap: "wrap", mt: 1 });

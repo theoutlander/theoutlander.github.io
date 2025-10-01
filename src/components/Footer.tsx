@@ -17,203 +17,356 @@ export default function Footer() {
 	return (
 		<footer
 			className={css({
-				bg: "white",
+				bg: { base: "white", _dark: "dark.surface" },
 				borderTop: "1px solid",
-				borderColor: "gray.200",
-				py: "12",
+				borderColor: { base: "gray.200", _dark: "dark.border" },
+				pt: { base: "6", md: "10" },
+				pb: { base: "8", md: "10" },
+				mt: "8",
 			})}
 		>
 			<div
-				className={flex({
-					direction: { base: "column", md: "row" },
-					gap: "12",
+				className={css({
 					maxW: "6xl",
 					mx: "auto",
-					px: "6",
+					px: { base: "4", md: "6", lg: "8" },
 				})}
 			>
-				{/* Left column - Bio */}
-				<div className={css({ flex: 1 })}>
-					<h2
-						className={css({ fontSize: "lg", fontWeight: "semibold", mb: "2" })}
+				<div
+					className={css({
+						maxW: "768px",
+						mx: "auto",
+					})}
+				>
+					<div
+						className={flex({
+							direction: { base: "column", md: "row" },
+							gap: { base: "8", md: "12" },
+							alignItems: { base: "center", md: "flex-start" },
+							justifyContent: { base: "center", md: "space-between" },
+						})}
 					>
-						Nick Karnik
-					</h2>
-					<p className={css({ fontSize: "md", color: "fg.muted", mb: "4" })}>
-						Engineering Leader & Staff Software Engineer
-					</p>
-					<div className={hstack({ gap: "2", wrap: "wrap", mb: "6" })}>
-						<div className={hstack({ gap: "1" })}>
-							<FaNodeJs
-								color="#3C873A"
-								title="Node.js"
-								size={20}
-							/>
-							<span className={css({ fontSize: "sm", color: "fg.muted" })}>
-								Node
-							</span>
+						{/* Left column - Bio */}
+						<div className={css({ flex: 1 })}>
+							<h2
+								className={css({
+									fontSize: "md",
+									fontWeight: "bold",
+									mb: "2",
+									color: { base: "gray.800", _dark: "dark.text" },
+								})}
+							>
+								Nick Karnik
+							</h2>
+							<p
+								className={css({ fontSize: "sm", color: "gray.600", mb: "4" })}
+							>
+								Engineering Leader & Staff Software Engineer
+							</p>
+							<div className={hstack({ gap: "2", wrap: "wrap", mb: "6" })}>
+								<div className={hstack({ gap: "1" })}>
+									<FaNodeJs
+										color="#3C873A"
+										title="Node.js"
+										size={20}
+									/>
+									<span className={css({ fontSize: "xs", color: "gray.600" })}>
+										Node
+									</span>
+								</div>
+								<div className={hstack({ gap: "1" })}>
+									<FaReact
+										color="#61DAFB"
+										title="React"
+										size={20}
+									/>
+									<span className={css({ fontSize: "xs", color: "gray.600" })}>
+										React
+									</span>
+								</div>
+								<div className={hstack({ gap: "1" })}>
+									<SiTypescript
+										color="#3178C6"
+										title="TypeScript"
+										size={20}
+									/>
+									<span className={css({ fontSize: "xs", color: "gray.600" })}>
+										TypeScript
+									</span>
+								</div>
+							</div>
+							<p className={css({ fontSize: "xs", color: "gray.600" })}>
+								© 2025 Nick Karnik. All rights reserved.
+							</p>
 						</div>
-						<div className={hstack({ gap: "1" })}>
-							<FaReact
-								color="#61DAFB"
-								title="React"
-								size={20}
-							/>
-							<span className={css({ fontSize: "sm", color: "fg.muted" })}>
-								React
-							</span>
-						</div>
-						<div className={hstack({ gap: "1" })}>
-							<SiTypescript
-								color="#3178C6"
-								title="TypeScript"
-								size={20}
-							/>
-							<span className={css({ fontSize: "sm", color: "fg.muted" })}>
-								TypeScript
-							</span>
-						</div>
-					</div>
-					<p className={css({ fontSize: "sm", color: "fg.muted" })}>
-						© 2025 Nick Karnik. All rights reserved.
-					</p>
-				</div>
 
-				{/* Right column - Links */}
-				<div className={css({ flex: 1 })}>
-					<h3
-						className={css({ fontSize: "md", fontWeight: "semibold", mb: "4" })}
-					>
-						Connect
-					</h3>
-					<div className={hstack({ gap: "4", wrap: "wrap", mb: "4" })}>
-						<a
-							href="mailto:nick@karnik.io"
-							target="_blank"
-							rel="noopener"
-							title="Email"
-						>
-							<div
+						{/* Right column - Links */}
+						<div className={css({ flex: 1 })}>
+							<h3
 								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
+									fontSize: "sm",
+									fontWeight: "bold",
+									mb: "4",
+									color: { base: "gray.800", _dark: "dark.text" },
 								})}
 							>
-								<MdEmail />
+								Connect
+							</h3>
+							<div className={hstack({ gap: "2", wrap: "wrap", mb: "4" })}>
+								<a
+									href="mailto:nick@karnik.io"
+									target="_blank"
+									rel="noopener"
+									aria-label="Send email to Nick Karnik"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<MdEmail size={18} />
+									</div>
+								</a>
+								<a
+									href="https://github.com/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's GitHub profile"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<FaGithub size={18} />
+									</div>
+								</a>
+								<a
+									href="https://www.linkedin.com/in/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's LinkedIn profile"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<FaLinkedin size={18} />
+									</div>
+								</a>
+								<a
+									href="https://twitter.com/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's Twitter profile"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<FaTwitter size={18} />
+									</div>
+								</a>
+								<a
+									href="https://youtube.com/@nick-karnik"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's YouTube channel"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<FaYoutube size={18} />
+									</div>
+								</a>
+								<a
+									href="https://stackoverflow.com/users/460472/nick"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's Stack Overflow profile"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<FaStackOverflow size={18} />
+									</div>
+								</a>
+								<a
+									href="/assets/documents/resume-nick-karnik.pdf"
+									target="_blank"
+									rel="noopener"
+									aria-label="Download Nick Karnik's resume (PDF)"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<div
+										className={css({
+											fontSize: "lg",
+											color: { base: "gray.600", _dark: "dark.textSecondary" },
+											_hover: { color: "brand.600" },
+											transition: "color 200ms ease-in-out",
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+									>
+										<HiOutlineDocumentText size={18} />
+									</div>
+								</a>
 							</div>
-						</a>
-						<a
-							href="https://github.com/theoutlander"
-							target="_blank"
-							rel="noopener"
-							title="GitHub"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<FaGithub />
-							</div>
-						</a>
-						<a
-							href="https://www.linkedin.com/in/theoutlander"
-							target="_blank"
-							rel="noopener"
-							title="LinkedIn"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<FaLinkedin />
-							</div>
-						</a>
-						<a
-							href="https://twitter.com/theoutlander"
-							target="_blank"
-							rel="noopener"
-							title="Twitter"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<FaTwitter />
-							</div>
-						</a>
-						<a
-							href="https://youtube.com/@nick-karnik"
-							target="_blank"
-							rel="noopener"
-							title="YouTube"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<FaYoutube />
-							</div>
-						</a>
-						<a
-							href="https://stackoverflow.com/users/460472/nick"
-							target="_blank"
-							rel="noopener"
-							title="Stack Overflow"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<FaStackOverflow />
-							</div>
-						</a>
-						<a
-							href="/assets/documents/resume-nick-karnik.pdf"
-							target="_blank"
-							rel="noopener"
-							title="Resume"
-						>
-							<div
-								className={css({
-									fontSize: "lg",
-									color: "fg.muted",
-									_hover: { color: "brand.600" },
-								})}
-							>
-								<HiOutlineDocumentText />
-							</div>
-						</a>
+							<p className={css({ fontSize: "xs", color: "gray.600" })}>
+								Available for consulting at{" "}
+								<a
+									href="https://plutonic.consulting"
+									target="_blank"
+									rel="noopener"
+									className={css({
+										color: "brand.600",
+										textDecoration: "none",
+										_hover: {
+											textDecoration: "underline",
+											color: "brand.600",
+										},
+										_focus: {
+											outline: "2px solid brand.700",
+											outlineOffset: "2px",
+											borderRadius: "2px",
+										},
+										transition: "color 200ms ease-in-out",
+										"@media (prefers-reduced-motion: reduce)": {
+											transition: "none",
+										},
+									})}
+								>
+									Plutonic Consulting
+								</a>
+							</p>
+						</div>
 					</div>
-					<p className={css({ fontSize: "sm", color: "fg.muted" })}>
-						Available for consulting at{" "}
-						<a
-							href="https://plutonic.consulting"
-							target="_blank"
-							rel="noopener"
-							className={css({
-								color: "brand.600",
-								_hover: { textDecoration: "underline" },
-							})}
-						>
-							Plutonic Consulting
-						</a>
-					</p>
 				</div>
 			</div>
 		</footer>

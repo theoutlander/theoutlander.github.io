@@ -14,6 +14,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/google.svg"
 				alt="Google"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -21,6 +22,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/microsoft.png"
 				alt="Microsoft"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -28,6 +30,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/salesforce.svg"
 				alt="Salesforce"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -35,6 +38,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/ycombinator.svg"
 				alt="Y Combinator"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -51,6 +55,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/idm.jpg"
 				alt="Gates Foundation"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -58,6 +63,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/tmobile.jpeg"
 				alt="T-Mobile"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -65,6 +71,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/tableau.svg"
 				alt="Tableau"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -72,6 +79,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/jobbatical.png"
 				alt="Jobbatical"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -79,6 +87,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/treasure.webp"
 				alt="Treasure Technologies"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -86,6 +95,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/compass-technologies.png"
 				alt="Compass Technologies"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -93,6 +103,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/fullstack-consulting.jpeg"
 				alt="Fullstack Consulting"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -100,6 +111,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/bluehippo-funding.png"
 				alt="Blue Hippo Funding"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -107,6 +119,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/meds-publishing.png"
 				alt="Meds Publishing"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -114,6 +127,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/theglobalist.jpg"
 				alt="The Globalist"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -121,6 +135,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/gemini-code-assist.png"
 				alt="Gemini"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -128,6 +143,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/room-today.png"
 				alt="RoomToday"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -135,6 +151,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/wdc-3.png"
 				alt="WDC-3"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
@@ -143,7 +160,7 @@ export function CompanyLogo({
 				className={css(companyLogo(), {
 					width: "120px",
 					height: "120px",
-					backgroundColor: "#6366f1",
+					backgroundColor: "brand.600",
 					borderRadius: "12px",
 					display: "flex",
 					alignItems: "center",
@@ -162,7 +179,7 @@ export function CompanyLogo({
 				className={css(companyLogo(), {
 					width: "120px",
 					height: "120px",
-					backgroundColor: "#ff6b6b",
+					backgroundColor: "red.500",
 					borderRadius: "12px",
 					display: "flex",
 					alignItems: "center",
@@ -180,6 +197,7 @@ export function CompanyLogo({
 			<img
 				src="/assets/images/companies/room-today.png"
 				alt="RoomToday Platform"
+				loading="lazy"
 				className={css(companyLogo(), { width: width })}
 			/>
 		),

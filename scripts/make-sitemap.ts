@@ -1,35 +1,66 @@
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir } from "node:fs/promises";
 
-const BASE = process.env.SITE_URL || 'https://nick.karnik.io';
+const BASE = process.env.SITE_URL || "https://nick.karnik.io";
 
-type Post = { slug: string };
+type Post = {
+	slug: string;
+	date?: string;
+	title?: string;
+};
 
 async function run() {
-  const baseRoutes = ['/', '/blog', '/about', '/resume'];
-  let posts: Post[] = [];
-  try {
-    posts = JSON.parse(await readFile('public/data/hashnode.json', 'utf8'));
-  } catch {
-    // Ignore error if file doesn't exist
-  }
+	const baseRoutes = [
+		{ path: "/", priority: "1.0", changefreq: "weekly" },
+		{ path: "/blog", priority: "0.9", changefreq: "weekly" },
+		{ path: "/about", priority: "0.8", changefreq: "monthly" },
+		{ path: "/resume", priority: "0.8", changefreq: "monthly" },
+	];
 
-  const urls = [
-    ...baseRoutes.map(p => `${BASE}${p}`),
-    ...posts.map(p => `${BASE}/blog/${p.slug}`),
-  ];
+	let posts: Post[] = [];
+	try {
+		posts = JSON.parse(await readFile("public/data/hashnode.json", "utf8"));
+	} catch {
+		// Ignore error if file doesn't exist
+	}
 
-  const xml = `<?xml version="1.0" encoding="UTF-8"?>
+	const now = new Date().toISOString();
+
+	const urls = [
+		...baseRoutes.map((route) => ({
+			loc: `${BASE}${route.path}`,
+			lastmod: now,
+			changefreq: route.changefreq,
+			priority: route.priority,
+		})),
+		...posts.map((post) => ({
+			loc: `${BASE}/blog/${post.slug}`,
+			lastmod: post.date ? new Date(post.date).toISOString() : now,
+			changefreq: "monthly",
+			priority: "0.7",
+		})),
+	];
+
+	const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${urls.map(u => `  <url><loc>${u}</loc></url>`).join('\n')}
+${urls
+	.map(
+		(url) => `  <url>
+    <loc>${url.loc}</loc>
+    <lastmod>${url.lastmod}</lastmod>
+    <changefreq>${url.changefreq}</changefreq>
+    <priority>${url.priority}</priority>
+  </url>`
+	)
+	.join("\n")}
 </urlset>
 `;
 
-  await mkdir('public', { recursive: true });
-  await writeFile('public/sitemap.xml', xml);
-  console.log(`sitemap.xml written with ${urls.length} URLs`);
+	await mkdir("dist", { recursive: true });
+	await writeFile("dist/sitemap.xml", xml);
+	console.log(`sitemap.xml written with ${urls.length} URLs`);
 }
 
-run().catch(e => {
-  console.error(e);
-  process.exit(1);
+run().catch((e) => {
+	console.error(e);
+	process.exit(1);
 });

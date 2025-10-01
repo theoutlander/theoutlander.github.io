@@ -34,11 +34,14 @@ const ghostBtn = cva({
 		borderRadius: "md",
 		transition: "all 0.2s ease",
 		textDecoration: "none",
+		"@media (prefers-reduced-motion: reduce)": {
+			transition: "none",
+		},
 	},
 	variants: {
 		variant: {
 			email: {
-				color: { base: "accent.700", _dark: "accent.300" },
+				color: { base: "brand.700", _dark: "brand.300" },
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
@@ -47,15 +50,25 @@ const ghostBtn = cva({
 						_dark: "0 4px 12px rgba(59, 130, 246, 0.1)",
 					},
 				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
 			},
 			linkedin: {
-				color: { base: "accent.600", _dark: "accent.400" },
+				color: { base: "brand.600", _dark: "brand.400" },
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(37, 99, 235, 0.15)",
 						_dark: "0 4px 12px rgba(37, 99, 235, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
 					},
 				},
 			},
@@ -69,6 +82,11 @@ const ghostBtn = cva({
 						_dark: "0 4px 12px rgba(255, 255, 255, 0.05)",
 					},
 				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
 			},
 			resume: {
 				color: { base: "purple.700", _dark: "purple.300" },
@@ -78,6 +96,11 @@ const ghostBtn = cva({
 					boxShadow: {
 						base: "0 4px 12px rgba(147, 51, 234, 0.15)",
 						_dark: "0 4px 12px rgba(147, 51, 234, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
 					},
 				},
 			},
