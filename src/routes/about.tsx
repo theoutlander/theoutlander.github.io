@@ -1,35 +1,21 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { AboutPagePanda } from "../pages/AboutPagePanda";
 
-type AboutData = {
-	title: string;
-	html: string;
-};
-
 export const Route = createFileRoute("/about")({
 	component: AboutPage,
-	loader: async (): Promise<{ aboutData: AboutData }> => {
-		try {
-			const response = await fetch("/data/pages/about.json");
-			if (!response.ok) {
-				throw new Error(`Failed to load about data: ${response.status}`);
-			}
-			const aboutData = await response.json();
-			return { aboutData };
-		} catch (error) {
-			console.error("Failed to load about data:", error);
-			// Fallback data
-			return {
-				aboutData: {
-					title: "About",
-					html: "",
-				},
-			};
-		}
-	},
 });
 
 function AboutPage() {
-	const { aboutData } = Route.useLoaderData();
+	// Use hardcoded data instead of fetching from JSON
+	const aboutData = {
+		title: "About",
+		html: `
+			<p>I help teams move faster without breaking things.</p>
+			<p>I've led engineering at Google, Microsoft, Salesforce, Tableau, IDM (now part of the Gates Foundation), T-Mobile, and startups. I care about clear decisions, strong execution, and code that ships.</p>
+			<p>On this blog I write about AI, engineering leadership, and building web products with React, Node.js, and TypeScript. I try to keep it practical so you can use it right away.</p>
+			<p>I also run <a href="https://plutonic.consulting" target="_blank" rel="noopener noreferrer">Plutonic Consulting</a>, where I work with founders on fractional CTO support, AI strategy, and scaling teams.</p>
+			<p>If you're hiring, wrestling with roadmap and architecture, or want a second set of eyes on your stack, I'm happy to help.</p>
+		`,
+	};
 	return <AboutPagePanda aboutData={aboutData} />;
 }

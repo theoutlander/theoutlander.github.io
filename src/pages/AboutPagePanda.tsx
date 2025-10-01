@@ -1,15 +1,10 @@
 import React from "react";
 import { css } from "../../styled-system/css/index.mjs";
-import {
-	container,
-	stack,
-	hstack,
-	vstack,
-} from "../../styled-system/patterns/index.mjs";
+import { container } from "../../styled-system/patterns/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
+import NameHeader from "../components/NameHeader";
 import ContactSection from "../components/ContactSection";
-import SkipLink from "../components/SkipLink";
 
 type AboutData = {
 	title: string;
@@ -28,78 +23,103 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				minH: "100vh",
 			})}
 		>
-			<SkipLink />
 			<HeaderSSR currentPage="about" />
 			<main
-				id="main-content"
-				className={container({ maxW: "6xl", py: { base: 6, md: 10 } })}
+				className={container({
+					maxW: "1024px",
+					mx: "auto",
+					px: { base: 4, md: 6 },
+					py: 8,
+				})}
 			>
-				{/* Hero Section */}
-				<div
+				{/* Header */}
+				<NameHeader showDownloadButton={false} />
+
+				{/* Grid */}
+				<section
 					className={css({
-						textAlign: "center",
-						mb: 16,
+						display: "grid",
+						gridTemplateColumns: { base: "1fr", md: "1.6fr 1fr" },
+						gap: 6,
+						mt: 6,
 					})}
 				>
-					<h1
-						className={css({
-							mb: 4,
-							color: "gray.800",
-							fontSize: "4xl",
-							fontWeight: "semibold",
-							lineHeight: "shorter",
-							letterSpacing: "-0.025em",
-							fontFamily: "heading",
-						})}
-					>
-						About
-					</h1>
-					<p
-						className={css({
-							fontSize: "xl",
-							color: "gray.600",
-							maxWidth: "600px",
-							margin: "0 auto",
-						})}
-					>
-						Engineering Leader & Staff Software Engineer, shipping fast with
-						Node, React, and TypeScript.
-					</p>
-				</div>
-
-				{/* Three Card Layout */}
-				<div className={stack({ gap: 6, maxW: "2xl", mx: "auto" })}>
-					{/* Contact Card */}
-					<ContactSection />
-
-					{/* Focus Card */}
-					<div
+					{/* Left: About */}
+					<article
 						className={css({
 							bg: "white",
-							borderRadius: "2xl",
-							p: 8,
-							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-							border: "1px solid",
+							borderWidth: "1px",
 							borderColor: "gray.200",
+							borderRadius: "xl",
+							boxShadow: "sm",
+							p: { base: 4, md: 6 },
 						})}
 					>
-						<h2
+						<h3
 							className={css({
-								fontSize: "xl",
 								fontWeight: "semibold",
 								color: "gray.800",
-								mb: 6,
-								fontFamily: "heading",
+								mb: 3,
+								fontSize: "lg",
 							})}
 						>
-							Focus
-						</h2>
-						<div className={css({ mb: 6 })}>
+							About
+						</h3>
+						<div
+							className={css({
+								color: "gray.700",
+								lineHeight: "1.7",
+								fontSize: "md",
+								"& p": { mb: 4 },
+								"& p:last-child": { mb: 0 },
+								"& ul": { mb: 4 },
+								"& li": { mb: 2 },
+								"& a": {
+									color: "blue.600",
+									textDecoration: "underline",
+									_hover: {
+										color: "blue.700",
+										textDecoration: "none",
+									},
+								},
+							})}
+							dangerouslySetInnerHTML={{ __html: aboutData.html }}
+						/>
+					</article>
+
+					{/* Right: Sidebar */}
+					<aside
+						className={css({ display: "flex", flexDir: "column", gap: 6 })}
+					>
+						{/* Contact */}
+						<ContactSection />
+
+						{/* Focus */}
+						<div
+							className={css({
+								bg: "white",
+								borderWidth: "1px",
+								borderColor: "gray.200",
+								borderRadius: "xl",
+								boxShadow: "sm",
+								p: { base: 4, md: 5 },
+							})}
+						>
+							<div
+								className={css({
+									fontSize: "sm",
+									fontWeight: "semibold",
+									color: "gray.800",
+									mb: 3,
+								})}
+							>
+								Focus
+							</div>
 							<div
 								className={css({
 									display: "flex",
-									flexWrap: "wrap",
 									gap: 2,
+									flexWrap: "wrap",
 									mb: 4,
 								})}
 							>
@@ -115,15 +135,18 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 									<span
 										key={tech}
 										className={css({
-											bg: "gray.100",
-											color: "gray.700",
-											px: 3,
+											display: "inline-flex",
+											alignItems: "center",
+											px: 2.5,
 											py: 1,
-											borderRadius: "md",
-											fontSize: "sm",
+											borderRadius: "full",
+											fontSize: "xs",
 											fontWeight: "medium",
-											border: "1px solid",
+											borderWidth: "1px",
+											whiteSpace: "nowrap",
+											bg: "gray.50",
 											borderColor: "gray.200",
+											color: "gray.700",
 										})}
 									>
 										{tech}
@@ -132,142 +155,129 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 							</div>
 							<p
 								className={css({
-									fontSize: "md",
+									mt: 3,
+									fontSize: "sm",
 									color: "gray.600",
-									lineHeight: 1.6,
 								})}
 							>
 								I help teams move faster with clear product bets, strong
 								execution, and systems that are simple to maintain.
 							</p>
 						</div>
-					</div>
 
-					{/* Now Card */}
-					<div
-						className={css({
-							bg: "white",
-							borderRadius: "2xl",
-							p: 8,
-							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
-							border: "1px solid",
-							borderColor: "gray.200",
-						})}
-					>
-						<h2
+						{/* Now */}
+						<div
 							className={css({
-								fontSize: "xl",
-								fontWeight: "semibold",
-								color: "gray.800",
-								mb: 6,
-								fontFamily: "heading",
+								bg: "white",
+								borderWidth: "1px",
+								borderColor: "gray.200",
+								borderRadius: "xl",
+								boxShadow: "sm",
+								p: { base: 4, md: 5 },
 							})}
 						>
-							Now
-						</h2>
-						<ul
-							className={css({
-								listStyle: "none",
-								padding: 0,
-								margin: 0,
-							})}
-						>
-							<li
+							<div
 								className={css({
-									display: "flex",
-									alignItems: "flex-start",
+									fontSize: "sm",
+									fontWeight: "semibold",
+									color: "gray.800",
 									mb: 3,
-									"&:last-child": { mb: 0 },
 								})}
 							>
-								<span
+								Now
+							</div>
+							<ul className={css({ listStyle: "none", padding: 0, margin: 0 })}>
+								<li
 									className={css({
-										display: "inline-block",
-										width: "6px",
-										height: "6px",
-										borderRadius: "50%",
-										bg: "brand.600",
-										mt: 2,
-										mr: 3,
-										flexShrink: 0,
-									})}
-								/>
-								<p
-									className={css({
-										fontSize: "md",
-										color: "gray.600",
-										lineHeight: 1.6,
-										margin: 0,
+										display: "flex",
+										alignItems: "flex-start",
+										mb: 2,
+										"&:last-child": { mb: 0 },
 									})}
 								>
-									Advising founders on pragmatic AI & DX.
-								</p>
-							</li>
-							<li
-								className={css({
-									display: "flex",
-									alignItems: "flex-start",
-									mb: 3,
-									"&:last-child": { mb: 0 },
-								})}
-							>
-								<span
+									<span
+										className={css({
+											display: "inline-block",
+											width: "4px",
+											height: "4px",
+											borderRadius: "50%",
+											bg: "blue.600",
+											mt: 2,
+											mr: 2,
+											flexShrink: 0,
+										})}
+									/>
+									<span
+										className={css({
+											fontSize: "sm",
+											color: "gray.600",
+										})}
+									>
+										Advising founders on pragmatic AI & DX.
+									</span>
+								</li>
+								<li
 									className={css({
-										display: "inline-block",
-										width: "6px",
-										height: "6px",
-										borderRadius: "50%",
-										bg: "brand.600",
-										mt: 2,
-										mr: 3,
-										flexShrink: 0,
-									})}
-								/>
-								<p
-									className={css({
-										fontSize: "md",
-										color: "gray.600",
-										lineHeight: 1.6,
-										margin: 0,
+										display: "flex",
+										alignItems: "flex-start",
+										mb: 2,
+										"&:last-child": { mb: 0 },
 									})}
 								>
-									Building React + Node tools with TypeScript.
-								</p>
-							</li>
-							<li
-								className={css({
-									display: "flex",
-									alignItems: "flex-start",
-									mb: 3,
-									"&:last-child": { mb: 0 },
-								})}
-							>
-								<span
+									<span
+										className={css({
+											display: "inline-block",
+											width: "4px",
+											height: "4px",
+											borderRadius: "50%",
+											bg: "blue.600",
+											mt: 2,
+											mr: 2,
+											flexShrink: 0,
+										})}
+									/>
+									<span
+										className={css({
+											fontSize: "sm",
+											color: "gray.600",
+										})}
+									>
+										Building React + Node tools with TypeScript.
+									</span>
+								</li>
+								<li
 									className={css({
-										display: "inline-block",
-										width: "6px",
-										height: "6px",
-										borderRadius: "50%",
-										bg: "brand.600",
-										mt: 2,
-										mr: 3,
-										flexShrink: 0,
-									})}
-								/>
-								<p
-									className={css({
-										fontSize: "md",
-										color: "gray.600",
-										lineHeight: 1.6,
-										margin: 0,
+										display: "flex",
+										alignItems: "flex-start",
+										mb: 2,
+										"&:last-child": { mb: 0 },
 									})}
 								>
-									Writing weekly about engineering leadership.
-								</p>
-							</li>
-						</ul>
-					</div>
-				</div>
+									<span
+										className={css({
+											display: "inline-block",
+											width: "4px",
+											height: "4px",
+											borderRadius: "50%",
+											bg: "blue.600",
+											mt: 2,
+											mr: 2,
+											flexShrink: 0,
+										})}
+									/>
+									<span
+										className={css({
+											fontSize: "sm",
+											color: "gray.600",
+										})}
+									>
+										Writing weekly about engineering leadership.
+									</span>
+								</li>
+							</ul>
+						</div>
+					</aside>
+				</section>
 			</main>
 			<Footer />
 		</div>
