@@ -307,6 +307,9 @@ const renderPageToHTML = (
 export async function renderAllStaticPagesSSR() {
 	console.log("🔄 Rendering all static pages with SSR...");
 
+	// Create dist directory if it doesn't exist
+	mkdirSync("dist", { recursive: true });
+
 	// Read the hashnode data
 	const hashnodeData = JSON.parse(
 		readFileSync("public/data/hashnode.json", "utf8")
