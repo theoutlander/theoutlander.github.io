@@ -1,12 +1,19 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import {
+	readFileSync,
+	writeFileSync,
+	mkdirSync,
+	copyFileSync,
+	readdirSync,
+	statSync,
+} from "node:fs";
 import { join } from "node:path";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
 import { BlogPagePanda } from "./pages/BlogPagePanda";
-import AboutPage from "./components/About";
+import { AboutPagePanda } from "./pages/AboutPagePanda";
 import { ResumePagePanda } from "./pages/ResumePagePanda";
 import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
@@ -27,6 +34,33 @@ type AboutData = {
 	html: string;
 };
 
+// Recursively copy directory contents, skipping system files
+const copyDirectory = (src: string, dest: string) => {
+	const items = readdirSync(src);
+
+	for (const item of items) {
+		// Skip system files and hidden files
+		if (item.startsWith(".") || item === "Thumbs.db") {
+			continue;
+		}
+
+		const srcPath = join(src, item);
+		const destPath = join(dest, item);
+		const stat = statSync(srcPath);
+
+		if (stat.isDirectory()) {
+			mkdirSync(destPath, { recursive: true });
+			copyDirectory(srcPath, destPath);
+		} else {
+			try {
+				copyFileSync(srcPath, destPath);
+			} catch (error) {
+				console.warn(`⚠️  Could not copy ${srcPath}:`, error.message);
+			}
+		}
+	}
+};
+
 // Generate comprehensive CSS by rendering all pages and collecting all styles
 const generateComprehensiveCSS = async (
 	hashnodeData: Post[],
@@ -42,7 +76,7 @@ const generateComprehensiveCSS = async (
 	}> = [
 		{ name: "home", component: HomePagePanda, props: { posts: hashnodeData } },
 		{ name: "blog", component: BlogPagePanda, props: { posts: hashnodeData } },
-		{ name: "about", component: AboutPage, props: {} },
+		{ name: "about", component: AboutPagePanda, props: { aboutData } },
 		{ name: "resume", component: ResumePagePanda, props: {} },
 	];
 
@@ -333,6 +367,27 @@ export async function renderAllStaticPagesSSR() {
 		await generateComprehensiveCSS(hashnodeData, aboutData);
 	}
 
+	// Copy assets from public to dist
+	console.log("📁 Copying assets from public to dist...");
+	try {
+		copyDirectory("public/assets", "dist/assets");
+		console.log("✅ Assets copied to dist/assets");
+	} catch (error) {
+		console.warn("⚠️  Could not copy assets:", error);
+	}
+
+	// Copy other static files from public to dist
+	console.log("📁 Copying static files from public to dist...");
+	const staticFiles = ["robots.txt", "sitemap.xml", "vite.svg", "404.html"];
+	for (const file of staticFiles) {
+		try {
+			copyFileSync(`public/${file}`, `dist/${file}`);
+		} catch (error) {
+			console.warn(`⚠️  Could not copy ${file}:`, error.message);
+		}
+	}
+	console.log("✅ Static files copied to dist");
+
 	// Render home page
 	console.log("📄 Rendering home page with SSR...");
 	const homeResult = renderPageToHTML(HomePagePanda, { posts: hashnodeData });
@@ -365,11 +420,30 @@ export async function renderAllStaticPagesSSR() {
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
 
+	// Render blogs index page (plural)
+	console.log("📄 Rendering blogs index page with SSR...");
+	const blogsDir = join("dist", "blogs");
+	mkdirSync(blogsDir, { recursive: true });
+	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
+	const blogsHTMLWithStyles = generateBaseHTML(
+		"Nick Karnik Blogs | Engineering, Leadership & AI",
+		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
+		blogsResult.html,
+		blogsResult.helmet.title +
+			blogsResult.helmet.meta +
+			blogsResult.helmet.link,
+		"https://nick.karnik.io/blogs",
+		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		"website"
+	);
+	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
+	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
+
 	// Render about page
 	console.log("📄 Rendering about page with SSR...");
 	const aboutDir = join("dist", "about");
 	mkdirSync(aboutDir, { recursive: true });
-	const aboutResult = renderPageToHTML(AboutPage, {});
+	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
 	const aboutHTMLWithStyles = generateBaseHTML(
 		"About Nick Karnik | Engineering Leader & Advisor",
 		"Nick Karnik is a software engineer and leader with decades of experience across Big Tech and startups. Advisor to founders on AI, developer experience, and reliable systems.",

@@ -66,6 +66,7 @@ if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
   if ! git checkout -b gh-pages origin/gh-pages 2>/tmp/wt_err.txt; then
     # Branch already exists, just switch to it
     git checkout gh-pages
+    git reset --hard origin/gh-pages
   fi
   cd ..
 else
@@ -82,7 +83,13 @@ pnpm build:prod
 
 # --- Sync dist into the worktree ---
 echo "🔄 Syncing dist/ -> gh-pages/"
-rsync -a --delete dist/ gh-pages/
+# Preserve the worktree's Git metadata file so subsequent commands still
+# operate inside the gh-pages repo instead of falling back to the main repo.
+rsync -a --delete --exclude '.git' dist/ gh-pages/
+touch gh-pages/.nojekyll
+if [ -f CNAME ]; then
+  cp CNAME gh-pages/CNAME
+fi
 
 # --- Commit and push from inside the worktree only ---
 cd gh-pages
@@ -90,6 +97,7 @@ cd gh-pages
 # Defensive: set upstream again
 if git ls-remote --exit-code --heads origin gh-pages >/dev/null 2>&1; then
   git branch --set-upstream-to=origin/gh-pages gh-pages >/dev/null 2>&1 || true
+  git pull --ff-only || true
 fi
 
 # Verify branch, or hard fail with guidance
