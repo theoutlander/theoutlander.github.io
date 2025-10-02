@@ -79,7 +79,7 @@ fi
 
 # --- Run tests ---
 echo "🧪 Running tests…"
-pnpm test:run
+pnpm vitest run
 if [ $? -ne 0 ]; then
   echo "❌ Tests failed. Deployment aborted." >&2
   exit 1
