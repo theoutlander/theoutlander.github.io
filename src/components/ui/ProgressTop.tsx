@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { css } from "../../styled-system/css";
+import { css } from "../../styled-system/css/index.mjs";
 
 export default function ProgressTop() {
 	const [value, setValue] = useState(0);

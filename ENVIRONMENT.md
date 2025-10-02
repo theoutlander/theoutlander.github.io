@@ -6,7 +6,7 @@ This document explains how to configure environment variables for the blog build
 
 ### Required Variables
 
-- `HASHNODE_HOST` - Your Hashnode subdomain (e.g., `theoutlander.hashnode.dev`)
+- `HASHNODE_HOST` - Your Hashnode subdomain (e.g., `nickkarnik.hashnode.dev`)
 - `SITE_URL` - Your site's URL (e.g., `https://nick.karnik.io`)
 
 ### Optional Variables
@@ -21,7 +21,7 @@ Create a `.env.local` file in the project root:
 
 ```bash
 # .env.local
-HASHNODE_HOST=theoutlander.hashnode.dev
+HASHNODE_HOST=nickkarnik.hashnode.dev
 SITE_URL=http://localhost:5173
 NODE_ENV=development
 ```
@@ -29,7 +29,7 @@ NODE_ENV=development
 ### Option 2: Export Variables
 
 ```bash
-export HASHNODE_HOST=theoutlander.hashnode.dev
+export HASHNODE_HOST=nickkarnik.hashnode.dev
 export SITE_URL=http://localhost:5173
 export NODE_ENV=development
 ```
@@ -37,7 +37,7 @@ export NODE_ENV=development
 ### Option 3: Inline Variables
 
 ```bash
-HASHNODE_HOST=theoutlander.hashnode.dev SITE_URL=http://localhost:5173 pnpm dev
+HASHNODE_HOST=nickkarnik.hashnode.dev SITE_URL=http://localhost:5173 pnpm dev
 ```
 
 ## Production Build
@@ -56,7 +56,7 @@ env:
 ### Manual Build
 
 ```bash
-HASHNODE_HOST=theoutlander.hashnode.dev SITE_URL=https://nick.karnik.io NODE_ENV=production pnpm build:prod
+HASHNODE_HOST=nickkarnik.hashnode.dev SITE_URL=https://nick.karnik.io NODE_ENV=production pnpm build:prod
 ```
 
 ## Default Values

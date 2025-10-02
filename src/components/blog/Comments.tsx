@@ -4,7 +4,7 @@ import UtterancesComments from "./UtterancesComments";
 import HashnodeComments from "./HashnodeComments";
 import SimpleComments from "./SimpleComments";
 import { COMMENTS_CONFIG } from "../../lib/comments";
-import { css } from "../../styled-system/css";
+import { css } from "../../styled-system/css/index.mjs";
 import {
 	commentsSection,
 	commentsContainer,
@@ -12,7 +12,7 @@ import {
 	commentsTitle,
 	commentsContent,
 	commentsActions,
-} from "../../styled-system/recipes";
+} from "../../styled-system/recipes/index.mjs";
 
 interface CommentsProps {
 	postTitle: string;

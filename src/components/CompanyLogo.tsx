@@ -1,5 +1,5 @@
 import { companyLogo } from "../../styled-system/recipes/index.mjs";
-import { css } from "../../styled-system/css";
+import { css } from "../../styled-system/css/index.mjs";
 
 // Company logo component
 export function CompanyLogo({

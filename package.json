@@ -5,7 +5,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "pnpm panda codegen && pnpm panda cssgen && NODE_ENV=${NODE_ENV:-development} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
-		"build:prod": "NODE_ENV=${NODE_ENV:-production} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"build:prod": "pnpm panda codegen && pnpm panda cssgen && NODE_ENV=${NODE_ENV:-production} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
 		"test:run": "vitest run",

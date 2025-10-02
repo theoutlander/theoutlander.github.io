@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
-import { css } from "../../styled-system/css";
+import { css } from "../../styled-system/css/index.mjs";
 
 export type Post = {
 	id?: string;

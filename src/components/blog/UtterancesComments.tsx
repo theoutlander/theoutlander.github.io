@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { FaComment, FaHeart } from "react-icons/fa";
 import { COMMENTS_CONFIG } from "../../lib/comments";
-import { css } from "../../styled-system/css";
+import { css } from "../../styled-system/css/index.mjs";
 import {
 	commentsSection,
 	commentsContainer,
@@ -9,7 +9,7 @@ import {
 	commentsTitle,
 	commentsContent,
 	commentsActions,
-} from "../../styled-system/recipes";
+} from "../../styled-system/recipes/index.mjs";
 
 interface UtterancesCommentsProps {
 	postTitle: string;
