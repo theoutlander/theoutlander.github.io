@@ -108,59 +108,65 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 			<div className={commentsContainer()}>
 				<div className={commentsHeader()}>
 					<div
-						style={{
+						className={css({
 							display: "flex",
 							gap: "12px",
 							alignItems: "center",
 							justifyContent: "space-between",
 							flexWrap: "wrap",
-						}}
+						})}
 					>
-						<div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+						<div
+							className={css({
+								display: "flex",
+								gap: "12px",
+								alignItems: "center",
+							})}
+						>
 							<FaComment
 								size={20}
 								color="#3182ce"
 							/>
 							<h2
-								style={{
+								className={css({
 									fontSize: "1.5rem",
 									fontWeight: "600",
 									color: "#1a202c",
 									margin: 0,
-								}}
+								})}
 							>
 								Comments
 							</h2>
 							<span
-								style={{
+								className={css({
 									backgroundColor: "#ebf8ff",
 									color: "#3182ce",
 									padding: "4px 8px",
 									borderRadius: "4px",
 									fontSize: "12px",
 									fontWeight: "500",
-								}}
+								})}
 							>
 								Hashnode Comments
 							</span>
 						</div>
-						<div style={{ display: "flex", gap: "12px" }}>
+						<div className={css({ display: "flex", gap: "12px" })}>
 							<FaHeart
 								size={16}
 								color="#fc8181"
 							/>
-							<div style={{ display: "flex", gap: "8px" }}>
+							<div className={css({ display: "flex", gap: "8px" })}>
 								<FaCog
 									size={12}
 									color="#a0aec0"
 								/>
 								<div>
 									<p
-										style={{
+										className={css({
 											fontSize: "12px",
 											color: "#a0aec0",
 											margin: "0 0 4px 0",
-										}}
+										})}
 									>
 										Comment System
 									</p>
@@ -170,14 +176,13 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 										onChange={(e) =>
 											setCommentSystem(e.target.value as CommentSystem)
 										}
-										className="comment-system-select"
 										aria-label="Select comment system"
-										style={{
+										className={css({
 											padding: "4px 8px",
 											border: "1px solid #e2e8f0",
 											borderRadius: "4px",
 											fontSize: "14px",
-										}}
+										})}
 									>
 										<option value="hashnode">Hashnode Comments</option>
 										<option value="giscus">Giscus Comments</option>
@@ -190,49 +195,63 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 					</div>
 
 					<p
-						style={{
+						className={css({
 							color: "#718096",
 							fontSize: "16px",
 							lineHeight: "1.6",
 							margin: 0,
-						}}
+						})}
 					>
 						Share your thoughts and join the discussion! Leave a comment below.
 					</p>
 
 					<div
-						style={{
+						className={css({
 							padding: "24px",
 							background: "linear-gradient(to right, #ebf8ff, #faf5ff)",
 							borderRadius: "12px",
 							border: "1px solid #bee3f8",
-						}}
+						})}
 					>
 						<div
-							style={{ display: "flex", flexDirection: "column", gap: "16px" }}
+							className={css({
+								display: "flex",
+								flexDirection: "column",
+								gap: "16px",
+							})}
 						>
 							<div
-								style={{ display: "flex", gap: "12px", alignItems: "center" }}
+								className={css({
+									display: "flex",
+									gap: "12px",
+									alignItems: "center",
+								})}
 							>
 								<FaComment
 									size={20}
 									color="#4a5568"
 								/>
 								<p
-									style={{
+									className={css({
 										fontSize: "16px",
 										fontWeight: "500",
 										color: "#4a5568",
 										margin: 0,
-									}}
+									})}
 								>
 									Ready to join the conversation?
 								</p>
 							</div>
 
-							<div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+							<div
+								className={css({
+									display: "flex",
+									gap: "12px",
+									flexWrap: "wrap",
+								})}
+							>
 								<button
-									style={{
+									className={css({
 										padding: "8px 16px",
 										border: "1px solid #e2e8f0",
 										borderRadius: "6px",
@@ -241,7 +260,7 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 										fontSize: "14px",
 										cursor: "pointer",
 										transition: "all 0.2s",
-									}}
+									})}
 									onClick={() => {
 										// Scroll to comments section
 										commentsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -255,14 +274,14 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 
 					<div
 						ref={commentsRef}
-						style={{
+						className={css({
 							minHeight: "300px",
 							borderRadius: "12px",
 							overflow: "hidden",
 							border: "1px solid #e2e8f0",
 							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 							backgroundColor: "white",
-						}}
+						})}
 					/>
 				</div>
 			</div>

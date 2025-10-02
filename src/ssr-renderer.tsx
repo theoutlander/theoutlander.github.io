@@ -9,6 +9,7 @@ import {
 	statSync,
 } from "node:fs";
 import { join } from "node:path";
+import { capitalizeFirstLetter } from "./utils/stringUtils";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -55,7 +56,10 @@ const copyDirectory = (src: string, dest: string) => {
 			try {
 				copyFileSync(srcPath, destPath);
 			} catch (error) {
-				console.warn(`⚠️  Could not copy ${srcPath}:`, error.message);
+				console.warn(
+					`⚠️  Could not copy ${srcPath}:`,
+					error instanceof Error ? error.message : String(error)
+				);
 			}
 		}
 	}
@@ -248,7 +252,12 @@ const generateBaseHTML = (
 		${
 			articleData.tags
 				? articleData.tags
-						.map((tag) => `<meta property="article:tag" content="${tag}" />`)
+						.map(
+							(tag) =>
+								`<meta property="article:tag" content="${capitalizeFirstLetter(
+									tag
+								)}" />`
+						)
 						.join("\n\t\t")
 				: ""
 		}
@@ -383,7 +392,10 @@ export async function renderAllStaticPagesSSR() {
 		try {
 			copyFileSync(`public/${file}`, `dist/${file}`);
 		} catch (error) {
-			console.warn(`⚠️  Could not copy ${file}:`, error.message);
+			console.warn(
+				`⚠️  Could not copy ${file}:`,
+				error instanceof Error ? error.message : String(error)
+			);
 		}
 	}
 	console.log("✅ Static files copied to dist");
@@ -580,7 +592,11 @@ function generateRssXml(posts: Post[]) {
       <guid isPermaLink="true">${postUrl}</guid>
       <pubDate>${pubDate}</pubDate>
       ${post.cover ? `<enclosure url="${post.cover}" type="image/jpeg" />` : ""}
-      ${post.tags?.map((tag) => `<category>${tag}</category>`).join("") || ""}
+      ${
+				post.tags
+					?.map((tag) => `<category>${capitalizeFirstLetter(tag)}</category>`)
+					.join("") || ""
+			}
     </item>`;
 		})
 		.join("");

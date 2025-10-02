@@ -1,6 +1,7 @@
 import { css } from "../../../styled-system/css/index.mjs";
 // import { Helmet } from 'react-helmet-async';
 import type { Post } from "./RoutePost";
+import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 export default function BlogList({
 	posts,
@@ -44,7 +45,9 @@ export default function BlogList({
 							mb: "2",
 						})}
 					>
-						{filterTag ? `No posts tagged "${filterTag}"` : "No posts yet"}
+						{filterTag
+							? `No posts tagged "${capitalizeFirstLetter(filterTag)}"`
+							: "No posts yet"}
 					</h2>
 					<p
 						className={css({

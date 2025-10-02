@@ -110,24 +110,24 @@ export default function SimpleComments({
 								color="#3182ce"
 							/>
 							<h2
-								style={{
+								className={css({
 									fontSize: "1.5rem",
 									fontWeight: "600",
 									color: "#1a202c",
 									margin: 0,
-								}}
+								})}
 							>
 								Comments
 							</h2>
 							<span
-								style={{
+								className={css({
 									backgroundColor: "#ebf8ff",
 									color: "#3182ce",
 									padding: "4px 8px",
 									borderRadius: "4px",
 									fontSize: "12px",
 									fontWeight: "500",
-								}}
+								})}
 							>
 								{comments.length}{" "}
 								{comments.length === 1 ? "Comment" : "Comments"}
@@ -140,26 +140,26 @@ export default function SimpleComments({
 					</div>
 
 					<p
-						style={{
+						className={css({
 							color: "#718096",
 							fontSize: "16px",
 							lineHeight: "1.6",
 							margin: 0,
-						}}
+						})}
 					>
 						Share your thoughts and join the discussion! Leave a comment below.
 					</p>
 
 					{error && (
 						<div
-							style={{
+							className={css({
 								padding: "12px 16px",
 								backgroundColor: "#fed7d7",
 								color: "#c53030",
 								borderRadius: "6px",
 								border: "1px solid #feb2b2",
 								fontSize: "14px",
-							}}
+							})}
 						>
 							{error}
 						</div>
@@ -167,7 +167,7 @@ export default function SimpleComments({
 
 					{!showForm && (
 						<button
-							style={{
+							className={css({
 								padding: "8px 16px",
 								backgroundColor: "#3182ce",
 								color: "white",
@@ -179,7 +179,7 @@ export default function SimpleComments({
 								alignItems: "center",
 								gap: "8px",
 								alignSelf: "flex-start",
-							}}
+							})}
 							onClick={() => setShowForm(true)}
 						>
 							<FaComment size={14} />
@@ -189,30 +189,30 @@ export default function SimpleComments({
 
 					{showForm && (
 						<div
-							style={{
+							className={css({
 								padding: "24px",
 								backgroundColor: "#f7fafc",
 								borderRadius: "12px",
 								border: "1px solid #e2e8f0",
-							}}
+							})}
 						>
 							<form onSubmit={handleSubmitComment}>
 								<div
-									style={{
+									className={css({
 										display: "flex",
 										flexDirection: "column",
 										gap: "16px",
-									}}
+									})}
 								>
 									<div>
 										<label
-											style={{
+											className={css({
 												display: "block",
 												fontSize: "14px",
 												fontWeight: "500",
 												marginBottom: "4px",
 												color: "#1a202c",
-											}}
+											})}
 										>
 											Name *
 										</label>
@@ -226,24 +226,24 @@ export default function SimpleComments({
 												}))
 											}
 											placeholder="Your name"
-											style={{
+											className={css({
 												width: "100%",
 												padding: "8px 12px",
 												border: "1px solid #e2e8f0",
 												borderRadius: "6px",
 												fontSize: "14px",
-											}}
+											})}
 										/>
 									</div>
 									<div>
 										<label
-											style={{
+											className={css({
 												display: "block",
 												fontSize: "14px",
 												fontWeight: "500",
 												marginBottom: "4px",
 												color: "#1a202c",
-											}}
+											})}
 										>
 											Comment *
 										</label>
@@ -257,20 +257,20 @@ export default function SimpleComments({
 											}
 											placeholder="Write your comment here..."
 											rows={4}
-											style={{
+											className={css({
 												width: "100%",
 												padding: "8px 12px",
 												border: "1px solid #e2e8f0",
 												borderRadius: "6px",
 												fontSize: "14px",
 												resize: "vertical",
-											}}
+											})}
 										/>
 									</div>
-									<div style={{ display: "flex", gap: "12px" }}>
+									<div className={css({ display: "flex", gap: "12px" })}>
 										<button
 											type="submit"
-											style={{
+											className={css({
 												padding: "8px 16px",
 												backgroundColor: "#3182ce",
 												color: "white",
@@ -281,14 +281,14 @@ export default function SimpleComments({
 												display: "flex",
 												alignItems: "center",
 												gap: "8px",
-											}}
+											})}
 										>
 											<FaPaperPlane size={14} />
 											Post Comment
 										</button>
 										<button
 											type="button"
-											style={{
+											className={css({
 												padding: "8px 16px",
 												backgroundColor: "white",
 												color: "#1a202c",
@@ -296,7 +296,7 @@ export default function SimpleComments({
 												borderRadius: "6px",
 												fontSize: "14px",
 												cursor: "pointer",
-											}}
+											})}
 											onClick={() => setShowForm(false)}
 										>
 											Cancel
@@ -308,96 +308,98 @@ export default function SimpleComments({
 					)}
 
 					<div
-						style={{
+						className={css({
 							minHeight: "200px",
 							borderRadius: "12px",
 							overflow: "hidden",
 							border: "1px solid #e2e8f0",
 							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 							backgroundColor: "white",
-						}}
+						})}
 					>
 						{comments.length === 0 ? (
 							<div
-								style={{
+								className={css({
 									padding: "32px",
 									textAlign: "center",
-								}}
+								})}
 							>
 								<FaComment
 									size={48}
 									color="#cbd5e0"
 								/>
 								<p
-									style={{
+									className={css({
 										marginTop: "16px",
 										color: "#718096",
 										margin: "16px 0 0 0",
-									}}
+									})}
 								>
 									No comments yet. Be the first to comment!
 								</p>
 							</div>
 						) : (
-							<div style={{ display: "flex", flexDirection: "column" }}>
+							<div
+								className={css({ display: "flex", flexDirection: "column" })}
+							>
 								{comments.map((comment) => (
 									<div
 										key={comment.id}
-										style={{
+										className={css({
 											padding: "24px",
 											borderBottom: "1px solid #f1f5f9",
-										}}
+										})}
 									>
 										<div
-											style={{
+											className={css({
 												display: "flex",
 												flexDirection: "column",
 												gap: "12px",
-											}}
+											})}
 										>
 											<div
-												style={{
+												className={css({
 													display: "flex",
 													gap: "12px",
 													alignItems: "flex-start",
-												}}
+												})}
 											>
 												<div
-													style={{
+													className={css({
 														display: "flex",
 														flexDirection: "column",
 														gap: "4px",
 														flex: 1,
-													}}
+													})}
 												>
 													<p
-														style={{
+														className={css({
 															fontWeight: "500",
 															fontSize: "14px",
 															margin: 0,
 															color: "#1a202c",
-														}}
+														})}
 													>
 														{comment.name}
 													</p>
 													<p
-														style={{
+														className={css({
 															color: "#a0aec0",
 															fontSize: "12px",
 															margin: 0,
-														}}
+														})}
 													>
 														{formatDate(comment.date)}
 													</p>
 												</div>
 											</div>
 											<p
-												style={{
+												className={css({
 													color: "#1a202c",
 													lineHeight: "1.6",
 													whiteSpace: "pre-wrap",
 													margin: 0,
-												}}
+												})}
 											>
 												{comment.content}
 											</p>

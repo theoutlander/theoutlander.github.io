@@ -3,6 +3,7 @@ import ReactMarkdown from "react-markdown";
 import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
 import { css } from "../../styled-system/css/index.mjs";
+import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 export type Post = {
 	id?: string;
@@ -128,7 +129,7 @@ export default function RoutePost({ slug }: { slug: string }) {
 								fontWeight: "500",
 							})}
 						>
-							{t}
+							{capitalizeFirstLetter(t)}
 						</span>
 					))}
 				</div>

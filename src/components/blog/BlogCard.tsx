@@ -1,6 +1,7 @@
 // src/components/blog/BlogCard.tsx
 import { css } from "../../../styled-system/css/index.mjs";
 import type { Post } from "./RoutePost";
+import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 export default function BlogCard({ post }: { post: Post }) {
 	return (
@@ -91,7 +92,7 @@ export default function BlogCard({ post }: { post: Post }) {
 									_hover: { bg: "gray.200" },
 								})}
 							>
-								{t}
+								{capitalizeFirstLetter(t)}
 							</a>
 						))}
 					</div>

@@ -3,6 +3,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import SkipLink from "../components/SkipLink";
+import { capitalizeFirstLetter } from "../utils/stringUtils";
 
 type Post = {
 	id?: string;
@@ -211,7 +212,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 											_hover: { bg: "blue.200" },
 										})}
 									>
-										{tag}
+										{capitalizeFirstLetter(tag)}
 									</a>
 								))}
 							</div>

@@ -4,14 +4,10 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"dev": "tsx scripts/fetch-hashnode.ts && pnpm panda codegen && pnpm panda cssgen && NODE_ENV=${NODE_ENV:-development} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts && vite",
-		"build:prod": "pnpm panda codegen && pnpm panda cssgen && NODE_ENV=${NODE_ENV:-production} tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
-		"refresh": "tsx scripts/fetch-hashnode.ts && pnpm build:prod",
-		"test": "vitest",
-		"test:ui": "vitest --ui",
-		"test:run": "vitest run",
-		"test:coverage": "vitest run --coverage",
-		"deploy": "tsx scripts/fetch-hashnode.ts && ./deploy.sh"
+		"build": "pnpm panda codegen && pnpm panda cssgen && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"dev": "tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} pnpm build && vite",
+		"test": "vitest run --coverage",
+		"deploy": "./scripts/deploy.sh"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",

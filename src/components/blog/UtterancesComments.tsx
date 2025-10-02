@@ -145,7 +145,7 @@ export default function UtterancesComments({
 
 							<div className={commentsActions()}>
 								<button
-									style={{
+									className={css({
 										padding: "8px 16px",
 										border: "1px solid #e2e8f0",
 										borderRadius: "6px",
@@ -154,7 +154,7 @@ export default function UtterancesComments({
 										fontSize: "14px",
 										cursor: "pointer",
 										transition: "all 0.2s",
-									}}
+									})}
 									onClick={() => {
 										// Scroll to comments section
 										commentsRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -168,14 +168,14 @@ export default function UtterancesComments({
 
 					<div
 						ref={commentsRef}
-						style={{
+						className={css({
 							minHeight: "300px",
 							borderRadius: "12px",
 							overflow: "hidden",
 							border: "1px solid #e2e8f0",
 							boxShadow: "0 1px 3px rgba(0,0,0,0.1)",
 							backgroundColor: "white",
-						}}
+						})}
 					/>
 				</div>
 			</div>

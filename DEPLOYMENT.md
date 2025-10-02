@@ -5,7 +5,7 @@
 To build for production:
 
 ```bash
-pnpm run build:prod
+NODE_ENV=production pnpm build
 ```
 
 This will:
@@ -51,7 +51,7 @@ The `dist/` folder contains:
 
 For automated deployments, you can:
 
-1. Set up GitHub Actions to run `pnpm run build:prod` on push
+1. Set up GitHub Actions to run `NODE_ENV=production pnpm build` on push
 2. Deploy the `dist/` folder to your hosting service
 3. Configure your domain to point to the deployed site
 
@@ -60,7 +60,7 @@ For automated deployments, you can:
 Before deploying, test locally:
 
 ```bash
-pnpm run build:prod
+NODE_ENV=production pnpm build
 pnpm run preview
 ```
 

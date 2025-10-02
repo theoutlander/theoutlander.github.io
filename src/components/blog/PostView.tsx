@@ -13,6 +13,7 @@ import {
 	blogContent,
 	blogCover,
 } from "../../../styled-system/recipes/index.mjs";
+import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 type Post = {
 	id?: string;
@@ -93,7 +94,7 @@ export default function PostView({ post }: { post: Post }) {
 							key={t}
 							className={blogTag()}
 						>
-							{t}
+							{capitalizeFirstLetter(t)}
 						</span>
 					))}
 				</div>

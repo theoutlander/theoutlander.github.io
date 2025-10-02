@@ -77,9 +77,22 @@ else
   fi
 fi
 
+# --- Run tests ---
+echo "🧪 Running tests…"
+pnpm test:run
+if [ $? -ne 0 ]; then
+  echo "❌ Tests failed. Deployment aborted." >&2
+  exit 1
+fi
+echo "✅ All tests passed!"
+
+# --- Fetch fresh data from Hashnode ---
+echo "📡 Fetching fresh data from Hashnode…"
+tsx scripts/fetch-hashnode.ts
+
 # --- Build site ---
 echo "🏗️ Building site…"
-pnpm build:prod
+NODE_ENV=production pnpm build
 
 # --- Sync dist into the worktree ---
 echo "🔄 Syncing dist/ -> gh-pages/"

@@ -110,10 +110,10 @@ describe("BlogPostPagePanda", () => {
 	it("renders tags when available", () => {
 		render(<BlogPostPagePanda post={mockPost} />);
 
-		expect(screen.getByText("AI")).toBeInTheDocument();
-		expect(screen.getByText("engineering")).toBeInTheDocument();
+		expect(screen.getByText("Ai")).toBeInTheDocument();
+		expect(screen.getByText("Engineering")).toBeInTheDocument();
 		expect(screen.getByText("Productivity")).toBeInTheDocument();
-		expect(screen.getByText("programming")).toBeInTheDocument();
+		expect(screen.getByText("Programming")).toBeInTheDocument();
 	});
 
 	it("does not render tags section when no tags available", () => {
@@ -124,7 +124,7 @@ describe("BlogPostPagePanda", () => {
 
 		render(<BlogPostPagePanda post={postWithoutTags} />);
 
-		expect(screen.queryByText("AI")).not.toBeInTheDocument();
+		expect(screen.queryByText("Ai")).not.toBeInTheDocument();
 	});
 
 	it("formats date correctly", () => {

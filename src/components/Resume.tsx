@@ -6,6 +6,7 @@ import { HiOutlineCalendar } from "react-icons/hi";
 import { FaDownload } from "react-icons/fa";
 import NameHeader from "./NameHeader";
 import ContactSection from "./ContactSection";
+import { capitalizeFirstLetter } from "../utils/stringUtils";
 
 // ----- Color tokens for light/dark mode -----
 const surface = { light: "white", dark: "gray.900" };
@@ -483,7 +484,7 @@ export default function Resume() {
 										key={t}
 										className={pill()}
 									>
-										{t}
+										{capitalizeFirstLetter(t)}
 									</span>
 								))}
 							</div>
@@ -617,7 +618,7 @@ export default function Resume() {
 											key={t}
 											className={pill()}
 										>
-											{t}
+											{capitalizeFirstLetter(t)}
 										</span>
 									))}
 								</div>

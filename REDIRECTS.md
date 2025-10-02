@@ -58,7 +58,7 @@ The redirect generation script creates the following files:
 
 - `pnpm run redirects` - Generate \_redirects files manually
 - `pnpm run redirects:html` - Generate HTML redirect files for GitHub Pages
-- `pnpm run build:prod` - Build with redirects included
+- `NODE_ENV=production pnpm build` - Build with redirects included
 - `pnpm run deploy` - Build and prepare for deployment
 
 ## Status Codes

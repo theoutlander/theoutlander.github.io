@@ -56,7 +56,7 @@ env:
 ### Manual Build
 
 ```bash
-HASHNODE_HOST=nickkarnik.hashnode.dev SITE_URL=https://nick.karnik.io NODE_ENV=production pnpm build:prod
+HASHNODE_HOST=nickkarnik.hashnode.dev SITE_URL=https://nick.karnik.io NODE_ENV=production pnpm build
 ```
 
 ## Default Values
@@ -72,7 +72,7 @@ If environment variables are not set, the following defaults are used:
 - `pnpm prebuild` - Fetches content from Hashnode
 - `pnpm build` - Builds the application
 - `pnpm postbuild` - Generates sitemap
-- `pnpm build:prod` - Runs all build steps
+- `NODE_ENV=production pnpm build` - Runs all build steps for production
 - `pnpm dev` - Starts development server
 
 ## Troubleshooting
