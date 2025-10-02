@@ -7,7 +7,7 @@
 		"build": "pnpm panda codegen && pnpm panda cssgen && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
 		"dev": "tsx scripts/fetch-hashnode.ts && NODE_ENV=${NODE_ENV:-development} pnpm build && vite",
 		"test": "vitest run --watch --coverage",
-		"deploy": "./scripts/deploy.sh"
+		"publish": "./scripts/deploy.sh"
 	},
 	"dependencies": {
 		"@emotion/react": "^11.14.0",

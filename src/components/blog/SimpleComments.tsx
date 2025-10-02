@@ -206,6 +206,7 @@ export default function SimpleComments({
 								>
 									<div>
 										<label
+											htmlFor="comment-name"
 											className={css({
 												display: "block",
 												fontSize: "14px",
@@ -217,6 +218,7 @@ export default function SimpleComments({
 											Name *
 										</label>
 										<input
+											id="comment-name"
 											type="text"
 											value={formData.name}
 											onChange={(e) =>
@@ -237,6 +239,7 @@ export default function SimpleComments({
 									</div>
 									<div>
 										<label
+											htmlFor="comment-content"
 											className={css({
 												display: "block",
 												fontSize: "14px",
@@ -248,6 +251,7 @@ export default function SimpleComments({
 											Comment *
 										</label>
 										<textarea
+											id="comment-content"
 											value={formData.content}
 											onChange={(e) =>
 												setFormData((prev) => ({

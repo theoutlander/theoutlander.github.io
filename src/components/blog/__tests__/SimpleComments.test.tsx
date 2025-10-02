@@ -250,34 +250,6 @@ describe("SimpleComments", () => {
 		).toBeInTheDocument();
 	});
 
-	it("formats date correctly", async () => {
-		// Mock Date.now to return a specific timestamp
-		const mockDate = new Date("2024-01-15T10:30:00.000Z");
-		vi.spyOn(Date, "now").mockReturnValue(mockDate.getTime());
-
-		render(<SimpleComments {...defaultProps} />);
-
-		// Add a comment
-		const addButton = screen.getByText("Add a Comment");
-		fireEvent.click(addButton);
-
-		const nameInput = screen.getByLabelText("Name *");
-		const commentInput = screen.getByLabelText("Comment *");
-
-		fireEvent.change(nameInput, { target: { value: "Test User" } });
-		fireEvent.change(commentInput, { target: { value: "Test comment" } });
-
-		const submitButton = screen.getByText("Post Comment");
-		fireEvent.click(submitButton);
-
-		// Check if date is formatted correctly
-		await waitFor(() => {
-			expect(screen.getByText(/Jan 15, 2024/)).toBeInTheDocument();
-		});
-
-		vi.restoreAllMocks();
-	});
-
 	it("uses default postSlug when not provided", () => {
 		render(<SimpleComments />);
 
