@@ -9,3 +9,6 @@ coverage/
 .astro/
 dist/
 .DS_Store
+public/assets/.DS_Store
+src/.DS_Store
+.DS_Store
