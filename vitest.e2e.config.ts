@@ -9,27 +9,17 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
-    coverage: {
-      provider: 'v8',
-      reporter: ['text', 'json', 'html'],
-      exclude: [
-        'node_modules/',
-        'src/test/',
-        '**/*.d.ts',
-        '**/*.config.*',
-        'dist/',
-        'public/',
-        'scripts/',
-      ],
-    },
-    // Exclude E2E tests from regular test runs
+    // Only run E2E tests
+    include: ['**/*.e2e.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // Exclude everything else
     exclude: [
       '**/node_modules/**',
       '**/dist/**',
       '**/cypress/**',
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
-      '**/*.e2e.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
     ],
+    // Longer timeout for E2E tests
+    testTimeout: 30000,
   },
 });

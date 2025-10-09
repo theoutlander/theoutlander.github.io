@@ -109,12 +109,13 @@ describe("Blog Routing Integration", () => {
 		expect(response.ok).toBe(true);
 
 		const data = await response.json();
-		expect(data).toHaveProperty("slug", "how-engineers-can-use-ai-effectively");
+		// Individual post files don't have slug property, they use filename as identifier
+		expect(data).toHaveProperty("id", "68d72ef766a499385385e183");
 		expect(data).toHaveProperty(
 			"title",
 			"How Engineers Can Use AI Effectively"
 		);
-		expect(data).toHaveProperty("contentHtml");
+		expect(data).toHaveProperty("html"); // Individual posts use 'html' not 'contentHtml'
 		expect(data).toHaveProperty("tags");
 		expect(Array.isArray(data.tags)).toBe(true);
 	});
@@ -145,12 +146,17 @@ describe("Blog Routing Integration", () => {
 		);
 		expect(hashnodePost).toBeDefined();
 
-		// Both should have the same core properties
-		expect(hashnodePost.slug).toBe(individualData.slug);
+		// Both should have the same core properties (accounting for different structures)
+		expect(hashnodePost.id).toBe(individualData.id);
 		expect(hashnodePost.title).toBe(individualData.title);
 		expect(hashnodePost.excerpt).toBe(individualData.excerpt);
 		expect(hashnodePost.date).toBe(individualData.date);
 		expect(hashnodePost.tags).toEqual(individualData.tags);
+		// hashnode has slug, individual posts don't
+		expect(hashnodePost.slug).toBe("how-engineers-can-use-ai-effectively");
+		// hashnode has contentHtml, individual posts have html
+		expect(hashnodePost.contentHtml).toBeDefined();
+		expect(individualData.html).toBeDefined();
 	});
 
 	it("should handle CORS properly", async () => {

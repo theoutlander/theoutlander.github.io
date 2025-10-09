@@ -11,30 +11,36 @@ describe("Blog Routing E2E", () => {
 
 		// Wait for server to be ready
 		let attempts = 0;
-		const maxAttempts = 5; // Reduced from 30 to 5 for faster test execution
+		const maxAttempts = 10; // Increased to 10 for more reliable detection
 
 		while (attempts < maxAttempts) {
 			try {
-				const response = await fetch(`${baseUrl}/`);
+				const response = await fetch(`${baseUrl}/`, {
+					method: 'HEAD', // Use HEAD request for faster check
+					signal: AbortSignal.timeout(2000), // 2 second timeout per attempt
+				});
 				if (response.ok) {
 					serverAvailable = true;
+					console.log(`Dev server is ready at ${baseUrl}`);
 					break;
 				}
 			} catch (error) {
-				// Server not ready yet
+				// Server not ready yet, continue waiting
+				console.log(`Attempt ${attempts + 1}/${maxAttempts}: Dev server not ready yet`);
 			}
 
-			await new Promise((resolve) => setTimeout(resolve, 1000));
+			await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between attempts
 			attempts++;
 		}
 
 		if (attempts >= maxAttempts) {
 			// Skip all tests if dev server is not available
-			console.log("Dev server not available, skipping E2E tests");
+			console.log("Dev server not available after maximum attempts, skipping E2E tests");
+			console.log("To run E2E tests, start the dev server with: pnpm dev");
 			serverAvailable = false;
 			return;
 		}
-	});
+	}, 25000); // 25 second timeout for the beforeAll hook
 
 	it("should serve the blog post page successfully", async () => {
 		if (!serverAvailable) {

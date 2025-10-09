@@ -2,6 +2,33 @@
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
+## Testing
+
+This project uses Vitest for testing with different test types:
+
+### Test Commands
+
+- `pnpm test` - Run unit tests with coverage
+- `pnpm test:watch` - Run unit tests in watch mode
+- `pnpm test:unit` - Run only unit tests
+- `pnpm test:integration` - Run only integration tests
+- `pnpm test:e2e` - Run E2E tests (requires dev server to be running)
+- `pnpm test:e2e:dev` - Run E2E tests with dev server (starts server automatically)
+- `pnpm test:all` - Run all tests (unit, integration, and E2E)
+
+### Test Types
+
+1. **Unit Tests** - Test individual components and functions in isolation
+2. **Integration Tests** - Test data fetching and API interactions with a mock server
+3. **E2E Tests** - Test the full application flow against a running development server
+
+### Running E2E Tests
+
+E2E tests require a running development server. You can either:
+
+1. Start the dev server manually: `pnpm dev` then run `pnpm test:e2e`
+2. Use the automated command: `pnpm test:e2e:dev` (starts server and runs tests)
+
 Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
