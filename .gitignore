@@ -8,3 +8,4 @@ styled-system-studio
 coverage/
 .astro/
 dist/
+.DS_Store

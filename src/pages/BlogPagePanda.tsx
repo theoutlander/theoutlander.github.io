@@ -3,6 +3,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import BlogList from "../components/blog/BlogList";
+import BlogIntro from "../components/blog/BlogIntro";
 import SkipLink from "../components/SkipLink";
 
 type Post = {
@@ -39,6 +40,7 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 					px: 4,
 				})}
 			>
+				<BlogIntro />
 				<BlogList posts={posts} />
 			</main>
 			<Footer />

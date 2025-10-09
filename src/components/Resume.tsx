@@ -459,7 +459,10 @@ export default function Resume() {
 							className={expItem}
 						>
 							<div className={css({ textAlign: "left", mb: 4 })}>
-								<CompanyLogo company={getCompanyKey(e.company)} />
+								<CompanyLogo 
+									company={getCompanyKey(e.company)} 
+									width={e.company === "University of Maryland" ? "160px" : "120px"}
+								/>
 							</div>
 							<div className={expHeader}>
 								<div>

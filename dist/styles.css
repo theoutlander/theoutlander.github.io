@@ -1860,6 +1860,10 @@
     margin-top: var(--spacing-4);
 }
 
+  .max-w_760px {
+    max-width: 760px;
+}
+
   .max-h_260px {
     max-height: 260px;
 }
@@ -2015,6 +2019,10 @@
     padding-block: var(--spacing-0);
 }
 
+  .\[\&_p\]\:my_2 p {
+    margin-block: var(--spacing-2);
+}
+
   .dark .dark\:bx-sh_none {
     box-shadow: none;
 }
@@ -2117,6 +2125,18 @@
 
   .\[\&_pre_code\]\:c_inherit pre code {
     color: inherit;
+}
+
+  .\[\&_p\]\:lh_1\.5 p {
+    line-height: 1.5;
+}
+
+  .\[\&_p\]\:c_inherit p {
+    color: inherit;
+}
+
+  .\[\&_\.cta\]\:c_gray\.600 .cta {
+    color: var(--colors-gray-600);
 }
 
   .\[\&_p\]\:mb_4 p {
@@ -2339,6 +2359,14 @@
     color: var(--colors-blue-700);
 }
 
+  .dark .\[\&_\.cta\]\:dark\:c_gray\.400 .cta {
+    color: var(--colors-gray-400);
+}
+
+  .dark .\[\&_a\]\:dark\:c_blue\.400 a {
+    color: var(--colors-blue-400);
+}
+
   .dark .hover\:dark\:bg_blue\.900\/20:is(:hover, [data-hover]) {
     --mix-background: color-mix(in srgb, var(--colors-blue-900) 20%, transparent);
     background: var(--mix-background, var(--colors-blue-900));
@@ -2390,6 +2418,10 @@
 
   .dark .hover\:dark\:c_brand\.300:is(:hover, [data-hover]) {
     color: var(--colors-brand-300);
+}
+
+  .dark .\[\&_a\]\:hover\:dark\:c_blue\.300 a:is(:hover, [data-hover]) {
+    color: var(--colors-blue-300);
 }
 
   @media screen and (min-width: 40rem) {
