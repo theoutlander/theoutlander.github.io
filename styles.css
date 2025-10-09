@@ -2023,6 +2023,14 @@
     margin-block: var(--spacing-2);
 }
 
+  .\[\&_p\:first-of-type\]\:my_3 p:first-of-type {
+    margin-block: var(--spacing-3);
+}
+
+  .\[\&_p\:nth-of-type\(2\)\]\:my_2 p:nth-of-type(2),.\[\&_p\:last-of-type\]\:my_2 p:last-of-type {
+    margin-block: var(--spacing-2);
+}
+
   .dark .dark\:bx-sh_none {
     box-shadow: none;
 }
@@ -2131,12 +2139,40 @@
     line-height: 1.5;
 }
 
-  .\[\&_p\]\:c_inherit p {
-    color: inherit;
+  .\[\&_p\:first-of-type\]\:fw_700 p:first-of-type {
+    font-weight: 700;
 }
 
-  .\[\&_\.cta\]\:c_gray\.600 .cta {
+  .\[\&_p\:first-of-type\]\:c_gray\.900 p:first-of-type {
+    color: var(--colors-gray-900);
+}
+
+  .\[\&_p\:first-of-type\]\:fs_lg p:first-of-type {
+    font-size: var(--font-sizes-lg);
+}
+
+  .\[\&_p\:nth-of-type\(2\)\]\:c_gray\.600 p:nth-of-type(2) {
     color: var(--colors-gray-600);
+}
+
+  .\[\&_p\:nth-of-type\(2\)\]\:fs_md p:nth-of-type(2) {
+    font-size: var(--font-sizes-md);
+}
+
+  .\[\&_p\:last-of-type\]\:c_gray\.500 p:last-of-type {
+    color: var(--colors-gray-500);
+}
+
+  .\[\&_p\:last-of-type\]\:fs_sm p:last-of-type {
+    font-size: var(--font-sizes-sm);
+}
+
+  .\[\&_p\:last-of-type\]\:fw_400 p:last-of-type {
+    font-weight: 400;
+}
+
+  .\[\&_a\]\:fw_500 a {
+    font-weight: 500;
 }
 
   .\[\&_p\]\:mb_4 p {
@@ -2359,8 +2395,24 @@
     color: var(--colors-blue-700);
 }
 
-  .dark .\[\&_\.cta\]\:dark\:c_gray\.400 .cta {
+  .dark .\[\&_p\:first-of-type\]\:dark\:c_gray\.100 p:first-of-type {
+    color: var(--colors-gray-100);
+}
+
+  .dark .\[\&_p\:nth-of-type\(2\)\]\:dark\:c_gray\.400 p:nth-of-type(2) {
     color: var(--colors-gray-400);
+}
+
+  .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:fw_700 p:nth-of-type(2) strong {
+    font-weight: 700;
+}
+
+  .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:c_gray\.800 p:nth-of-type(2) strong {
+    color: var(--colors-gray-800);
+}
+
+  .dark .\[\&_p\:last-of-type\]\:dark\:c_gray\.500 p:last-of-type {
+    color: var(--colors-gray-500);
 }
 
   .dark .\[\&_a\]\:dark\:c_blue\.400 a {
@@ -2418,6 +2470,10 @@
 
   .dark .hover\:dark\:c_brand\.300:is(:hover, [data-hover]) {
     color: var(--colors-brand-300);
+}
+
+  .dark .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:dark\:c_gray\.200 p:nth-of-type(2) strong {
+    color: var(--colors-gray-200);
 }
 
   .dark .\[\&_a\]\:hover\:dark\:c_blue\.300 a:is(:hover, [data-hover]) {
