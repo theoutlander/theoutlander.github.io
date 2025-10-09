@@ -1520,6 +1520,10 @@
     color: accent.700;
 }
 
+  .fw_700 {
+    font-weight: 700;
+}
+
   .fs_6xl {
     font-size: var(--font-sizes-6xl);
 }
@@ -1955,6 +1959,10 @@
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 }
 
+  .\[\&_p\]\:m_0 p {
+    margin: var(--spacing-0);
+}
+
   .dark .dark\:bd-c_gray\.700 {
     border-color: var(--colors-gray-700);
 }
@@ -2019,16 +2027,8 @@
     padding-block: var(--spacing-0);
 }
 
-  .\[\&_p\]\:my_2 p {
-    margin-block: var(--spacing-2);
-}
-
-  .\[\&_p\:first-of-type\]\:my_3 p:first-of-type {
-    margin-block: var(--spacing-3);
-}
-
-  .\[\&_p\:nth-of-type\(2\)\]\:my_2 p:nth-of-type(2),.\[\&_p\:last-of-type\]\:my_2 p:last-of-type {
-    margin-block: var(--spacing-2);
+  .\[\&_\.cta_a\]\:td_underline .cta a {
+    text-decoration: underline;
 }
 
   .dark .dark\:bx-sh_none {
@@ -2139,39 +2139,39 @@
     line-height: 1.5;
 }
 
-  .\[\&_p\:first-of-type\]\:fw_700 p:first-of-type {
-    font-weight: 700;
+  .\[\&_\.lead\]\:fw_600 .lead {
+    font-weight: 600;
 }
 
-  .\[\&_p\:first-of-type\]\:c_gray\.900 p:first-of-type {
+  .\[\&_\.lead\]\:c_gray\.900 .lead {
     color: var(--colors-gray-900);
 }
 
-  .\[\&_p\:first-of-type\]\:fs_lg p:first-of-type {
+  .\[\&_\.lead\]\:fs_lg .lead {
     font-size: var(--font-sizes-lg);
 }
 
-  .\[\&_p\:nth-of-type\(2\)\]\:c_gray\.600 p:nth-of-type(2) {
+  .\[\&_\.sub\]\:c_gray\.600 .sub {
     color: var(--colors-gray-600);
 }
 
-  .\[\&_p\:nth-of-type\(2\)\]\:fs_md p:nth-of-type(2) {
+  .\[\&_\.sub\]\:fs_md .sub {
     font-size: var(--font-sizes-md);
 }
 
-  .\[\&_p\:last-of-type\]\:c_gray\.500 p:last-of-type {
+  .\[\&_\.cta\]\:fs_0\.95rem .cta {
+    font-size: 0.95rem;
+}
+
+  .\[\&_\.cta\]\:c_gray\.500 .cta {
     color: var(--colors-gray-500);
 }
 
-  .\[\&_p\:last-of-type\]\:fs_sm p:last-of-type {
-    font-size: var(--font-sizes-sm);
+  .\[\&_\.cta_a\]\:c_blue\.600 .cta a {
+    color: var(--colors-blue-600);
 }
 
-  .\[\&_p\:last-of-type\]\:fw_400 p:last-of-type {
-    font-weight: 400;
-}
-
-  .\[\&_a\]\:fw_500 a {
+  .\[\&_\.cta_a\]\:fw_500 .cta a {
     font-weight: 500;
 }
 
@@ -2225,6 +2225,14 @@
 
   .\[\&_blockquote\]\:mb_4 blockquote,.\[\&_pre\]\:mb_4 pre {
     margin-bottom: var(--spacing-4);
+}
+
+  .\[\&_\.sub\]\:mt_4 .sub {
+    margin-top: var(--spacing-4);
+}
+
+  .\[\&_\.cta\]\:mt_3 .cta {
+    margin-top: var(--spacing-3);
 }
 
   .focus\:ring_2px_solid_brand\.600:is(:focus, [data-focus]) {
@@ -2395,28 +2403,20 @@
     color: var(--colors-blue-700);
 }
 
-  .dark .\[\&_p\:first-of-type\]\:dark\:c_gray\.100 p:first-of-type {
+  .dark .\[\&_\.lead\]\:dark\:c_gray\.100 .lead {
     color: var(--colors-gray-100);
 }
 
-  .dark .\[\&_p\:nth-of-type\(2\)\]\:dark\:c_gray\.400 p:nth-of-type(2) {
+  .dark .\[\&_\.sub\]\:dark\:c_gray\.400 .sub,.dark .\[\&_\.cta\]\:dark\:c_gray\.400 .cta {
     color: var(--colors-gray-400);
 }
 
-  .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:fw_700 p:nth-of-type(2) strong {
-    font-weight: 700;
-}
-
-  .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:c_gray\.800 p:nth-of-type(2) strong {
-    color: var(--colors-gray-800);
-}
-
-  .dark .\[\&_p\:last-of-type\]\:dark\:c_gray\.500 p:last-of-type {
-    color: var(--colors-gray-500);
-}
-
-  .dark .\[\&_a\]\:dark\:c_blue\.400 a {
+  .dark .\[\&_\.cta_a\]\:dark\:c_blue\.400 .cta a {
     color: var(--colors-blue-400);
+}
+
+  .\[\&_\.cta_a\]\:hover\:c_blue\.700 .cta a:is(:hover, [data-hover]) {
+    color: var(--colors-blue-700);
 }
 
   .dark .hover\:dark\:bg_blue\.900\/20:is(:hover, [data-hover]) {
@@ -2472,11 +2472,7 @@
     color: var(--colors-brand-300);
 }
 
-  .dark .\[\&_p\:nth-of-type\(2\)\]\:\[\&_strong\]\:dark\:c_gray\.200 p:nth-of-type(2) strong {
-    color: var(--colors-gray-200);
-}
-
-  .dark .\[\&_a\]\:hover\:dark\:c_blue\.300 a:is(:hover, [data-hover]) {
+  .dark .\[\&_\.cta_a\]\:hover\:dark\:c_blue\.300 .cta a:is(:hover, [data-hover]) {
     color: var(--colors-blue-300);
 }
 
@@ -2567,6 +2563,15 @@
   @media screen and (min-width: 64rem) {
     .lg\:px_8 {
       padding-inline: var(--spacing-8);
+}
+}
+
+  @media (max-width: 480px) {
+    .\[\@media_\(max-width\:_480px\)\]\:\[\&_\.sub\]\:mt_0\.8rem .sub {
+      margin-top: 0.8rem;
+}
+    .\[\@media_\(max-width\:_480px\)\]\:\[\&_\.cta\]\:mt_0\.6rem .cta {
+      margin-top: 0.6rem;
 }
 }
 
