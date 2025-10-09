@@ -6,6 +6,12 @@ export interface Redirect {
 }
 
 export const redirects: Redirect[] = [
+  // Route compatibility
+  {
+    source: '/blogs',
+    destination: '/blog',
+    statusCode: 301,
+  },
   // Social Media
   {
     source: '/youtube',

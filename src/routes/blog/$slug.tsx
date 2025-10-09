@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BlogPostPagePanda } from "../pages/BlogPostPagePanda";
+import { BlogPostPagePanda } from "../../pages/BlogPostPagePanda";
 
 export const Route = createFileRoute("/blog/$slug")({
 	component: BlogPostPage,

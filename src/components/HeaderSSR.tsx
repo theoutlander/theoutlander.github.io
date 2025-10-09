@@ -63,7 +63,7 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 						aria-label="Main navigation"
 					>
 						<a
-							href="/blogs"
+							href="/blog"
 							aria-current={currentPage === "blogs" ? "page" : undefined}
 							className={css({
 								color: currentPage === "blogs" ? "brand.600" : "gray.600",

@@ -237,7 +237,7 @@ export default function HeroSSR() {
 						})}
 					>
 						<a
-							href="/blogs"
+							href="/blog"
 							className={chip({ variant: "cta" })}
 						>
 							<span>Read the blog</span>

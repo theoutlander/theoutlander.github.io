@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { BlogPagePanda } from "../pages/BlogPagePanda";
+import { BlogPagePanda } from "../../pages/BlogPagePanda";
 
 type Post = {
 	id?: string;
@@ -12,7 +12,7 @@ type Post = {
 	tags: string[];
 };
 
-export const Route = createFileRoute("/blogs")({
+export const Route = createFileRoute("/blog/")({
 	component: BlogPage,
 	loader: async (): Promise<{ posts: Post[] }> => {
 		try {
