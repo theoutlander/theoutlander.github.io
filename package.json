@@ -15,6 +15,9 @@
 		"test:e2e": "vitest run --config vitest.e2e.config.ts",
 		"test:e2e:dev": "concurrently \"pnpm dev\" \"vitest run --config vitest.e2e.config.ts\"",
 		"test:all": "pnpm test:unit && pnpm test:integration && pnpm test:e2e:dev",
+		"test:links": "npx linkinator https://nick.karnik.io --recurse --skip 'linkedin.com'",
+		"test:links:local": "echo '⚠️  Make sure preview server is running (pnpm preview)' && npx linkinator http://localhost:5173 --recurse --skip 'linkedin.com'",
+		"test:links:dist": "npx serve dist -l 3000 & sleep 2 && npx linkinator http://localhost:3000 --recurse --skip 'linkedin.com' ; kill %1",
 		"deploy": "./scripts/deploy.sh"
 	},
 	"dependencies": {

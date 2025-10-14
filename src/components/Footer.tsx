@@ -210,10 +210,10 @@ export default function Footer() {
 									</div>
 								</a>
 								<a
-									href="https://twitter.com/theoutlander"
+									href="https://x.com/theoutlander"
 									target="_blank"
 									rel="noopener"
-									aria-label="Visit Nick Karnik's Twitter profile"
+									aria-label="Visit Nick Karnik's X profile"
 									className={css({
 										display: "flex",
 										alignItems: "center",

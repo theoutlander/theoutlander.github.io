@@ -45,12 +45,12 @@ export const redirects: Redirect[] = [
 	},
 	{
 		source: "/twitter",
-		destination: "https://twitter.com/theoutlander",
+		destination: "https://x.com/theoutlander",
 		statusCode: 308,
 	},
 	{
 		source: "/x",
-		destination: "https://twitter.com/theoutlander",
+		destination: "https://x.com/theoutlander",
 		statusCode: 308,
 	},
 	{

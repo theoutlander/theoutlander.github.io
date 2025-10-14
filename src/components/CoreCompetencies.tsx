@@ -1,23 +1,19 @@
 import { css } from "../../styled-system/css/index.mjs";
-import { grid, hstack } from "../../styled-system/patterns/index.mjs";
 
 const items = [
 	{
 		title: "Full-Stack Development",
 		body: "React + Node. Ship weekly with modern tooling and DX.",
-		href: "/tags/dev",
 		icon: "⚡",
 	},
 	{
 		title: "Engineering Leadership",
 		body: "Clear bets, strong execution, calm, predictable delivery.",
-		href: "/about#leadership",
 		icon: "🎯",
 	},
 	{
 		title: "AI Advisory",
 		body: "Use AI as leverage for teams and tooling, not a crutch.",
-		href: "/tags/ai",
 		icon: "🤖",
 	},
 ];
@@ -68,30 +64,22 @@ export default function CoreCompetencies() {
 					justifyContent: "center",
 				})}
 			>
-				{items.map((it) => (
-					<a
-						key={it.title}
-						href={it.href}
-						className={css({
-							display: "flex",
-							flexDirection: "column",
-							flex: "1",
-							rounded: "xl",
-							borderWidth: "1px",
-							borderColor: "gray.200",
-							bg: "white",
-							p: "8",
-							shadow: "sm",
-							transition: "all 300ms ease-in-out",
-							textDecoration: "none",
-							height: "100%",
-							_hover: {
-								shadow: "xl",
-								transform: "translateY(-6px)",
-								borderColor: "gray.300",
-							},
-						})}
-					>
+			{items.map((it) => (
+				<div
+					key={it.title}
+					className={css({
+						display: "flex",
+						flexDirection: "column",
+						flex: "1",
+						rounded: "xl",
+						borderWidth: "1px",
+						borderColor: "gray.200",
+						bg: "white",
+						p: "8",
+						shadow: "sm",
+						height: "100%",
+					})}
+				>
 						{/* Icon */}
 						<div
 							className={css({
@@ -131,25 +119,11 @@ export default function CoreCompetencies() {
 								fontSize: "md",
 								flex: "1",
 							})}
-						>
-							{it.body}
-						</p>
-
-						{/* Learn more link */}
-						<div
-							className={hstack({
-								justify: "center",
-								fontSize: "sm",
-								color: "accent.600",
-								fontWeight: "medium",
-								mt: "auto",
-							})}
-						>
-							<span>Learn more</span>
-							<span aria-hidden>→</span>
-						</div>
-					</a>
-				))}
+					>
+						{it.body}
+					</p>
+				</div>
+			))}
 			</div>
 		</section>
 	);

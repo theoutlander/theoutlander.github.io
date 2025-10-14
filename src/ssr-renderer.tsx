@@ -274,8 +274,7 @@ const generateBaseHTML = (
 		/>
 
 		<!-- Favicon -->
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
 
 		<!-- Google Analytics -->
 		<script
