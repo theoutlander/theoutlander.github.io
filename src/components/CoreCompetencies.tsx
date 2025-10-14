@@ -32,11 +32,11 @@ export default function CoreCompetencies() {
 				py: "12",
 			})}
 		>
-			<div className={css({ textAlign: "center", mb: "16" })}>
+			<div className={css({ textAlign: "center", mb: "16", px: { base: "4", md: "6" } })}>
 				<h2
 					className={css({
 						fontWeight: "bold",
-						fontSize: "4xl",
+						fontSize: { base: "2xl", sm: "3xl", md: "4xl" },
 						mb: "4",
 						color: "gray.900",
 						lineHeight: "1.2",
@@ -46,7 +46,7 @@ export default function CoreCompetencies() {
 				</h2>
 				<p
 					className={css({
-						fontSize: "lg",
+						fontSize: { base: "md", md: "lg" },
 						color: "gray.600",
 						fontWeight: "normal",
 						lineHeight: "1.6",
@@ -60,7 +60,7 @@ export default function CoreCompetencies() {
 				className={css({
 					maxW: "6xl",
 					mx: "auto",
-					px: "6",
+					px: { base: "4", md: "6" },
 					display: "flex",
 					flexDirection: { base: "column", md: "row" },
 					gap: { base: "6", md: "8" },

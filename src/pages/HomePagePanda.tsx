@@ -20,6 +20,8 @@ export function HomePagePanda({ posts }: HomePageProps) {
 					_dark: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
 				},
 				minHeight: "100vh",
+				width: "100%",
+				overflowX: "hidden",
 			})}
 		>
 			<SkipLink />

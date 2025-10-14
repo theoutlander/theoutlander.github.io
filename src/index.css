@@ -1,1 +1,33 @@
 @layer reset, base, tokens, recipes, utilities;
+
+/* Mobile-specific fixes */
+html {
+	overflow-x: hidden;
+	width: 100%;
+}
+
+body {
+	overflow-x: hidden;
+	width: 100%;
+	position: relative;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent horizontal scroll on all elements */
+* {
+	max-width: 100%;
+}
+
+/* Improve tap targets on mobile */
+@media (max-width: 768px) {
+	a,
+	button,
+	[role="button"] {
+		min-height: 44px;
+		min-width: 44px;
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+	}
+}

@@ -224,7 +224,7 @@ const generateBaseHTML = (
 		<!-- Additional SEO Meta Tags -->
 		<meta name="robots" content="index, follow" />
 		<meta name="author" content="Nick Karnik" />
-		<meta name="theme-color" content="#4F46E5" />
+		<meta name="theme-color" content="#ffffff" />
 		${
 			articleData
 				? `
@@ -301,8 +301,8 @@ const generateBaseHTML = (
 			${content}
 		</div>
 		
-		<!-- Dark mode detection script -->
-		<script>
+		<!-- Dark mode detection script - DISABLED for mobile compatibility -->
+		<!-- <script>
 			// Check for saved theme preference or default to 'light'
 			const theme = localStorage.getItem('theme') || 
 				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
@@ -322,7 +322,7 @@ const generateBaseHTML = (
 					}
 				}
 			});
-		</script>
+		</script> -->
 	</body>
 </html>`;
 };

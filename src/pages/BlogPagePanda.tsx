@@ -27,6 +27,8 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 			className={css({
 				bg: { base: "gray.50", _dark: "dark.bg" },
 				minH: "100vh",
+				width: "100%",
+				overflowX: "hidden",
 			})}
 		>
 			<SkipLink />

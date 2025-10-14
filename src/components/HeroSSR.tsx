@@ -32,13 +32,14 @@ export default function HeroSSR() {
 					{/* Title */}
 					<h1
 						className={css({
-							fontSize: "5xl",
+							fontSize: { base: "3xl", sm: "4xl", md: "5xl" },
 							fontWeight: "bold",
 							lineHeight: "1.05",
 							letterSpacing: "-0.02em",
 							color: { base: "gray.900", _dark: "dark.text" },
 							textAlign: "center",
 							mb: "2",
+							px: { base: "2", md: "0" },
 						})}
 					>
 						Engineering Leader & Software Engineer
@@ -47,7 +48,7 @@ export default function HeroSSR() {
 					{/* Subtitle */}
 					<p
 						className={css({
-							fontSize: { base: "xl", md: "2xl" },
+							fontSize: { base: "lg", sm: "xl", md: "2xl" },
 							color: "gray.600",
 							fontWeight: "semibold",
 							lineHeight: "1.4",
@@ -56,7 +57,7 @@ export default function HeroSSR() {
 							mx: "auto",
 							mt: "3",
 							mb: "6",
-							whiteSpace: { base: "normal", md: "nowrap" },
+							px: { base: "2", md: "0" },
 						})}
 					>
 						Build faster. Lead stronger. Scale smarter.

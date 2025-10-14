@@ -29,6 +29,8 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 			className={css({
 				bg: "gray.50",
 				minH: "100vh",
+				width: "100%",
+				overflowX: "hidden",
 			})}
 		>
 			<SkipLink />
@@ -39,14 +41,15 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 					maxW: "4xl",
 					py: { base: 6, md: 10 },
 					mx: "auto",
-					px: 4,
+					px: { base: 4, md: 6 },
+					width: "100%",
 				})}
 			>
 				<article
 					className={css({
 						bg: "white",
 						borderRadius: "2xl",
-						p: 8,
+						p: { base: 4, md: 8 },
 						shadow: "sm",
 						border: "1px solid",
 						borderColor: "gray.200",
@@ -55,7 +58,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 					<header className={css({ mb: 8 })}>
 						<h1
 							className={css({
-								fontSize: "3xl",
+								fontSize: { base: "2xl", md: "3xl" },
 								fontWeight: "bold",
 								mb: 4,
 								color: "gray.800",
@@ -112,18 +115,18 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 
 					<div
 						className={css({
-							fontSize: "lg",
+							fontSize: { base: "md", md: "lg" },
 							lineHeight: 1.7,
 							color: "gray.800",
 							"& h2": {
-								fontSize: "2xl",
+								fontSize: { base: "xl", md: "2xl" },
 								fontWeight: "bold",
 								mt: 8,
 								mb: 4,
 								color: "gray.900",
 							},
 							"& h3": {
-								fontSize: "xl",
+								fontSize: { base: "lg", md: "xl" },
 								fontWeight: "semibold",
 								mt: 6,
 								mb: 3,
@@ -159,10 +162,12 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							"& pre": {
 								bg: "gray.900",
 								color: "white",
-								p: 4,
+								p: { base: 2, md: 4 },
 								borderRadius: "lg",
 								overflow: "auto",
+								overflowX: "auto",
 								mb: 4,
+								maxWidth: "100%",
 							},
 							"& pre code": {
 								bg: "transparent",

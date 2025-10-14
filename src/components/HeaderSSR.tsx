@@ -14,10 +14,11 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 				position: "sticky",
 				top: 0,
 				zIndex: 10,
-				bg: "white",
+				bg: { base: "white", _dark: "dark.surface" },
 				borderBottom: "1px solid",
 				borderColor: "gray.200",
-				backdropFilter: "saturate(180%) blur(8px)",
+				backdropFilter: { base: "none", md: "saturate(180%) blur(8px)" },
+				WebkitBackdropFilter: { base: "none", md: "saturate(180%) blur(8px)" },
 			})}
 		>
 			<div className={container({ maxW: "6xl", py: 3 })}>

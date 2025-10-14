@@ -13,6 +13,8 @@ export function ResumePagePanda() {
 				className={css({
 					bg: "gray.50",
 					minH: "100vh",
+					width: "100%",
+					overflowX: "hidden",
 				})}
 			>
 				<SkipLink />

@@ -21,6 +21,8 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 			className={css({
 				bg: "gray.50",
 				minH: "100vh",
+				width: "100%",
+				overflowX: "hidden",
 			})}
 		>
 			<HeaderSSR currentPage="about" />
