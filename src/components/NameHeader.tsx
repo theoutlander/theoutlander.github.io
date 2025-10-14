@@ -150,7 +150,7 @@ const contactLinks = [
 		title: "Email",
 	},
 	{
-		href: "https://linkedin.com/in/nickkarnik",
+		href: "https://www.linkedin.com/in/theoutlander/",
 		icon: FaLinkedin,
 		title: "LinkedIn",
 		external: true,
@@ -162,7 +162,7 @@ const contactLinks = [
 		external: true,
 	},
 	{
-		href: "https://calendly.com/nick-karnik",
+		href: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true",
 		icon: HiOutlineCalendar,
 		title: "Schedule Call",
 		external: true,

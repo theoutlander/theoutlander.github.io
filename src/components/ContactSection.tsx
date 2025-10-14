@@ -4,6 +4,7 @@ import {
 	EnvelopeIcon,
 	DocumentTextIcon,
 	ArrowTopRightOnSquareIcon,
+	CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
 
@@ -104,6 +105,22 @@ const ghostBtn = cva({
 					},
 				},
 			},
+			calendar: {
+				color: { base: "green.700", _dark: "green.300" },
+				_hover: {
+					bg: { base: "green.50", _dark: "green.900/20" },
+					transform: "translateY(-1px)",
+					boxShadow: {
+						base: "0 4px 12px rgba(34, 197, 94, 0.15)",
+						_dark: "0 4px 12px rgba(34, 197, 94, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
+			},
 		},
 	},
 	defaultVariants: { variant: "email" },
@@ -144,8 +161,22 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					</div>
 				</a>
 				<a
+					className={ghostBtn({ variant: "calendar" })}
+					href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<div className={iconContainer}>
+						<CalendarIcon className={contactIcon} />
+						<span>Schedule Meeting</span>
+					</div>
+					<ArrowTopRightOnSquareIcon
+						className={css({ w: 4, h: 4, opacity: 0.6 })}
+					/>
+				</a>
+				<a
 					className={ghostBtn({ variant: "linkedin" })}
-					href="https://www.linkedin.com/in/theoutlander"
+					href="https://www.linkedin.com/in/theoutlander/"
 					target="_blank"
 					rel="noopener noreferrer"
 				>
