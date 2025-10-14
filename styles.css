@@ -2335,14 +2335,6 @@
     background: var(--colors-brand-700);
 }
 
-  .hover\:bg_blue\.200:is(:hover, [data-hover]) {
-    background: var(--colors-blue-200);
-}
-
-  .hover\:bg_gray\.200:is(:hover, [data-hover]) {
-    background: var(--colors-gray-200);
-}
-
   .hover\:td_underline:is(:hover, [data-hover]) {
     text-decoration: underline;
 }
