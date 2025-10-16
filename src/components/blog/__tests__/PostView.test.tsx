@@ -19,11 +19,11 @@ vi.mock("../../../styled-system/recipes/index.mjs", () => ({
 	blogCover: vi.fn(() => "blog-cover"),
 }));
 
-// Mock react-helmet-async
-vi.mock("react-helmet-async", () => ({
-	Helmet: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="helmet">{children}</div>
-	),
+// Mock HelmetShim used by PostView
+vi.mock("../../seo/HelmetShim", () => ({
+    Helmet: ({ children }: { children: React.ReactNode }) => (
+        <div data-testid="helmet">{children}</div>
+    ),
 }));
 
 // Mock the ProgressTop component
