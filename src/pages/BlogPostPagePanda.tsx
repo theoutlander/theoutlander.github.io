@@ -202,24 +202,21 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 									flexWrap: "wrap",
 								})}
 							>
-								{post.tags.map((tag) => (
-									<a
-										key={tag}
-										href={`/blog/t/${tag}`}
-										className={css({
-											bg: "accent.100",
-											color: "accent.700",
-											px: 3,
-											py: 1,
-											borderRadius: "full",
-											fontSize: "sm",
-											textDecoration: "none",
-											_hover: { bg: "blue.200" },
-										})}
-									>
-										{capitalizeFirstLetter(tag)}
-									</a>
-								))}
+							{post.tags.map((tag) => (
+								<span
+									key={tag}
+									className={css({
+										bg: "accent.100",
+										color: "accent.700",
+										px: 3,
+										py: 1,
+										borderRadius: "full",
+										fontSize: "sm",
+									})}
+								>
+									{capitalizeFirstLetter(tag)}
+								</span>
+							))}
 							</div>
 						</div>
 					)}

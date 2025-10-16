@@ -77,24 +77,21 @@ export default function BlogCard({ post }: { post: Post }) {
 							flexWrap: "wrap",
 						})}
 					>
-						{post.tags.slice(0, 3).map((t) => (
-							<a
-								key={t}
-								href={`/blog/t/${t}`}
-								className={css({
-									textDecoration: "none",
-									bg: "gray.100",
-									color: "gray.700",
-									px: 2,
-									py: 1,
-									rounded: "md",
-									fontSize: "sm",
-									_hover: { bg: "gray.200" },
-								})}
-							>
-								{capitalizeFirstLetter(t)}
-							</a>
-						))}
+					{post.tags.slice(0, 3).map((t) => (
+						<span
+							key={t}
+							className={css({
+								bg: "gray.100",
+								color: "gray.700",
+								px: 2,
+								py: 1,
+								rounded: "md",
+								fontSize: "sm",
+							})}
+						>
+							{capitalizeFirstLetter(t)}
+						</span>
+					))}
 					</div>
 				) : null}
 			</div>
