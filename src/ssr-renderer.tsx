@@ -274,7 +274,10 @@ const generateBaseHTML = (
 		/>
 
 		<!-- Favicon -->
-		<link rel="icon" type="image/svg+xml" href="/vite.svg" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="icon" type="image/x-icon" href="/favicon.ico">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_32x32.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_16x16.png">
 
 		<!-- Google Analytics -->
 		<script
@@ -386,7 +389,15 @@ export async function renderAllStaticPagesSSR() {
 
 	// Copy other static files from public to dist
 	console.log("📁 Copying static files from public to dist...");
-	const staticFiles = ["robots.txt", "sitemap.xml", "vite.svg", "404.html"];
+	const staticFiles = [
+		"robots.txt",
+		"sitemap.xml",
+		"favicon.svg",
+		"favicon.ico",
+		"favicon_32x32.png",
+		"favicon_16x16.png",
+		"404.html",
+	];
 	for (const file of staticFiles) {
 		try {
 			copyFileSync(`public/${file}`, `dist/${file}`);

@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { css } from "../../styled-system/css/index.mjs";
 import { container } from "../../styled-system/patterns/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
@@ -25,6 +26,14 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				overflowX: "hidden",
 			})}
 		>
+			<Helmet>
+				<title>About Nick Karnik | Engineering Leader & Advisor</title>
+				<meta
+					name="description"
+					content="Engineering leader and advisor helping teams move faster with clear product bets, strong execution, and simple systems."
+				/>
+				<link rel="canonical" href="https://nick.karnik.io/about" />
+			</Helmet>
 			<HeaderSSR currentPage="about" />
 			<main
 				className={container({

@@ -1,4 +1,5 @@
 import React from "react";
+import { Helmet } from "react-helmet-async";
 import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
@@ -32,6 +33,14 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 			})}
 		>
 			<SkipLink />
+			<Helmet>
+				<title>Nick Karnik Blog | Engineering, Leadership & AI</title>
+				<meta
+					name="description"
+					content="Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster."
+				/>
+				<link rel="canonical" href="https://nick.karnik.io/blog" />
+			</Helmet>
 			<HeaderSSR currentPage="blogs" />
 			<main
 				id="main-content"
