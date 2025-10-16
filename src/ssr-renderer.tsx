@@ -9,6 +9,7 @@ import {
 	statSync,
 } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
 import { capitalizeFirstLetter } from "./utils/stringUtils";
 
 // Import our Panda CSS page components
@@ -34,6 +35,23 @@ type AboutData = {
 	title: string;
 	html: string;
 };
+
+// Very small CSS minifier suitable for production CSS built by Panda
+function minifyCss(css: string) {
+    // Remove comments
+    let out = css.replace(/\/\*[^!*][\s\S]*?\*\//g, "");
+    // Collapse whitespace
+    out = out.replace(/\s+/g, " ");
+    // Remove spaces around symbols
+    out = out.replace(/\s*([{}:;,>~\+\(\)])\s*/g, "$1");
+    // Remove final semicolons and extra spaces
+    out = out.replace(/;}/g, "}").trim();
+    return out;
+}
+
+function hashContent(content: string, length = 8) {
+    return createHash("sha256").update(content).digest("hex").slice(0, length);
+}
 
 // Recursively copy directory contents, skipping system files
 const copyDirectory = (src: string, dest: string) => {
@@ -106,7 +124,7 @@ const generateComprehensiveCSS = async (
 	for (const page of pages) {
 		console.log(`  📄 Collecting CSS from ${page.name}...`);
 		const result = renderPageToHTML(page.component, page.props);
-		const html = generateBaseHTML("Test", "Test", result.html, "");
+    const html = generateBaseHTML("Test", "Test", result.html, "/styles.css", "");
 
 		// Extract CSS from this page
 		const styleRegex = /<style[^>]*>(.*?)<\/style>/gs;
@@ -126,7 +144,7 @@ const generateComprehensiveCSS = async (
 	// Combine all unique CSS
 	const combinedCSS = Array.from(allCSS).join("\n\n");
 
-	// Write to dist
+	// Write to dist (legacy fallback used by subsequent step which will minify+hash)
 	writeFileSync("dist/styles.css", combinedCSS);
 
 	console.log(
@@ -144,6 +162,7 @@ const generateBaseHTML = (
 	title: string,
 	description: string,
 	content: string,
+	cssHref: string,
 	additionalHead?: string,
 	canonicalUrl?: string,
 	ogImage?: string,
@@ -279,24 +298,36 @@ const generateBaseHTML = (
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_16x16.png?v=2">
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
 
-		<!-- Google Analytics -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"
-		></script>
+		<!-- Google Analytics: lazy loader to reduce unused JS on initial load -->
 		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag("js", new Date());
-			gtag("config", "G-62FC7BDSGJ");
+			(function(){
+				function loadGA(){
+					if (window.__gaLoaded) return;
+					window.__gaLoaded = true;
+					var s = document.createElement('script');
+					s.async = true;
+					s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
+					document.head.appendChild(s);
+					window.dataLayer = window.dataLayer || [];
+					window.gtag = function(){ dataLayer.push(arguments); };
+					gtag('js', new Date());
+					gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
+				}
+				// If user previously granted consent, load after idle; otherwise on first interaction
+				var consent = null;
+				try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
+				if (consent === 'granted') {
+					(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
+				} else {
+					window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
+				}
+			})();
 		</script>
 
 		${additionalHead || ""}
 
 		<!-- External CSS -->
-		<link rel="stylesheet" href="/styles.css" />
+		<link rel="stylesheet" href="${cssHref}" />
 	</head>
 	<body>
 		<div id="root">
@@ -365,18 +396,28 @@ export async function renderAllStaticPagesSSR() {
 		readFileSync("public/data/pages/about.json", "utf8")
 	) as AboutData;
 
-	// Copy Panda CSS to dist folder
-	console.log("📋 Copying Panda CSS to dist folder...");
-	try {
-		const pandaCSS = readFileSync("styled-system/styles.css", "utf8");
-		writeFileSync("dist/styles.css", pandaCSS);
-		console.log("✅ Panda CSS copied to dist/styles.css");
-	} catch (error) {
-		console.warn(
-			"⚠️  Could not copy Panda CSS, generating comprehensive CSS instead..."
-		);
-		await generateComprehensiveCSS(hashnodeData, aboutData);
-	}
+    // Prepare CSS asset: copy or generate, then minify and fingerprint
+    console.log("📋 Preparing CSS asset…");
+    let sourceCss = "";
+    try {
+        sourceCss = readFileSync("styled-system/styles.css", "utf8");
+        console.log("✅ Loaded Panda CSS from styled-system/styles.css");
+        // Also write a non-minified copy for reference/debugging
+        writeFileSync("dist/styles.css", sourceCss);
+    } catch (error) {
+        console.warn(
+            "⚠️  Could not read styled-system CSS, generating comprehensive CSS instead…"
+        );
+        await generateComprehensiveCSS(hashnodeData, aboutData);
+        sourceCss = readFileSync("dist/styles.css", "utf8");
+    }
+
+    const minCss = minifyCss(sourceCss);
+    const cssHash = hashContent(minCss);
+    const cssFileName = `styles.${cssHash}.css`;
+    writeFileSync(`dist/${cssFileName}`, minCss);
+    console.log(`✅ Minified + fingerprinted CSS -> dist/${cssFileName}`);
+    const cssHref = `/${cssFileName}`;
 
 	// Copy assets from public to dist
 	console.log("📁 Copying assets from public to dist...");
@@ -413,10 +454,11 @@ export async function renderAllStaticPagesSSR() {
 	// Render home page
 	console.log("📄 Rendering home page with SSR...");
 	const homeResult = renderPageToHTML(HomePagePanda, { posts: hashnodeData });
-	const homeHTMLWithStyles = generateBaseHTML(
+    const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Engineering Leader & Software Engineer",
 		"Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools.",
-		homeResult.html,
+        homeResult.html,
+        cssHref,
 		homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link,
 		"https://nick.karnik.io",
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
@@ -430,10 +472,11 @@ export async function renderAllStaticPagesSSR() {
 	const blogDir = join("dist", "blog");
 	mkdirSync(blogDir, { recursive: true });
 	const blogResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
-	const blogHTMLWithStyles = generateBaseHTML(
+    const blogHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blog | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
-		blogResult.html,
+        blogResult.html,
+        cssHref,
 		blogResult.helmet.title + blogResult.helmet.meta + blogResult.helmet.link,
 		"https://nick.karnik.io/blog",
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
@@ -447,10 +490,11 @@ export async function renderAllStaticPagesSSR() {
 	const blogsDir = join("dist", "blogs");
 	mkdirSync(blogsDir, { recursive: true });
 	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
-	const blogsHTMLWithStyles = generateBaseHTML(
+    const blogsHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blogs | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
-		blogsResult.html,
+        blogsResult.html,
+        cssHref,
 		blogsResult.helmet.title +
 			blogsResult.helmet.meta +
 			blogsResult.helmet.link,
@@ -466,10 +510,11 @@ export async function renderAllStaticPagesSSR() {
 	const aboutDir = join("dist", "about");
 	mkdirSync(aboutDir, { recursive: true });
 	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
-	const aboutHTMLWithStyles = generateBaseHTML(
+    const aboutHTMLWithStyles = generateBaseHTML(
 		"About Nick Karnik | Engineering Leader & Advisor",
 		"Nick Karnik is a software engineer and leader with decades of experience across Big Tech and startups. Advisor to founders on AI, developer experience, and reliable systems.",
-		aboutResult.html,
+        aboutResult.html,
+        cssHref,
 		aboutResult.helmet.title +
 			aboutResult.helmet.meta +
 			aboutResult.helmet.link,
@@ -485,10 +530,11 @@ export async function renderAllStaticPagesSSR() {
 	const resumeDir = join("dist", "resume");
 	mkdirSync(resumeDir, { recursive: true });
 	const resumeResult = renderPageToHTML(ResumePagePanda, {});
-	const resumeHTMLWithStyles = generateBaseHTML(
+    const resumeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Resume | Engineering Leadership & Expertise",
 		"Explore Nick Karnik's professional background: 10+ years leading teams, 25+ years building software, and a track record of delivering reliable, scalable systems.",
-		resumeResult.html,
+        resumeResult.html,
+        cssHref,
 		resumeResult.helmet.title +
 			resumeResult.helmet.meta +
 			resumeResult.helmet.link,
@@ -538,10 +584,11 @@ export async function renderAllStaticPagesSSR() {
 			tags: post.tags || ["engineering", "technology", "software development"],
 		};
 
-		const postHTMLWithStyles = generateBaseHTML(
+        const postHTMLWithStyles = generateBaseHTML(
 			`${post.title} - Nick Karnik`,
 			postDescription,
-			postResult.html,
+            postResult.html,
+            cssHref,
 			postResult.helmet.title + postResult.helmet.meta + postResult.helmet.link,
 			`https://nick.karnik.io/blog/${post.slug}`,
 			postOgImage,
@@ -555,10 +602,11 @@ export async function renderAllStaticPagesSSR() {
 	// Render 404 page
 	console.log("📄 Rendering 404 page with SSR...");
 	const notFoundResult = renderPageToHTML(NotFoundPagePanda, {});
-	const notFoundHTMLWithStyles = generateBaseHTML(
+    const notFoundHTMLWithStyles = generateBaseHTML(
 		"404 - Page Not Found - Nick Karnik",
 		"The page you're looking for doesn't exist. Return to the homepage or explore the blog.",
-		notFoundResult.html,
+        notFoundResult.html,
+        cssHref,
 		notFoundResult.helmet.title +
 			notFoundResult.helmet.meta +
 			notFoundResult.helmet.link,

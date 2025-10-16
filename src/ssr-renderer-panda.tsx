@@ -58,7 +58,7 @@ const generateBaseHTML = (
     
     ${additionalHead || ""}
     
-    <!-- Panda CSS -->
+    <!-- Panda CSS: this file is now fingerprinted by ssr-renderer at build time -->
     <link rel="stylesheet" href="/styles.css">
   </head>
   <body>

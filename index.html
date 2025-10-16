@@ -5,7 +5,7 @@
 
 		<meta
 			name="viewport"
-			content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+			content="width=device-width, initial-scale=1"
 		/>
 		<meta
 			http-equiv="Content-Security-Policy"
@@ -40,18 +40,29 @@
 			title="RSS"
 			href="https://theoutlander.hashnode.dev/rss.xml"
 		/>
-		<!-- Google Analytics -->
-		<script
-			async
-			src="https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ"
-		></script>
+		<!-- Google Analytics: lazy loader to reduce unused JS during dev/preview -->
 		<script>
-			window.dataLayer = window.dataLayer || [];
-			function gtag() {
-				dataLayer.push(arguments);
-			}
-			gtag("js", new Date());
-			gtag("config", "G-62FC7BDSGJ");
+			(function(){
+				function loadGA(){
+					if (window.__gaLoaded) return;
+					window.__gaLoaded = true;
+					var s = document.createElement('script');
+					s.async = true;
+					s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
+					document.head.appendChild(s);
+					window.dataLayer = window.dataLayer || [];
+					window.gtag = function(){ dataLayer.push(arguments); };
+					gtag('js', new Date());
+					gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
+				}
+				var consent = null;
+				try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
+				if (consent === 'granted') {
+					(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
+				} else {
+					window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
+				}
+			})();
 		</script>
 		<title>Nick Karnik | Engineering Leader & Software Engineer</title>
 	</head>
