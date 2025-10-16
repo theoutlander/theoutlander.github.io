@@ -1,5 +1,5 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetShim";
 import { css } from "../../styled-system/css/index.mjs";
 import { container } from "../../styled-system/patterns/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";

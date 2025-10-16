@@ -1,7 +1,7 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { HelmetProvider } from "react-helmet-async";
+import { HelmetProvider } from "./components/seo/HelmetShim";
 import { routeTree } from "./routeTree.gen";
 import "../styled-system/styles.css";
 

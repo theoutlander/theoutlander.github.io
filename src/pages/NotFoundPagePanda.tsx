@@ -1,5 +1,5 @@
 import React from "react";
-import { Helmet } from "react-helmet-async";
+import { Helmet } from "../components/seo/HelmetShim";
 import NotFound from "../components/NotFound";
 
 export function NotFoundPagePanda() {
