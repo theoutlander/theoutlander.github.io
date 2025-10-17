@@ -35,8 +35,10 @@ function minifyCss(css: string) {
     let out = css.replace(/\/\*[^!*][\s\S]*?\*\//g, "");
     // Collapse whitespace
     out = out.replace(/\s+/g, " ");
-    // Remove spaces around symbols
-    out = out.replace(/\s*([{}:;,>~\+\(\)])\s*/g, "$1");
+    // Remove spaces around symbols, but preserve spaces around "and" in media queries
+    out = out.replace(/\s*([{}:;,>~\+])\s*/g, "$1");
+    // Ensure spaces around 'and' in media queries are preserved
+    out = out.replace(/@media\s*([^{]+?)\s*and\s*\(/g, "@media $1 and (");
     // Remove final semicolons and extra spaces
     out = out.replace(/;}/g, "}").trim();
     return out;
@@ -290,7 +292,6 @@ const generateBaseHTML = (
 		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2">
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_32x32.png?v=2">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_16x16.png?v=2">
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
 
 		<!-- Google Analytics: lazy loader to reduce unused JS on initial load -->
 		<script>
@@ -425,7 +426,6 @@ export async function renderAllStaticPagesSSR() {
 	const staticFiles = [
 		"robots.txt",
 		"sitemap.xml",
-		"favicon.svg",
 		"favicon.ico",
 		"favicon_32x32.png",
 		"favicon_16x16.png",

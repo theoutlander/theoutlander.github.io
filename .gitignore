@@ -12,3 +12,4 @@ dist/
 public/assets/.DS_Store
 src/.DS_Store
 .DS_Store
+.playwright-mcp

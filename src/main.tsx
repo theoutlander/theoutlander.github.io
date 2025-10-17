@@ -3,7 +3,6 @@ import { createRoot } from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { HelmetProvider } from "./components/seo/HelmetShim";
 import { routeTree } from "./routeTree.gen";
-import "../styled-system/styles.css";
 
 const router = createRouter({
 	routeTree,
