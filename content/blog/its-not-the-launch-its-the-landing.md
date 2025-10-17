@@ -1,0 +1,41 @@
+---
+id: "68de2f36ccf5227d52c0cc52"
+title: "It's Not the Launch, It's the Landing"
+date: "2025-10-02T07:52:22.725Z"
+cover: "/assets/images/blog/its-not-the-launch-its-the-landing-746ca19b-1bee-43ef-90bf-fd04bb1d5240.jpeg"
+excerpt: "In technology we celebrate launches as if they were victories. The moment something goes live there is a demo, a blog post, a slide in a performance review. It feels like success. But a launch is not the finish line. It is only takeoff. The real test..."
+tags: ["Product Management", "Startups", "engineering", "Product launch", "Software Engineering", "product strategy"]
+---
+
+In technology we celebrate launches as if they were victories. The moment something goes live there is a demo, a blog post, a slide in a performance review. It feels like success. But a launch is not the finish line. It is only takeoff. The real test is whether the product lands.
+
+Nobody remembers Apollo 11 as a triumph simply because the rocket cleared the pad. It was a triumph because the astronauts landed on the moon, achieved their mission, and returned home safely.
+
+I saw this firsthand years ago at a security company. I built a feature that seemed minor at the time, a real-time status light that showed whether devices were online, idle, restarting, or updating. It worked across card readers, cameras, motion sensors, and alarms. There was no launch event, no fanfare. I wrote it in a couple of long nights because I believed it would help. And it did.
+
+Support tickets dropped because technicians could see problems at a glance instead of digging through logs. Installations went faster because issues were obvious as soon as devices came online. If something went offline during setup you knew right away. Sales used it in demos. Customers could see right away it worked and they felt we were listening. Over time we expanded it so you could right click to control devices, group them, and take actions directly from the same interface. What began as a side project quietly transformed the product. That was a landing.
+
+Plenty of products we all use tell the same story. [Gmail](https://www.howtogeek.com/786487/the-history-of-gmail/) began as a quiet invite-only service. The landing was steady adoption until it became the default for billions. GitHub was not splashy either, but pull requests became the way modern software is written. Dropbox began with a short [demo video](https://www.youtube.com/watch?v=7QmCUDHpNzE) on Hacker News, and the landing came when sync worked flawlessly and spread by word of mouth. None of these succeeded because of the noise at launch. They succeeded because they landed.
+
+We have also seen the opposite. [Google Glass](https://www.theverge.com/2023/2/20/23607131/google-glass-10-years-later) had a dazzling demo. It failed not because it couldn't launch but because people didn't want to wear computers on their faces. Microsoft launched the [Zune](https://www.geekwire.com/2011/goodbye-seattle-microsoft-kills-zune-hardware/) to compete with the iPod but it never landed because it lacked an ecosystem and cultural pull.
+
+So how do you tell whether something has truly landed.
+
+**The landing test comes down to a handful of simple questions:**
+
+> Did adoption continue after the initial spike or flatten out?  
+> Did retention improve after week two and week four or did users drop off?  
+> Did the product hold up under real load or collapse when it mattered?  
+> Did it replace an older workflow or did people drift back?  
+> Did customers bring it up unprompted as valuable or did it fade away?  
+> Did it achieve the goal it was built for?
+
+If most of these questions can be answered with a clear yes, then you have a landing. If not, all you had was a launch.
+
+A launch with no landing isn't neutral. It's a liability. It adds complexity and noise for no gain.
+
+Launches are important. They mark the moment when something becomes available. But they are not success. They are liftoff. Success is when the thing survives contact with reality, scales under pressure, and earns its place in people's lives.
+
+Anyone who has flown knows this truth. Takeoff is thrilling, but nobody claps when the plane leaves the ground. The relief and the gratitude come when the wheels touch down safely. In technology it is the same. Launches are exciting, but the real measure is whether the thing you built actually lands.
+
+Launches are noise. Landings are history.

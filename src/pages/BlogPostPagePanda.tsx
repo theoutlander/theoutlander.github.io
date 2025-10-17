@@ -6,13 +6,13 @@ import SkipLink from "../components/SkipLink";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
 
 type Post = {
-	id?: string;
+	id: string;
 	slug: string;
 	title: string;
 	excerpt: string;
 	url: string;
 	date: string;
-	cover: string;
+	cover: string | null;
 	tags: string[];
 	html?: string;
 	contentHtml?: string;
@@ -206,12 +206,22 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								<span
 									key={tag}
 									className={css({
-										bg: "accent.100",
-										color: "accent.700",
-										px: 3,
-										py: 1,
+										bg: "blue.100",
+										color: "blue.800",
+										px: "12px",
+										py: "6px",
 										borderRadius: "full",
-										fontSize: "sm",
+										fontSize: "12px",
+										fontWeight: "600",
+										display: "inline-flex",
+										alignItems: "center",
+										textTransform: "uppercase",
+										letterSpacing: "0.025em",
+										_hover: {
+											bg: "blue.200",
+											transform: "translateY(-1px)",
+										},
+										transition: "all 0.2s ease",
 									})}
 								>
 									{capitalizeFirstLetter(tag)}

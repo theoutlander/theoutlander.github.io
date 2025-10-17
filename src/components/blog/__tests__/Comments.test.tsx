@@ -26,11 +26,6 @@ vi.mock("../UtterancesComments", () => ({
 	),
 }));
 
-vi.mock("../HashnodeComments", () => ({
-	default: ({ postUrl }: { postUrl: string }) => (
-		<div data-testid="hashnode-comments">Hashnode Comments for {postUrl}</div>
-	),
-}));
 
 vi.mock("../SimpleComments", () => ({
 	default: ({ postSlug }: { postSlug: string }) => (

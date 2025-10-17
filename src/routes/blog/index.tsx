@@ -1,23 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { BlogPagePanda } from "../../pages/BlogPagePanda";
-
-type Post = {
-	id?: string;
-	slug: string;
-	title: string;
-	excerpt: string;
-	url: string;
-	date: string;
-	cover: string;
-	tags: string[];
-};
+import { loadAllBlogPosts, type BlogPost } from "../../lib/content";
 
 export const Route = createFileRoute("/blog/")({
 	component: BlogPage,
-	loader: async (): Promise<{ posts: Post[] }> => {
+	loader: async (): Promise<{ posts: BlogPost[] }> => {
 		try {
-			const response = await fetch("/data/hashnode.json");
-			const posts: Post[] = await response.json();
+			const posts = await loadAllBlogPosts();
 			return { posts };
 		} catch (error) {
 			console.error("Failed to load blog posts:", error);

@@ -114,12 +114,22 @@ export default defineConfig({
 				blogTag: {
 					className: "blog-tag",
 					base: {
-						bg: "background.tag",
-						color: "text.muted",
-						p: "4px 8px",
-						borderRadius: "4px",
+						bg: "blue.100",
+						color: "blue.800",
+						px: "12px",
+						py: "6px",
+						borderRadius: "full",
 						fontSize: "12px",
-						fontWeight: "500",
+						fontWeight: "600",
+						display: "inline-flex",
+						alignItems: "center",
+						textTransform: "uppercase",
+						letterSpacing: "0.025em",
+						_hover: {
+							bg: "blue.200",
+							transform: "translateY(-1px)",
+						},
+						transition: "all 0.2s ease",
 					},
 				},
 				// Blog post excerpt recipe

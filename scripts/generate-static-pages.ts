@@ -15,15 +15,15 @@ type Post = {
 async function generateStaticPages() {
   console.log('🔄 Generating static pages for blog posts...');
 
-  // Read the hashnode.json to get all posts
-  const hashnodeData = JSON.parse(
-    readFileSync('public/data/hashnode.json', 'utf8')
+  // Read the blog-posts.json to get all posts
+  const blogPostsData = JSON.parse(
+    readFileSync('public/data/blog-posts.json', 'utf8')
   ) as Post[];
 
   // Read the base HTML template
   const baseHtml = readFileSync('dist/index.html', 'utf8');
 
-  for (const post of hashnodeData) {
+  for (const post of blogPostsData) {
     console.log(`📄 Generating static page for: ${post.slug}`);
 
     // Create the blog post directory
@@ -44,7 +44,7 @@ async function generateStaticPages() {
     writeFileSync(join(blogDir, 'index.html'), postHtml);
   }
 
-  console.log(`✅ Generated ${hashnodeData.length} static blog post pages`);
+  console.log(`✅ Generated ${blogPostsData.length} static blog post pages`);
 
   // Generate static blog index page
   console.log('📄 Generating static page for: blog');
@@ -57,7 +57,7 @@ async function generateStaticPages() {
     `<div id="root"></div>
 		<script>
 			// Pre-populate the router with the blog posts data
-			window.__INITIAL_BLOG_DATA__ = ${JSON.stringify(hashnodeData)};
+			window.__INITIAL_BLOG_DATA__ = ${JSON.stringify(blogPostsData)};
 		</script>`
   );
 
@@ -110,7 +110,7 @@ async function generateStaticPages() {
   mkdirSync(rssDir, { recursive: true });
 
   // Generate RSS XML content
-  const rssXml = generateRssXml(hashnodeData);
+  const rssXml = generateRssXml(blogPostsData);
   writeFileSync(join(rssDir, 'index.html'), rssXml);
   console.log('✅ Generated RSS feed');
 }
@@ -150,7 +150,7 @@ function generateRssXml(posts: Post[]) {
     <atom:link href="${feedUrl}" rel="self" type="application/rss+xml"/>
     <language>en-us</language>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
-    <generator>TanStack Router + Hashnode</generator>
+    <generator>TanStack Router + Self-Hosted Blog</generator>
     <managingEditor>nick@karnik.io (Nick Karnik)</managingEditor>
     <webMaster>nick@karnik.io (Nick Karnik)</webMaster>
     <image>

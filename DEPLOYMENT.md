@@ -10,7 +10,7 @@ NODE_ENV=production pnpm build
 
 This will:
 
-1. Fetch latest blog posts from Hashnode
+1. Generate blog data from markdown files
 2. Build the application for production
 3. Output files to `dist/` folder
 
@@ -45,7 +45,7 @@ The `dist/` folder contains:
 
 - `index.html` - Main HTML file
 - `assets/` - CSS, JS, and other assets
-- `data/` - Blog data from Hashnode
+- `data/` - Blog data from markdown files
 
 ## Automated Deployment
 

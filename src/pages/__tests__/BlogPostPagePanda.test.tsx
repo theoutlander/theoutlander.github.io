@@ -32,7 +32,7 @@ const mockPost = {
 	url: "https://nick.karnik.io/blog/how-engineers-can-use-ai-effectively",
 	date: "2025-09-27T00:25:27.274Z",
 	cover:
-		"https://cdn.hashnode.com/res/hashnode/image/upload/v1758929293050/bc5411bc-f5fb-4a4f-aecf-62ae5358c42c.png",
+		"/assets/images/blog/how-engineers-can-use-ai-effectively-bc5411bc-f5fb-4a4f-aecf-62ae5358c42c.png",
 	tags: ["AI", "engineering", "Productivity", "programming"],
 	contentHtml: "<p>This is the full article content in HTML format.</p>",
 };

@@ -8,13 +8,13 @@ import BlogIntro from "../components/blog/BlogIntro";
 import SkipLink from "../components/SkipLink";
 
 type Post = {
-	id?: string;
+	id: string;
 	slug: string;
 	title: string;
 	excerpt: string;
 	url: string;
 	date: string;
-	cover: string;
+	cover: string | null;
 	tags: string[];
 };
 

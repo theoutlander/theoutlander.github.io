@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { FaComment, FaHeart, FaCog } from "react-icons/fa";
 import UtterancesComments from "./UtterancesComments";
-import HashnodeComments from "./HashnodeComments";
 import SimpleComments from "./SimpleComments";
 import { COMMENTS_CONFIG } from "../../lib/comments";
 import { css } from "../../../styled-system/css/index.mjs";
@@ -19,7 +18,7 @@ interface CommentsProps {
 	postUrl: string;
 }
 
-type CommentSystem = "hashnode" | "giscus" | "utterances" | "simple";
+type CommentSystem = "giscus" | "utterances" | "simple";
 
 export default function Comments({ postTitle, postUrl }: CommentsProps) {
 	const commentsRef = useRef<HTMLDivElement>(null);
@@ -73,10 +72,6 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 		};
 	}, [postTitle, postUrl, commentSystem]);
 
-	// If using Hashnode, render the Hashnode component
-	if (commentSystem === "hashnode") {
-		return <HashnodeComments postUrl={postUrl} />;
-	}
 
 	// If using Utterances, render the Utterances component
 	if (commentSystem === "utterances") {
@@ -147,7 +142,9 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 									fontWeight: "500",
 								})}
 							>
-								Hashnode Comments
+								{commentSystem === "giscus" ? "Giscus Comments" : 
+								 commentSystem === "utterances" ? "Utterances Comments" : 
+								 "Simple Comments"}
 							</span>
 						</div>
 						<div className={css({ display: "flex", gap: "12px" })}>
@@ -184,7 +181,6 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 											fontSize: "14px",
 										})}
 									>
-										<option value="hashnode">Hashnode Comments</option>
 										<option value="giscus">Giscus Comments</option>
 										<option value="utterances">Utterances Comments</option>
 										<option value="simple">Simple Comments</option>

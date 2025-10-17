@@ -30,11 +30,11 @@ describe("Blog Routing Integration", () => {
 				return;
 			}
 
-			// Serve the hashnode.json file
-			if (url === "/data/hashnode.json") {
+			// Serve the blog-posts.json file
+			if (url === "/data/blog-posts.json") {
 				try {
 					const data = readFileSync(
-						join(process.cwd(), "public/data/hashnode.json"),
+						join(process.cwd(), "public/data/blog-posts.json"),
 						"utf8"
 					);
 					res.writeHead(200, { "Content-Type": "application/json" });
@@ -86,8 +86,8 @@ describe("Blog Routing Integration", () => {
 		}
 	});
 
-	it("should fetch hashnode data successfully", async () => {
-		const response = await fetch(`${baseUrl}/data/hashnode.json`);
+	it("should fetch blog data successfully", async () => {
+		const response = await fetch(`${baseUrl}/data/blog-posts.json`);
 		expect(response.ok).toBe(true);
 
 		const data = await response.json();
@@ -127,40 +127,40 @@ describe("Blog Routing Integration", () => {
 		expect(response.status).toBe(404);
 	});
 
-	it("should have consistent data structure between hashnode.json and individual post files", async () => {
-		const [hashnodeResponse, individualResponse] = await Promise.all([
-			fetch(`${baseUrl}/data/hashnode.json`),
+	it("should have consistent data structure between blog-posts.json and individual post files", async () => {
+		const [blogPostsResponse, individualResponse] = await Promise.all([
+			fetch(`${baseUrl}/data/blog-posts.json`),
 			fetch(`${baseUrl}/data/posts/how-engineers-can-use-ai-effectively.json`),
 		]);
 
-		expect(hashnodeResponse.ok).toBe(true);
+		expect(blogPostsResponse.ok).toBe(true);
 		expect(individualResponse.ok).toBe(true);
 
-		const [hashnodeData, individualData] = await Promise.all([
-			hashnodeResponse.json(),
+		const [blogPostsData, individualData] = await Promise.all([
+			blogPostsResponse.json(),
 			individualResponse.json(),
 		]);
 
-		const hashnodePost = hashnodeData.find(
+		const blogPost = blogPostsData.find(
 			(p: any) => p.slug === "how-engineers-can-use-ai-effectively"
 		);
-		expect(hashnodePost).toBeDefined();
+		expect(blogPost).toBeDefined();
 
 		// Both should have the same core properties (accounting for different structures)
-		expect(hashnodePost.id).toBe(individualData.id);
-		expect(hashnodePost.title).toBe(individualData.title);
-		expect(hashnodePost.excerpt).toBe(individualData.excerpt);
-		expect(hashnodePost.date).toBe(individualData.date);
-		expect(hashnodePost.tags).toEqual(individualData.tags);
-		// hashnode has slug, individual posts don't
-		expect(hashnodePost.slug).toBe("how-engineers-can-use-ai-effectively");
-		// hashnode has contentHtml, individual posts have html
-		expect(hashnodePost.contentHtml).toBeDefined();
+		expect(blogPost.id).toBe(individualData.id);
+		expect(blogPost.title).toBe(individualData.title);
+		expect(blogPost.excerpt).toBe(individualData.excerpt);
+		expect(blogPost.date).toBe(individualData.date);
+		expect(blogPost.tags).toEqual(individualData.tags);
+		// blog-posts has slug, individual posts don't
+		expect(blogPost.slug).toBe("how-engineers-can-use-ai-effectively");
+		// blog-posts has contentHtml, individual posts have html
+		expect(blogPost.contentHtml).toBeDefined();
 		expect(individualData.html).toBeDefined();
 	});
 
 	it("should handle CORS properly", async () => {
-		const response = await fetch(`${baseUrl}/data/hashnode.json`, {
+		const response = await fetch(`${baseUrl}/data/blog-posts.json`, {
 			method: "OPTIONS",
 		});
 

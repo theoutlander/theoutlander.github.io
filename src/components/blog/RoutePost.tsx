@@ -6,13 +6,13 @@ import { css } from "../../styled-system/css/index.mjs";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 export type Post = {
-	id?: string;
+	id: string;
 	slug: string;
 	title: string;
 	url: string;
 	date: string;
 	excerpt: string;
-	cover: string;
+	cover: string | null;
 	tags: string[];
 	contentMarkdown?: string;
 	contentHtml?: string;
@@ -23,7 +23,7 @@ export default function RoutePost({ slug }: { slug: string }) {
 
 	useEffect(() => {
 		console.log("RoutePost: Fetching data for slug:", slug);
-		fetch("/data/hashnode.json")
+		fetch("/data/blog-posts.json")
 			.then((r) => {
 				console.log("RoutePost: Fetch response:", r.status);
 				return r.json();
@@ -121,12 +121,22 @@ export default function RoutePost({ slug }: { slug: string }) {
 						<span
 							key={t}
 							className={css({
-								bg: "#edf2f7",
-								color: "#4a5568",
-								p: "4px 8px",
-								borderRadius: "4px",
+								bg: "blue.100",
+								color: "blue.800",
+								px: "12px",
+								py: "6px",
+								borderRadius: "full",
 								fontSize: "12px",
-								fontWeight: "500",
+								fontWeight: "600",
+								display: "inline-flex",
+								alignItems: "center",
+								textTransform: "uppercase",
+								letterSpacing: "0.025em",
+								_hover: {
+									bg: "blue.200",
+									transform: "translateY(-1px)",
+								},
+								transition: "all 0.2s ease",
 							})}
 						>
 							{capitalizeFirstLetter(t)}

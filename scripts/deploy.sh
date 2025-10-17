@@ -86,9 +86,9 @@ if [ $? -ne 0 ]; then
 fi
 echo "✅ All tests passed!"
 
-# --- Fetch fresh data from Hashnode ---
-echo "📡 Fetching fresh data from Hashnode…"
-tsx scripts/fetch-hashnode.ts
+# --- Generate blog data ---
+echo "📝 Generating blog data from markdown files…"
+tsx scripts/generate-blog-data.ts
 
 # --- Build site ---
 echo "🏗️ Building site…"

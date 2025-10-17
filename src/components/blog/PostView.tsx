@@ -16,10 +16,10 @@ import {
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 type Post = {
-	id?: string;
+	id: string;
 	title: string;
 	date: string;
-	cover: string;
+	cover: string | null;
 	excerpt: string;
 	html: string;
 	url: string;

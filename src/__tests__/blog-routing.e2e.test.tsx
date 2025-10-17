@@ -80,13 +80,13 @@ describe("Blog Routing E2E", () => {
 		expect(html).toContain('src="/src/main.tsx');
 	});
 
-	it("should serve hashnode data correctly", async () => {
+	it("should serve blog data correctly", async () => {
 		if (!serverAvailable) {
 			console.log("Skipping test - dev server not available");
 			return;
 		}
 
-		const response = await fetch(`${baseUrl}/data/hashnode.json`);
+		const response = await fetch(`${baseUrl}/data/blog-posts.json`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("content-type")).toContain("application/json");
@@ -161,35 +161,35 @@ describe("Blog Routing E2E", () => {
 		expect([200, 404]).toContain(response.status);
 	});
 
-	it("should have consistent data between hashnode.json and individual post files", async () => {
+	it("should have consistent data between blog-posts.json and individual post files", async () => {
 		if (!serverAvailable) {
 			console.log("Skipping test - dev server not available");
 			return;
 		}
 
-		const [hashnodeResponse, individualResponse] = await Promise.all([
-			fetch(`${baseUrl}/data/hashnode.json`),
+		const [blogPostsResponse, individualResponse] = await Promise.all([
+			fetch(`${baseUrl}/data/blog-posts.json`),
 			fetch(`${baseUrl}/data/posts/how-engineers-can-use-ai-effectively.json`),
 		]);
 
-		expect(hashnodeResponse.ok).toBe(true);
+		expect(blogPostsResponse.ok).toBe(true);
 		expect(individualResponse.ok).toBe(true);
 
-		const [hashnodeData, individualData] = await Promise.all([
-			hashnodeResponse.json(),
+		const [blogPostsData, individualData] = await Promise.all([
+			blogPostsResponse.json(),
 			individualResponse.json(),
 		]);
 
-		const hashnodePost = hashnodeData.find(
+		const blogPost = blogPostsData.find(
 			(p: any) => p.slug === "how-engineers-can-use-ai-effectively"
 		);
-		expect(hashnodePost).toBeDefined();
+		expect(blogPost).toBeDefined();
 
 		// Both should have the same core properties
-		expect(hashnodePost.slug).toBe(individualData.slug);
-		expect(hashnodePost.title).toBe(individualData.title);
-		expect(hashnodePost.excerpt).toBe(individualData.excerpt);
-		expect(hashnodePost.date).toBe(individualData.date);
-		expect(hashnodePost.tags).toEqual(individualData.tags);
+		expect(blogPost.slug).toBe(individualData.slug);
+		expect(blogPost.title).toBe(individualData.title);
+		expect(blogPost.excerpt).toBe(individualData.excerpt);
+		expect(blogPost.date).toBe(individualData.date);
+		expect(blogPost.tags).toEqual(individualData.tags);
 	});
 });

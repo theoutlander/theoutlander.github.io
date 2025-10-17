@@ -1,6 +1,44 @@
-# React + TypeScript + Vite
+# Nick Karnik's Personal Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A modern, self-hosted personal website and blog built with React, TypeScript, and Vite. Features a fully self-hosted blog system with markdown-based content management.
+
+## 🚀 Quick Start
+
+### Development
+```bash
+pnpm dev
+```
+
+### Build
+```bash
+pnpm build
+```
+
+### Deploy
+```bash
+pnpm deploy
+```
+
+## 📝 Blog Management
+
+This website includes a self-hosted blog system. To create and manage blog posts, see the comprehensive [Blog Guide](./BLOG_GUIDE.md).
+
+### Quick Blog Post Creation
+1. Create a new `.md` file in `content/blog/`
+2. Add front matter with metadata
+3. Write your content in Markdown
+4. Run `pnpm dev` to preview or `pnpm build` to publish
+
+For detailed instructions, see [BLOG_GUIDE.md](./BLOG_GUIDE.md).
+
+## 🛠️ Technology Stack
+
+- **Frontend**: React 19 + TypeScript
+- **Build Tool**: Vite
+- **Styling**: Panda CSS
+- **Routing**: TanStack Router
+- **Content**: Markdown with front matter
+- **Deployment**: GitHub Pages
 
 ## Testing
 

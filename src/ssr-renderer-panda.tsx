@@ -4,13 +4,13 @@ import { readFileSync, writeFileSync, mkdirSync, join } from "fs";
 import { HomePagePanda } from "./pages/HomePagePanda";
 
 type Post = {
-	id?: string;
+	id: string;
 	slug: string;
 	title: string;
 	excerpt: string;
 	url: string;
 	date: string;
-	cover: string;
+	cover: string | null;
 	tags: string[];
 };
 
@@ -91,9 +91,9 @@ const renderPageToHTML = (
 export async function renderAllStaticPagesPanda() {
 	console.log("🔄 Rendering all static pages with Panda CSS...");
 
-	// Read the hashnode data
-	const hashnodeData = JSON.parse(
-		readFileSync("public/data/hashnode.json", "utf8")
+	// Read the blog posts data
+	const blogPostsData = JSON.parse(
+		readFileSync("public/data/blog-posts.json", "utf8")
 	) as Post[];
 
 	// Generate CSS first
@@ -101,7 +101,7 @@ export async function renderAllStaticPagesPanda() {
 
 	// Render home page
 	console.log("📄 Rendering home page with Panda CSS...");
-	const homeResult = renderPageToHTML(HomePagePanda, { posts: hashnodeData });
+	const homeResult = renderPageToHTML(HomePagePanda, { posts: blogPostsData });
 	const homeHTML = generateBaseHTML(
 		"Nick Karnik | Engineering Leader & Software Engineer",
 		"Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools.",

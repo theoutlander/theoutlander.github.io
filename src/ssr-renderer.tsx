@@ -11,6 +11,7 @@ import {
 import { join } from "node:path";
 import { createHash } from "node:crypto";
 import { capitalizeFirstLetter } from "./utils/stringUtils";
+import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -21,16 +22,7 @@ import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
 import { CalendarPagePanda } from "./pages/CalendarPagePanda";
 
-type Post = {
-	id?: string;
-	slug: string;
-	title: string;
-	excerpt: string;
-	url: string;
-	date: string;
-	cover: string;
-	tags: string[];
-};
+type Post = BlogPost;
 
 type AboutData = {
 	title: string;
@@ -86,7 +78,7 @@ const copyDirectory = (src: string, dest: string) => {
 
 // Generate comprehensive CSS by rendering all pages and collecting all styles
 const generateComprehensiveCSS = async (
-	hashnodeData: Post[],
+	blogData: Post[],
 	aboutData: AboutData
 ) => {
 	console.log("🎨 Generating comprehensive CSS...");
@@ -97,15 +89,15 @@ const generateComprehensiveCSS = async (
 		component: any;
 		props: any;
 	}> = [
-		{ name: "home", component: HomePagePanda, props: { posts: hashnodeData } },
-		{ name: "blog", component: BlogPagePanda, props: { posts: hashnodeData } },
+		{ name: "home", component: HomePagePanda, props: { posts: blogData } },
+		{ name: "blog", component: BlogPagePanda, props: { posts: blogData } },
 		{ name: "about", component: AboutPagePanda, props: { aboutData } },
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
 	];
 
 	// Add blog post pages
-	for (const post of hashnodeData) {
+	for (const post of blogData) {
 		const postDataPath = join("public", "data", "posts", `${post.slug}.json`);
 		let fullPostData;
 		try {
@@ -388,10 +380,8 @@ export async function renderAllStaticPagesSSR() {
 	// Create dist directory if it doesn't exist
 	mkdirSync("dist", { recursive: true });
 
-	// Read the hashnode data
-	const hashnodeData = JSON.parse(
-		readFileSync("public/data/hashnode.json", "utf8")
-	) as Post[];
+	// Load blog data from local markdown files
+	const blogData = await loadAllBlogPosts();
 
 	// Read the about page data
 	const aboutData = JSON.parse(
@@ -410,7 +400,7 @@ export async function renderAllStaticPagesSSR() {
         console.warn(
             "⚠️  Could not read styled-system CSS, generating comprehensive CSS instead…"
         );
-        await generateComprehensiveCSS(hashnodeData, aboutData);
+        await generateComprehensiveCSS(blogData, aboutData);
         sourceCss = readFileSync("dist/styles.css", "utf8");
     }
 
@@ -455,7 +445,7 @@ export async function renderAllStaticPagesSSR() {
 
 	// Render home page
 	console.log("📄 Rendering home page with SSR...");
-	const homeResult = renderPageToHTML(HomePagePanda, { posts: hashnodeData });
+	const homeResult = renderPageToHTML(HomePagePanda, { posts: blogData });
     const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Engineering Leader & Software Engineer",
 		"Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools.",
@@ -473,7 +463,7 @@ export async function renderAllStaticPagesSSR() {
 	console.log("📄 Rendering blog index page with SSR...");
 	const blogDir = join("dist", "blog");
 	mkdirSync(blogDir, { recursive: true });
-	const blogResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
+	const blogResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
     const blogHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blog | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
@@ -491,7 +481,7 @@ export async function renderAllStaticPagesSSR() {
 	console.log("📄 Rendering blogs index page with SSR...");
 	const blogsDir = join("dist", "blogs");
 	mkdirSync(blogsDir, { recursive: true });
-	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: hashnodeData });
+	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
     const blogsHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blogs | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
@@ -567,7 +557,7 @@ export async function renderAllStaticPagesSSR() {
 
 	// Render individual blog post pages
 	console.log("📄 Rendering individual blog post pages with SSR...");
-	for (const post of hashnodeData) {
+	for (const post of blogData) {
 		const postDir = join("dist", "blog", post.slug);
 		mkdirSync(postDir, { recursive: true });
 
@@ -642,7 +632,7 @@ export async function renderAllStaticPagesSSR() {
 	const rssDir = join("dist", "rss");
 	mkdirSync(rssDir, { recursive: true });
 
-	const rssXml = generateRssXml(hashnodeData);
+	const rssXml = generateRssXml(blogData);
 	writeFileSync(join(rssDir, "index.html"), rssXml);
 	console.log("✅ Generated RSS feed");
 

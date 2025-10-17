@@ -81,12 +81,22 @@ export default function BlogCard({ post }: { post: Post }) {
 						<span
 							key={t}
 							className={css({
-								bg: "gray.100",
-								color: "gray.700",
-								px: 2,
-								py: 1,
-								rounded: "md",
-								fontSize: "sm",
+								bg: "blue.100",
+								color: "blue.800",
+								px: "12px",
+								py: "6px",
+								borderRadius: "full",
+								fontSize: "12px",
+								fontWeight: "600",
+								display: "inline-flex",
+								alignItems: "center",
+								textTransform: "uppercase",
+								letterSpacing: "0.025em",
+								_hover: {
+									bg: "blue.200",
+									transform: "translateY(-1px)",
+								},
+								transition: "all 0.2s ease",
 							})}
 						>
 							{capitalizeFirstLetter(t)}
