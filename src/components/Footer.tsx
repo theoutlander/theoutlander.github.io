@@ -1,15 +1,12 @@
 import { css } from "../../styled-system/css/index.mjs";
 import { flex, hstack } from "../../styled-system/patterns/index.mjs";
 import {
-	FaNodeJs,
-	FaReact,
 	FaGithub,
 	FaLinkedin,
 	FaTwitter,
 	FaYoutube,
 	FaStackOverflow,
 } from "react-icons/fa";
-import { SiTypescript } from "react-icons/si";
 import { MdEmail } from "react-icons/md";
 import { HiOutlineDocumentText } from "react-icons/hi";
 
@@ -42,12 +39,12 @@ export default function Footer() {
 						className={flex({
 							direction: { base: "column", md: "row" },
 							gap: { base: "8", md: "12" },
-							alignItems: { base: "center", md: "flex-start" },
-							justifyContent: { base: "center", md: "space-between" },
+							alignItems: { base: "flex-start", md: "flex-start" },
+							justifyContent: { base: "flex-start", md: "space-between" },
 						})}
 					>
 						{/* Left column - Bio */}
-						<div className={css({ flex: 1 })}>
+					<div className={css({ flex: 1, width: "100%", textAlign: "left", alignSelf: "stretch", display: "flex", flexDirection: "column", alignItems: "flex-start" })}>
 							<h2
 								className={css({
 									fontSize: "md",
@@ -61,58 +58,17 @@ export default function Footer() {
 							<p
 								className={css({ fontSize: "sm", color: "gray.600", mb: "4" })}
 							>
-								Engineering Leader & Staff Software Engineer
+						Engineering Leader - AI & Product Strategy
 							</p>
-							<div className={hstack({ gap: "2", wrap: "wrap", mb: "6" })}>
-								<div className={hstack({ gap: "1" })}>
-									<FaNodeJs
-										color="#3C873A"
-										title="Node.js"
-										size={20}
-									/>
-									<span className={css({ fontSize: "xs", color: "gray.600" })}>
-										Node
-									</span>
-								</div>
-								<div className={hstack({ gap: "1" })}>
-									<FaReact
-										color="#61DAFB"
-										title="React"
-										size={20}
-									/>
-									<span className={css({ fontSize: "xs", color: "gray.600" })}>
-										React
-									</span>
-								</div>
-								<div className={hstack({ gap: "1" })}>
-									<SiTypescript
-										color="#3178C6"
-										title="TypeScript"
-										size={20}
-									/>
-									<span className={css({ fontSize: "xs", color: "gray.600" })}>
-										TypeScript
-									</span>
-								</div>
-							</div>
-							<p className={css({ fontSize: "xs", color: "gray.600" })}>
+					
+						<p className={css({ fontSize: "xs", color: "gray.600", paddingLeft: "12px" })}>
 								© 2025 Nick Karnik. All rights reserved.
 							</p>
 						</div>
 
 						{/* Right column - Links */}
-						<div className={css({ flex: 1 })}>
-							<h3
-								className={css({
-									fontSize: "sm",
-									fontWeight: "bold",
-									mb: "4",
-									color: { base: "gray.800", _dark: "dark.text" },
-								})}
-							>
-								Connect
-							</h3>
-							<div className={hstack({ gap: "2", wrap: "wrap", mb: "4" })}>
+					<div className={css({ flex: 1, width: "100%", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start" })}>
+						<div className={css({ display: "flex", flexWrap: "wrap", gap: "2", mb: "4", justifyContent: "flex-start" })}>
 								<a
 									href="mailto:nick@karnik.io"
 									target="_blank"
@@ -338,7 +294,7 @@ export default function Footer() {
 									</div>
 								</a>
 							</div>
-							<p className={css({ fontSize: "xs", color: "gray.600" })}>
+							<p className={css({ fontSize: "xs", color: "gray.600", paddingLeft: "12px" })}>
 								Available for consulting at{" "}
 								<a
 									href="https://plutonic.consulting"

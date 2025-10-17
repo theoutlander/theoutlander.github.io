@@ -200,20 +200,6 @@ type Exp = {
 
 const experience: Exp[] = [
 	{
-		role: "Founder & Fractional CTO",
-		company: "Plutonic Consulting",
-		dates: "May 2025 – Present",
-		current: true,
-		blurb:
-			"Providing fractional CTO support, AI strategy, and scaling guidance to founders. Helping teams move faster with clear product bets, strong execution, and systems that are simple to maintain. Focus on pragmatic AI integration and developer experience optimization.",
-		tags: [
-			"AI Strategy",
-			"Technical Leadership",
-			"Fractional CTO",
-			"Team Scaling",
-		],
-	},
-	{
 		role: "Engineering Manager (Gemini Code Assist)",
 		company: "Google",
 		dates: "May 2022 – Apr 2025",
@@ -449,9 +435,18 @@ export default function Resume() {
 					mt: 6,
 				})}
 			>
-				{/* Experience column */}
-				<article className={[card, "resume-card"].join(" ")}>
-					<h3 className={sectionHeader}>Experience</h3>
+				{/* Left column: Summary + Experience */}
+				<div className={css({ display: "flex", flexDir: "column", gap: 6 })}>
+					<article className={[card, "resume-card"].join(" ")}>
+						<h3 className={sectionHeader}>Summary</h3>
+						<div className={css({ p: { base: 4, md: 6 } })}>
+							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
+								Engineering leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups. Led Gemini Code Assist from inception to adoption by millions of developers. Developed epidemiological modeling systems featured in Bill Gates’ TED Talk and led high-performing engineering teams across Big Tech and high-growth environments. After a brief transition in April 2025, now focused on full-time engineering leadership in AI, platform, and product engineering.
+							</p>
+					</div>
+					</article>
+					<article className={[card, "resume-card"].join(" ")}>
+						<h3 className={sectionHeader}>Experience</h3>
 
 					{experience.map((e, idx) => (
 						<div
@@ -494,6 +489,7 @@ export default function Resume() {
 						</div>
 					))}
 				</article>
+				</div>
 
 				{/* Right column - Skills, Education, Contact */}
 				<aside className={css({ display: "flex", flexDir: "column", gap: 6 })}>
@@ -628,7 +624,7 @@ export default function Resume() {
 							</div>
 						))}
 					</div>
-				</article>
+					</article>
 				<div></div>
 			</section>
 		</main>
