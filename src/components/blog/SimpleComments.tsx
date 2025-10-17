@@ -5,9 +5,6 @@ import {
 	commentsSection,
 	commentsContainer,
 	commentsHeader,
-	commentsTitle,
-	commentsContent,
-	commentsActions,
 } from "../../../styled-system/recipes/index.mjs";
 
 interface Comment {
@@ -104,7 +101,11 @@ export default function SimpleComments({
 							flexWrap: "wrap",
 						})}
 					>
-						<div className={commentsTitle()}>
+						<div className={css({
+							display: "flex",
+							gap: "12px",
+							alignItems: "center",
+						})}>
 							<FaComment
 								size={20}
 								color="#3182ce"

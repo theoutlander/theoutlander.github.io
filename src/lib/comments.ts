@@ -13,4 +13,8 @@ export const COMMENTS_CONFIG = {
 		lang: "en",
 		loading: "lazy",
 	},
+	utterances: {
+		issueTerm: "pathname",
+		theme: "github-light",
+	},
 };

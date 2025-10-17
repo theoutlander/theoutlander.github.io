@@ -6,9 +6,6 @@ import {
 	commentsSection,
 	commentsContainer,
 	commentsHeader,
-	commentsTitle,
-	commentsContent,
-	commentsActions,
 } from "../../styled-system/recipes/index.mjs";
 
 interface UtterancesCommentsProps {
@@ -72,7 +69,11 @@ export default function UtterancesComments({
 							flexWrap: "wrap",
 						})}
 					>
-						<div className={commentsTitle()}>
+						<div className={css({
+							display: "flex",
+							gap: "12px",
+							alignItems: "center",
+						})}>
 							<FaComment
 								size={20}
 								color="#3182ce"
@@ -125,8 +126,16 @@ export default function UtterancesComments({
 							border: "1px solid #bee3f8",
 						})}
 					>
-						<div className={commentsContent()}>
-							<div className={commentsTitle()}>
+						<div className={css({
+							display: "flex",
+							flexDirection: "column",
+							gap: "16px",
+						})}>
+							<div className={css({
+								display: "flex",
+								gap: "12px",
+								alignItems: "center",
+							})}>
 								<FaComment
 									size={20}
 									color="#4a5568"
@@ -143,7 +152,7 @@ export default function UtterancesComments({
 								</p>
 							</div>
 
-							<div className={commentsActions()}>
+							<div className={css({ display: "flex", gap: "12px" })}>
 								<button
 									className={css({
 										padding: "8px 16px",

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { FaComment, FaHeart, FaCog } from "react-icons/fa";
+import { FaComment, FaHeart } from "react-icons/fa";
 import UtterancesComments from "./UtterancesComments";
 import SimpleComments from "./SimpleComments";
 import { COMMENTS_CONFIG } from "../../lib/comments";
@@ -8,9 +8,6 @@ import {
 	commentsSection,
 	commentsContainer,
 	commentsHeader,
-	commentsTitle,
-	commentsContent,
-	commentsActions,
 } from "../../../styled-system/recipes/index.mjs";
 
 interface CommentsProps {
@@ -153,10 +150,6 @@ export default function Comments({ postTitle, postUrl }: CommentsProps) {
 								color="#fc8181"
 							/>
 							<div className={css({ display: "flex", gap: "8px" })}>
-								<FaCog
-									size={12}
-									color="#a0aec0"
-								/>
 								<div>
 									<p
 										className={css({
