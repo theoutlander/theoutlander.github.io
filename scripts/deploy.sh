@@ -88,7 +88,7 @@ echo "✅ All tests passed!"
 
 # --- Generate blog data ---
 echo "📝 Generating blog data from markdown files…"
-tsx scripts/generate-blog-data.ts
+pnpm tsx scripts/generate-blog-data.ts
 
 # --- Build site ---
 echo "🏗️ Building site…"

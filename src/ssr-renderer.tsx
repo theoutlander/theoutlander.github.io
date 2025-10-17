@@ -1,6 +1,6 @@
 import React from "react";
 import { renderToString } from "react-dom/server";
-import {
+import fs, {
 	readFileSync,
 	writeFileSync,
 	mkdirSync,
@@ -431,6 +431,14 @@ export async function renderAllStaticPagesSSR() {
 		"favicon_16x16.png",
 		"404.html",
 	];
+	
+	// Add GitHub Pages specific files
+	console.log("📁 Adding GitHub Pages specific files...");
+	writeFileSync("dist/.nojekyll", "");
+	if (fs.existsSync("CNAME")) {
+		copyFileSync("CNAME", "dist/CNAME");
+		console.log("✅ CNAME file copied to dist/");
+	}
 	for (const file of staticFiles) {
 		try {
 			copyFileSync(`public/${file}`, `dist/${file}`);
