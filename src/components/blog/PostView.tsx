@@ -14,17 +14,7 @@ import {
 	blogCover,
 } from "../../../styled-system/recipes/index.mjs";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
-
-type Post = {
-	id: string;
-	title: string;
-	date: string;
-	cover: string | null;
-	excerpt: string;
-	html: string;
-	url: string;
-	tags: string[];
-};
+import { Post } from "../../types/blog";
 
 export default function PostView({ post }: { post: Post }) {
 	const postUrl =

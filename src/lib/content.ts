@@ -1,17 +1,5 @@
 import { marked } from 'marked';
-
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  url: string;
-  date: string;
-  cover: string | null;
-  tags: string[];
-  contentMarkdown: string;
-  contentHtml: string;
-}
+import { BlogPost } from '../types/blog';
 
 // Client-side functions that fetch from the generated JSON files
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {

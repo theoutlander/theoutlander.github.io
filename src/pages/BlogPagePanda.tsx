@@ -6,17 +6,7 @@ import Footer from "../components/Footer";
 import BlogList from "../components/blog/BlogList";
 import BlogIntro from "../components/blog/BlogIntro";
 import SkipLink from "../components/SkipLink";
-
-type Post = {
-	id: string;
-	slug: string;
-	title: string;
-	excerpt: string;
-	url: string;
-	date: string;
-	cover: string | null;
-	tags: string[];
-};
+import { Post } from "../types/blog";
 
 type BlogPageProps = {
 	posts: Post[];

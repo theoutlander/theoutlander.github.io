@@ -1,19 +1,7 @@
 import { readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { marked } from 'marked';
-
-export interface BlogPost {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  url: string;
-  date: string;
-  cover: string | null;
-  tags: string[];
-  contentMarkdown: string;
-  contentHtml: string;
-}
+import { BlogPost } from '../types/blog';
 
 interface FrontMatter {
   id: string;

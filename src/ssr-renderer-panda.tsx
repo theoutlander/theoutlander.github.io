@@ -2,17 +2,7 @@ import React from "react";
 import { renderToString } from "react-dom/server";
 import { readFileSync, writeFileSync, mkdirSync, join } from "fs";
 import { HomePagePanda } from "./pages/HomePagePanda";
-
-type Post = {
-	id: string;
-	slug: string;
-	title: string;
-	excerpt: string;
-	url: string;
-	date: string;
-	cover: string | null;
-	tags: string[];
-};
+import { Post } from "./types/blog";
 
 type AboutData = {
 	title: string;

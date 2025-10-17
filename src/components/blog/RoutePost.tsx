@@ -4,19 +4,7 @@ import ProgressTop from "../ui/ProgressTop";
 import PostJsonLd from "../seo/PostJsonLd";
 import { css } from "../../styled-system/css/index.mjs";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
-
-export type Post = {
-	id: string;
-	slug: string;
-	title: string;
-	url: string;
-	date: string;
-	excerpt: string;
-	cover: string | null;
-	tags: string[];
-	contentMarkdown?: string;
-	contentHtml?: string;
-};
+import { Post } from "../../types/blog";
 
 export default function RoutePost({ slug }: { slug: string }) {
 	const [post, setPost] = useState<Post | null>(null);

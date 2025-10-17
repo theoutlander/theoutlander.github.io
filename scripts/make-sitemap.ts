@@ -1,12 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
+import { BlogPostData } from "../src/types/blog";
 
 const BASE = process.env.SITE_URL || "https://nick.karnik.io";
-
-type Post = {
-	slug: string;
-	date?: string;
-	title?: string;
-};
 
 async function run() {
 	const baseRoutes = [
@@ -16,7 +11,7 @@ async function run() {
 		{ path: "/resume", priority: "0.8", changefreq: "monthly" },
 	];
 
-	let posts: Post[] = [];
+	let posts: BlogPostData[] = [];
 	try {
 		posts = JSON.parse(await readFile("public/data/blog-posts.json", "utf8"));
 	} catch {

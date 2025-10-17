@@ -1,16 +1,6 @@
 import { readFileSync, writeFileSync, mkdirSync, copyFileSync } from 'node:fs';
 import { join } from 'node:path';
-
-type Post = {
-  slug: string;
-  title: string;
-  date: string | null;
-  cover: string | null;
-  excerpt: string;
-  html: string;
-  url: string;
-  tags: string[];
-};
+import { BlogPostData } from '../src/types/blog';
 
 async function generateStaticPages() {
   console.log('🔄 Generating static pages for blog posts...');
@@ -18,7 +8,7 @@ async function generateStaticPages() {
   // Read the blog-posts.json to get all posts
   const blogPostsData = JSON.parse(
     readFileSync('public/data/blog-posts.json', 'utf8')
-  ) as Post[];
+  ) as BlogPostData[];
 
   // Read the base HTML template
   const baseHtml = readFileSync('dist/index.html', 'utf8');

@@ -4,20 +4,7 @@ import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import SkipLink from "../components/SkipLink";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
-
-type Post = {
-	id: string;
-	slug: string;
-	title: string;
-	excerpt: string;
-	url: string;
-	date: string;
-	cover: string | null;
-	tags: string[];
-	html?: string;
-	contentHtml?: string;
-	contentMarkdown?: string;
-};
+import { Post } from "../types/blog";
 
 type BlogPostPageProps = {
 	post: Post;
