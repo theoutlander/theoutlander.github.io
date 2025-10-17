@@ -19,6 +19,7 @@ import { AboutPagePanda } from "./pages/AboutPagePanda";
 import { ResumePagePanda } from "./pages/ResumePagePanda";
 import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
+import { CalendarPagePanda } from "./pages/CalendarPagePanda";
 
 type Post = {
 	id?: string;
@@ -100,6 +101,7 @@ const generateComprehensiveCSS = async (
 		{ name: "blog", component: BlogPagePanda, props: { posts: hashnodeData } },
 		{ name: "about", component: AboutPagePanda, props: { aboutData } },
 		{ name: "resume", component: ResumePagePanda, props: {} },
+		{ name: "calendar", component: CalendarPagePanda, props: {} },
 	];
 
 	// Add blog post pages
@@ -544,6 +546,24 @@ export async function renderAllStaticPagesSSR() {
 	);
 	const resumeHTML = removeInlineStyles(resumeHTMLWithStyles);
 	writeFileSync(join(resumeDir, "index.html"), resumeHTML);
+
+	// Render calendar page
+	console.log("📄 Rendering calendar page with SSR...");
+	const calendarDir = join("dist", "calendar");
+	mkdirSync(calendarDir, { recursive: true });
+	const calendarResult = renderPageToHTML(CalendarPagePanda, {});
+	const calendarHTMLWithStyles = generateBaseHTML(
+		"Schedule time with Nick Karnik",
+		"Book time with Nick directly via Google Calendar appointments.",
+		calendarResult.html,
+		cssHref,
+		calendarResult.helmet.title + calendarResult.helmet.meta + calendarResult.helmet.link,
+		"https://nick.karnik.io/calendar",
+		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		"website"
+	);
+	const calendarHTML = removeInlineStyles(calendarHTMLWithStyles);
+	writeFileSync(join(calendarDir, "index.html"), calendarHTML);
 
 	// Render individual blog post pages
 	console.log("📄 Rendering individual blog post pages with SSR...");

@@ -66,8 +66,8 @@ export const redirects: Redirect[] = [
 
 	// Contact & Business
 	{
-		source: "/calendar",
-		destination: "https://calendly.com/nick-karnik",
+		source: "/schedule",
+		destination: "/calendar",
 		statusCode: 308,
 	},
 	{

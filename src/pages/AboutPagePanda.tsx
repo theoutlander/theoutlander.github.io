@@ -44,7 +44,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				})}
 			>
 				{/* Header */}
-				<NameHeader showDownloadButton={false} />
+				<NameHeader showDownloadButton={true} />
 
 				{/* Grid */}
 				<section

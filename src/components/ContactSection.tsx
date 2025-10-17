@@ -162,17 +162,12 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "calendar" })}
-					href="https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true"
-					target="_blank"
-					rel="noopener noreferrer"
+					href="/calendar"
 				>
 					<div className={iconContainer}>
 						<CalendarIcon className={contactIcon} />
 						<span>Schedule Meeting</span>
 					</div>
-					<ArrowTopRightOnSquareIcon
-						className={css({ w: 4, h: 4, opacity: 0.6 })}
-					/>
 				</a>
 				<a
 					className={ghostBtn({ variant: "linkedin" })}

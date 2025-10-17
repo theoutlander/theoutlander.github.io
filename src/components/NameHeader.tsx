@@ -2,7 +2,7 @@ import { css, cva } from "../../styled-system/css/index.mjs";
 import { FaLinkedin, FaGithub, FaYoutube } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { HiOutlineCalendar } from "react-icons/hi";
-import { FaDownload } from "react-icons/fa";
+import { HiOutlineDocumentText } from "react-icons/hi";
 
 // ====== shared primitives ======
 const card = css({
@@ -107,10 +107,38 @@ const iconButton = css({
 	bg: "white",
 	border: "1px solid",
 	borderColor: { base: "gray.200", _dark: "gray.700" },
+	position: "relative",
 	_hover: {
 		bg: "gray.50",
 		transform: "translateY(-1px)",
 		boxShadow: "sm",
+	},
+	"&::after": {
+		content: "attr(aria-label)",
+		position: "absolute",
+		bottom: "calc(100% + 6px)",
+		left: "50%",
+		transform: "translateX(-50%) translateY(4px)",
+		bg: { base: "gray.900", _dark: "gray.800" },
+		color: "white",
+		fontSize: "xs",
+		px: 2,
+		py: 1,
+		borderRadius: "sm",
+		boxShadow: "sm",
+		whiteSpace: "nowrap",
+		opacity: 0,
+		pointerEvents: "none",
+		transition: "opacity 150ms ease, transform 150ms ease",
+		zIndex: 20,
+	},
+	"&:hover::after": {
+		opacity: 1,
+		transform: "translateX(-50%) translateY(0)",
+	},
+	"&:focus-visible::after": {
+		opacity: 1,
+		transform: "translateX(-50%) translateY(0)",
 	},
 });
 
@@ -162,10 +190,10 @@ const contactLinks = [
 		external: true,
 	},
 	{
-		href: "https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true",
+		href: "/schedule",
 		icon: HiOutlineCalendar,
-		title: "Schedule Call",
-		external: true,
+		title: "Schedule a Call",
+		external: false,
 	},
 	{
 		href: "https://youtube.com/@nick-karnik",
@@ -177,9 +205,11 @@ const contactLinks = [
 
 const actionButtons = [
 	{
-		icon: FaDownload,
-		title: "Download PDF",
-		action: "print",
+		icon: HiOutlineDocumentText,
+		title: "Download Resume (PDF)",
+		action: "download",
+		href: "/assets/documents/resume-nick-karnik.pdf",
+		filename: "resume-nick-karnik.pdf",
 	},
 ];
 
@@ -223,22 +253,22 @@ export default function NameHeader({
 							target={link.external ? "_blank" : undefined}
 							rel={link.external ? "noopener noreferrer" : undefined}
 							className={iconButton}
-							title={link.title}
+							aria-label={link.title}
 						>
 							<link.icon size={18} />
 						</a>
 					))}
 					{showDownloadButton &&
 						actionButtons.map((button) => (
-							<button
+						<a
 								key={button.title}
 								className={actionButton}
-								onClick={onDownload || (() => window.print())}
-								type="button"
-								title={button.title}
+								href={button.href}
+								download={button.filename}
+							aria-label={button.title}
 							>
 								<button.icon size={18} />
-							</button>
+							</a>
 						))}
 				</div>
 			</div>
