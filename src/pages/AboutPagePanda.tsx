@@ -44,7 +44,10 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				})}
 			>
 				{/* Header */}
-				<NameHeader showDownloadButton={true} />
+				<NameHeader
+					showDownloadButton={true}
+					tags={["✨ AI", "👥 Leadership", "📦 Product"]}
+				/>
 
 				{/* Grid */}
 				<section
@@ -70,8 +73,11 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 							className={css({
 								fontWeight: "semibold",
 								color: "gray.800",
-								mb: 3,
+							mb: 3,
 								fontSize: "lg",
+							pb: 3,
+							borderBottomWidth: "1px",
+							borderColor: "gray.100",
 							})}
 						>
 							About
@@ -105,76 +111,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 						{/* Contact */}
 						<ContactSection />
 
-						{/* Focus */}
-						<div
-							className={css({
-								bg: "white",
-								borderWidth: "1px",
-								borderColor: "gray.200",
-								borderRadius: "xl",
-								boxShadow: "sm",
-								p: { base: 4, md: 5 },
-							})}
-						>
-							<div
-								className={css({
-									fontSize: "sm",
-									fontWeight: "semibold",
-									color: "gray.800",
-									mb: 3,
-								})}
-							>
-								Focus
-							</div>
-							<div
-								className={css({
-									display: "flex",
-									gap: 2,
-									flexWrap: "wrap",
-									mb: 4,
-								})}
-							>
-								{[
-									"TypeScript",
-									"React",
-									"Vite",
-									"Chakra",
-									"Node",
-									"GraphQL",
-									"AI",
-								].map((tech) => (
-									<span
-										key={tech}
-										className={css({
-											display: "inline-flex",
-											alignItems: "center",
-											px: 2.5,
-											py: 1,
-											borderRadius: "full",
-											fontSize: "xs",
-											fontWeight: "medium",
-											borderWidth: "1px",
-											whiteSpace: "nowrap",
-											bg: "gray.50",
-											borderColor: "gray.200",
-											color: "gray.700",
-										})}
-									>
-										{tech}
-									</span>
-								))}
-							</div>
-							<p
-								className={css({
-									mt: 3,
-									fontSize: "sm",
-									color: "gray.600",
-								})}
-							>
-								I help teams move faster with clear product bets, strong
-								execution, and systems that are simple to maintain.
-							</p>
-						</div>
+
 
 						{/* Now */}
 						<div
@@ -187,15 +124,18 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 								p: { base: 4, md: 5 },
 							})}
 						>
-							<div
+						<div
 								className={css({
-									fontSize: "sm",
-									fontWeight: "semibold",
-									color: "gray.800",
-									mb: 3,
+								fontSize: "sm",
+								fontWeight: "semibold",
+								color: "gray.800",
+								mb: 3,
+								pb: 3,
+								borderBottomWidth: "1px",
+								borderColor: "gray.100",
 								})}
 							>
-								Now
+							📍 Now
 							</div>
 							<ul className={css({ listStyle: "none", padding: 0, margin: 0 })}>
 								<li
@@ -224,7 +164,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Advising founders on pragmatic AI & DX.
+										Preparing for full-time engineering leadership roles in AI and platform teams
 									</span>
 								</li>
 								<li
@@ -253,7 +193,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Building React + Node tools with TypeScript.
+										Writing about AI, product, and technical leadership
 									</span>
 								</li>
 								<li
@@ -282,7 +222,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Writing weekly about engineering leadership.
+										Exploring how AI is changing software engineering teams
 									</span>
 								</li>
 							</ul>

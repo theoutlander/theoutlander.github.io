@@ -54,23 +54,20 @@ export default function BlogIntro() {
 	return (
 		<div className={`blog-intro ${blogIntroStyles}`}>
 			<p className="lead">
-				I'm an engineering and product leader who's spent 25+ years building at{" "}
+				I'm an engineering leader with 25+ years at{" "}
 				<strong className={strongStyles}>
-					Google, Microsoft, and Salesforce
+					Google, Microsoft, Salesforce, Tableau, and startups.
 				</strong>
-				.
+				. 
 			</p>
 			<p className="sub">
 				I write about{" "}
 				<strong className={strongStyles}>
-					building products, leading teams,
+					engineering leadership, AI strategy, and building high-performance teams.
 				</strong>{" "}
-				and{" "}
-				<strong className={strongStyles}>learning through technology.</strong>
 			</p>
 			<p className="cta">
-				For consulting or advisory work, visit{" "}
-				<a href="https://plutonic.consulting">Plutonic Consulting</a>.
+				I’m currently focused on full-time engineering leadership roles in AI, platform, and product engineering.
 			</p>
 		</div>
 	);

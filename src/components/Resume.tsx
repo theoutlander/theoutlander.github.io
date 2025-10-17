@@ -214,11 +214,11 @@ const experience: Exp[] = [
 		],
 	},
 	{
-		role: "Staff Software Engineer / Engineering Manager",
+		role: "Engineering Manager (Gemini Code Assist)",
 		company: "Google",
 		dates: "May 2022 – Apr 2025",
 		blurb:
-			"Led technical direction and hands-on engineering for Gemini Code Assist, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.",
+			"Led engineering for Gemini Code Assist, Google’s AI coding assistant for VS Code and IntelliJ. Drove technical leadership across engineering, product, research, and UX teams to scale AI-assisted development workflows. Delivered cross-cutting features that improved LLM completion acceptance and product adoption, while integrating model advancements and developer feedback into production systems.",
 		tags: ["Go", "TypeScript", "Node.js", "Kubernetes", "GCP", "LLM"],
 	},
 	{

@@ -42,7 +42,7 @@ export default function HeroSSR() {
 							px: { base: "2", md: "0" },
 						})}
 					>
-						Engineering Leader & Software Engineer
+						Engineering Leader - AI & Product Strategy
 					</h1>
 
 					{/* Subtitle */}
@@ -99,7 +99,7 @@ export default function HeroSSR() {
 									✅
 								</span>
 								<span>
-									More than 10 years leading high-performing engineering teams
+									Led AI and platform engineering teams at Google, Microsoft, and Salesforce
 								</span>
 							</li>
 							<li
@@ -119,8 +119,7 @@ export default function HeroSSR() {
 									✅
 								</span>
 								<span>
-									25+ Years building software across Google, Microsoft, and
-									startups
+									Built products adopted by millions of developers (Gemini Code Assist)
 								</span>
 							</li>
 							<li
@@ -139,7 +138,7 @@ export default function HeroSSR() {
 								>
 									✅
 								</span>
-								<span>Deep expertise in React, TypeScript, and Node.js</span>
+								<span>Known for clarity, technical strategy, and high-performance team leadership</span>
 							</li>
 							<li
 								className={css({
@@ -157,7 +156,7 @@ export default function HeroSSR() {
 								>
 									✅
 								</span>
-								<span>Passion for shipping reliable, simple systems</span>
+								<span>Passionate about building products that matter, not just software</span>
 							</li>
 						</ul>
 					</div>
@@ -189,42 +188,29 @@ export default function HeroSSR() {
 						</button>
 						<button
 							type="button"
-							className={chip({ variant: "react" })}
-							aria-label="React technology"
+							className={chip({ variant: "leadership" })}
+							aria-label="Leadership"
 						>
 							<span
 								aria-hidden="true"
 								className={css({ fontSize: "0.9em" })}
 							>
-								⚛️
+								👥
 							</span>
-							<span>React</span>
+							<span>Leadership</span>
 						</button>
 						<button
 							type="button"
-							className={chip({ variant: "typescript" })}
-							aria-label="TypeScript technology"
+							className={chip({ variant: "product" })}
+							aria-label="Product"
 						>
 							<span
 								aria-hidden="true"
 								className={css({ fontSize: "0.9em" })}
 							>
-								📘
+								📦
 							</span>
-							<span>TypeScript</span>
-						</button>
-						<button
-							type="button"
-							className={chip({ variant: "node" })}
-							aria-label="Node.js technology"
-						>
-							<span
-								aria-hidden="true"
-								className={css({ fontSize: "0.9em" })}
-							>
-								🌱
-							</span>
-							<span>Node.js</span>
+							<span>Product</span>
 						</button>
 					</div>
 
@@ -282,49 +268,38 @@ const chip = cva({
 	variants: {
 		variant: {
 			ai: {
-				bg: { base: "gray.50", _dark: "dark.card" },
-				color: { base: "gray.700", _dark: "dark.textSecondary" },
-				borderColor: { base: "gray.200", _dark: "dark.border" },
+					bg: { base: "blue.50", _dark: "dark.card" },
+					color: { base: "blue.700", _dark: "dark.textSecondary" },
+					borderColor: { base: "blue.200", _dark: "dark.border" },
 				_focusVisible: {
-					outlineColor: "gray.600",
+						outlineColor: "blue.600",
 				},
 				_hover: {
-					bg: { base: "gray.100", _dark: "dark.surface" },
+						bg: { base: "blue.100", _dark: "dark.surface" },
 				},
 			},
-			react: {
-				bg: { base: "blue.50", _dark: "blue.900/20" },
-				color: { base: "blue.700", _dark: "blue.400" },
-				borderColor: { base: "blue.200", _dark: "blue.700" },
-				_focusVisible: {
-					outlineColor: "blue.600",
+				leadership: {
+					bg: { base: "orange.50", _dark: "orange.900/20" },
+					color: { base: "orange.700", _dark: "orange.400" },
+					borderColor: { base: "orange.200", _dark: "orange.700" },
+					_focusVisible: {
+						outlineColor: "orange.600",
+					},
+					_hover: {
+						bg: { base: "orange.100", _dark: "orange.800/30" },
+					},
 				},
-				_hover: {
-					bg: { base: "blue.100", _dark: "blue.800/30" },
+				product: {
+					bg: { base: "purple.50", _dark: "purple.900/20" },
+					color: { base: "purple.700", _dark: "purple.400" },
+					borderColor: { base: "purple.200", _dark: "purple.700" },
+					_focusVisible: {
+						outlineColor: "purple.600",
+					},
+					_hover: {
+						bg: { base: "purple.100", _dark: "purple.800/30" },
+					},
 				},
-			},
-			typescript: {
-				bg: { base: "indigo.50", _dark: "indigo.900/20" },
-				color: { base: "indigo.700", _dark: "indigo.400" },
-				borderColor: { base: "indigo.200", _dark: "indigo.700" },
-				_focusVisible: {
-					outlineColor: "indigo.600",
-				},
-				_hover: {
-					bg: { base: "indigo.100", _dark: "indigo.800/30" },
-				},
-			},
-			node: {
-				bg: { base: "green.50", _dark: "green.900/20" },
-				color: { base: "green.700", _dark: "green.400" },
-				borderColor: { base: "green.200", _dark: "green.700" },
-				_focusVisible: {
-					outlineColor: "green.600",
-				},
-				_hover: {
-					bg: { base: "green.100", _dark: "green.800/30" },
-				},
-			},
 			cta: {
 				height: "44px",
 				px: "4",

@@ -2,19 +2,19 @@ import { css } from "../../styled-system/css/index.mjs";
 
 const items = [
 	{
-		title: "Full-Stack Development",
-		body: "React + Node. Ship weekly with modern tooling and DX.",
-		icon: "⚡",
+		title: "Engineering Leadership & Team Growth",
+		body:
+			"Leading high-performing teams, scaling orgs, mentoring engineers, and driving delivery through clarity and execution.",
 	},
 	{
-		title: "Engineering Leadership",
-		body: "Clear bets, strong execution, calm, predictable delivery.",
-		icon: "🎯",
+		title: "AI & Platform Strategy",
+		body:
+			"Leading AI initiatives including Gemini Code Assist, bridging engineering, product, and research to deliver at scale.",
 	},
 	{
-		title: "AI Advisory",
-		body: "Use AI as leverage for teams and tooling, not a crutch.",
-		icon: "🤖",
+		title: "Product Execution & Delivery",
+		body:
+			"Driving product vision, prioritization, and cross-functional execution to ship products used by millions.",
 	},
 ];
 
@@ -71,6 +71,7 @@ export default function CoreCompetencies() {
 						display: "flex",
 						flexDirection: "column",
 						flex: "1",
+						minHeight: "300px",
 						rounded: "xl",
 						borderWidth: "1px",
 						borderColor: "gray.200",
@@ -78,46 +79,35 @@ export default function CoreCompetencies() {
 						p: "8",
 						shadow: "sm",
 						height: "100%",
+						gap: "3",
+						alignItems: "center",
+						justifyContent: "center",
 					})}
 				>
-						{/* Icon */}
-						<div
-							className={css({
-								fontSize: "4xl",
-								mb: "6",
-								textAlign: "center",
-								height: "64px",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-							})}
-						>
-							{it.icon}
-						</div>
+					
 
 						{/* Title */}
-						<h3
+					<h3
 							className={css({
-								fontSize: "xl",
+							fontSize: { base: "lg", md: "xl" },
 								fontWeight: "bold",
-								mb: "4",
-								textAlign: "center",
+							mb: "2",
+							textAlign: "center",
 								color: "gray.900",
-								lineHeight: "1.3",
+							lineHeight: "1.25",
 							})}
 						>
 							{it.title}
 						</h3>
 
 						{/* Description */}
-						<p
+					<p
 							className={css({
 								color: "gray.600",
-								mb: "6",
-								textAlign: "center",
+							mb: "0",
+							textAlign: "center",
 								lineHeight: "1.6",
 								fontSize: "md",
-								flex: "1",
 							})}
 					>
 						{it.body}

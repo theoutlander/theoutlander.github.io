@@ -45,6 +45,16 @@ const pill = cva({
 	defaultVariants: { tone: "gray" },
 });
 
+// Helper to map plain string tags to the closest visual tone
+type PillTone = "gray" | "blue" | "green" | "purple" | "orange";
+function inferToneFromLabel(label: string): PillTone {
+	const lower = label.toLowerCase();
+	if (lower.includes("ai")) return "blue";
+	if (lower.includes("lead")) return "orange";
+	if (lower.includes("product")) return "purple";
+	return "gray";
+}
+
 // ====== header styles ======
 const headerCard = css({
 	display: "flex",
@@ -245,11 +255,14 @@ const actionButtons = [
 interface NameHeaderProps {
 	showDownloadButton?: boolean;
 	onDownload?: () => void;
+	/** Optional list of tag labels to display instead of default skills */
+	tags?: string[];
 }
 
 export default function NameHeader({
 	showDownloadButton = true,
 	onDownload,
+	tags,
 }: NameHeaderProps) {
 	return (
 		<section className={[card, headerCard].join(" ")}>
@@ -262,17 +275,23 @@ export default function NameHeader({
 			<div className={titleBox}>
 				<span className={nameCss}>Nick Karnik</span>
 				<span className={subtitleCss}>
-					Staff Software Engineer & Engineering Leader
+					Engineering Leader - AI & Product Strategy
 				</span>
 				<div className={badgeRow}>
-					{skills.map((skill) => (
-						<span
-							key={skill.label}
-							className={pill({ tone: skill.tone })}
-						>
-							{skill.label}
-						</span>
-					))}
+					{tags && tags.length > 0
+						? tags.map((label) => (
+								<span key={label} className={pill({ tone: inferToneFromLabel(label) })}>
+									{label}
+								</span>
+						  ))
+						: skills.map((skill) => (
+								<span
+									key={skill.label}
+									className={pill({ tone: skill.tone })}
+								>
+									{skill.label}
+								</span>
+						  ))}
 				</div>
 				<div className={iconRow}>
 					{contactLinks.map((link) => (

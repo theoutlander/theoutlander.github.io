@@ -144,6 +144,9 @@ const sidebarTitle = css({
 	fontWeight: "semibold",
 	color: { base: "gray.800", _dark: "gray.200" },
 	mb: 3,
+	pb: 3,
+	borderBottomWidth: "1px",
+	borderColor: "gray.100",
 });
 
 export default function ContactSection({ className }: ContactSectionProps) {
