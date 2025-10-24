@@ -56,7 +56,7 @@ export default function BlogCard({ post }: { post: Post }) {
 					})}
 				>
 					{post.date ? new Date(post.date).toDateString() : ""} ·{" "}
-					{estimateReadingTime(post.excerpt || "")} min read
+					{estimateReadingTime(post.contentMarkdown || post.contentHtml || post.excerpt || "")} min read
 				</p>
 				{post.excerpt ? (
 					<p
@@ -109,6 +109,8 @@ export default function BlogCard({ post }: { post: Post }) {
 	);
 }
 function estimateReadingTime(text: string) {
-	const words = text.trim().split(/\s+/).length;
+	// Strip HTML tags if present
+	const cleanText = text.replace(/<[^>]*>/g, '');
+	const words = cleanText.trim().split(/\s+/).length;
 	return Math.max(1, Math.round(words / 200));
 }

@@ -15,12 +15,8 @@ const router = createRouter({
 });
 
 // Add debugging
-router.subscribe("onLoad", ({ pathname, routeId }) => {
-	console.log("Route loaded:", pathname, routeId);
-});
-
-router.subscribe("onError", ({ error, pathname }) => {
-	console.error("Route error:", error, pathname);
+router.subscribe("onLoad", (event) => {
+	console.log("Route loaded:", event.toLocation.pathname);
 });
 
 // Handle GitHub Pages SPA redirect

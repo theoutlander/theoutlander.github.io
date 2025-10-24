@@ -76,10 +76,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							</time>
 							<span>•</span>
 							<span>
-								{Math.max(
-									1,
-									Math.round((post.excerpt || "").split(" ").length / 200)
-								)}{" "}
+								{estimateReadingTime(post.contentHtml || post.html || post.contentMarkdown || post.excerpt || "")}{" "}
 								min read
 							</span>
 						</div>
@@ -222,4 +219,11 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 			<Footer />
 		</div>
 	);
+}
+
+function estimateReadingTime(text: string) {
+	// Strip HTML tags if present
+	const cleanText = text.replace(/<[^>]*>/g, '');
+	const words = cleanText.trim().split(/\s+/).length;
+	return Math.max(1, Math.round(words / 200));
 }

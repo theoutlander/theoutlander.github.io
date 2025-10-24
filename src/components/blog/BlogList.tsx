@@ -164,8 +164,8 @@ export default function BlogList({
 								})}
 							>
 								{p.date ? new Date(p.date).toDateString() : ""}
-								{p.excerpt
-									? ` · ${estimateReadingTime(p.excerpt)} min read`
+								{p.contentMarkdown || p.contentHtml || p.excerpt
+									? ` · ${estimateReadingTime(p.contentMarkdown || p.contentHtml || p.excerpt || "")} min read`
 									: ""}
 							</p>
 
@@ -188,6 +188,8 @@ export default function BlogList({
 }
 
 function estimateReadingTime(text: string) {
-	const words = text.trim().split(/\s+/).length;
+	// Strip HTML tags if present
+	const cleanText = text.replace(/<[^>]*>/g, '');
+	const words = cleanText.trim().split(/\s+/).length;
 	return Math.max(1, Math.round(words / 200));
 }
