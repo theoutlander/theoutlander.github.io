@@ -2,27 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nick.karnik.io/</loc>
-    <lastmod>2025-10-17T23:55:38.651Z</lastmod>
+    <lastmod>2025-10-24T20:39:51.252Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/blog</loc>
-    <lastmod>2025-10-17T23:55:38.651Z</lastmod>
+    <lastmod>2025-10-24T20:39:51.252Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/about</loc>
-    <lastmod>2025-10-17T23:55:38.651Z</lastmod>
+    <lastmod>2025-10-24T20:39:51.252Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/resume</loc>
-    <lastmod>2025-10-17T23:55:38.651Z</lastmod>
+    <lastmod>2025-10-24T20:39:51.252Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nick.karnik.io/blog/build-for-speed</loc>
+    <lastmod>2025-10-23T13:47:00.000Z</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/blog/its-not-the-launch-its-the-landing</loc>
