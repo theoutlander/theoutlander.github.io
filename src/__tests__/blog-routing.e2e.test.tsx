@@ -6,41 +6,51 @@ describe("Blog Routing E2E", () => {
 	let serverAvailable = false;
 
 	beforeAll(async () => {
-		// Wait for dev server to be ready
-		baseUrl = "http://localhost:5173";
+		// Check if a specific port is provided via environment variable
+		const envPort = process.env.E2E_DEV_SERVER_PORT;
+		const possiblePorts = envPort 
+			? [parseInt(envPort, 10)]
+			: [5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180];
+		
+		const maxAttemptsPerPort = 5; // Try each port multiple times
+		const waitTimeBetweenAttempts = 3000; // 3 seconds between attempts
 
-		// Wait for server to be ready
-		let attempts = 0;
-		const maxAttempts = 10; // Increased to 10 for more reliable detection
+		// Try each port until we find one that's working
+		for (const port of possiblePorts) {
+			baseUrl = `https://localhost:${port}`;
+			console.log(`Trying to connect to ${baseUrl}...`);
 
-		while (attempts < maxAttempts) {
-			try {
-				const response = await fetch(`${baseUrl}/`, {
-					method: 'HEAD', // Use HEAD request for faster check
-					signal: AbortSignal.timeout(2000), // 2 second timeout per attempt
-				});
-				if (response.ok) {
-					serverAvailable = true;
-					console.log(`Dev server is ready at ${baseUrl}`);
-					break;
+			// Try this port multiple times before moving to the next
+			for (let attempt = 0; attempt < maxAttemptsPerPort; attempt++) {
+				try {
+					const response = await fetch(`${baseUrl}/`, {
+						method: 'HEAD', // Use HEAD request for faster check
+						signal: AbortSignal.timeout(5000), // 5 second timeout per attempt
+					});
+					if (response.ok) {
+						serverAvailable = true;
+						console.log(`✅ Dev server is ready at ${baseUrl}`);
+						return; // Success! Exit the function
+					}
+				} catch (error) {
+					// Server not ready yet on this port, continue
+					console.log(`⏳ Attempt ${attempt + 1}/${maxAttemptsPerPort}: Dev server not ready yet on port ${port}`);
 				}
-			} catch (error) {
-				// Server not ready yet, continue waiting
-				console.log(`Attempt ${attempts + 1}/${maxAttempts}: Dev server not ready yet`);
+
+				// Wait before next attempt (except on the last attempt)
+				if (attempt < maxAttemptsPerPort - 1) {
+					await new Promise((resolve) => setTimeout(resolve, waitTimeBetweenAttempts));
+				}
 			}
-
-			await new Promise((resolve) => setTimeout(resolve, 2000)); // Wait 2 seconds between attempts
-			attempts++;
+			
+			console.log(`❌ Port ${port} not available, trying next port...`);
 		}
 
-		if (attempts >= maxAttempts) {
-			// Skip all tests if dev server is not available
-			console.log("Dev server not available after maximum attempts, skipping E2E tests");
-			console.log("To run E2E tests, start the dev server with: pnpm dev");
-			serverAvailable = false;
-			return;
-		}
-	}, 25000); // 25 second timeout for the beforeAll hook
+		// If we get here, no port worked
+		console.log("❌ Dev server not available after trying all ports, skipping E2E tests");
+		console.log("💡 To run E2E tests, start the dev server with: pnpm dev");
+		serverAvailable = false;
+	}, 60000); // 60 second timeout for the beforeAll hook
 
 	it("should serve the blog post page successfully", async () => {
 		if (!serverAvailable) {
