@@ -1,6 +1,6 @@
 import { css } from "../../../styled-system/css/index.mjs";
 // import { Helmet } from 'react-helmet-async';
-import type { Post } from "./RoutePost";
+import type { Post } from "../../types/blog";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
 export default function BlogList({
@@ -107,80 +107,97 @@ export default function BlogList({
 					display: "grid",
 					gridTemplateColumns: { base: "1fr", md: "repeat(2, 1fr)" },
 					gap: 6,
+					alignItems: "stretch",
 				})}
 			>
 				{items.map((p) => (
-					<div
+					<a
 						key={p.slug}
+						href={`/blog/${p.slug}`}
 						className={css({
-							borderRadius: "2xl",
-							overflow: "hidden",
-							shadow: "sm",
-							bg: { base: "white", _dark: "dark.card" },
-							border: "1px solid",
-							borderColor: { base: "gray.200", _dark: "dark.border" },
-							_hover: { shadow: "md", transform: "translateY(-2px)" },
-							transition: "all 120ms",
-							"@media (prefers-reduced-motion: reduce)": {
-								transition: "none",
-								_hover: {
-									transform: "none",
-								},
-							},
+							textDecoration: "none",
+							color: "inherit",
+							display: "flex",
+							height: "100%",
 						})}
 					>
-						{p.cover ? (
-							<img
-								src={p.cover}
-								alt=""
-								loading="lazy"
-								className={css({
-									objectFit: "cover",
-									maxH: "260px",
-									w: "100%",
-								})}
-							/>
-						) : null}
-
-						<div className={css({ p: 4 })}>
-							<a
-								href={`/blog/${p.slug}`}
-								className={css({
-									textDecoration: "none",
-									color: { base: "brand.700", _dark: "brand.400" },
-									fontWeight: "semibold",
-									fontSize: "lg",
-									_hover: { color: { base: "brand.600", _dark: "brand.300" } },
-								})}
-							>
-								<h2>{p.title}</h2>
-							</a>
-
-							<p
-								className={css({
-									fontSize: "sm",
-									color: { base: "gray.600", _dark: "dark.textMuted" },
-									mt: 1,
-								})}
-							>
-								{p.date ? new Date(p.date).toDateString() : ""}
-								{p.contentMarkdown || p.contentHtml || p.excerpt
-									? ` · ${estimateReadingTime(p.contentMarkdown || p.contentHtml || p.excerpt || "")} min read`
-									: ""}
-							</p>
-
-							{p.excerpt ? (
-								<p
+						<div
+							className={css({
+								borderRadius: "2xl",
+								overflow: "hidden",
+								shadow: "sm",
+								bg: { base: "white", _dark: "dark.card" },
+								border: "1px solid",
+								borderColor: { base: "gray.200", _dark: "dark.border" },
+								_hover: { shadow: "md", transform: "translateY(-2px)" },
+								transition: "all 120ms",
+								display: "flex",
+								flexDirection: "column",
+								width: "100%",
+								"@media (prefers-reduced-motion: reduce)": {
+									transition: "none",
+									_hover: {
+										transform: "none",
+									},
+								},
+							})}
+						>
+							{p.cover ? (
+								<img
+									src={p.cover}
+									alt=""
+									loading="lazy"
 									className={css({
-										mt: 3,
-										color: { base: "gray.900", _dark: "dark.text" },
+										objectFit: "cover",
+										maxH: "260px",
+										w: "100%",
+									})}
+								/>
+							) : null}
+
+							<div className={css({ p: 4, display: "flex", flexDirection: "column", flex: 1 })}>
+								<h2
+									className={css({
+										color: { base: "brand.700", _dark: "brand.400" },
+										fontWeight: "semibold",
+										fontSize: "lg",
+										_hover: { color: { base: "brand.600", _dark: "brand.300" } },
 									})}
 								>
-									{p.excerpt}
+									{p.title}
+								</h2>
+
+								<p
+									className={css({
+										fontSize: "sm",
+										color: { base: "gray.600", _dark: "dark.textMuted" },
+										mt: 1,
+									})}
+								>
+									{p.date ? new Date(p.date).toDateString() : ""}
+									{p.contentMarkdown || p.contentHtml || p.excerpt
+										? ` · ${estimateReadingTime(p.contentMarkdown || p.contentHtml || p.excerpt || "")} min read`
+										: ""}
 								</p>
-							) : null}
+
+								{p.excerpt ? (
+									<p
+										className={css({
+											mt: 3,
+											color: { base: "gray.900", _dark: "dark.text" },
+											flex: 1,
+											display: "-webkit-box",
+											WebkitLineClamp: 3,
+											WebkitBoxOrient: "vertical",
+											overflow: "hidden",
+										})}
+									>
+										{p.excerpt}
+									</p>
+								) : null}
+							</div>
 						</div>
-					</div>
+					</a>
 				))}
 			</div>
 		</div>

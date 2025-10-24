@@ -1,5 +1,6 @@
 import { Helmet } from "../seo/HelmetShim";
 import ProgressTop from "../ui/ProgressTop";
+import BackToTop from "../ui/BackToTop";
 import PostJsonLd from "../seo/PostJsonLd";
 import Comments from "./Comments";
 import { css } from "../../../styled-system/css/index.mjs";
@@ -114,6 +115,7 @@ export default function PostView({ post }: { post: Post }) {
 					postUrl={postUrl}
 				/>
 			</div>
+			<BackToTop />
 		</>
 	);
 }

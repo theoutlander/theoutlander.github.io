@@ -1,20 +1,16 @@
 export const COMMENTS_CONFIG = {
 	githubRepo: "theoutlander/theoutlander.github.io",
 	giscus: {
-		repoId: "R_kgDOJqXqYQ",
+		repoId: "MDEwOlJlcG9zaXRvcnkxNjg5ODEwMg==",
 		category: "General",
-		categoryId: "DIC_kwDOJqXqYc4CXgQZ",
+		categoryId: "DIC_kwDOAQHYNs4CxCAj",
 		mapping: "pathname",
 		strict: "0",
 		reactionsEnabled: "1",
-		emitMetadata: "0",
+		emitMetadata: "1",
 		inputPosition: "bottom",
-		theme: "light",
+		theme: "preferred_color_scheme",
 		lang: "en",
 		loading: "lazy",
-	},
-	utterances: {
-		issueTerm: "pathname",
-		theme: "github-light",
 	},
 };

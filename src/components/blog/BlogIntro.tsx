@@ -5,12 +5,12 @@ export default function BlogIntro() {
 	const blogIntroStyles = css({
 		maxW: "760px",
 		mx: "auto",
-		mb: 4, // ~16px bottom margin to cards
-		p: 0,
+		mb: 6, // Slightly more bottom margin
+		p: 4, // Add some padding
 		textAlign: "left",
 		"& p": {
 			m: 0,
-			lineHeight: "1.5",
+			lineHeight: "1.6", // Slightly better line height
 		},
 		"& .lead": {
 			fontWeight: "600",
@@ -37,6 +37,7 @@ export default function BlogIntro() {
 		},
 		// Mobile adjustments - reduce spacing slightly
 		"@media (max-width: 480px)": {
+			p: 2, // Less padding on mobile
 			"& .sub": {
 				mt: "0.8rem", // Slightly tighter on mobile
 			},
@@ -67,7 +68,7 @@ export default function BlogIntro() {
 				</strong>{" "}
 			</p>
 			<p className="cta">
-				I’m currently focused on full-time engineering leadership roles in AI, platform, and product engineering.
+				I'm currently focused on full-time engineering leadership roles in AI, platform, and product engineering.
 			</p>
 		</div>
 	);
