@@ -111,7 +111,61 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 						{/* Contact */}
 						<ContactSection />
 
-
+						{/* Patents */}
+						<div
+							className={css({
+								bg: "white",
+								borderWidth: "1px",
+								borderColor: "gray.200",
+								borderRadius: "xl",
+								boxShadow: "sm",
+								p: { base: 4, md: 5 },
+							})}
+						>
+							<div
+								className={css({
+									fontSize: "sm",
+									fontWeight: "semibold",
+									color: "gray.800",
+									mb: 3,
+									pb: 3,
+									borderBottomWidth: "1px",
+									borderColor: "gray.100",
+								})}
+							>
+								🔬 Patents
+							</div>
+							<div className={css({ mb: 3 })}>
+								<a
+									href="https://patents.google.com/patent/US8918354B2/en"
+									target="_blank"
+									rel="noopener noreferrer"
+									className={css({
+										fontSize: "sm",
+										fontWeight: "semibold",
+										color: "blue.600",
+										textDecoration: "none",
+										_hover: {
+											textDecoration: "underline",
+										},
+										display: "block",
+										mb: 1,
+										lineHeight: "1.5",
+									})}
+								>
+									US Patent 8,918,354: Intelligent intent detection from social network messages
+								</a>
+								<p
+									className={css({
+										color: "gray.500",
+										fontSize: "xs",
+										mt: 1,
+									})}
+								>
+									Granted 2014 • Active until 2032
+								</p>
+							</div>
+						</div>
 
 						{/* Now */}
 						<div

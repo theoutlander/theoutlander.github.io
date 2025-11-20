@@ -3,6 +3,11 @@ import { render, screen } from "../../../test/test-utils";
 import BlogCard from "../BlogCard";
 import type { Post } from "../RoutePost";
 
+// Mock the styled-system css function
+vi.mock("../../styled-system/css/index.mjs", () => ({
+	css: vi.fn((styles) => JSON.stringify(styles)),
+}));
+
 // Mock the router
 vi.mock("@tanstack/react-router", () => ({
 	Link: ({

@@ -16,7 +16,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 	return (
 		<div
 			className={css({
-				bg: "gray.50",
+				bg: "white",
 				minH: "100vh",
 				width: "100%",
 				overflowX: "hidden",
@@ -27,30 +27,21 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 			<main
 				id="main-content"
 				className={css({
-					maxW: "4xl",
+					maxW: "768px",
 					py: { base: 6, md: 10 },
 					mx: "auto",
 					px: { base: 4, md: 6 },
 					width: "100%",
 				})}
 			>
-				<article
-					className={css({
-						bg: "white",
-						borderRadius: "2xl",
-						p: { base: 4, md: 8 },
-						shadow: "sm",
-						border: "1px solid",
-						borderColor: "gray.200",
-					})}
-				>
+				<article>
 					<header className={css({ mb: 8 })}>
 						<h1
 							className={css({
-								fontSize: { base: "2xl", md: "3xl" },
-								fontWeight: "bold",
+								fontSize: { base: "2xl", md: "2.5rem" },
+								fontWeight: "600",
 								mb: 4,
-								color: "gray.800",
+								color: "#000",
 								lineHeight: 1.2,
 							})}
 						>
@@ -61,10 +52,10 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							className={css({
 								display: "flex",
 								alignItems: "center",
-								gap: 4,
+								gap: 2,
 								mb: 6,
-								fontSize: "sm",
-								color: "gray.600",
+								fontSize: "14px",
+								color: "#666",
 							})}
 						>
 							<time>
@@ -76,11 +67,19 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 									  })
 									: ""}
 							</time>
-							<span>•</span>
+							<span>│</span>
 							<span>
-								{estimateReadingTime(post.contentHtml || post.html || post.contentMarkdown || post.excerpt || "")}{" "}
+								{estimateReadingTime(
+									post.contentHtml || post.html || post.excerpt || ""
+								)}{" "}
 								min read
 							</span>
+							{post.tags && post.tags.length > 0 && (
+								<>
+									<span>│</span>
+									<span>{post.tags[0]}</span>
+								</>
+							)}
 						</div>
 
 						{post.cover && (
@@ -90,9 +89,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								loading="lazy"
 								className={css({
 									width: "100%",
-									height: "300px",
-									objectFit: "cover",
-									borderRadius: "lg",
+									height: "auto",
 									mb: 6,
 								})}
 							/>
@@ -101,22 +98,22 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 
 					<div
 						className={css({
-							fontSize: { base: "md", md: "lg" },
+							fontSize: { base: "16px", md: "18px" },
 							lineHeight: 1.7,
-							color: "gray.800",
+							color: "#000",
 							"& h2": {
-								fontSize: { base: "xl", md: "2xl" },
-								fontWeight: "bold",
+								fontSize: { base: "1.5rem", md: "1.75rem" },
+								fontWeight: "600",
 								mt: 8,
 								mb: 4,
-								color: "gray.900",
+								color: "#000",
 							},
 							"& h3": {
-								fontSize: { base: "lg", md: "xl" },
-								fontWeight: "semibold",
+								fontSize: { base: "1.25rem", md: "1.5rem" },
+								fontWeight: "600",
 								mt: 6,
 								mb: 3,
-								color: "gray.900",
+								color: "#000",
 							},
 							"& p": {
 								mb: 4,
@@ -129,27 +126,27 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								mb: 2,
 							},
 							"& blockquote": {
-								borderLeft: "4px solid",
-								borderColor: "blue.500",
+								borderLeft: "3px solid",
+								borderColor: "#ccc",
 								pl: 4,
 								py: 2,
-								bg: "blue.50",
-								fontStyle: "italic",
 								mb: 4,
+								fontStyle: "italic",
+								color: "#666",
 							},
 							"& code": {
-								bg: "gray.100",
+								bg: "#f5f5f5",
 								px: 2,
 								py: 1,
-								borderRadius: "md",
-								fontSize: "sm",
+								borderRadius: "3px",
+								fontSize: "0.9em",
 								fontFamily: "mono",
 							},
 							"& pre": {
-								bg: "gray.900",
-								color: "white",
-								p: { base: 2, md: 4 },
-								borderRadius: "lg",
+								bg: "#f5f5f5",
+								color: "#000",
+								p: { base: 3, md: 4 },
+								borderRadius: "3px",
 								overflow: "auto",
 								overflowX: "auto",
 								mb: 4,
@@ -160,6 +157,10 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								color: "inherit",
 								px: 0,
 								py: 0,
+							},
+							"& a": {
+								color: "#000",
+								textDecoration: "underline",
 							},
 						})}
 					>
@@ -178,7 +179,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								mt: 8,
 								pt: 6,
 								borderTop: "1px solid",
-								borderColor: "gray.200",
+								borderColor: "#e5e5e5",
 							})}
 						>
 							<div
@@ -188,40 +189,26 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 									flexWrap: "wrap",
 								})}
 							>
-							{post.tags.map((tag) => (
-								<span
-									key={tag}
-									className={css({
-										bg: "blue.100",
-										color: "blue.800",
-										px: "12px",
-										py: "6px",
-										borderRadius: "full",
-										fontSize: "12px",
-										fontWeight: "600",
-										display: "inline-flex",
-										alignItems: "center",
-										textTransform: "uppercase",
-										letterSpacing: "0.025em",
-										_hover: {
-											bg: "blue.200",
-											transform: "translateY(-1px)",
-										},
-										transition: "all 0.2s ease",
-									})}
-								>
-									{capitalizeFirstLetter(tag)}
-								</span>
-							))}
+								{post.tags.map((tag) => (
+									<span
+										key={tag}
+										className={css({
+											color: "#666",
+											fontSize: "14px",
+										})}
+									>
+										{capitalizeFirstLetter(tag)}
+									</span>
+								))}
 							</div>
 						</div>
 					)}
 				</article>
 
 				{/* Comments Section */}
-				<Comments 
-					postTitle={post.title} 
-					postUrl={`/blog/${post.slug}`} 
+				<Comments
+					postTitle={post.title}
+					postUrl={`/blog/${post.slug}`}
 				/>
 			</main>
 			<Footer />
@@ -232,7 +219,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 
 function estimateReadingTime(text: string) {
 	// Strip HTML tags if present
-	const cleanText = text.replace(/<[^>]*>/g, '');
+	const cleanText = text.replace(/<[^>]*>/g, "");
 	const words = cleanText.trim().split(/\s+/).length;
 	return Math.max(1, Math.round(words / 200));
 }

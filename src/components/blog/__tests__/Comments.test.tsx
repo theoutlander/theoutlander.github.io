@@ -17,20 +17,20 @@ vi.mock("../../../../styled-system/recipes/index.mjs", () => ({
 	commentsActions: vi.fn(() => "comments-actions"),
 }));
 
-// Mock the comment components
-vi.mock("../UtterancesComments", () => ({
-	default: ({ postTitle, postUrl }: { postTitle: string; postUrl: string }) => (
-		<div data-testid="utterances-comments">
-			Utterances Comments for {postTitle} at {postUrl}
-		</div>
+// Mock react-icons
+vi.mock("react-icons/fa", () => ({
+	FaComment: ({ size, color }: { size: number; color: string }) => (
+		<svg
+			data-testid="comment-icon"
+			width={size}
+			height={size}
+			fill={color}
+			viewBox="0 0 512 512"
+		>
+			<path d="M256 32C114.6 32 0 125.1 0 240c0 49.6 21.4 95 57 130.7C44.5 421.1 2.7 466 2.2 466.5c-2.2 2.3-2.8 5.7-1.5 8.7S4.8 480 8 480c66.3 0 116-31.8 140.6-51.4 32.7 12.3 69 19.4 107.4 19.4 141.4 0 256-93.1 256-208S397.4 32 256 32z" />
+		</svg>
 	),
-}));
-
-
-vi.mock("../SimpleComments", () => ({
-	default: ({ postSlug }: { postSlug: string }) => (
-		<div data-testid="simple-comments">Simple Comments for {postSlug}</div>
-	),
+	FaHeart: () => <div data-testid="heart-icon">Heart</div>,
 }));
 
 // Mock the comments config
@@ -64,14 +64,19 @@ describe("Comments", () => {
 		document.body.innerHTML = "";
 	});
 
-	it("renders Utterances comments by default", () => {
+	it("renders Giscus comments section", () => {
 		render(<Comments {...defaultProps} />);
 
-		expect(screen.getByTestId("utterances-comments")).toBeInTheDocument();
-		expect(
-			screen.getByText(
-				`Utterances Comments for ${defaultProps.postTitle} at ${defaultProps.postUrl}`
-			)
-		).toBeInTheDocument();
+		// Check that the Comments heading is rendered
+		expect(screen.getByText("Comments")).toBeInTheDocument();
+		
+		// Check that the comment icon is rendered
+		expect(screen.getByTestId("comment-icon")).toBeInTheDocument();
+		
+		// Check that the comments container div exists (where Giscus script will be injected)
+		const commentsContainer = document.querySelector(
+			'div[class*="borderRadius"]'
+		);
+		expect(commentsContainer).toBeInTheDocument();
 	});
 });

@@ -51,11 +51,11 @@ export default defineConfig({
 				fonts: {
 					heading: {
 						value:
-							'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+							'-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
 					},
 					body: {
 						value:
-							'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
+							'-apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif',
 					},
 				},
 				spacing: {

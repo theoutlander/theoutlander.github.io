@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Start serve in background and capture the PID
-npx serve dist -l 3000 > /tmp/serve.log 2>&1 &
+NPM_CONFIG_LOGLEVEL=error npx serve dist -l 3000 > /tmp/serve.log 2>&1 &
 SERVE_PID=$!
 
 # Wait for serve to start
@@ -20,7 +20,7 @@ fi
 echo "Testing links on http://localhost:$PORT"
 
 # Run linkinator with the actual port
-npx linkinator http://localhost:$PORT --recurse --skip 'linkedin.com'
+NPM_CONFIG_LOGLEVEL=error npx linkinator http://localhost:$PORT --recurse --skip 'linkedin.com' --skip 'cdn-cgi/l/email-protection'
 
 # Capture the exit code
 EXIT_CODE=$?

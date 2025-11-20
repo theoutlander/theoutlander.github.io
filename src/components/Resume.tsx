@@ -25,8 +25,10 @@ const getCompanyKey = (companyName: string): string => {
 		"Treasure Technologies": "treasure",
 		Jobbatical: "jobbatical",
 		"Gates Foundation": "idm",
+		"Institute for Disease Modeling (Gates Foundation)": "idm",
 		Microsoft: "microsoft",
 		Tableau: "tableau",
+		"Tableau (Salesforce)": "tableau",
 		"Y Combinator": "ycombinator",
 		RoomToday: "roomtoday",
 		"COMPASS Technologies": "compass-technologies",
@@ -35,6 +37,7 @@ const getCompanyKey = (companyName: string): string => {
 		"Meds Publishing": "meds-publishing",
 		"University of Maryland": "umd",
 		"Videoly Platform": "videoly platform",
+		Videoly: "videoly platform",
 		"RoomToday Platform": "roomtoday platform",
 	};
 	return (
@@ -44,6 +47,26 @@ const getCompanyKey = (companyName: string): string => {
 			.replace(/\s+/g, "")
 			.replace(/[^a-z0-9-]/g, "")
 	);
+};
+
+// ----- Company URL mapping -----
+const getCompanyUrl = (companyName: string): string | null => {
+	const urlMap: Record<string, string> = {
+		Google: "https://www.google.com",
+		Salesforce: "https://www.salesforce.com",
+		"T-Mobile": "https://www.t-mobile.com",
+		"Gates Foundation": "https://www.gatesfoundation.org",
+		"Institute for Disease Modeling (Gates Foundation)":
+			"https://www.idmod.org",
+		Microsoft: "https://www.microsoft.com",
+		Tableau: "https://www.tableau.com",
+		"Tableau (Salesforce)": "https://www.tableau.com",
+		"University of Maryland": "https://www.umd.edu",
+		Jobbatical: "https://www.jobbatical.com",
+		"Treasure Technologies": "https://www.treasurefi.com",
+		"The Globalist": "https://www.theglobalist.com",
+	};
+	return urlMap[companyName] || null;
 };
 
 // ----- Pills (chips) -----
@@ -210,9 +233,17 @@ const experience: Exp[] = [
 	{
 		role: "Senior Engineering Manager",
 		company: "Salesforce",
-		dates: "Oct 2019 – Apr 2022",
+		dates: "Apr 2020 – Apr 2022",
 		blurb:
-			"Built CI pipeline (TACO) enabling 100+ partners to test connectors across Tableau/Salesforce stack. Delivered REST and native Salesforce connectors; owned Web Data Connector platform. Managed a team of 35+; drove hiring, mentoring, and technical strategy. Created Connector SDK adopted across the Tableau ecosystem.",
+			"Continued leadership of connector platform following Tableau acquisition. Delivered REST and native Salesforce connectors; owned Web Data Connector platform. Managed large engineering teams across multiple areas and vendor partnerships; drove hiring, mentoring, and technical strategy. Expanded Connector SDK adoption across Salesforce ecosystem.",
+		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "Team Leadership"],
+	},
+	{
+		role: "Senior Engineering Manager",
+		company: "Tableau",
+		dates: "Oct 2019 – Apr 2020",
+		blurb:
+			"Led the Data Connectivity Platform, overseeing ODBC, JDBC, and Web Data Connectors. Drove the creation of Web Data Connectors 3 (TACO Toolkit), including the TACO CLI and the Connector SDK that became core standards across the Tableau ecosystem. Built a CI pipeline that allowed more than 100 partners to test and validate their connectors across the entire Tableau stack. Managed engineering teams across multiple areas, guided vendor partnerships, and shaped hiring, mentoring, and technical strategy.",
 		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "Team Leadership"],
 	},
 	{
@@ -275,7 +306,7 @@ const experience: Exp[] = [
 		company: "Microsoft",
 		dates: "Aug 2006 – Aug 2012",
 		blurb:
-			"Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee). Built JS memory profiling tools for Outlook Web Access; developed Naive Bayes sentiment classifiers for Bing Shopping.",
+			"Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee). Built JS memory profiling tools for Outlook Web Access; developed Naive Bayes sentiment classifiers for Bing Shopping. Co-inventor on US Patent 8,918,354: Intelligent intent detection from social network messages.",
 		tags: [
 			"Big Data",
 			"JavaScript",
@@ -336,7 +367,7 @@ const experience: Exp[] = [
 const projects = [
 	{
 		name: "Gemini Code Assist",
-		company: "gemini-code-assist",
+		company: "Google",
 		dates: "2022 - 2025",
 		description:
 			"Led technical direction and hands-on engineering for Google's AI coding assistant, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.",
@@ -344,15 +375,15 @@ const projects = [
 	},
 	{
 		name: "TACO Toolkit & Connector SDK",
-		company: "Tableau",
+		company: "Tableau (Salesforce)",
 		dates: "2019 - 2022",
 		description:
-			"Built a robust CI/CD pipeline (TACO) enabling over 100 partners to test and deploy Tableau connectors efficiently. Created a Connector SDK widely adopted across Tableau's ecosystem, simplifying web data connector development.",
+			"Built the next generation connectivity platform called Web Data Connectors 3 (TACO Toolkit), a CI/CD pipeline enabling 100+ partners to test connectors across the Tableau stack. Created a Connector SDK that was widely adopted across the Tableau ecosystem, simplifying web data connector development.",
 		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "SDK Development"],
 	},
 	{
-		name: "Malaria Simulation Platform",
-		company: "Gates Foundation",
+		name: "Disease Modeling Tools",
+		company: "Institute for Disease Modeling (Gates Foundation)",
 		dates: "2012 - 2016",
 		description:
 			"Developed advanced simulation and visualization tools for malaria, HIV, TB, and polio research. Created software and spatial models featured in Bill Gates' TED Talk \"The next outbreak? We're not ready.\" Collaborated with WHO, ministries of health, NGOs, and universities worldwide.",
@@ -366,7 +397,7 @@ const projects = [
 	},
 	{
 		name: "Videoly Platform",
-		company: "Videoly Platform",
+		company: "Videoly",
 		dates: "2007 - 2009",
 		description:
 			"Co-founded video mail platform allowing users to send video messages via webcam or upload existing videos through email accounts. Accepted into YCombinator 2007. Experimented with ad-based and paid revenue models for consumer space and B2B platform services.",
@@ -380,7 +411,7 @@ const projects = [
 	},
 	{
 		name: "RoomToday Platform",
-		company: "RoomToday Platform",
+		company: "RoomToday",
 		dates: "2014 - 2016",
 		description:
 			"Co-founded and built a real-time, last-minute hotel booking platform. Raised $1.6M and led the acquisition by Simasindo and Northcliff Ventures. Developed mobile apps and real-time property management systems used by hotel partners across Asia and Europe.",
@@ -441,54 +472,153 @@ export default function Resume() {
 						<h3 className={sectionHeader}>Summary</h3>
 						<div className={css({ p: { base: 4, md: 6 } })}>
 							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-								Engineering leader with 25+ years building scalable platforms at Google, Microsoft, Salesforce, Tableau, and startups. Led Gemini Code Assist from inception to adoption by millions of developers. Developed epidemiological modeling systems featured in Bill Gates’ TED Talk and led high-performing engineering teams across Big Tech and high-growth environments. After a brief transition in April 2025, now focused on full-time engineering leadership in AI, platform, and product engineering.
+								Engineering leader with 25+ years building scalable platforms at
+								Google, Microsoft, Salesforce, Tableau, and startups. Led Gemini
+								Code Assist from inception to adoption by millions of
+								developers. Developed epidemiological modeling systems featured
+								in Bill Gates’ TED Talk and led high-performing engineering
+								teams across Big Tech and high-growth environments. After a
+								brief transition in April 2025, now focused on full-time
+								engineering leadership in AI, platform, and product engineering.
 							</p>
-					</div>
+						</div>
 					</article>
 					<article className={[card, "resume-card"].join(" ")}>
 						<h3 className={sectionHeader}>Experience</h3>
 
-					{experience.map((e, idx) => (
-						<div
-							key={idx}
-							className={expItem}
-						>
-							<div className={css({ textAlign: "left", mb: 4 })}>
-								<CompanyLogo 
-									company={getCompanyKey(e.company)} 
-									width={e.company === "University of Maryland" ? "160px" : "120px"}
+						{experience.map((e, idx) => (
+							<div
+								key={idx}
+								className={expItem}
+							>
+								<div className={css({ textAlign: "left", mb: 4 })}>
+									{getCompanyUrl(e.company) ? (
+										<a
+											href={getCompanyUrl(e.company)!}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={`Visit ${e.company} website`}
+											className={css({
+												display: "inline-block",
+												verticalAlign: "top",
+												lineHeight: 0,
+												transition: "opacity 0.2s",
+												_hover: {
+													opacity: 0.8,
+												},
+											})}
+										>
+											<CompanyLogo
+												company={getCompanyKey(e.company)}
+												width={
+													e.company === "University of Maryland"
+														? "160px"
+														: "120px"
+												}
+											/>
+										</a>
+									) : (
+										<CompanyLogo
+											company={getCompanyKey(e.company)}
+											width={
+												e.company === "University of Maryland"
+													? "160px"
+													: "120px"
+											}
+										/>
+									)}
+								</div>
+								<div className={expHeader}>
+									<div>
+										<div className={expTitle}>{e.role}</div>
+										<div className={expSub}>{e.company}</div>
+									</div>
+									<div className={expMeta}>
+										{e.dates}{" "}
+										{e.current ? (
+											<span className={pill({ tone: "green" })}>Current</span>
+										) : null}
+									</div>
+								</div>
+
+								<p
+									className={css({
+										color: "gray.700",
+										lineHeight: "1.65",
+										"& a": {
+											color: "blue.600",
+											fontWeight: "600",
+											textDecoration: "none",
+											borderBottomWidth: "2px",
+											borderBottomStyle: "solid",
+											borderBottomColor: "blue.400",
+											transition: "all 0.15s ease",
+											_hover: {
+												color: "blue.700",
+												borderBottomColor: "blue.600",
+											},
+											_dark: {
+												color: "blue.400",
+												borderBottomColor: "blue.500",
+												_hover: {
+													color: "blue.300",
+													borderBottomColor: "blue.400",
+												},
+											},
+										},
+										"& a.patent-link": {
+											color: "gray.700",
+											fontWeight: "500",
+											fontStyle: "italic",
+											borderBottomWidth: "1px",
+											borderBottomColor: "gray.400",
+											_hover: {
+												color: "gray.900",
+												borderBottomColor: "gray.600",
+											},
+											_dark: {
+												color: "gray.300",
+												borderBottomColor: "gray.500",
+												_hover: {
+													color: "gray.100",
+													borderBottomColor: "gray.400",
+												},
+											},
+										},
+									})}
+									dangerouslySetInnerHTML={{
+										__html:
+											e.company === "Microsoft" &&
+											e.blurb.includes("US Patent 8,918,354")
+												? e.blurb.replace(
+														/US Patent 8,918,354: Intelligent intent detection from social network messages/,
+														'<a href="https://patents.google.com/patent/US8918354B2/en" target="_blank" rel="noopener noreferrer" class="patent-link">US Patent 8,918,354: Intelligent intent detection from social network messages</a>'
+												  )
+												: e.company === "Gates Foundation" &&
+												  e.blurb.includes(
+														"The next outbreak? We're not ready."
+												  )
+												? e.blurb.replace(
+														/"The next outbreak\? We're not ready\."/,
+														'<a href="https://www.ted.com/talks/bill_gates_the_next_outbreak_we_re_not_ready" target="_blank" rel="noopener noreferrer">"The next outbreak? We\'re not ready."</a>'
+												  )
+												: e.blurb,
+									}}
 								/>
-							</div>
-							<div className={expHeader}>
-								<div>
-									<div className={expTitle}>{e.role}</div>
-									<div className={expSub}>{e.company}</div>
-								</div>
-								<div className={expMeta}>
-									{e.dates}{" "}
-									{e.current ? (
-										<span className={pill({ tone: "green" })}>Current</span>
-									) : null}
-								</div>
-							</div>
 
-							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-								{e.blurb}
-							</p>
-
-							<div className={tagRow}>
-								{e.tags.map((t) => (
-									<span
-										key={t}
-										className={pill()}
-									>
-										{capitalizeFirstLetter(t)}
-									</span>
-								))}
+								<div className={tagRow}>
+									{e.tags.map((t) => (
+										<span
+											key={t}
+											className={pill()}
+										>
+											{capitalizeFirstLetter(t)}
+										</span>
+									))}
+								</div>
 							</div>
-						</div>
-					))}
-				</article>
+						))}
+					</article>
 				</div>
 
 				{/* Right column - Skills, Education, Contact */}
@@ -524,7 +654,23 @@ export default function Resume() {
 						<h3 className={sectionHeader}>Education</h3>
 						<div className={css({ p: { base: 4, md: 6 } })}>
 							<div className={css({ textAlign: "left", mb: 4 })}>
-								<CompanyLogo company="umd" />
+								<a
+									href="https://www.umd.edu"
+									target="_blank"
+									rel="noopener noreferrer"
+									aria-label="Visit University of Maryland website"
+									className={css({
+										display: "inline-block",
+										verticalAlign: "top",
+										lineHeight: 0,
+										transition: "opacity 0.2s",
+										_hover: {
+											opacity: 0.8,
+										},
+									})}
+								>
+									<CompanyLogo company="umd" />
+								</a>
 							</div>
 							<div className={css({ mb: 4 })}>
 								<h4
@@ -567,6 +713,54 @@ export default function Resume() {
 						</div>
 					</article>
 
+					{/* Patents */}
+					<article className={[card, "resume-card"].join(" ")}>
+						<h3 className={sectionHeader}>Patents</h3>
+						<div className={css({ p: { base: 4, md: 6 } })}>
+							<div className={css({ mb: 3 })}>
+								<div className={css({ mb: 2 })}>
+									<a
+										href="https://patents.google.com/patent/US8918354B2/en"
+										target="_blank"
+										rel="noopener noreferrer"
+										className={css({
+											fontSize: "sm",
+											fontWeight: "semibold",
+											color: { base: "blue.600", _dark: "blue.400" },
+											textDecoration: "none",
+											_hover: {
+												textDecoration: "underline",
+											},
+											display: "block",
+											lineHeight: "1.4",
+										})}
+									>
+										US Patent 8,918,354
+									</a>
+									<p
+										className={css({
+											color: { base: "gray.700", _dark: "gray.300" },
+											fontSize: "sm",
+											mt: 0.5,
+											lineHeight: "1.5",
+										})}
+									>
+										Intelligent intent detection from social network messages
+									</p>
+								</div>
+								<p
+									className={css({
+										color: { base: "gray.500", _dark: "gray.500" },
+										fontSize: "xs",
+										mt: 1,
+									})}
+								>
+									Granted 2014 • Active until 2032
+								</p>
+							</div>
+						</div>
+					</article>
+
 					{/* Contact */}
 					<ContactSection />
 				</aside>
@@ -597,19 +791,123 @@ export default function Resume() {
 								className={expItem}
 							>
 								<div className={css({ textAlign: "left", mb: 4 })}>
-									<CompanyLogo company={getCompanyKey(project.company)} />
+									{getCompanyUrl(project.company) ? (
+										<a
+											href={getCompanyUrl(project.company)!}
+											target="_blank"
+											rel="noopener noreferrer"
+											aria-label={`Visit ${project.company} website`}
+											className={css({
+												display: "inline-block",
+												verticalAlign: "top",
+												lineHeight: 0,
+												transition: "opacity 0.2s",
+												_hover: {
+													opacity: 0.8,
+												},
+											})}
+										>
+											<CompanyLogo company={getCompanyKey(project.company)} />
+										</a>
+									) : (
+										<CompanyLogo company={getCompanyKey(project.company)} />
+									)}
 								</div>
 								<div className={expHeader}>
 									<div>
-										<div className={expTitle}>{project.name}</div>
+										{project.name === "Disease Modeling Tools" ? (
+											<a
+												href="https://www.idmod.org/tools/"
+												target="_blank"
+												rel="noopener noreferrer"
+												className={css({
+													color: { base: textMain.light, _dark: textMain.dark },
+													textDecoration: "none",
+													fontWeight: "semibold",
+													transition: "color 0.15s ease",
+													_hover: {
+														color: "blue.600",
+													},
+													_dark: {
+														_hover: {
+															color: "blue.400",
+														},
+													},
+												})}
+											>
+												<div className={expTitle}>{project.name}</div>
+											</a>
+										) : project.name === "Gemini Code Assist" ? (
+											<a
+												href="https://codeassist.google/"
+												target="_blank"
+												rel="noopener noreferrer"
+												className={css({
+													color: { base: textMain.light, _dark: textMain.dark },
+													textDecoration: "underline",
+													fontWeight: "semibold",
+												})}
+											>
+												<div className={expTitle}>{project.name}</div>
+											</a>
+										) : project.name === "TACO Toolkit & Connector SDK" ? (
+											<a
+												href="https://help.tableau.com/current/pro/desktop/en-us/examples_wdc_connector_sdk.htm"
+												target="_blank"
+												rel="noopener noreferrer"
+												className={css({
+													color: { base: textMain.light, _dark: textMain.dark },
+													textDecoration: "underline",
+													fontWeight: "semibold",
+												})}
+											>
+												<div className={expTitle}>{project.name}</div>
+											</a>
+										) : (
+											<div className={expTitle}>{project.name}</div>
+										)}
 										<div className={expSub}>{project.company}</div>
 									</div>
 									<div className={expMeta}>{project.dates}</div>
 								</div>
 
-								<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-									{project.description}
-								</p>
+								<p
+									className={css({
+										color: "gray.700",
+										lineHeight: "1.65",
+										"& a": {
+											color: "blue.600",
+											fontWeight: "600",
+											textDecoration: "none",
+											borderBottomWidth: "2px",
+											borderBottomStyle: "solid",
+											borderBottomColor: "blue.400",
+											transition: "all 0.15s ease",
+											_hover: {
+												color: "blue.700",
+												borderBottomColor: "blue.600",
+											},
+											_dark: {
+												color: "blue.400",
+												borderBottomColor: "blue.500",
+												_hover: {
+													color: "blue.300",
+													borderBottomColor: "blue.400",
+												},
+											},
+										},
+									})}
+									dangerouslySetInnerHTML={{
+										__html: project.description.includes(
+											"The next outbreak? We're not ready."
+										)
+											? project.description.replace(
+													/"The next outbreak\? We're not ready\."/,
+													'<a href="https://www.ted.com/talks/bill_gates_the_next_outbreak_we_re_not_ready" target="_blank" rel="noopener noreferrer">"The next outbreak? We\'re not ready."</a>'
+											  )
+											: project.description,
+									}}
+								/>
 
 								<div className={tagRow}>
 									{project.tags.map((t) => (
@@ -624,7 +922,7 @@ export default function Resume() {
 							</div>
 						))}
 					</div>
-					</article>
+				</article>
 				<div></div>
 			</section>
 		</main>

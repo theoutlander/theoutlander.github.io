@@ -1,5 +1,5 @@
 // src/components/blog/BlogCard.tsx
-import { css } from "../../styled-system/css/index.mjs";
+import { css } from "../../../styled-system/css/index.mjs";
 import type { Post } from "../../types/blog";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
 
@@ -20,7 +20,7 @@ export default function BlogCard({ post }: { post: Post }) {
 					shadow: "sm",
 					bg: "white",
 					border: "1px solid",
-					borderColor: "gray.200",
+					borderColor: "#e5e5e5",
 					_hover: { transform: "translateY(-2px)", shadow: "md" },
 					transition: "transform 0.2s",
 					"@media (prefers-reduced-motion: reduce)": {
@@ -46,10 +46,9 @@ export default function BlogCard({ post }: { post: Post }) {
 				<div className={css({ p: 4 })}>
 					<h2
 						className={css({
-							color: "brand.700",
-							fontWeight: "semibold",
+							color: "#000",
+							fontWeight: "600",
 							fontSize: "lg",
-							_hover: { color: "brand.600" },
 						})}
 					>
 						{post.title}
@@ -57,18 +56,21 @@ export default function BlogCard({ post }: { post: Post }) {
 					<p
 						className={css({
 							fontSize: "sm",
-							color: "gray.600",
+							color: "#666",
 							mt: 1,
 						})}
 					>
 						{post.date ? new Date(post.date).toDateString() : ""} ·{" "}
-						{estimateReadingTime(post.contentMarkdown || post.contentHtml || post.excerpt || "")} min read
+						{estimateReadingTime(
+							post.contentMarkdown || post.contentHtml || post.excerpt || ""
+						)}{" "}
+						min read
 					</p>
 					{post.excerpt ? (
 						<p
 							className={css({
 								mt: 3,
-								color: "gray.900",
+								color: "#000",
 							})}
 						>
 							{post.excerpt}
@@ -83,31 +85,17 @@ export default function BlogCard({ post }: { post: Post }) {
 								flexWrap: "wrap",
 							})}
 						>
-						{post.tags.slice(0, 3).map((t: string) => (
-							<span
-								key={t}
-								className={css({
-									bg: "blue.100",
-									color: "blue.800",
-									px: "12px",
-									py: "6px",
-									borderRadius: "full",
-									fontSize: "12px",
-									fontWeight: "600",
-									display: "inline-flex",
-									alignItems: "center",
-									textTransform: "uppercase",
-									letterSpacing: "0.025em",
-									_hover: {
-										bg: "blue.200",
-										transform: "translateY(-1px)",
-									},
-									transition: "all 0.2s ease",
-								})}
-							>
-								{capitalizeFirstLetter(t)}
-							</span>
-						))}
+							{post.tags.slice(0, 3).map((t: string) => (
+								<span
+									key={t}
+									className={css({
+										color: "#666",
+										fontSize: "12px",
+									})}
+								>
+									{capitalizeFirstLetter(t)}
+								</span>
+							))}
 						</div>
 					) : null}
 				</div>
@@ -117,7 +105,7 @@ export default function BlogCard({ post }: { post: Post }) {
 }
 function estimateReadingTime(text: string) {
 	// Strip HTML tags if present
-	const cleanText = text.replace(/<[^>]*>/g, '');
+	const cleanText = text.replace(/<[^>]*>/g, "");
 	const words = cleanText.trim().split(/\s+/).length;
 	return Math.max(1, Math.round(words / 200));
 }

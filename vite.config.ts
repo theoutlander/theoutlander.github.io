@@ -12,11 +12,23 @@ export default defineConfig({
 		host: true, // Listen on all network interfaces
 		port: 5173,
 		strictPort: false,
-		allowedHosts: ['.ngrok-free.app', '.ngrok.io', 'localhost'],
-		https: fs.existsSync('.cert/localhost+3.pem') ? {
-			key: fs.readFileSync('.cert/localhost+3-key.pem'),
-			cert: fs.readFileSync('.cert/localhost+3.pem'),
-		} : undefined,
+		allowedHosts: [".ngrok-free.app", ".ngrok.io", "localhost"],
+		https: fs.existsSync(".cert/localhost+3.pem")
+			? {
+					key: fs.readFileSync(".cert/localhost+3-key.pem"),
+					cert: fs.readFileSync(".cert/localhost+3.pem"),
+			  }
+			: undefined,
+	},
+	preview: {
+		port: 5173,
+		host: true,
+		https: fs.existsSync(".cert/localhost+3.pem")
+			? {
+					key: fs.readFileSync(".cert/localhost+3-key.pem"),
+					cert: fs.readFileSync(".cert/localhost+3.pem"),
+			  }
+			: undefined,
 	},
 	build: {
 		outDir: "dist",

@@ -16,7 +16,7 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 	return (
 		<div
 			className={css({
-				bg: { base: "gray.50", _dark: "dark.bg" },
+				bg: { base: "white", _dark: "dark.bg" },
 				minH: "100vh",
 				width: "100%",
 				overflowX: "hidden",

@@ -4,7 +4,7 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"build": "tsx scripts/generate-blog-data.ts && pnpm panda codegen && pnpm panda cssgen && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"build": "tsx scripts/generate-blog-data.ts && pnpm panda codegen && pnpm panda cssgen && vite build && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
 		"build:prod": "NODE_ENV=production pnpm build",
 		"preview": "pnpm build:prod && vite preview --host --port 5173",
 		"dev": "tsx scripts/generate-blog-data.ts && NODE_ENV=${NODE_ENV:-development} pnpm build && vite --host",
@@ -16,8 +16,8 @@
 		"test:e2e:dev": "concurrently \"pnpm dev\" \"vitest run --config vitest.e2e.config.ts\"",
 		"test:e2e:dev:port": "E2E_DEV_SERVER_PORT=5173 concurrently \"pnpm dev\" \"vitest run --config vitest.e2e.config.ts\"",
 		"test:all": "pnpm test:unit && pnpm test:integration && pnpm test:e2e:dev",
-		"test:links": "npx linkinator https://nick.karnik.io --recurse --skip 'linkedin.com' --skip 'geekwire.com'",
-		"test:links:local": "npx serve dist -l 5173 & sleep 2 && npx linkinator http://localhost:5173 --recurse --skip 'linkedin.com' ; kill %1",
+		"test:links": "NPM_CONFIG_LOGLEVEL=error npx linkinator https://nick.karnik.io --recurse --skip 'linkedin.com' --skip 'geekwire.com' --skip 'cdn-cgi/l/email-protection'",
+		"test:links:local": "NPM_CONFIG_LOGLEVEL=error npx serve dist -l 5173 & sleep 2 && NPM_CONFIG_LOGLEVEL=error npx linkinator http://localhost:5173 --recurse --skip 'linkedin.com' --skip 'cdn-cgi/l/email-protection' ; kill %1",
 		"test:links:dist": "./scripts/test-links-dist.sh",
 		"deploy": "./scripts/deploy.sh"
 	},

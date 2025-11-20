@@ -126,9 +126,9 @@ export default function BlogList({
 								borderRadius: "2xl",
 								overflow: "hidden",
 								shadow: "sm",
-								bg: { base: "white", _dark: "dark.card" },
+								bg: "white",
 								border: "1px solid",
-								borderColor: { base: "gray.200", _dark: "dark.border" },
+								borderColor: "#e5e5e5",
 								_hover: { shadow: "md", transform: "translateY(-2px)" },
 								transition: "all 120ms",
 								display: "flex",
@@ -155,13 +155,19 @@ export default function BlogList({
 								/>
 							) : null}
 
-							<div className={css({ p: 4, display: "flex", flexDirection: "column", flex: 1 })}>
+							<div
+								className={css({
+									p: 4,
+									display: "flex",
+									flexDirection: "column",
+									flex: 1,
+								})}
+							>
 								<h2
 									className={css({
-										color: { base: "brand.700", _dark: "brand.400" },
-										fontWeight: "semibold",
+										color: "#000",
+										fontWeight: "600",
 										fontSize: "lg",
-										_hover: { color: { base: "brand.600", _dark: "brand.300" } },
 									})}
 								>
 									{p.title}
@@ -170,13 +176,15 @@ export default function BlogList({
 								<p
 									className={css({
 										fontSize: "sm",
-										color: { base: "gray.600", _dark: "dark.textMuted" },
+										color: "#666",
 										mt: 1,
 									})}
 								>
 									{p.date ? new Date(p.date).toDateString() : ""}
 									{p.contentMarkdown || p.contentHtml || p.excerpt
-										? ` · ${estimateReadingTime(p.contentMarkdown || p.contentHtml || p.excerpt || "")} min read`
+										? ` · ${estimateReadingTime(
+												p.contentMarkdown || p.contentHtml || p.excerpt || ""
+										  )} min read`
 										: ""}
 								</p>
 
@@ -184,7 +192,7 @@ export default function BlogList({
 									<p
 										className={css({
 											mt: 3,
-											color: { base: "gray.900", _dark: "dark.text" },
+											color: "#000",
 											flex: 1,
 											display: "-webkit-box",
 											WebkitLineClamp: 3,
@@ -206,7 +214,7 @@ export default function BlogList({
 
 function estimateReadingTime(text: string) {
 	// Strip HTML tags if present
-	const cleanText = text.replace(/<[^>]*>/g, '');
+	const cleanText = text.replace(/<[^>]*>/g, "");
 	const words = cleanText.trim().split(/\s+/).length;
 	return Math.max(1, Math.round(words / 200));
 }

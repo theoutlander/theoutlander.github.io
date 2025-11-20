@@ -1,4 +1,83 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import https from "https";
+import http from "http";
+import { URL } from "url";
+
+// Helper function to make HTTP/HTTPS requests with SSL handling
+function makeRequest(url: string): Promise<{
+	status: number;
+	headers: { get: (name: string) => string | null };
+	text: () => Promise<string>;
+	json: () => Promise<any>;
+	ok: boolean;
+}> {
+	return new Promise((resolve, reject) => {
+		const parsedUrl = new URL(url);
+		const isHttps = parsedUrl.protocol === "https:";
+		const client = isHttps ? https : http;
+
+		const port = parsedUrl.port
+			? parseInt(parsedUrl.port, 10)
+			: isHttps
+			? 443
+			: 80;
+
+		const options: any = {
+			hostname: parsedUrl.hostname,
+			port: port,
+			path: parsedUrl.pathname + parsedUrl.search,
+			method: "GET",
+		};
+
+		if (isHttps) {
+			options.rejectUnauthorized = false; // Allow self-signed certificates for localhost
+		}
+
+		const req = client.request(options, (res) => {
+			const chunks: Buffer[] = [];
+
+			res.on("data", (chunk) => {
+				chunks.push(chunk);
+			});
+
+			res.on("end", () => {
+				const body = Buffer.concat(chunks).toString();
+				const headersMap: Record<string, string> = {};
+
+				// Convert Node.js headers to a simple map
+				Object.keys(res.headers).forEach((key) => {
+					const value = res.headers[key];
+					if (value) {
+						headersMap[key.toLowerCase()] = Array.isArray(value)
+							? value[0]
+							: value;
+					}
+				});
+
+				resolve({
+					status: res.statusCode || 200,
+					headers: {
+						get: (name: string) => headersMap[name.toLowerCase()] || null,
+					},
+					ok: (res.statusCode || 0) >= 200 && (res.statusCode || 0) < 300,
+					text: async () => body,
+					json: async () => JSON.parse(body),
+				});
+			});
+		});
+
+		req.on("error", (error) => {
+			reject(error);
+		});
+
+		req.setTimeout(10000, () => {
+			req.destroy();
+			reject(new Error("Request timeout"));
+		});
+
+		req.end();
+	});
+}
 
 // End-to-end test for blog routing
 describe("Blog Routing E2E", () => {
@@ -8,49 +87,108 @@ describe("Blog Routing E2E", () => {
 	beforeAll(async () => {
 		// Check if a specific port is provided via environment variable
 		const envPort = process.env.E2E_DEV_SERVER_PORT;
-		const possiblePorts = envPort 
+		const possiblePorts = envPort
 			? [parseInt(envPort, 10)]
 			: [5173, 5174, 5175, 5176, 5177, 5178, 5179, 5180];
-		
-		const maxAttemptsPerPort = 5; // Try each port multiple times
-		const waitTimeBetweenAttempts = 3000; // 3 seconds between attempts
+
+		const maxAttemptsPerPort = 10; // Try each port multiple times (increased for build time)
+		const waitTimeBetweenAttempts = 5000; // 5 seconds between attempts (increased for build time)
 
 		// Try each port until we find one that's working
 		for (const port of possiblePorts) {
-			baseUrl = `https://localhost:${port}`;
-			console.log(`Trying to connect to ${baseUrl}...`);
+			console.log(`Trying to connect to port ${port}...`);
 
 			// Try this port multiple times before moving to the next
 			for (let attempt = 0; attempt < maxAttemptsPerPort; attempt++) {
-				try {
-					const response = await fetch(`${baseUrl}/`, {
-						method: 'HEAD', // Use HEAD request for faster check
-						signal: AbortSignal.timeout(5000), // 5 second timeout per attempt
+				// Helper function to check if server is responding
+				const checkServer = (protocol: "https" | "http"): Promise<boolean> => {
+					return new Promise((resolve) => {
+						const client = protocol === "https" ? https : http;
+						const options =
+							protocol === "https"
+								? {
+										hostname: "localhost",
+										port: port,
+										path: "/",
+										method: "HEAD",
+										rejectUnauthorized: false, // Allow self-signed certificates for localhost
+								  }
+								: {
+										hostname: "localhost",
+										port: port,
+										path: "/",
+										method: "HEAD",
+								  };
+
+						const req = client.request(options, (res) => {
+							resolve(res.statusCode === 200 || res.statusCode === 404); // 404 is OK for SPA
+						});
+
+						req.on("error", () => {
+							resolve(false);
+						});
+
+						req.setTimeout(5000, () => {
+							req.destroy();
+							resolve(false);
+						});
+
+						req.end();
 					});
-					if (response.ok) {
+				};
+
+				try {
+					// Try HTTPS first, then HTTP as fallback
+					const httpsWorking = await checkServer("https");
+					if (httpsWorking) {
+						baseUrl = `https://localhost:${port}`;
 						serverAvailable = true;
 						console.log(`✅ Dev server is ready at ${baseUrl}`);
 						return; // Success! Exit the function
 					}
-				} catch (error) {
+
+					// Try HTTP if HTTPS didn't work
+					const httpWorking = await checkServer("http");
+					if (httpWorking) {
+						baseUrl = `http://localhost:${port}`;
+						serverAvailable = true;
+						console.log(`✅ Dev server is ready at ${baseUrl}`);
+						return; // Success! Exit the function
+					}
+				} catch (error: any) {
 					// Server not ready yet on this port, continue
-					console.log(`⏳ Attempt ${attempt + 1}/${maxAttemptsPerPort}: Dev server not ready yet on port ${port}`);
 				}
 
 				// Wait before next attempt (except on the last attempt)
 				if (attempt < maxAttemptsPerPort - 1) {
-					await new Promise((resolve) => setTimeout(resolve, waitTimeBetweenAttempts));
+					const errorMsg = attempt === 0 ? "" : ` (server not responding)`;
+					console.log(
+						`⏳ Attempt ${
+							attempt + 1
+						}/${maxAttemptsPerPort}: Dev server not ready yet on port ${port}${errorMsg}`
+					);
+					await new Promise((resolve) =>
+						setTimeout(resolve, waitTimeBetweenAttempts)
+					);
+				} else {
+					console.log(
+						`⏳ Attempt ${
+							attempt + 1
+						}/${maxAttemptsPerPort}: Dev server not ready yet on port ${port}`
+					);
 				}
 			}
-			
+
 			console.log(`❌ Port ${port} not available, trying next port...`);
 		}
 
 		// If we get here, no port worked
-		console.log("❌ Dev server not available after trying all ports, skipping E2E tests");
+		console.log(
+			"❌ Dev server not available after trying all ports, skipping E2E tests"
+		);
 		console.log("💡 To run E2E tests, start the dev server with: pnpm dev");
 		serverAvailable = false;
-	}, 60000); // 60 second timeout for the beforeAll hook
+	}, 180000); // 180 second timeout for the beforeAll hook (increased for build time)
 
 	it("should serve the blog post page successfully", async () => {
 		if (!serverAvailable) {
@@ -58,7 +196,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(
+		const response = await makeRequest(
 			`${baseUrl}/blog/how-engineers-can-use-ai-effectively`
 		);
 
@@ -78,7 +216,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(`${baseUrl}/blog`);
+		const response = await makeRequest(`${baseUrl}/blog`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("content-type")).toContain("text/html");
@@ -96,7 +234,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(`${baseUrl}/data/blog-posts.json`);
+		const response = await makeRequest(`${baseUrl}/data/blog-posts.json`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("content-type")).toContain("application/json");
@@ -122,7 +260,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(
+		const response = await makeRequest(
 			`${baseUrl}/data/posts/how-engineers-can-use-ai-effectively.json`
 		);
 
@@ -146,7 +284,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(`${baseUrl}/blog/non-existent-post`);
+		const response = await makeRequest(`${baseUrl}/blog/non-existent-post`);
 
 		expect(response.status).toBe(200);
 		expect(response.headers.get("content-type")).toContain("text/html");
@@ -162,7 +300,7 @@ describe("Blog Routing E2E", () => {
 			return;
 		}
 
-		const response = await fetch(
+		const response = await makeRequest(
 			`${baseUrl}/data/posts/non-existent-post.json`
 		);
 
@@ -178,8 +316,10 @@ describe("Blog Routing E2E", () => {
 		}
 
 		const [blogPostsResponse, individualResponse] = await Promise.all([
-			fetch(`${baseUrl}/data/blog-posts.json`),
-			fetch(`${baseUrl}/data/posts/how-engineers-can-use-ai-effectively.json`),
+			makeRequest(`${baseUrl}/data/blog-posts.json`),
+			makeRequest(
+				`${baseUrl}/data/posts/how-engineers-can-use-ai-effectively.json`
+			),
 		]);
 
 		expect(blogPostsResponse.ok).toBe(true);
