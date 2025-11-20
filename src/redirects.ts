@@ -63,6 +63,16 @@ export const redirects: Redirect[] = [
 		destination: "https://stackoverflow.com/users/460472/nick",
 		statusCode: 308,
 	},
+	{
+		source: "/codementor",
+		destination: "https://www.codementor.io/@theoutlander",
+		statusCode: 308,
+	},
+	{
+		source: "/cm",
+		destination: "https://www.codementor.io/@theoutlander",
+		statusCode: 308,
+	},
 
 	// Contact & Business
 	{

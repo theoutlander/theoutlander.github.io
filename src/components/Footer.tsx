@@ -44,7 +44,17 @@ export default function Footer() {
 						})}
 					>
 						{/* Left column - Bio */}
-					<div className={css({ flex: 1, width: "100%", textAlign: "left", alignSelf: "stretch", display: "flex", flexDirection: "column", alignItems: "flex-start" })}>
+						<div
+							className={css({
+								flex: 1,
+								width: "100%",
+								textAlign: "left",
+								alignSelf: "stretch",
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "flex-start",
+							})}
+						>
 							<h2
 								className={css({
 									fontSize: "md",
@@ -58,17 +68,40 @@ export default function Footer() {
 							<p
 								className={css({ fontSize: "sm", color: "gray.600", mb: "4" })}
 							>
-						Engineering Leader - AI & Product Strategy
+								Engineering Leader - AI & Product Strategy
 							</p>
-					
-						<p className={css({ fontSize: "xs", color: "gray.600", paddingLeft: "12px" })}>
+
+							<p
+								className={css({
+									fontSize: "xs",
+									color: "gray.600",
+									paddingLeft: "12px",
+								})}
+							>
 								© 2025 Nick Karnik. All rights reserved.
 							</p>
 						</div>
 
 						{/* Right column - Links */}
-					<div className={css({ flex: 1, width: "100%", textAlign: "left", display: "flex", flexDirection: "column", alignItems: "flex-start" })}>
-						<div className={css({ display: "flex", flexWrap: "wrap", gap: "2", mb: "4", justifyContent: "flex-start" })}>
+						<div
+							className={css({
+								flex: 1,
+								width: "100%",
+								textAlign: "left",
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "flex-start",
+							})}
+						>
+							<div
+								className={css({
+									display: "flex",
+									flexWrap: "wrap",
+									gap: "2",
+									mb: "4",
+									justifyContent: "flex-start",
+								})}
+							>
 								<a
 									href="mailto:nick@karnik.io"
 									target="_blank"
@@ -262,6 +295,40 @@ export default function Footer() {
 									</div>
 								</a>
 								<a
+									href="https://www.codementor.io/@theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's Codementor profile"
+									className={css({
+										display: "flex",
+										alignItems: "center",
+										justifyContent: "center",
+										minWidth: "44px",
+										minHeight: "44px",
+										borderRadius: "4px",
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+										},
+									})}
+								>
+									<img
+										src="/assets/images/companies/codementor.svg"
+										alt="Codementor"
+										className={css({
+											w: 4.5,
+											h: 4.5,
+											objectFit: "contain",
+											transition: "opacity 200ms ease-in-out",
+											_hover: { opacity: 0.8 },
+											"@media (prefers-reduced-motion: reduce)": {
+												transition: "none",
+											},
+										})}
+										loading="lazy"
+									/>
+								</a>
+								<a
 									href="/assets/documents/resume-nick-karnik.pdf"
 									target="_blank"
 									rel="noopener"
@@ -294,7 +361,13 @@ export default function Footer() {
 									</div>
 								</a>
 							</div>
-							<p className={css({ fontSize: "xs", color: "gray.600", paddingLeft: "12px" })}>
+							<p
+								className={css({
+									fontSize: "xs",
+									color: "gray.600",
+									paddingLeft: "12px",
+								})}
+							>
 								Available for consulting at{" "}
 								<a
 									href="https://plutonic.consulting"

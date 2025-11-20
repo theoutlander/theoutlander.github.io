@@ -152,53 +152,59 @@ const iconButton = css({
 	},
 });
 
+const iconImage = css({
+	w: 4.5,
+	h: 4.5,
+	objectFit: "contain",
+});
+
 const actionButton = css({
-display: "flex",
-alignItems: "center",
-justifyContent: "center",
-color: { base: "brand.600", _dark: "brand.400" },
-textDecoration: "none",
-px: 3,
-py: 1.5,
-fontSize: "sm",
-borderRadius: "md",
-bg: "white",
-border: "1px solid",
-borderColor: { base: "gray.200", _dark: "gray.700" },
-cursor: "pointer",
-position: "relative",
-_hover: {
-bg: "gray.50",
- transform: "translateY(-1px)",
-			boxShadow: "sm",
-		},
-		"&::after": {
-			content: "attr(aria-label)",
-			position: "absolute",
-			bottom: "calc(100% + 6px)",
-			left: "50%",
-			transform: "translateX(-50%) translateY(4px)",
-			bg: { base: "gray.900", _dark: "gray.800" },
-			color: "white",
-			fontSize: "xs",
-			px: 2,
-			py: 1,
-			borderRadius: "sm",
-			boxShadow: "sm",
-			whiteSpace: "nowrap",
-			opacity: 0,
-			pointerEvents: "none",
-			transition: "opacity 150ms ease, transform 150ms ease",
-			zIndex: 20,
-		},
-		"&:hover::after": {
-			opacity: 1,
-			transform: "translateX(-50%) translateY(0)",
-		},
-		"&:focus-visible::after": {
-			opacity: 1,
-			transform: "translateX(-50%) translateY(0)",
-		},
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+	color: { base: "brand.600", _dark: "brand.400" },
+	textDecoration: "none",
+	px: 3,
+	py: 1.5,
+	fontSize: "sm",
+	borderRadius: "md",
+	bg: "white",
+	border: "1px solid",
+	borderColor: { base: "gray.200", _dark: "gray.700" },
+	cursor: "pointer",
+	position: "relative",
+	_hover: {
+		bg: "gray.50",
+		transform: "translateY(-1px)",
+		boxShadow: "sm",
+	},
+	"&::after": {
+		content: "attr(aria-label)",
+		position: "absolute",
+		bottom: "calc(100% + 6px)",
+		left: "50%",
+		transform: "translateX(-50%) translateY(4px)",
+		bg: { base: "gray.900", _dark: "gray.800" },
+		color: "white",
+		fontSize: "xs",
+		px: 2,
+		py: 1,
+		borderRadius: "sm",
+		boxShadow: "sm",
+		whiteSpace: "nowrap",
+		opacity: 0,
+		pointerEvents: "none",
+		transition: "opacity 150ms ease, transform 150ms ease",
+		zIndex: 20,
+	},
+	"&:hover::after": {
+		opacity: 1,
+		transform: "translateX(-50%) translateY(0)",
+	},
+	"&:focus-visible::after": {
+		opacity: 1,
+		transform: "translateX(-50%) translateY(0)",
+	},
 });
 
 // ====== data ======
@@ -238,6 +244,12 @@ const contactLinks = [
 		href: "https://youtube.com/@nick-karnik",
 		icon: FaYoutube,
 		title: "YouTube",
+		external: true,
+	},
+	{
+		href: "https://www.codementor.io/@theoutlander",
+		imageSrc: "/assets/images/companies/codementor.svg",
+		title: "Codementor",
 		external: true,
 	},
 ];
@@ -280,7 +292,10 @@ export default function NameHeader({
 				<div className={badgeRow}>
 					{tags && tags.length > 0
 						? tags.map((label) => (
-								<span key={label} className={pill({ tone: inferToneFromLabel(label) })}>
+								<span
+									key={label}
+									className={pill({ tone: inferToneFromLabel(label) })}
+								>
 									{label}
 								</span>
 						  ))
@@ -303,17 +318,26 @@ export default function NameHeader({
 							className={iconButton}
 							aria-label={link.title}
 						>
-							<link.icon size={18} />
+							{"imageSrc" in link ? (
+								<img
+									src={link.imageSrc}
+									alt={link.title}
+									className={iconImage}
+									loading="lazy"
+								/>
+							) : (
+								<link.icon size={18} />
+							)}
 						</a>
 					))}
 					{showDownloadButton &&
 						actionButtons.map((button) => (
-						<a
+							<a
 								key={button.title}
 								className={actionButton}
 								href={button.href}
 								download={button.filename}
-							aria-label={button.title}
+								aria-label={button.title}
 							>
 								<button.icon size={18} />
 							</a>

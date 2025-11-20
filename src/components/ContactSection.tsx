@@ -121,6 +121,22 @@ const ghostBtn = cva({
 					},
 				},
 			},
+			codementor: {
+				color: { base: "orange.700", _dark: "orange.300" },
+				_hover: {
+					bg: { base: "orange.50", _dark: "orange.900/20" },
+					transform: "translateY(-1px)",
+					boxShadow: {
+						base: "0 4px 12px rgba(249, 115, 22, 0.15)",
+						_dark: "0 4px 12px rgba(249, 115, 22, 0.1)",
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
+			},
 		},
 	},
 	defaultVariants: { variant: "email" },
@@ -195,6 +211,25 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					<div className={iconContainer}>
 						<FaGithub className={contactIcon} />
 						<span>GitHub</span>
+					</div>
+					<ArrowTopRightOnSquareIcon
+						className={css({ w: 4, h: 4, opacity: 0.6 })}
+					/>
+				</a>
+				<a
+					className={ghostBtn({ variant: "codementor" })}
+					href="https://www.codementor.io/@theoutlander"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<div className={iconContainer}>
+						<img
+							src="/assets/images/companies/codementor.svg"
+							alt="Codementor"
+							className={contactIcon}
+							loading="lazy"
+						/>
+						<span>Codementor</span>
 					</div>
 					<ArrowTopRightOnSquareIcon
 						className={css({ w: 4, h: 4, opacity: 0.6 })}
