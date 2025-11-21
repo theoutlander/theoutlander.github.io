@@ -7,6 +7,11 @@ import {
 	CalendarIcon,
 } from "@heroicons/react/24/outline";
 import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { iconColors } from "../utils/iconColors";
+import { CodementorIcon } from "./CodementorIcon";
+
+// Shared icon size constant - matches resume icon size
+const ICON_SIZE = 18;
 
 interface ContactSectionProps {
 	className?: string;
@@ -42,13 +47,17 @@ const ghostBtn = cva({
 	variants: {
 		variant: {
 			email: {
-				color: { base: "brand.700", _dark: "brand.300" },
+				color: { base: iconColors.email.light, _dark: iconColors.email.dark },
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(59, 130, 246, 0.15)",
 						_dark: "0 4px 12px rgba(59, 130, 246, 0.1)",
+					},
+					color: {
+						base: iconColors.email.hoverLight,
+						_dark: iconColors.email.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -58,13 +67,20 @@ const ghostBtn = cva({
 				},
 			},
 			linkedin: {
-				color: { base: "brand.600", _dark: "brand.400" },
+				color: {
+					base: iconColors.linkedin.light,
+					_dark: iconColors.linkedin.dark,
+				},
 				_hover: {
 					bg: { base: "blue.50", _dark: "blue.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(37, 99, 235, 0.15)",
 						_dark: "0 4px 12px rgba(37, 99, 235, 0.1)",
+					},
+					color: {
+						base: iconColors.linkedin.hoverLight,
+						_dark: iconColors.linkedin.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -74,13 +90,17 @@ const ghostBtn = cva({
 				},
 			},
 			github: {
-				color: { base: "gray.700", _dark: "gray.300" },
+				color: { base: iconColors.github.light, _dark: iconColors.github.dark },
 				_hover: {
 					bg: { base: "gray.50", _dark: "gray.800" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(0, 0, 0, 0.1)",
 						_dark: "0 4px 12px rgba(255, 255, 255, 0.05)",
+					},
+					color: {
+						base: iconColors.github.hoverLight,
+						_dark: iconColors.github.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -90,13 +110,17 @@ const ghostBtn = cva({
 				},
 			},
 			resume: {
-				color: { base: "purple.700", _dark: "purple.300" },
+				color: { base: iconColors.resume.light, _dark: iconColors.resume.dark },
 				_hover: {
 					bg: { base: "purple.50", _dark: "purple.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(147, 51, 234, 0.15)",
 						_dark: "0 4px 12px rgba(147, 51, 234, 0.1)",
+					},
+					color: {
+						base: iconColors.resume.hoverLight,
+						_dark: iconColors.resume.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -106,13 +130,20 @@ const ghostBtn = cva({
 				},
 			},
 			calendar: {
-				color: { base: "green.700", _dark: "green.300" },
+				color: {
+					base: iconColors.calendar.light,
+					_dark: iconColors.calendar.dark,
+				},
 				_hover: {
 					bg: { base: "green.50", _dark: "green.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(34, 197, 94, 0.15)",
 						_dark: "0 4px 12px rgba(34, 197, 94, 0.1)",
+					},
+					color: {
+						base: iconColors.calendar.hoverLight,
+						_dark: iconColors.calendar.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -122,13 +153,20 @@ const ghostBtn = cva({
 				},
 			},
 			codementor: {
-				color: { base: "orange.700", _dark: "orange.300" },
+				color: {
+					base: iconColors.codementor.light,
+					_dark: iconColors.codementor.dark,
+				},
 				_hover: {
 					bg: { base: "orange.50", _dark: "orange.900/20" },
 					transform: "translateY(-1px)",
 					boxShadow: {
 						base: "0 4px 12px rgba(249, 115, 22, 0.15)",
 						_dark: "0 4px 12px rgba(249, 115, 22, 0.1)",
+					},
+					color: {
+						base: iconColors.codementor.hoverLight,
+						_dark: iconColors.codementor.hoverDark,
 					},
 				},
 				"@media (prefers-reduced-motion: reduce)": {
@@ -150,8 +188,6 @@ const iconContainer = css({
 });
 
 const contactIcon = css({
-	w: 5,
-	h: 5,
 	flexShrink: 0,
 });
 
@@ -175,7 +211,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="mailto:nick@karnik.io"
 				>
 					<div className={iconContainer}>
-						<EnvelopeIcon className={contactIcon} />
+						<EnvelopeIcon
+							className={contactIcon}
+							style={{ width: `${ICON_SIZE}px`, height: `${ICON_SIZE}px` }}
+						/>
 						<span>Email</span>
 					</div>
 				</a>
@@ -184,7 +223,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="/calendar"
 				>
 					<div className={iconContainer}>
-						<CalendarIcon className={contactIcon} />
+						<CalendarIcon
+							className={contactIcon}
+							style={{ width: `${ICON_SIZE}px`, height: `${ICON_SIZE}px` }}
+						/>
 						<span>Schedule Meeting</span>
 					</div>
 				</a>
@@ -195,7 +237,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					rel="noopener noreferrer"
 				>
 					<div className={iconContainer}>
-						<FaLinkedin className={contactIcon} />
+						<FaLinkedin
+							size={ICON_SIZE}
+							className={css({ flexShrink: 0 })}
+						/>
 						<span>LinkedIn</span>
 					</div>
 					<ArrowTopRightOnSquareIcon
@@ -209,7 +254,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					rel="noopener noreferrer"
 				>
 					<div className={iconContainer}>
-						<FaGithub className={contactIcon} />
+						<FaGithub
+							size={ICON_SIZE}
+							className={css({ flexShrink: 0 })}
+						/>
 						<span>GitHub</span>
 					</div>
 					<ArrowTopRightOnSquareIcon
@@ -223,11 +271,9 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					rel="noopener noreferrer"
 				>
 					<div className={iconContainer}>
-						<img
-							src="/assets/images/companies/codementor.svg"
-							alt="Codementor"
+						<CodementorIcon
+							size={ICON_SIZE}
 							className={contactIcon}
-							loading="lazy"
 						/>
 						<span>Codementor</span>
 					</div>
@@ -240,7 +286,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="/resume"
 				>
 					<div className={iconContainer}>
-						<DocumentTextIcon className={contactIcon} />
+						<DocumentTextIcon
+							className={contactIcon}
+							style={{ width: `${ICON_SIZE}px`, height: `${ICON_SIZE}px` }}
+						/>
 						<span>Resume</span>
 					</div>
 				</a>

@@ -9,6 +9,37 @@ import {
 } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { HiOutlineDocumentText } from "react-icons/hi";
+import { getIconColorStyles } from "../utils/iconColors";
+import { CodementorIcon } from "./CodementorIcon";
+
+// Shared icon size constant - matches resume icon size
+const ICON_SIZE = 18;
+
+// Shared container style for all icons - matches resume icon container
+const iconLinkContainer = css({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+	minWidth: "44px",
+	minHeight: "44px",
+	borderRadius: "4px",
+	cursor: "pointer",
+	transition: "color 200ms ease-in-out",
+	"@media (prefers-reduced-motion: reduce)": {
+		transition: "none",
+	},
+	_focus: {
+		outline: "2px solid brand.600",
+		outlineOffset: "2px",
+	},
+});
+
+// Shared icon wrapper style
+const iconWrapper = css({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+});
 
 export default function Footer() {
 	return (
@@ -107,31 +138,12 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Send email to Nick Karnik"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("email"))}
 									>
-										<MdEmail size={18} />
+										<MdEmail size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -139,31 +151,12 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's GitHub profile"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("github"))}
 									>
-										<FaGithub size={18} />
+										<FaGithub size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -171,31 +164,12 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's LinkedIn profile"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("linkedin"))}
 									>
-										<FaLinkedin size={18} />
+										<FaLinkedin size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -203,31 +177,12 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's X profile"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("twitter"))}
 									>
-										<FaTwitter size={18} />
+										<FaTwitter size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -235,31 +190,12 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's YouTube channel"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("youtube"))}
 									>
-										<FaYoutube size={18} />
+										<FaYoutube size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -267,31 +203,15 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's Stack Overflow profile"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(
+											iconWrapper,
+											getIconColorStyles("stackoverflow")
+										)}
 									>
-										<FaStackOverflow size={18} />
+										<FaStackOverflow size={ICON_SIZE} />
 									</div>
 								</a>
 								<a
@@ -299,65 +219,28 @@ export default function Footer() {
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's Codementor profile"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
-									<img
-										src="/assets/images/companies/codementor.svg"
-										alt="Codementor"
-										className={css({
-											w: 4.5,
-											h: 4.5,
-											objectFit: "contain",
-											transition: "opacity 200ms ease-in-out",
-											_hover: { opacity: 0.8 },
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
-										loading="lazy"
-									/>
+									<div
+										className={css(
+											iconWrapper,
+											getIconColorStyles("codementor")
+										)}
+									>
+										<CodementorIcon size={ICON_SIZE} />
+									</div>
 								</a>
 								<a
 									href="/assets/documents/resume-nick-karnik.pdf"
 									target="_blank"
 									rel="noopener"
 									aria-label="Download Nick Karnik's resume (PDF)"
-									className={css({
-										display: "flex",
-										alignItems: "center",
-										justifyContent: "center",
-										minWidth: "44px",
-										minHeight: "44px",
-										borderRadius: "4px",
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-										},
-									})}
+									className={iconLinkContainer}
 								>
 									<div
-										className={css({
-											fontSize: "lg",
-											color: { base: "gray.600", _dark: "dark.textSecondary" },
-											_hover: { color: "brand.600" },
-											transition: "color 200ms ease-in-out",
-											"@media (prefers-reduced-motion: reduce)": {
-												transition: "none",
-											},
-										})}
+										className={css(iconWrapper, getIconColorStyles("resume"))}
 									>
-										<HiOutlineDocumentText size={18} />
+										<HiOutlineDocumentText size={ICON_SIZE} />
 									</div>
 								</a>
 							</div>

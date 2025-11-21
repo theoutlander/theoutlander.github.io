@@ -1,8 +1,14 @@
+import React from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
 import { FaLinkedin, FaGithub, FaYoutube } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { HiOutlineCalendar } from "react-icons/hi";
 import { HiOutlineDocumentText } from "react-icons/hi";
+import { getIconColorStyles, iconColors } from "../utils/iconColors";
+import { CodementorIcon } from "./CodementorIcon";
+
+// Shared icon size constant - matches resume icon size
+const ICON_SIZE = 18;
 
 // ====== shared primitives ======
 const card = css({
@@ -104,106 +110,36 @@ const iconRow = css({
 	mt: 2,
 });
 
-const iconButton = css({
+// Shared icon container style - matches resume icon container
+const iconLinkContainer = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-	color: { base: "brand.600", _dark: "brand.400" },
-	textDecoration: "none",
-	px: 3,
-	py: 1.5,
-	fontSize: "sm",
-	borderRadius: "md",
-	bg: "white",
-	border: "1px solid",
-	borderColor: { base: "gray.200", _dark: "gray.700" },
-	position: "relative",
-	_hover: {
-		bg: "gray.50",
-		transform: "translateY(-1px)",
-		boxShadow: "sm",
-	},
-	"&::after": {
-		content: "attr(aria-label)",
-		position: "absolute",
-		bottom: "calc(100% + 6px)",
-		left: "50%",
-		transform: "translateX(-50%) translateY(4px)",
-		bg: { base: "gray.900", _dark: "gray.800" },
-		color: "white",
-		fontSize: "xs",
-		px: 2,
-		py: 1,
-		borderRadius: "sm",
-		boxShadow: "sm",
-		whiteSpace: "nowrap",
-		opacity: 0,
-		pointerEvents: "none",
-		transition: "opacity 150ms ease, transform 150ms ease",
-		zIndex: 20,
-	},
-	"&:hover::after": {
-		opacity: 1,
-		transform: "translateX(-50%) translateY(0)",
-	},
-	"&:focus-visible::after": {
-		opacity: 1,
-		transform: "translateX(-50%) translateY(0)",
-	},
-});
-
-const iconImage = css({
-	w: 4.5,
-	h: 4.5,
-	objectFit: "contain",
-});
-
-const actionButton = css({
-	display: "flex",
-	alignItems: "center",
-	justifyContent: "center",
-	color: { base: "brand.600", _dark: "brand.400" },
-	textDecoration: "none",
-	px: 3,
-	py: 1.5,
-	fontSize: "sm",
-	borderRadius: "md",
-	bg: "white",
-	border: "1px solid",
-	borderColor: { base: "gray.200", _dark: "gray.700" },
+	minWidth: "44px",
+	minHeight: "44px",
+	borderRadius: "4px",
 	cursor: "pointer",
-	position: "relative",
-	_hover: {
-		bg: "gray.50",
-		transform: "translateY(-1px)",
-		boxShadow: "sm",
+	transition: "color 200ms ease-in-out",
+	"@media (prefers-reduced-motion: reduce)": {
+		transition: "none",
 	},
-	"&::after": {
-		content: "attr(aria-label)",
-		position: "absolute",
-		bottom: "calc(100% + 6px)",
-		left: "50%",
-		transform: "translateX(-50%) translateY(4px)",
-		bg: { base: "gray.900", _dark: "gray.800" },
-		color: "white",
-		fontSize: "xs",
-		px: 2,
-		py: 1,
-		borderRadius: "sm",
-		boxShadow: "sm",
-		whiteSpace: "nowrap",
-		opacity: 0,
-		pointerEvents: "none",
-		transition: "opacity 150ms ease, transform 150ms ease",
-		zIndex: 20,
+	_focus: {
+		outline: "2px solid brand.600",
+		outlineOffset: "2px",
 	},
-	"&:hover::after": {
-		opacity: 1,
-		transform: "translateX(-50%) translateY(0)",
+});
+
+// Shared icon wrapper style
+const iconWrapper = css({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "center",
+	color: "currentColor",
+	"& svg": {
+		color: "currentColor",
 	},
-	"&:focus-visible::after": {
-		opacity: 1,
-		transform: "translateX(-50%) translateY(0)",
+	"& *": {
+		color: "currentColor",
 	},
 });
 
@@ -214,54 +150,6 @@ const skills = [
 	{ label: "Developer Experience", tone: "gray" as const },
 	{ label: "NodeJS", tone: "green" as const },
 	{ label: "AI", tone: "orange" as const },
-];
-
-const contactLinks = [
-	{
-		href: "mailto:nick@karnik.io",
-		icon: MdEmail,
-		title: "Email",
-	},
-	{
-		href: "https://www.linkedin.com/in/theoutlander/",
-		icon: FaLinkedin,
-		title: "LinkedIn",
-		external: true,
-	},
-	{
-		href: "https://github.com/theoutlander",
-		icon: FaGithub,
-		title: "GitHub",
-		external: true,
-	},
-	{
-		href: "/schedule",
-		icon: HiOutlineCalendar,
-		title: "Schedule a Call",
-		external: false,
-	},
-	{
-		href: "https://youtube.com/@nick-karnik",
-		icon: FaYoutube,
-		title: "YouTube",
-		external: true,
-	},
-	{
-		href: "https://www.codementor.io/@theoutlander",
-		imageSrc: "/assets/images/companies/codementor.svg",
-		title: "Codementor",
-		external: true,
-	},
-];
-
-const actionButtons = [
-	{
-		icon: HiOutlineDocumentText,
-		title: "Download Resume (PDF)",
-		action: "download",
-		href: "/assets/documents/resume-nick-karnik.pdf",
-		filename: "resume-nick-karnik.pdf",
-	},
 ];
 
 interface NameHeaderProps {
@@ -309,39 +197,104 @@ export default function NameHeader({
 						  ))}
 				</div>
 				<div className={iconRow}>
-					{contactLinks.map((link) => (
+					<a
+						href="mailto:nick@karnik.io"
+						target="_blank"
+						rel="noopener"
+						aria-label="Send email to Nick Karnik"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("email"))}>
+							<MdEmail
+								size={ICON_SIZE}
+								color={iconColors.email.light}
+							/>
+						</div>
+					</a>
+					<a
+						href="https://github.com/theoutlander"
+						target="_blank"
+						rel="noopener"
+						aria-label="Visit Nick Karnik's GitHub profile"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("github"))}>
+							<FaGithub
+								size={ICON_SIZE}
+								color={iconColors.github.light}
+							/>
+						</div>
+					</a>
+					<a
+						href="https://www.linkedin.com/in/theoutlander"
+						target="_blank"
+						rel="noopener"
+						aria-label="Visit Nick Karnik's LinkedIn profile"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("linkedin"))}>
+							<FaLinkedin
+								size={ICON_SIZE}
+								color={iconColors.linkedin.light}
+							/>
+						</div>
+					</a>
+					<a
+						href="/schedule"
+						aria-label="Schedule a Call"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("calendar"))}>
+							<HiOutlineCalendar
+								size={ICON_SIZE}
+								color={iconColors.calendar.light}
+							/>
+						</div>
+					</a>
+					<a
+						href="https://youtube.com/@nick-karnik"
+						target="_blank"
+						rel="noopener"
+						aria-label="Visit Nick Karnik's YouTube channel"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("youtube"))}>
+							<FaYoutube
+								size={ICON_SIZE}
+								color={iconColors.youtube.light}
+							/>
+						</div>
+					</a>
+					<a
+						href="https://www.codementor.io/@theoutlander"
+						target="_blank"
+						rel="noopener"
+						aria-label="Visit Nick Karnik's Codementor profile"
+						className={iconLinkContainer}
+					>
+						<div className={css(iconWrapper, getIconColorStyles("codementor"))}>
+							<CodementorIcon
+								size={ICON_SIZE}
+								color={iconColors.codementor.light}
+							/>
+						</div>
+					</a>
+					{showDownloadButton && (
 						<a
-							key={link.href}
-							href={link.href}
-							target={link.external ? "_blank" : undefined}
-							rel={link.external ? "noopener noreferrer" : undefined}
-							className={iconButton}
-							aria-label={link.title}
+							href="/assets/documents/resume-nick-karnik.pdf"
+							target="_blank"
+							rel="noopener"
+							aria-label="Download Nick Karnik's resume (PDF)"
+							className={iconLinkContainer}
 						>
-							{"imageSrc" in link ? (
-								<img
-									src={link.imageSrc}
-									alt={link.title}
-									className={iconImage}
-									loading="lazy"
+							<div className={css(iconWrapper, getIconColorStyles("resume"))}>
+								<HiOutlineDocumentText
+									size={ICON_SIZE}
+									color={iconColors.resume.light}
 								/>
-							) : (
-								<link.icon size={18} />
-							)}
+							</div>
 						</a>
-					))}
-					{showDownloadButton &&
-						actionButtons.map((button) => (
-							<a
-								key={button.title}
-								className={actionButton}
-								href={button.href}
-								download={button.filename}
-								aria-label={button.title}
-							>
-								<button.icon size={18} />
-							</a>
-						))}
+					)}
 				</div>
 			</div>
 		</section>
