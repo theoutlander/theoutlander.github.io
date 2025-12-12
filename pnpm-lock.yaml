@@ -75,6 +75,9 @@ importers:
       '@vitest/coverage-v8':
         specifier: ^3.2.4
         version: 3.2.4(vitest@3.2.4(@types/debug@4.1.12)(@types/node@24.5.2)(jsdom@27.0.0(postcss@8.5.6))(lightningcss@1.25.1)(terser@5.44.0))
+      baseline-browser-mapping:
+        specifier: ^2.9.6
+        version: 2.9.6
       concurrently:
         specifier: ^9.1.0
         version: 9.2.1
@@ -1328,8 +1331,8 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  baseline-browser-mapping@2.8.9:
-    resolution: {integrity: sha512-hY/u2lxLrbecMEWSB0IpGzGyDyeoMFQhCvZd2jGFSE5I17Fh01sYUBPCJtkWERw7zrac9+cIghxm/ytJa2X8iA==}
+  baseline-browser-mapping@2.9.6:
+    resolution: {integrity: sha512-v9BVVpOTLB59C9E7aSnmIF8h7qRsFpx+A2nugVMTszEOMcfjlZMsXRm4LF23I3Z9AJxc8ANpIvzbzONoX9VJlg==}
     hasBin: true
 
   bidi-js@1.0.3:
@@ -4563,7 +4566,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  baseline-browser-mapping@2.8.9: {}
+  baseline-browser-mapping@2.9.6: {}
 
   bidi-js@1.0.3:
     dependencies:
@@ -4610,7 +4613,7 @@ snapshots:
 
   browserslist@4.26.2:
     dependencies:
-      baseline-browser-mapping: 2.8.9
+      baseline-browser-mapping: 2.9.6
       caniuse-lite: 1.0.30001745
       electron-to-chromium: 1.5.227
       node-releases: 2.0.21
