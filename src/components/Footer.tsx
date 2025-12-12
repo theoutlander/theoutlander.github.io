@@ -20,8 +20,8 @@ const iconLinkContainer = css({
 	display: "flex",
 	alignItems: "center",
 	justifyContent: "center",
-	minWidth: "44px",
-	minHeight: "44px",
+	minWidth: "40px",
+	minHeight: "40px",
 	borderRadius: "4px",
 	cursor: "pointer",
 	transition: "color 200ms ease-in-out",
@@ -128,7 +128,7 @@ export default function Footer() {
 								className={css({
 									display: "flex",
 									flexWrap: "wrap",
-									gap: "2",
+									gap: "1",
 									mb: "4",
 									justifyContent: "flex-start",
 								})}
