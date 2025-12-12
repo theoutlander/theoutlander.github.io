@@ -4,7 +4,15 @@ title: "It's Not the Launch, It's the Landing"
 date: "2025-10-02T07:52:22.725Z"
 cover: "/assets/images/blog/its-not-the-launch-its-the-landing-746ca19b-1bee-43ef-90bf-fd04bb1d5240.jpeg"
 excerpt: "In technology we celebrate launches as if they were victories. The moment something goes live there is a demo, a blog post, a slide in a performance review. It feels like success. But a launch is not the finish line. It is only takeoff. The real test..."
-tags: ["Product Management", "Startups", "engineering", "Product launch", "Software Engineering", "product strategy"]
+tags:
+  [
+    "Product Management",
+    "Startups",
+    "Engineering",
+    "Product launch",
+    "Software Engineering",
+    "Product Strategy",
+  ]
 ---
 
 In technology we celebrate launches as if they were victories. The moment something goes live there is a demo, a blog post, a slide in a performance review. It feels like success. But a launch is not the finish line. It is only takeoff. The real test is whether the product lands.

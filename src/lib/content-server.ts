@@ -63,7 +63,8 @@ function getSlugFromFilename(filename: string): string {
 
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {
   const contentDir = join(process.cwd(), 'content', 'blog');
-  const files = readdirSync(contentDir).filter(file => file.endsWith('.md'));
+  const files = readdirSync(contentDir)
+    .filter(file => file.endsWith('.md') && !file.startsWith('_'));
   
   const posts: BlogPost[] = [];
   

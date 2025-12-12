@@ -4,7 +4,7 @@ title: "How Engineers Can Use AI Effectively"
 date: "2025-09-27T00:25:27.274Z"
 cover: "/assets/images/blog/how-engineers-can-use-ai-effectively-bc5411bc-f5fb-4a4f-aecf-62ae5358c42c.png"
 excerpt: "AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used.\nUsed carelessly, it produces garbage. Us..."
-tags: ["AI", "engineering", "Productivity", "programming"]
+tags: ["AI", "Engineering", "Productivity", "Programming"]
 ---
 
 AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used.
@@ -25,13 +25,13 @@ I asked AI to critique the design. It flagged that without jitter, simultaneous 
 
 ![Diagram showing initial design with exponential backoff retries](/assets/images/blog/how-engineers-can-use-ai-effectively-7ecd41f0-c8ca-453d-8461-ecb11e0cac4f.png)
 
-*Jobs move into a queue and are retried with exponential backoff on failure.*
+_Jobs move into a queue and are retried with exponential backoff on failure._
 
 **AI-suggested improvements:**
 
 ![Diagram showing improved design with jitter and dead letter queue](/assets/images/blog/how-engineers-can-use-ai-effectively-edcc962c-5b23-47bc-92d8-1a76f4aa0228.png)
 
-*Adding jitter reduces retry storms. A dead-letter queue catches jobs that fail after maximum attempts.*
+_Adding jitter reduces retry storms. A dead-letter queue catches jobs that fail after maximum attempts._
 
 These weren't concepts I didn't know, but AI gave me a quick critique partner Instead of spending half an hour sanity-checking edge cases, I got feedback in seconds and could move ahead with confidence.
 
