@@ -2,25 +2,25 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://nick.karnik.io/</loc>
-    <lastmod>2025-12-12T12:31:05.564Z</lastmod>
+    <lastmod>2025-12-12T12:34:37.888Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/blog</loc>
-    <lastmod>2025-12-12T12:31:05.564Z</lastmod>
+    <lastmod>2025-12-12T12:34:37.888Z</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/about</loc>
-    <lastmod>2025-12-12T12:31:05.564Z</lastmod>
+    <lastmod>2025-12-12T12:34:37.888Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://nick.karnik.io/resume</loc>
-    <lastmod>2025-12-12T12:31:05.564Z</lastmod>
+    <lastmod>2025-12-12T12:34:37.888Z</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
