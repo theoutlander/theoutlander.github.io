@@ -42,6 +42,8 @@ const iconWrapper = css({
 });
 
 export default function Footer() {
+	const currentYear = new Date().getFullYear();
+	
 	return (
 		<footer
 			className={css({
@@ -79,11 +81,11 @@ export default function Footer() {
 							className={css({
 								flex: 1,
 								width: "100%",
-								textAlign: "left",
+								textAlign: { base: "center", md: "left" },
 								alignSelf: "stretch",
 								display: "flex",
 								flexDirection: "column",
-								alignItems: "flex-start",
+								alignItems: { base: "center", md: "flex-start" },
 							})}
 						>
 							<h2
@@ -106,10 +108,10 @@ export default function Footer() {
 								className={css({
 									fontSize: "xs",
 									color: "gray.600",
-									paddingLeft: "12px",
+									paddingLeft: { base: "0", md: "12px" },
 								})}
 							>
-								© 2025 Nick Karnik. All rights reserved.
+								© {currentYear} Nick Karnik. All rights reserved.
 							</p>
 						</div>
 
@@ -118,10 +120,10 @@ export default function Footer() {
 							className={css({
 								flex: 1,
 								width: "100%",
-								textAlign: "left",
+								textAlign: { base: "center", md: "left" },
 								display: "flex",
 								flexDirection: "column",
-								alignItems: "flex-start",
+								alignItems: { base: "center", md: "flex-start" },
 							})}
 						>
 							<div
@@ -130,7 +132,7 @@ export default function Footer() {
 									flexWrap: "wrap",
 									gap: "1",
 									mb: "4",
-									justifyContent: "flex-start",
+									justifyContent: { base: "center", md: "flex-start" },
 								})}
 							>
 								<a
@@ -248,7 +250,7 @@ export default function Footer() {
 								className={css({
 									fontSize: "xs",
 									color: "gray.600",
-									paddingLeft: "12px",
+									paddingLeft: { base: "0", md: "12px" },
 								})}
 							>
 								Available for consulting at{" "}
