@@ -69,7 +69,7 @@ export default function PostView({ post }: { post: Post }) {
 				{post.cover ? (
 					<img
 						src={post.cover}
-						alt=""
+						alt={post.title || "Blog post cover image"}
 						loading="lazy"
 						className={blogCover()}
 					/>

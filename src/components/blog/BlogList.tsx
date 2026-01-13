@@ -145,7 +145,7 @@ export default function BlogList({
 							{p.cover ? (
 								<img
 									src={p.cover}
-									alt=""
+									alt={p.title || "Blog post cover image"}
 									loading="lazy"
 									className={css({
 										objectFit: "cover",

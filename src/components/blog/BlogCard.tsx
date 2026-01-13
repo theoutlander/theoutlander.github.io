@@ -34,7 +34,7 @@ export default function BlogCard({ post }: { post: Post }) {
 				{post.cover ? (
 					<img
 						src={post.cover}
-						alt=""
+						alt={post.title || "Blog post cover image"}
 						loading="lazy"
 						className={css({
 							objectFit: "cover",

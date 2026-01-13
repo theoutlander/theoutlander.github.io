@@ -12,9 +12,6 @@ Sitemap: ${BASE}/sitemap.xml
 # Disallow admin or private areas (if any)
 # Disallow: /admin/
 # Disallow: /private/
-
-# Allow all search engines to crawl the site
-Crawl-delay: 1
 `;
 
 	await mkdir("dist", { recursive: true });
