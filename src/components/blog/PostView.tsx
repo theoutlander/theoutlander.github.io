@@ -62,6 +62,7 @@ export default function PostView({ post }: { post: Post }) {
 				url={postUrl}
 				date={post.date}
 				excerpt={post.excerpt}
+				image={post.cover}
 			/>
 
 			<div className={blogPost()}>

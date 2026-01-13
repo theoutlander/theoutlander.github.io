@@ -164,6 +164,120 @@ const removeInlineStyles = (html: string) => {
 	return html.replace(/<style[^>]*>.*?<\/style>/gs, "");
 };
 
+// Generate JSON-LD structured data for Person schema
+const generatePersonJsonLd = (url: string) => {
+	const siteUrl = "https://nick.karnik.io";
+	return {
+		"@context": "https://schema.org",
+		"@type": "Person",
+		name: "Nick Karnik",
+		url: siteUrl,
+		sameAs: [
+			"https://twitter.com/theoutlander",
+			"https://github.com/theoutlander",
+			"https://www.linkedin.com/in/nickkarnik",
+		],
+		jobTitle: "Engineering Leader & Software Engineer",
+		worksFor: {
+			"@type": "Organization",
+			name: "Nick Karnik",
+			url: siteUrl,
+		},
+	};
+};
+
+// Generate JSON-LD structured data for WebSite schema
+const generateWebSiteJsonLd = () => {
+	const siteUrl = "https://nick.karnik.io";
+	return {
+		"@context": "https://schema.org",
+		"@type": "WebSite",
+		name: "Nick Karnik",
+		url: siteUrl,
+		description:
+			"Engineering leader with 25+ years building software across Google, Microsoft, and startups.",
+		author: {
+			"@type": "Person",
+			name: "Nick Karnik",
+		},
+		publisher: {
+			"@type": "Organization",
+			name: "Nick Karnik",
+			url: siteUrl,
+		},
+	};
+};
+
+// Generate JSON-LD structured data for Blog schema
+const generateBlogJsonLd = () => {
+	const siteUrl = "https://nick.karnik.io";
+	return {
+		"@context": "https://schema.org",
+		"@type": "Blog",
+		name: "Nick Karnik Blog",
+		url: `${siteUrl}/blog`,
+		description:
+			"Practical essays and reflections on software engineering, leadership, and AI.",
+		author: {
+			"@type": "Person",
+			name: "Nick Karnik",
+			url: siteUrl,
+		},
+		publisher: {
+			"@type": "Organization",
+			name: "Nick Karnik",
+			url: siteUrl,
+		},
+	};
+};
+
+// Generate JSON-LD structured data for BlogPosting schema
+const generateBlogPostJsonLd = (
+	title: string,
+	url: string,
+	date: string,
+	excerpt: string,
+	image?: string | null,
+	dateModified?: string
+) => {
+	const siteUrl = "https://nick.karnik.io";
+	const defaultImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
+	const imageUrl = image
+		? image.startsWith("http")
+			? image
+			: `${siteUrl}${image}`
+		: defaultImage;
+
+	return {
+		"@context": "https://schema.org",
+		"@type": "BlogPosting",
+		headline: title,
+		url: url,
+		datePublished: date,
+		dateModified: dateModified || date,
+		description: excerpt,
+		image: imageUrl,
+		mainEntityOfPage: {
+			"@type": "WebPage",
+			"@id": url,
+		},
+		author: {
+			"@type": "Person",
+			name: "Nick Karnik",
+			url: siteUrl,
+		},
+		publisher: {
+			"@type": "Organization",
+			name: "Nick Karnik",
+			url: siteUrl,
+			logo: {
+				"@type": "ImageObject",
+				url: defaultImage,
+			},
+		},
+	};
+};
+
 // Generate the base HTML template
 const generateBaseHTML = (
 	title: string,
@@ -181,13 +295,26 @@ const generateBaseHTML = (
 		section?: string;
 		tags?: string[];
 	},
-	jsBundle?: string | null
+	jsBundle?: string | null,
+	jsonLd?: object | object[]
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	const defaultOgImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
-	const finalOgImage = ogImage || defaultOgImage;
+	// Ensure og:image is absolute URL
+	const finalOgImage = ogImage
+		? ogImage.startsWith("http")
+			? ogImage
+			: `${siteUrl}${ogImage}`
+		: defaultOgImage;
 	const finalOgType = ogType || "website";
 	const finalCanonicalUrl = canonicalUrl || siteUrl;
+	
+	// Determine image type from URL
+	const imageType = finalOgImage.endsWith(".png")
+		? "image/png"
+		: finalOgImage.endsWith(".jpg") || finalOgImage.endsWith(".jpeg")
+		? "image/jpeg"
+		: "image/jpeg"; // default
 
 	return `<!DOCTYPE html>
 <html lang="en">
@@ -236,6 +363,9 @@ const generateBaseHTML = (
 		<meta property="og:url" content="${finalCanonicalUrl}" />
 		<meta property="og:image" content="${finalOgImage}" />
 		<meta property="og:image:alt" content="${title}" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="${imageType}" />
 		<meta property="og:site_name" content="Nick Karnik" />
 		<meta property="og:locale" content="en_US" />
 
@@ -268,7 +398,7 @@ const generateBaseHTML = (
 		}
 		${
 			articleData.author
-				? `<meta property="article:author" content="${articleData.author}" />`
+				? `<meta property="article:author" content="${siteUrl}" />`
 				: ""
 		}
 		${
@@ -289,6 +419,15 @@ const generateBaseHTML = (
 				: ""
 		}
 		`
+				: ""
+		}
+		
+		${
+			jsonLd
+				? `<!-- Structured Data (JSON-LD) -->
+		<script type="application/ld+json">
+${JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd, null, 2)}
+		</script>`
 				: ""
 		}
 
@@ -472,10 +611,10 @@ export async function renderAllStaticPagesSSR() {
 	}
 
 	// Copy other static files from public to dist
+	// Note: robots.txt and sitemap.xml are generated fresh to dist/ during build,
+	// so we don't copy them from public/ to avoid overwriting with stale data
 	console.log("📁 Copying static files from public to dist...");
 	const staticFiles = [
-		"robots.txt",
-		"sitemap.xml",
 		"favicon.ico",
 		"favicon_32x32.png",
 		"favicon_16x16.png",
@@ -504,6 +643,10 @@ export async function renderAllStaticPagesSSR() {
 	// Render home page
 	console.log("📄 Rendering home page with SSR...");
 	const homeResult = renderPageToHTML(HomePagePanda, { posts: blogData });
+	const homeJsonLd = [
+		generatePersonJsonLd("https://nick.karnik.io"),
+		generateWebSiteJsonLd(),
+	];
 	const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Engineering Leader & Software Engineer",
 		"Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools.",
@@ -514,7 +657,8 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
+		homeJsonLd
 	);
 	const homeHTML = removeInlineStyles(homeHTMLWithStyles);
 	writeFileSync("dist/index.html", homeHTML);
@@ -524,6 +668,7 @@ export async function renderAllStaticPagesSSR() {
 	const blogDir = join("dist", "blog");
 	mkdirSync(blogDir, { recursive: true });
 	const blogResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
+	const blogJsonLd = generateBlogJsonLd();
 	const blogHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blog | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
@@ -534,7 +679,8 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
+		blogJsonLd
 	);
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
@@ -544,6 +690,7 @@ export async function renderAllStaticPagesSSR() {
 	const blogsDir = join("dist", "blogs");
 	mkdirSync(blogsDir, { recursive: true });
 	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
+	const blogsJsonLd = generateBlogJsonLd();
 	const blogsHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Blogs | Engineering, Leadership & AI",
 		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
@@ -556,7 +703,8 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
+		blogsJsonLd
 	);
 	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
 	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
@@ -566,6 +714,7 @@ export async function renderAllStaticPagesSSR() {
 	const aboutDir = join("dist", "about");
 	mkdirSync(aboutDir, { recursive: true });
 	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
+	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
 		"About Nick Karnik | Engineering Leader & Advisor",
 		"Nick Karnik is a software engineer and leader with decades of experience across Big Tech and startups. Advisor to founders on AI, developer experience, and reliable systems.",
@@ -578,7 +727,8 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"profile",
 		undefined,
-		jsBundle
+		jsBundle,
+		aboutJsonLd
 	);
 	const aboutHTML = removeInlineStyles(aboutHTMLWithStyles);
 	writeFileSync(join(aboutDir, "index.html"), aboutHTML);
@@ -588,6 +738,7 @@ export async function renderAllStaticPagesSSR() {
 	const resumeDir = join("dist", "resume");
 	mkdirSync(resumeDir, { recursive: true });
 	const resumeResult = renderPageToHTML(ResumePagePanda, {});
+	const resumeJsonLd = generatePersonJsonLd("https://nick.karnik.io/resume");
 	const resumeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik Resume | Engineering Leadership & Expertise",
 		"Explore Nick Karnik's professional background: 10+ years leading teams, 25+ years building software, and a track record of delivering reliable, scalable systems.",
@@ -600,7 +751,8 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"profile",
 		undefined,
-		jsBundle
+		jsBundle,
+		resumeJsonLd
 	);
 	const resumeHTML = removeInlineStyles(resumeHTMLWithStyles);
 	writeFileSync(join(resumeDir, "index.html"), resumeHTML);
@@ -666,6 +818,14 @@ export async function renderAllStaticPagesSSR() {
 			tags: post.tags || ["engineering", "technology", "software development"],
 		};
 
+		const postJsonLd = generateBlogPostJsonLd(
+			post.title,
+			`https://nick.karnik.io/blog/${post.slug}`,
+			post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
+			postDescription,
+			post.cover,
+			articleData.modifiedTime
+		);
 		const postHTMLWithStyles = generateBaseHTML(
 			`${post.title} - Nick Karnik`,
 			postDescription,
@@ -676,7 +836,8 @@ export async function renderAllStaticPagesSSR() {
 			postOgImage,
 			"article",
 			articleData,
-			jsBundle
+			jsBundle,
+			postJsonLd
 		);
 		const postHTML = removeInlineStyles(postHTMLWithStyles);
 		writeFileSync(join(postDir, "index.html"), postHTML);

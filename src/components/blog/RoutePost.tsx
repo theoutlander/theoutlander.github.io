@@ -60,6 +60,7 @@ export default function RoutePost({ slug }: { slug: string }) {
 				url={`https://nick.karnik.io/blog/${post.slug}`}
 				date={post.date}
 				excerpt={post.excerpt}
+				image={post.cover}
 			/>
 
 			<div className={css({ maxW: "768px", mx: "auto", p: "0 24px" })}>
