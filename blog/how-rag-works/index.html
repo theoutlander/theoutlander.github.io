@@ -43,8 +43,11 @@
 		<meta property="og:description" content="A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter." />
 		<meta property="og:type" content="article" />
 		<meta property="og:url" content="https://nick.karnik.io/blog/how-rag-works" />
-		<meta property="og:image" content="/assets/images/blog/how-rag-works-cover.png" />
+		<meta property="og:image" content="https://nick.karnik.io/assets/images/blog/how-rag-works-cover.png" />
 		<meta property="og:image:alt" content="A Practical Way to Think About RAG - Nick Karnik" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="image/png" />
 		<meta property="og:site_name" content="Nick Karnik" />
 		<meta property="og:locale" content="en_US" />
 
@@ -54,7 +57,7 @@
 		<meta name="twitter:creator" content="@theoutlander" />
 		<meta name="twitter:title" content="A Practical Way to Think About RAG - Nick Karnik" />
 		<meta name="twitter:description" content="A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter." />
-		<meta name="twitter:image" content="/assets/images/blog/how-rag-works-cover.png" />
+		<meta name="twitter:image" content="https://nick.karnik.io/assets/images/blog/how-rag-works-cover.png" />
 		<meta name="twitter:image:alt" content="A Practical Way to Think About RAG - Nick Karnik" />
 
 		<!-- Additional SEO Meta Tags -->
@@ -65,12 +68,44 @@
 		<!-- Article-specific meta tags -->
 		<meta property="article:published_time" content="2025-12-12T10:00:00.000Z" />
 		<meta property="article:modified_time" content="2025-12-12T10:00:00.000Z" />
-		<meta property="article:author" content="Nick Karnik" />
+		<meta property="article:author" content="https://nick.karnik.io" />
 		<meta property="article:section" content="Technology" />
 		<meta property="article:tag" content="Llm" />
 		<meta property="article:tag" content="Rag" />
 		<meta property="article:tag" content="Architecture" />
 		
+		
+		<!-- Structured Data (JSON-LD) -->
+		<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A Practical Way to Think About RAG",
+  "url": "https://nick.karnik.io/blog/how-rag-works",
+  "datePublished": "2025-12-12T10:00:00.000Z",
+  "dateModified": "2025-12-12T10:00:00.000Z",
+  "description": "A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter.",
+  "image": "https://nick.karnik.io/assets/images/blog/how-rag-works-cover.png",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nick.karnik.io/blog/how-rag-works"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Nick Karnik",
+    "url": "https://nick.karnik.io"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nick Karnik",
+    "url": "https://nick.karnik.io",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg"
+    }
+  }
+}
+		</script>
 
 		<!-- RSS Feed -->
 		<link
@@ -118,7 +153,7 @@
 	</head>
 	<body>
 		<div id="root">
-			<div class="bg_white min-h_100vh w_100% ov-x_hidden"><a href="#main-content" class="pos_absolute top_-40px left_6px bg_brand.600 c_white p_8px_12px td_none bdr_4px z_1000 fs_sm fw_medium trs_top_200ms_ease-in-out focus:top_6px focus:ring_2px_solid_white focus:ring-o_2px [@media_(prefers-reduced-motion:_reduce)]:trs_none">Skip to main content</a><header class="pos_sticky top_0 z_10 bg_white dark:bg_dark.surface bd-b_1px_solid bd-c_gray.200 bkdp_none md:bkdp_saturate(180%)_blur(8px) -webkit-backdrop-filter_none md:-webkit-backdrop-filter_saturate(180%)_blur(8px)"><div class="pos_relative max-w_6xl mx_auto px_4 md:px_6 lg:px_8 py_3"><div class="d_flex ai_center jc_space-between gap_6"><a href="/" class="td_none focus:ring_2px_solid_brand.600 focus:ring-o_2px focus:bdr_4px"><h1 class="fs_md fw_semibold c_gray.900 dark:c_dark.text ff_heading m_0">Nick Karnik</h1></a><nav class="d_flex ai_center gap_6" aria-label="Main navigation"><a href="/blog" aria-current="page" class="c_brand.600 fw_medium td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Blog</a><a href="/about" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">About</a><a href="/resume" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Resume</a><a href="/schedule" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Schedule</a></nav></div></div></header><main id="main-content" class="max-w_768px py_6 md:py_10 mx_auto px_4 md:px_6 w_100%"><article><header class="mb_8"><h1 class="fs_2xl md:fs_2.5rem fw_600 mb_4 c_#000 lh_1.2">A Practical Way to Think About RAG</h1><div class="d_flex ai_center gap_2 mb_6 fs_14px c_#666"><time>December 12, 2025</time><span>│</span><span>7<!-- --> <!-- -->min read</span><span>│</span><span>LLM</span></div><img src="/assets/images/blog/how-rag-works-cover.png" alt="" loading="lazy" class="w_100% h_auto mb_6"/></header><div class="fs_16px md:fs_18px lh_1.7 c_#000 [&amp;_h2]:fs_1.5rem [&amp;_h2]:md:fs_1.75rem [&amp;_h2]:fw_600 [&amp;_h2]:mt_8 [&amp;_h2]:mb_4 [&amp;_h2]:c_#000 [&amp;_h3]:fs_1.25rem [&amp;_h3]:md:fs_1.5rem [&amp;_h3]:fw_600 [&amp;_h3]:mt_6 [&amp;_h3]:mb_3 [&amp;_h3]:c_#000 [&amp;_p]:mb_4 [&amp;_ul,_&amp;_ol]:mb_4 [&amp;_ul,_&amp;_ol]:pl_6 [&amp;_li]:mb_2 [&amp;_blockquote]:bd-l_3px_solid [&amp;_blockquote]:bd-c_#ccc [&amp;_blockquote]:pl_4 [&amp;_blockquote]:py_2 [&amp;_blockquote]:mb_4 [&amp;_blockquote]:font-style_italic [&amp;_blockquote]:c_#666 [&amp;_code]:bg_#f5f5f5 [&amp;_code]:px_2 [&amp;_code]:py_1 [&amp;_code]:bdr_3px [&amp;_code]:fs_0.9em [&amp;_code]:ff_mono [&amp;_pre]:bg_#f5f5f5 [&amp;_pre]:c_#000 [&amp;_pre]:p_3 [&amp;_pre]:md:p_4 [&amp;_pre]:bdr_3px [&amp;_pre]:ov_auto [&amp;_pre]:ov-x_auto [&amp;_pre]:mb_4 [&amp;_pre]:max-w_100% [&amp;_pre_code]:bg_transparent [&amp;_pre_code]:c_inherit [&amp;_pre_code]:px_0 [&amp;_pre_code]:py_0 [&amp;_a]:c_#000 [&amp;_a]:td_underline"><div><p>Retrieval-Augmented Generation (RAG) shows up constantly in conversations about LLM applications, especially once private or fast-changing data enters the picture. What I kept noticing was a gap between two kinds of explanations. Some stayed so abstract that it was hard to tell when RAG actually helped. Others jumped straight into tools and pipelines without first explaining what problem the system was really solving.</p>
+			<div class="bg_white min-h_100vh w_100% ov-x_hidden"><a href="#main-content" class="pos_absolute top_-40px left_6px bg_brand.600 c_white p_8px_12px td_none bdr_4px z_1000 fs_sm fw_medium trs_top_200ms_ease-in-out focus:top_6px focus:ring_2px_solid_white focus:ring-o_2px [@media_(prefers-reduced-motion:_reduce)]:trs_none">Skip to main content</a><header class="pos_sticky top_0 z_10 bg_white dark:bg_dark.surface bd-b_1px_solid bd-c_gray.200 bkdp_none md:bkdp_saturate(180%)_blur(8px) -webkit-backdrop-filter_none md:-webkit-backdrop-filter_saturate(180%)_blur(8px)"><div class="pos_relative max-w_6xl mx_auto px_4 md:px_6 lg:px_8 py_3"><div class="d_flex ai_center jc_space-between gap_6"><a href="/" class="td_none focus:ring_2px_solid_brand.600 focus:ring-o_2px focus:bdr_4px"><h1 class="fs_md fw_semibold c_gray.900 dark:c_dark.text ff_heading m_0">Nick Karnik</h1></a><nav class="d_flex ai_center gap_6" aria-label="Main navigation"><a href="/blog" aria-current="page" class="c_brand.600 fw_medium td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Blog</a><a href="/about" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">About</a><a href="/resume" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Resume</a><a href="/schedule" class="c_gray.600 fw_normal td_none p_8px_12px bdr_4px min-h_44px d_flex ai_center hover:c_brand.600 hover:td_underline focus:ring_2px_solid_brand.600 focus:ring-o_2px">Schedule</a></nav></div></div></header><main id="main-content" class="max-w_768px py_6 md:py_10 mx_auto px_4 md:px_6 w_100%"><article><header class="mb_8"><h1 class="fs_2xl md:fs_2.5rem fw_600 mb_4 c_#000 lh_1.2">A Practical Way to Think About RAG</h1><div class="d_flex ai_center gap_2 mb_6 fs_14px c_#666"><time>December 12, 2025</time><span>│</span><span>7<!-- --> <!-- -->min read</span><span>│</span><span>LLM</span></div><img src="/assets/images/blog/how-rag-works-cover.png" alt="A Practical Way to Think About RAG" loading="lazy" class="w_100% h_auto mb_6"/></header><div class="fs_16px md:fs_18px lh_1.7 c_#000 [&amp;_h2]:fs_1.5rem [&amp;_h2]:md:fs_1.75rem [&amp;_h2]:fw_600 [&amp;_h2]:mt_8 [&amp;_h2]:mb_4 [&amp;_h2]:c_#000 [&amp;_h3]:fs_1.25rem [&amp;_h3]:md:fs_1.5rem [&amp;_h3]:fw_600 [&amp;_h3]:mt_6 [&amp;_h3]:mb_3 [&amp;_h3]:c_#000 [&amp;_p]:mb_4 [&amp;_ul,_&amp;_ol]:mb_4 [&amp;_ul,_&amp;_ol]:pl_6 [&amp;_li]:mb_2 [&amp;_blockquote]:bd-l_3px_solid [&amp;_blockquote]:bd-c_#ccc [&amp;_blockquote]:pl_4 [&amp;_blockquote]:py_2 [&amp;_blockquote]:mb_4 [&amp;_blockquote]:font-style_italic [&amp;_blockquote]:c_#666 [&amp;_code]:bg_#f5f5f5 [&amp;_code]:px_2 [&amp;_code]:py_1 [&amp;_code]:bdr_3px [&amp;_code]:fs_0.9em [&amp;_code]:ff_mono [&amp;_pre]:bg_#f5f5f5 [&amp;_pre]:c_#000 [&amp;_pre]:p_3 [&amp;_pre]:md:p_4 [&amp;_pre]:bdr_3px [&amp;_pre]:ov_auto [&amp;_pre]:ov-x_auto [&amp;_pre]:mb_4 [&amp;_pre]:max-w_100% [&amp;_pre_code]:bg_transparent [&amp;_pre_code]:c_inherit [&amp;_pre_code]:px_0 [&amp;_pre_code]:py_0 [&amp;_a]:c_#000 [&amp;_a]:td_underline"><div><p>Retrieval-Augmented Generation (RAG) shows up constantly in conversations about LLM applications, especially once private or fast-changing data enters the picture. What I kept noticing was a gap between two kinds of explanations. Some stayed so abstract that it was hard to tell when RAG actually helped. Others jumped straight into tools and pipelines without first explaining what problem the system was really solving.</p>
 <p>This is the mental model I keep coming back to when evaluating RAG systems. It is not exhaustive, but it is enough to make informed design decisions and to recognize when RAG is likely to help and when it is likely to cause problems.</p>
 <h2>Why RAG exists</h2>
 <p>Language models are strong at reasoning over text, but they operate inside a fixed knowledge boundary. They do not know your internal documents, policies, or product details unless those are explicitly provided at inference time. They also do not update themselves as your information changes.</p>
@@ -181,7 +216,7 @@
 		</div>
 		
 		<!-- Load client-side JavaScript bundle for routing -->
-		<script type="module" src="/assets/index-DJPblfid.js"></script>
+		<script type="module" src="/assets/index-BrSb0YfY.js"></script>
 		
 		<!-- Dark mode detection script - DISABLED for mobile compatibility -->
 		<!-- <script>
