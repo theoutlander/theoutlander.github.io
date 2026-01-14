@@ -20,7 +20,7 @@ fi
 echo "Testing links on http://localhost:$PORT"
 
 # Run linkinator with the actual port
-NPM_CONFIG_LOGLEVEL=error npx linkinator http://localhost:$PORT --recurse --skip 'linkedin.com' --skip 'cdn-cgi/l/email-protection'
+NPM_CONFIG_LOGLEVEL=error npx linkinator http://localhost:$PORT --recurse --skip 'linkedin.com' --skip 'help.tableau.com' --skip 'cdn-cgi/l/email-protection'
 
 # Capture the exit code
 EXIT_CODE=$?

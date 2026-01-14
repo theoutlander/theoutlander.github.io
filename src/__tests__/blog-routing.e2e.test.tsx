@@ -205,7 +205,7 @@ describe("Blog Routing E2E", () => {
 
 		const html = await response.text();
 		// For a SPA, we expect the base HTML structure
-		expect(html).toContain("<!doctype html>");
+		expect(html.toLowerCase()).toContain("<!doctype html>");
 		expect(html).toContain('<div id="root"></div>');
 		expect(html).toContain('src="/src/main.tsx');
 	});
@@ -223,7 +223,7 @@ describe("Blog Routing E2E", () => {
 
 		const html = await response.text();
 		// For a SPA, we expect the base HTML structure
-		expect(html).toContain("<!doctype html>");
+		expect(html.toLowerCase()).toContain("<!doctype html>");
 		expect(html).toContain('<div id="root"></div>');
 		expect(html).toContain('src="/src/main.tsx');
 	});
@@ -243,7 +243,9 @@ describe("Blog Routing E2E", () => {
 		expect(Array.isArray(data)).toBe(true);
 		expect(data.length).toBeGreaterThan(0);
 
-		const post = data[0];
+		// Find the specific post we're testing
+		const post = data.find((p: any) => p.slug === "how-engineers-can-use-ai-effectively");
+		expect(post).toBeDefined();
 		expect(post).toHaveProperty("slug", "how-engineers-can-use-ai-effectively");
 		expect(post).toHaveProperty(
 			"title",
@@ -273,7 +275,8 @@ describe("Blog Routing E2E", () => {
 			"title",
 			"How Engineers Can Use AI Effectively"
 		);
-		expect(data).toHaveProperty("contentHtml");
+		// Individual post files use 'html' instead of 'contentHtml'
+		expect(data).toHaveProperty("html");
 		expect(data).toHaveProperty("tags");
 		expect(Array.isArray(data.tags)).toBe(true);
 	});
@@ -290,7 +293,7 @@ describe("Blog Routing E2E", () => {
 		expect(response.headers.get("content-type")).toContain("text/html");
 
 		const html = await response.text();
-		expect(html).toContain("<!doctype html>");
+		expect(html.toLowerCase()).toContain("<!doctype html>");
 		expect(html).toContain('<div id="root"></div>');
 	});
 

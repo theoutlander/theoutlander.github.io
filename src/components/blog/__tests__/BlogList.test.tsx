@@ -96,7 +96,7 @@ describe("BlogList", () => {
 
 		expect(screen.getByText("Third Post")).toBeInTheDocument();
 		// Third post has no cover image
-		const images = screen.getAllByRole("presentation");
+		const images = screen.getAllByRole("img");
 		expect(images).toHaveLength(2); // Only first two posts have cover images
 	});
 

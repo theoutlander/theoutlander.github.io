@@ -68,9 +68,9 @@ describe("BlogCard", () => {
 
 	it("renders cover image when available", () => {
 		render(<BlogCard post={mockPost} />);
-		const image = screen.getByRole("presentation");
+		const image = screen.getByRole("img", { name: "Test Post Title" });
 		expect(image).toHaveAttribute("src", "https://example.com/cover.jpg");
-		expect(image).toHaveAttribute("alt", "");
+		expect(image).toHaveAttribute("alt", "Test Post Title");
 	});
 
 	it("does not render cover image when not available", () => {

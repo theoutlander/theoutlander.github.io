@@ -90,10 +90,10 @@ describe("BlogPostPagePanda", () => {
 	it("renders cover image when available", () => {
 		render(<BlogPostPagePanda post={mockPost} />);
 
-		const coverImage = screen.getByRole("presentation");
+		const coverImage = screen.getByRole("img", { name: "How Engineers Can Use AI Effectively" });
 		expect(coverImage).toBeInTheDocument();
 		expect(coverImage).toHaveAttribute("src", mockPost.cover);
-		expect(coverImage).toHaveAttribute("alt", "");
+		expect(coverImage).toHaveAttribute("alt", "How Engineers Can Use AI Effectively");
 	});
 
 	it("does not render cover image when not available", () => {

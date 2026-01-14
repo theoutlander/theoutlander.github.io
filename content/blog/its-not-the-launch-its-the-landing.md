@@ -25,7 +25,7 @@ Support tickets dropped because technicians could see problems at a glance inste
 
 Plenty of products we all use tell the same story. [Gmail](https://workspace.google.com/blog/productivity-collaboration/celebrating-50-years-of-email) began as a quiet invite-only service. The landing was steady adoption until it became the default for billions. GitHub was not splashy either, but pull requests became the way modern software is written. Dropbox began with a short [demo video](https://www.youtube.com/watch?v=7QmCUDHpNzE) on Hacker News, and the landing came when sync worked flawlessly and spread by word of mouth. None of these succeeded because of the noise at launch. They succeeded because they landed.
 
-We have also seen the opposite. Google Glass had a dazzling demo. It failed not because it couldn't launch but because people didn't want to wear computers on their faces. Microsoft launched the [Zune](https://www.geekwire.com/2011/goodbye-seattle-microsoft-kills-zune-hardware/) to compete with the iPod but it never landed because it lacked an ecosystem and cultural pull.
+We have also seen the opposite. Google Glass had a dazzling demo. It failed not because it couldn't launch but because people didn't want to wear computers on their faces. Microsoft launched the Zune to compete with the iPod but it never landed because it lacked an ecosystem and cultural pull.
 
 So how do you tell whether something has truly landed.
 

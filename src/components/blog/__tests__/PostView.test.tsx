@@ -133,16 +133,16 @@ describe("PostView", () => {
 	it("renders cover image when available", () => {
 		render(<PostView post={mockPost} />);
 
-		const image = screen.getByRole("presentation");
+		const image = screen.getByRole("img", { name: "Test Post Title" });
 		expect(image).toHaveAttribute("src", "https://example.com/cover.jpg");
-		expect(image).toHaveAttribute("alt", "");
+		expect(image).toHaveAttribute("alt", "Test Post Title");
 		expect(image).toHaveAttribute("loading", "lazy");
 	});
 
 	it("does not render cover image when not available", () => {
 		render(<PostView post={mockPostWithoutCover} />);
 
-		expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
+		expect(screen.queryByRole("img", { name: "Test Post Title" })).not.toBeInTheDocument();
 	});
 
 	it("renders post content when available", () => {
