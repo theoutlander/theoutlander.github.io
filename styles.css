@@ -870,16 +870,16 @@
     background: var(--colors-purple-50);
 }
 
+  .bg_green\.50 {
+    background: var(--colors-green-50);
+}
+
   .bg_brand\.600 {
     background: var(--colors-brand-600);
 }
 
   .bg_brand\.50 {
     background: var(--colors-brand-50);
-}
-
-  .bg_green\.50 {
-    background: var(--colors-green-50);
 }
 
   .bd_1px_solid {
@@ -1062,6 +1062,10 @@
     border-color: var(--colors-purple-200);
 }
 
+  .bd-c_green\.200 {
+    border-color: var(--colors-green-200);
+}
+
   .gap_4 {
     gap: var(--spacing-4);
 }
@@ -1084,10 +1088,6 @@
 
   .bd-c_brand\.200 {
     border-color: var(--colors-brand-200);
-}
-
-  .bd-c_green\.200 {
-    border-color: var(--colors-green-200);
 }
 
   .px_6 {
@@ -1407,6 +1407,10 @@
     color: var(--colors-purple-700);
 }
 
+  .c_green\.700 {
+    color: var(--colors-green-700);
+}
+
   .fw_600 {
     font-weight: 600;
 }
@@ -1425,10 +1429,6 @@
 
   .c_brand\.700 {
     color: var(--colors-brand-700);
-}
-
-  .c_green\.700 {
-    color: var(--colors-green-700);
 }
 
   .fs_8xl {
@@ -1909,6 +1909,11 @@
     background: var(--mix-background, var(--colors-purple-900));
 }
 
+  .dark .dark\:bg_green\.900\/20 {
+    --mix-background: color-mix(in srgb, var(--colors-green-900) 20%, transparent);
+    background: var(--mix-background, var(--colors-green-900));
+}
+
   .dark .dark\:bg_dark\.bg {
     background: var(--colors-dark-bg);
 }
@@ -1947,6 +1952,10 @@
 
   .dark .dark\:bd-c_purple\.700 {
     border-color: var(--colors-purple-700);
+}
+
+  .dark .dark\:bd-c_green\.700 {
+    border-color: var(--colors-green-700);
 }
 
   .\[\&_a\]\:td_none a {
@@ -2023,6 +2032,10 @@
 
   .dark .dark\:c_purple\.400 {
     color: var(--colors-purple-400);
+}
+
+  .dark .dark\:c_green\.300 {
+    color: var(--colors-green-300);
 }
 
   .dark .dark\:c_gray\.100 {
@@ -2305,6 +2318,10 @@
     outline-color: var(--colors-purple-600);
 }
 
+  .focusVisible\:ring-c_green\.600:is(:focus-visible, [data-focus-visible]) {
+    outline-color: var(--colors-green-600);
+}
+
   .focusVisible\:ring-c_brand\.700:is(:focus-visible, [data-focus-visible]) {
     outline-color: var(--colors-brand-700);
 }
@@ -2343,6 +2360,10 @@
 
   .hover\:bg_purple\.100:is(:hover, [data-hover]) {
     background: var(--colors-purple-100);
+}
+
+  .hover\:bg_green\.100:is(:hover, [data-hover]) {
+    background: var(--colors-green-100);
 }
 
   .hover\:bg_brand\.700:is(:hover, [data-hover]) {
@@ -2505,6 +2526,11 @@
   .dark .hover\:dark\:bg_purple\.800\/30:is(:hover, [data-hover]) {
     --mix-background: color-mix(in srgb, var(--colors-purple-800) 30%, transparent);
     background: var(--mix-background, var(--colors-purple-800));
+}
+
+  .dark .hover\:dark\:bg_green\.800\/30:is(:hover, [data-hover]) {
+    --mix-background: color-mix(in srgb, var(--colors-green-800) 30%, transparent);
+    background: var(--mix-background, var(--colors-green-800));
 }
 
   .dark .hover\:dark\:bx-sh_0_4px_12px_rgba\(59\,_130\,_246\,_0\.1\):is(:hover, [data-hover]) {
