@@ -212,6 +212,19 @@ export default function HeroSSR() {
 							</span>
 							<span>Product</span>
 						</button>
+						<button
+							type="button"
+							className={chip({ variant: "devex" })}
+							aria-label="Developer Experience"
+						>
+							<span
+								aria-hidden="true"
+								className={css({ fontSize: "0.9em" })}
+							>
+								🛠
+							</span>
+							<span>Developer Experience</span>
+						</button>
 					</div>
 
 					{/* CTA */}
@@ -298,6 +311,17 @@ const chip = cva({
 					},
 					_hover: {
 						bg: { base: "purple.100", _dark: "purple.800/30" },
+					},
+				},
+				devex: {
+					bg: { base: "green.50", _dark: "green.900/20" },
+					color: { base: "green.700", _dark: "green.300" },
+					borderColor: { base: "green.200", _dark: "green.700" },
+					_focusVisible: {
+						outlineColor: "green.600",
+					},
+					_hover: {
+						bg: { base: "green.100", _dark: "green.800/30" },
 					},
 				},
 			cta: {
