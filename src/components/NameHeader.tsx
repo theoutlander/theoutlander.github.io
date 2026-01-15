@@ -53,9 +53,10 @@ const pill = cva({
 type PillTone = "gray" | "blue" | "green" | "purple" | "orange";
 function inferToneFromLabel(label: string): PillTone {
 	const lower = label.toLowerCase();
-	if (lower.includes("ai")) return "blue";
-	if (lower.includes("lead")) return "orange";
+	if (lower.includes("ai")) return "orange";
+	if (lower.includes("lead")) return "blue";
 	if (lower.includes("product")) return "purple";
+	if (lower.includes("developer")) return "green";
 	return "gray";
 }
 
@@ -186,11 +187,10 @@ const iconWrapper = css({
 
 // ====== data ======
 const skills = [
-	{ label: "TypeScript", tone: "blue" as const },
-	{ label: "React", tone: "purple" as const },
-	{ label: "Developer Experience", tone: "gray" as const },
-	{ label: "NodeJS", tone: "green" as const },
-	{ label: "AI", tone: "orange" as const },
+	{ label: "✨ AI", tone: "orange" as const },
+	{ label: "👥 Leadership", tone: "blue" as const },
+	{ label: "📦 Product", tone: "purple" as const },
+	{ label: "🛠 Developer Experience", tone: "green" as const },
 ];
 
 interface NameHeaderProps {

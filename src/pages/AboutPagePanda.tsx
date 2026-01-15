@@ -46,7 +46,12 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				{/* Header */}
 				<NameHeader
 					showDownloadButton={true}
-					tags={["✨ AI", "👥 Leadership", "📦 Product"]}
+					tags={[
+						"✨ AI",
+						"👥 Leadership",
+						"📦 Product",
+						"🛠 Developer Experience",
+					]}
 				/>
 
 				{/* Grid */}

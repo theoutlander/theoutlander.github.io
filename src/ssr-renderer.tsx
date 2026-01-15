@@ -48,6 +48,17 @@ function hashContent(content: string, length = 8) {
 	return createHash("sha256").update(content).digest("hex").slice(0, length);
 }
 
+function serializeForInlineScript(data: unknown) {
+	// Prevent closing the script tag and escape minimal characters
+	return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+function buildInlineDataScript(id: string, data: unknown) {
+	return `<script id="${id}" type="application/json">${serializeForInlineScript(
+		data
+	)}</script>`;
+}
+
 // Recursively copy directory contents, skipping system files
 const copyDirectory = (src: string, dest: string) => {
 	const items = readdirSync(src);
@@ -296,7 +307,8 @@ const generateBaseHTML = (
 		tags?: string[];
 	},
 	jsBundle?: string | null,
-	jsonLd?: object | object[]
+	jsonLd?: object | object[],
+	inlineDataScript?: string
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	const defaultOgImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
@@ -480,6 +492,7 @@ ${JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd, null, 2)}
 			${content}
 		</div>
 		
+		${inlineDataScript || ""}
 		${
 			jsBundle
 				? `<!-- Load client-side JavaScript bundle for routing -->
@@ -572,6 +585,7 @@ export async function renderAllStaticPagesSSR() {
 
 	// Load blog data from local markdown files
 	const blogData = await loadAllBlogPosts();
+	const inlineAllPostsScript = buildInlineDataScript("__ALL_POSTS__", blogData);
 
 	// Read the about page data
 	const aboutData = JSON.parse(
@@ -658,7 +672,8 @@ export async function renderAllStaticPagesSSR() {
 		"website",
 		undefined,
 		jsBundle,
-		homeJsonLd
+		homeJsonLd,
+		inlineAllPostsScript
 	);
 	const homeHTML = removeInlineStyles(homeHTMLWithStyles);
 	writeFileSync("dist/index.html", homeHTML);
@@ -680,7 +695,8 @@ export async function renderAllStaticPagesSSR() {
 		"website",
 		undefined,
 		jsBundle,
-		blogJsonLd
+		blogJsonLd,
+		inlineAllPostsScript
 	);
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
@@ -704,7 +720,8 @@ export async function renderAllStaticPagesSSR() {
 		"website",
 		undefined,
 		jsBundle,
-		blogsJsonLd
+		blogsJsonLd,
+		inlineAllPostsScript
 	);
 	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
 	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
@@ -826,6 +843,10 @@ export async function renderAllStaticPagesSSR() {
 			post.cover,
 			articleData.modifiedTime
 		);
+		const postInlineScript = buildInlineDataScript(
+			"__POST_DATA__",
+			fullPostData
+		);
 		const postHTMLWithStyles = generateBaseHTML(
 			`${post.title} - Nick Karnik`,
 			postDescription,
@@ -837,7 +858,8 @@ export async function renderAllStaticPagesSSR() {
 			"article",
 			articleData,
 			jsBundle,
-			postJsonLd
+			postJsonLd,
+			postInlineScript
 		);
 		const postHTML = removeInlineStyles(postHTMLWithStyles);
 		writeFileSync(join(postDir, "index.html"), postHTML);
