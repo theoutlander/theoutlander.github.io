@@ -1,8 +1,6 @@
 import React from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
 import { FaLinkedin, FaGithub, FaYoutube } from "react-icons/fa";
-import { MdEmail } from "react-icons/md";
-import { HiOutlineCalendar } from "react-icons/hi";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { getIconColorStyles, iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
@@ -107,7 +105,50 @@ const iconRow = css({
 	gap: 2,
 	flexWrap: "wrap",
 	justifyContent: "flex-start",
-	mt: 2,
+});
+
+const actionsRow = css({
+	display: "flex",
+	flexWrap: "wrap",
+	justifyContent: "space-between",
+	alignItems: "center",
+	gap: 3,
+	mt: 3,
+});
+
+const downloadRow = css({
+	display: "flex",
+	alignItems: "center",
+	justifyContent: "flex-end",
+	gap: 2,
+});
+
+const downloadButton = css({
+	display: "inline-flex",
+	alignItems: "center",
+	gap: 2,
+	paddingInline: 3,
+	paddingBlock: 2,
+	borderRadius: "md",
+	backgroundColor: { base: "brand.600", _dark: "brand.500" },
+	color: "white",
+	fontWeight: "semibold",
+	textDecoration: "none",
+	boxShadow: "sm",
+	transition: "all 150ms ease-in-out",
+	_hover: {
+		backgroundColor: { base: "brand.700", _dark: "brand.400" },
+		boxShadow: "md",
+		transform: "translateY(-1px)",
+	},
+	_active: {
+		transform: "translateY(0)",
+	},
+	_focusVisible: {
+		outline: "2px solid",
+		outlineColor: "brand.700",
+		outlineOffset: "2px",
+	},
 });
 
 // Shared icon container style - matches resume icon container
@@ -196,104 +237,79 @@ export default function NameHeader({
 								</span>
 						  ))}
 				</div>
-				<div className={iconRow}>
-					<a
-						href="mailto:nick@karnik.io"
-						target="_blank"
-						rel="noopener"
-						aria-label="Send email to Nick Karnik"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("email"))}>
-							<MdEmail
-								size={ICON_SIZE}
-								color={iconColors.email.light}
-							/>
-						</div>
-					</a>
-					<a
-						href="https://github.com/theoutlander"
-						target="_blank"
-						rel="noopener"
-						aria-label="Visit Nick Karnik's GitHub profile"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("github"))}>
-							<FaGithub
-								size={ICON_SIZE}
-								color={iconColors.github.light}
-							/>
-						</div>
-					</a>
-					<a
-						href="https://www.linkedin.com/in/theoutlander"
-						target="_blank"
-						rel="noopener"
-						aria-label="Visit Nick Karnik's LinkedIn profile"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("linkedin"))}>
-							<FaLinkedin
-								size={ICON_SIZE}
-								color={iconColors.linkedin.light}
-							/>
-						</div>
-					</a>
-					<a
-						href="/schedule"
-						aria-label="Schedule a Call"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("calendar"))}>
-							<HiOutlineCalendar
-								size={ICON_SIZE}
-								color={iconColors.calendar.light}
-							/>
-						</div>
-					</a>
-					<a
-						href="https://youtube.com/@nick-karnik"
-						target="_blank"
-						rel="noopener"
-						aria-label="Visit Nick Karnik's YouTube channel"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("youtube"))}>
-							<FaYoutube
-								size={ICON_SIZE}
-								color={iconColors.youtube.light}
-							/>
-						</div>
-					</a>
-					<a
-						href="https://www.codementor.io/@theoutlander"
-						target="_blank"
-						rel="noopener"
-						aria-label="Visit Nick Karnik's Codementor profile"
-						className={iconLinkContainer}
-					>
-						<div className={css(iconWrapper, getIconColorStyles("codementor"))}>
-							<CodementorIcon
-								size={ICON_SIZE}
-								color={iconColors.codementor.light}
-							/>
-						</div>
-					</a>
-					{showDownloadButton && (
+				<div className={actionsRow}>
+					<div className={iconRow}>
 						<a
-							href="/assets/documents/resume-nick-karnik.pdf"
+							href="https://github.com/theoutlander"
 							target="_blank"
 							rel="noopener"
-							aria-label="Download Nick Karnik's resume (PDF)"
+							aria-label="Visit Nick Karnik's GitHub profile"
 							className={iconLinkContainer}
 						>
-							<div className={css(iconWrapper, getIconColorStyles("resume"))}>
-								<HiOutlineDocumentText
+							<div className={css(iconWrapper, getIconColorStyles("github"))}>
+								<FaGithub
 									size={ICON_SIZE}
-									color={iconColors.resume.light}
+									color={iconColors.github.light}
 								/>
 							</div>
 						</a>
+						<a
+							href="https://www.linkedin.com/in/theoutlander"
+							target="_blank"
+							rel="noopener"
+							aria-label="Visit Nick Karnik's LinkedIn profile"
+							className={iconLinkContainer}
+						>
+							<div className={css(iconWrapper, getIconColorStyles("linkedin"))}>
+								<FaLinkedin
+									size={ICON_SIZE}
+									color={iconColors.linkedin.light}
+								/>
+							</div>
+						</a>
+						<a
+							href="https://youtube.com/@nick-karnik"
+							target="_blank"
+							rel="noopener"
+							aria-label="Visit Nick Karnik's YouTube channel"
+							className={iconLinkContainer}
+						>
+							<div className={css(iconWrapper, getIconColorStyles("youtube"))}>
+								<FaYoutube
+									size={ICON_SIZE}
+									color={iconColors.youtube.light}
+								/>
+							</div>
+						</a>
+						<a
+							href="https://www.codementor.io/@theoutlander"
+							target="_blank"
+							rel="noopener"
+							aria-label="Visit Nick Karnik's Codementor profile"
+							className={iconLinkContainer}
+						>
+							<div className={css(iconWrapper, getIconColorStyles("codementor"))}>
+								<CodementorIcon
+									size={ICON_SIZE}
+									color={iconColors.codementor.light}
+								/>
+							</div>
+						</a>
+					</div>
+					{showDownloadButton && (
+						<div className={downloadRow}>
+							<a
+								href="/assets/documents/resume-nick-karnik.pdf"
+								target="_blank"
+								rel="noopener"
+								aria-label="Download Nick Karnik's resume (PDF)"
+								className={downloadButton}
+								download
+							>
+								<HiOutlineDocumentText size={ICON_SIZE} />
+								<span>Download Resume</span>
+							</a>
+						</div>
 					)}
 				</div>
 			</div>
