@@ -1,12 +1,13 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import SkipLink from "../components/SkipLink";
 import BackToTop from "../components/ui/BackToTop";
-import Comments from "../components/blog/Comments";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
 import { Post } from "../types/blog";
+
+const Comments = lazy(() => import("../components/blog/Comments"));
 
 type BlogPostPageProps = {
 	post: Post;
@@ -206,10 +207,12 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 				</article>
 
 				{/* Comments Section */}
-				<Comments
-					postTitle={post.title}
-					postUrl={`/blog/${post.slug}`}
-				/>
+				<Suspense fallback={null}>
+					<Comments
+						postTitle={post.title}
+						postUrl={`/blog/${post.slug}`}
+					/>
+				</Suspense>
 			</main>
 			<Footer />
 			<BackToTop />

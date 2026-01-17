@@ -38,6 +38,24 @@ export default defineConfig({
 			keepNames: true,
 			legalComments: "none",
 		},
+		rollupOptions: {
+			output: {
+				manualChunks(id) {
+					if (id.includes("node_modules")) {
+						if (id.includes("react")) return "vendor-react";
+						if (id.includes("@tanstack")) return "vendor-router";
+						if (
+							id.includes("react-markdown") ||
+							id.includes("remark") ||
+							id.includes("rehype")
+						) {
+							return "vendor-markdown";
+						}
+						return "vendor";
+					}
+				},
+			},
+		},
 	},
 	define: {
 		"process.env.NODE_ENV": JSON.stringify(
