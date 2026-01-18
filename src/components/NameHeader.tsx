@@ -1,4 +1,5 @@
 import React from "react";
+import { useEffect, useRef } from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
 import { FaLinkedin, FaGithub, FaYoutube } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
@@ -63,18 +64,26 @@ function inferToneFromLabel(label: string): PillTone {
 // ====== header styles ======
 const headerCard = css({
 	display: "flex",
-	alignItems: "center",
-	gap: 4,
+	flexDir: { base: "column", md: "row" },
+	alignItems: { base: "flex-start", md: "center" },
+	gap: { base: 4, md: 6 },
 	p: { base: 4, md: 6 },
 });
 
 const avatar = css({
-	w: 12,
-	h: 12,
+	w: { base: "160px", md: "120px" },
+	h: { base: "160px", md: "120px" },
+	maxW: { base: "160px", md: "120px" },
+	maxH: { base: "160px", md: "120px" },
 	borderRadius: "full",
 	objectFit: "cover",
 	borderWidth: "1px",
 	borderColor: { base: "gray.200", _dark: "gray.700" },
+	boxShadow: { base: "sm", _dark: "none" },
+	alignSelf: { base: "center", md: "flex-start" },
+	marginInline: { base: "auto", md: "0" },
+	flexShrink: 0,
+	flexGrow: 0,
 });
 
 const titleBox = css({
@@ -82,16 +91,20 @@ const titleBox = css({
 	flexDir: "column",
 	gap: 1,
 	flex: 1,
+	alignItems: { base: "center", md: "flex-start" },
+	textAlign: { base: "center", md: "left" },
 });
 
 const nameCss = css({
 	fontWeight: "semibold",
 	color: { base: "gray.900", _dark: "gray.100" },
+	fontSize: { base: "xl", md: "2xl" },
 });
 
 const subtitleCss = css({
 	color: { base: "gray.600", _dark: "gray.400" },
-	fontSize: "sm",
+	fontSize: { base: "sm", md: "md" },
+	lineHeight: "1.4",
 });
 
 const badgeRow = css({
@@ -99,29 +112,33 @@ const badgeRow = css({
 	gap: 2,
 	mt: 2,
 	flexWrap: "wrap",
+	justifyContent: { base: "center", md: "flex-start" },
 });
 
 const iconRow = css({
 	display: "flex",
 	gap: 2,
 	flexWrap: "wrap",
-	justifyContent: "flex-start",
+	justifyContent: { base: "center", md: "flex-start" },
 });
 
 const actionsRow = css({
 	display: "flex",
 	flexWrap: "wrap",
+	flexDir: { base: "column", md: "row" },
 	justifyContent: "space-between",
-	alignItems: "center",
+	alignItems: { base: "center", md: "center" },
 	gap: 3,
 	mt: 3,
+	width: "100%",
 });
 
 const downloadRow = css({
 	display: "flex",
 	alignItems: "center",
-	justifyContent: "flex-end",
+	justifyContent: { base: "center", md: "flex-end" },
 	gap: 2,
+	width: { base: "100%", md: "auto" },
 });
 
 const downloadButton = css({
@@ -137,6 +154,9 @@ const downloadButton = css({
 	textDecoration: "none",
 	boxShadow: "sm",
 	transition: "all 150ms ease-in-out",
+	width: { base: "100%", md: "auto" },
+	maxWidth: { base: "100%", md: "220px" },
+	justifyContent: { base: "center", md: "flex-start" },
 	_hover: {
 		backgroundColor: { base: "brand.700", _dark: "brand.400" },
 		boxShadow: "md",
@@ -205,13 +225,82 @@ export default function NameHeader({
 	onDownload,
 	tags,
 }: NameHeaderProps) {
+	const avatarRef = useRef<HTMLImageElement | null>(null);
+
+	useEffect(() => {
+		const img = avatarRef.current;
+		if (!img) return;
+		const logMeasure = (tag: string, hyp: string) => {
+			const rect = img.getBoundingClientRect();
+			const styles = window.getComputedStyle(img);
+			// #region agent log
+			fetch("http://127.0.0.1:7245/ingest/dffccd09-90d6-4aa6-8287-26b2180390d2", {
+				method: "POST",
+				headers: { "Content-Type": "application/json" },
+				body: JSON.stringify({
+					sessionId: "debug-session",
+					runId: "run1",
+					hypothesisId: hyp,
+					location: "NameHeader.tsx:~240",
+					message: tag,
+					data: {
+						clientWidth: rect.width,
+						clientHeight: rect.height,
+						styleWidth: styles.width,
+						styleHeight: styles.height,
+						naturalWidth: img.naturalWidth,
+						naturalHeight: img.naturalHeight,
+						className: img.className,
+					},
+					timestamp: Date.now(),
+				}),
+			}).catch(() => {});
+			// #endregion
+		};
+
+		logMeasure("avatar initial effect", "H1");
+		requestAnimationFrame(() => logMeasure("avatar rAF", "H1"));
+	}, []);
+
+	const handleAvatarLoad = () => {
+		const img = avatarRef.current;
+		if (!img) return;
+		const rect = img.getBoundingClientRect();
+		const styles = window.getComputedStyle(img);
+		// #region agent log
+		fetch("http://127.0.0.1:7245/ingest/dffccd09-90d6-4aa6-8287-26b2180390d2", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				sessionId: "debug-session",
+				runId: "run1",
+				hypothesisId: "H2",
+				location: "NameHeader.tsx:onLoad",
+				message: "avatar onLoad",
+				data: {
+					clientWidth: rect.width,
+					clientHeight: rect.height,
+					styleWidth: styles.width,
+					styleHeight: styles.height,
+					naturalWidth: img.naturalWidth,
+					naturalHeight: img.naturalHeight,
+					className: img.className,
+				},
+				timestamp: Date.now(),
+			}),
+		}).catch(() => {});
+		// #endregion
+	};
+
 	return (
 		<section className={[card, headerCard].join(" ")}>
 			<img
+				ref={avatarRef}
 				src="/assets/images/profile/nick-karnik.jpeg"
 				alt="Nick Karnik"
 				className={avatar}
 				loading="lazy"
+				onLoad={handleAvatarLoad}
 			/>
 			<div className={titleBox}>
 				<span className={nameCss}>Nick Karnik</span>
