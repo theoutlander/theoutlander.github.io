@@ -82,8 +82,8 @@ export const iconColors: Record<IconType, IconColorConfig> = {
  * Get color styles for an icon type
  */
 export function getIconColorStyles(iconType: IconType): {
-	color: { base: string; _dark: string };
-	_hover?: { color: { base: string; _dark: string } };
+	color: { base: string; _dark: string; };
+	_hover?: { color: { base: string; _dark: string; }; };
 } {
 	const colors = iconColors[iconType];
 	return {
@@ -93,13 +93,13 @@ export function getIconColorStyles(iconType: IconType): {
 		},
 		...(colors.hoverLight && colors.hoverDark
 			? {
-					_hover: {
-						color: {
-							base: colors.hoverLight,
-							_dark: colors.hoverDark,
-						},
+				_hover: {
+					color: {
+						base: colors.hoverLight,
+						_dark: colors.hoverDark,
 					},
-			  }
+				},
+			}
 			: {}),
 	};
 }
