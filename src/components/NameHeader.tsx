@@ -1,7 +1,7 @@
 import React from "react";
 import { useEffect, useRef } from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
-import { FaLinkedin, FaGithub, FaYoutube } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaYoutube, FaTwitter } from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { getIconColorStyles, iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
@@ -367,6 +367,20 @@ export default function NameHeader({
 								<FaYoutube
 									size={ICON_SIZE}
 									color={iconColors.youtube.light}
+								/>
+							</div>
+						</a>
+						<a
+							href="https://x.com/theoutlander"
+							target="_blank"
+							rel="noopener"
+							aria-label="Visit Nick Karnik's X profile"
+							className={iconLinkContainer}
+						>
+							<div className={css(iconWrapper, getIconColorStyles("twitter"))}>
+								<FaTwitter
+									size={ICON_SIZE}
+									color={iconColors.twitter.light}
 								/>
 							</div>
 						</a>

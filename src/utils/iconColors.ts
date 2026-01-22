@@ -65,10 +65,10 @@ export const iconColors: Record<IconType, IconColorConfig> = {
 		hoverDark: "#E4E4E7",
 	},
 	twitter: {
-		light: "#000000", // X/Twitter black
-		dark: "#FFFFFF",
-		hoverLight: "#333333",
-		hoverDark: "#E4E4E7",
+		light: "#1DA1F2", // Official Twitter blue
+		dark: "#1DA1F2",
+		hoverLight: "#0d8bd9",
+		hoverDark: "#4db3f5",
 	},
 	stackoverflow: {
 		light: "#F48024", // Official Stack Overflow orange

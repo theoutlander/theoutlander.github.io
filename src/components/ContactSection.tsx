@@ -6,7 +6,7 @@ import {
 	ArrowTopRightOnSquareIcon,
 	CalendarIcon,
 } from "@heroicons/react/24/outline";
-import { FaLinkedin, FaGithub } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaTwitter } from "react-icons/fa";
 import { iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
 
@@ -175,6 +175,29 @@ const ghostBtn = cva({
 					},
 				},
 			},
+			twitter: {
+				color: {
+					base: iconColors.twitter.light,
+					_dark: iconColors.twitter.dark,
+				},
+				_hover: {
+					bg: { base: "gray.50", _dark: "gray.800" },
+					transform: "translateY(-1px)",
+					boxShadow: {
+						base: "0 4px 12px rgba(0, 0, 0, 0.1)",
+						_dark: "0 4px 12px rgba(255, 255, 255, 0.05)",
+					},
+					color: {
+						base: iconColors.twitter.hoverLight,
+						_dark: iconColors.twitter.hoverDark,
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
+			},
 		},
 	},
 	defaultVariants: { variant: "email" },
@@ -259,6 +282,23 @@ export default function ContactSection({ className }: ContactSectionProps) {
 							className={css({ flexShrink: 0 })}
 						/>
 						<span>GitHub</span>
+					</div>
+					<ArrowTopRightOnSquareIcon
+						className={css({ w: 4, h: 4, opacity: 0.6 })}
+					/>
+				</a>
+				<a
+					className={ghostBtn({ variant: "twitter" })}
+					href="https://x.com/theoutlander"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<div className={iconContainer}>
+						<FaTwitter
+							size={ICON_SIZE}
+							className={css({ flexShrink: 0 })}
+						/>
+						<span>Twitter</span>
 					</div>
 					<ArrowTopRightOnSquareIcon
 						className={css({ w: 4, h: 4, opacity: 0.6 })}
