@@ -98,8 +98,24 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 						)}
 					</header>
 
+					<style dangerouslySetInnerHTML={{
+						__html: `
+							.blog-post-content ol {
+								list-style: decimal outside !important;
+								list-style-type: decimal !important;
+							}
+							.blog-post-content ul {
+								list-style: disc outside !important;
+								list-style-type: disc !important;
+							}
+							.blog-post-content li {
+								display: list-item !important;
+							}
+						`
+					}} />
+
 					<div
-						className={css({
+						className={`blog-post-content ${css({
 							fontSize: { base: "16px", md: "18px" },
 							lineHeight: 1.7,
 							color: "#000",
@@ -125,13 +141,16 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								pl: 6,
 							},
 							"& ol": {
+								listStyle: "decimal outside",
 								listStyleType: "decimal",
 							},
 							"& ul": {
+								listStyle: "disc outside",
 								listStyleType: "disc",
 							},
 							"& li": {
 								mb: 2,
+								display: "list-item",
 							},
 							"& blockquote": {
 								borderLeft: "3px solid",
@@ -170,7 +189,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								color: "#000",
 								textDecoration: "underline",
 							},
-						})}
+						})}`}
 					>
 						{post.contentHtml ? (
 							<div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
