@@ -54,7 +54,6 @@ const linkStyle = css({
 	textDecoration: "none",
 	cursor: linkCursor,
 	minHeight: { base: "44px", md: "auto" },
-	bg: { base: "gray.50", _dark: "gray.800" },
 	px: { base: "0.5rem", md: "3" },
 	py: { base: "0.5rem", md: "2.5" },
 	borderRadius: { base: "4px", md: "md" },
@@ -199,26 +198,20 @@ export default function Footer() {
 							</p>
 						</div>
 
-						{/* Columns 2 & 3 Container - Side by side on mobile */}
+						{/* Column 2 - Contact & Professional Links */}
 						<div
 							className={css({
-								display: { base: "grid", md: "contents" },
-								gridTemplateColumns: { base: "1fr 1fr", md: "none" },
-								gap: { base: "1.5rem", md: "0" },
 								width: "100%",
+								textAlign: { base: "center", md: "left" },
+								display: "flex",
+								flexDirection: "column",
+								alignItems: { base: "center", md: "flex-start" },
+								gap: "0.5rem",
+								paddingRight: { base: "0", md: "2rem" },
+								borderRight: { base: "none", md: "1px solid" },
+								borderColor: { base: "transparent", md: "gray.200", _dark: "dark.border" },
 							})}
 						>
-							{/* Column 2 - Contact */}
-							<div
-								className={css({
-									width: "100%",
-									textAlign: { base: "center", md: "left" },
-									display: "flex",
-									flexDirection: "column",
-									alignItems: { base: "center", md: "flex-start" },
-									gap: "0.5rem",
-								})}
-							>
 							<a
 								href="mailto:nick@karnik.io"
 								className={linkStyle}
@@ -336,7 +329,6 @@ export default function Footer() {
 								</div>
 								<span>YouTube</span>
 							</a>
-						</div>
 						</div>
 					</div>
 			</div>
