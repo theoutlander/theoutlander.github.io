@@ -1,0 +1,405 @@
+[
+  {
+    "id": "review-1",
+    "author": "Bryan Hackett",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Excellent mentor. I learned more JS concepts from Nick in one session than from reading weeks of tutorials. Highly recommend him!",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/1_bryan_hackett_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-2",
+    "author": "Purencool Digital",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Nick was able to explain in a clear manner what my issues in my code were and then help me with what I should be looking to do next.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/KGvEdY97Q2C8yGUZXuTU",
+    "authorImageLocal": "/assets/images/codementor/2_purencool_digital_KGvEdY97Q2C8yGUZXuTU.jpg"
+  },
+  {
+    "id": "review-3",
+    "author": "Supra",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Nick is very knowledgeable and has good patience in clarifying the concepts. Highly recommended",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/UZUymytQk2yYhCWFoeLg",
+    "authorImageLocal": "/assets/images/codementor/3_supra_UZUymytQk2yYhCWFoeLg.jpg"
+  },
+  {
+    "id": "review-4",
+    "author": "Brandon Moore",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Very knowledgable about javascript and a range of algorithms and their practical applications. Super helpful!",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/4_brandon_moore_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-5",
+    "author": "Pardhu",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Awsome mentor. He really really knows what he is doing. Highly recommended and fast.",
+    "authorImage": "https://lh6.googleusercontent.com/-q4YEqNoy5RM/AAAAAAAAAAI/AAAAAAAAFXw/SiFBk29mSBA/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/5_pardhu_photo.jpg"
+  },
+  {
+    "id": "review-6",
+    "author": "Laurent Chevrette Translations",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Amazing. Nick knows it all & is an amazing teacher. He is honest, smart and efficient. I am extremely satisfied.",
+    "authorImage": "https://lh5.googleusercontent.com/-K3csLEeFQcM/AAAAAAAAAAI/AAAAAAAAY9g/QYQpQYd-ML0/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/6_laurent_chevrette_translations_photo.jpg"
+  },
+  {
+    "id": "review-7",
+    "author": "Ganesh",
+    "date": "August 2018",
+    "rating": 5,
+    "text": "Nick is an awesome mentor really helped me get unstuck. I was stuck in a Promise loop in es6/React/Redux and was able to finally fix my code. Highly recommend.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/UMXblUHWSRapAb3FONRK",
+    "authorImageLocal": "/assets/images/codementor/7_ganesh_UMXblUHWSRapAb3FONRK.jpg"
+  },
+  {
+    "id": "review-8",
+    "author": "leslie diane",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick is A++. He can help with the code as well as the strategy. I highly recommend Nick. He is a rare find.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/65jLyg6PRKGrNslRCwQi",
+    "authorImageLocal": "/assets/images/codementor/8_leslie_diane_65jLyg6PRKGrNslRCwQi.jpg"
+  },
+  {
+    "id": "review-9",
+    "author": "Timo Fahlenbock",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Perfect delivery, very good Communication",
+    "authorImage": "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/9_timo_fahlenbock_photo.jpg"
+  },
+  {
+    "id": "review-10",
+    "author": "Ronak",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Very helpful. Nick is excellent knowledge in programming. Explain well in details. I will use him next time when I need help. Thank you Nick."
+  },
+  {
+    "id": "review-11",
+    "author": "Robert Aguilera",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick is very knowledgable about Javascript and it's ecosystem. He was able to quickly understand my questions and codebase, help me with my specific problems, and provided me with a complete solution. He also gave me tips on how to improve the quality of my app.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/11_robert_aguilera_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-12",
+    "author": "Joe Lemmer",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick really helped me with making a database-related architectural decision for my project. He was very clear and knowledgeable and I feel like I've now got the pros and cons of all the options and which is my best option overall. I highly recommend him. Thanks.",
+    "authorImage": "https://ucarecdn.com/da9ea503-9751-4e5d-b0f3-fc9b4a9f1b2b/-/crop/231x309/121,209/-/preview/-/enhance/50/-/sharp/10/-/resize/72/",
+    "authorImageLocal": "/assets/images/codementor/12_joe_lemmer_72.jpg"
+  },
+  {
+    "id": "review-13",
+    "author": "Bryan Hughes",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick's broad experience was great for helping me do some serverless/node sanity checking!",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/13_bryan_hughes_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-14",
+    "author": "Sam",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick was very good at breaking down and fixing the issue we were working on. Working with him, you can clearly see his knowledge and expertise of not only javascript but also higher-level CS concepts. I highly recommend his services."
+  },
+  {
+    "id": "review-15",
+    "author": "Keenn Dev",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Amazing mentor!! Not only he helped me architecture my app and pick all the best technologies to use, but he also gave me a lot of tips on how to be efficient with my time and how to streamline the development a lot.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/08su2vljQBJ9swCyi28Q",
+    "authorImageLocal": "/assets/images/codementor/15_keenn_dev_08su2vljQBJ9swCyi28Q.jpg"
+  },
+  {
+    "id": "review-16",
+    "author": "Megan Hainstock",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "Nick was incredibly helpful. I was able to discuss my issues, my failed attempts and was able to get feedback on what I was missing in a short period of time."
+  },
+  {
+    "id": "review-17",
+    "author": "Salma Elshahawy",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "All my Issues were resolved. So happy that Nick was my mentor. This was my first time to use codementor and I loved it.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/QeLQ1gITqmvjYx6HOF9P",
+    "authorImageLocal": "/assets/images/codementor/17_salma_elshahawy_QeLQ1gITqmvjYx6HOF9P.jpg"
+  },
+  {
+    "id": "review-18",
+    "author": "Salma Elshahawy",
+    "date": "July 2018",
+    "rating": 5,
+    "text": "I didn't have a good mentor like Nick. He is patient, teach you step by step. Use the debugging tool and get me step by step into the issue and finally I'm able to resolve the issue via the solution.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/QeLQ1gITqmvjYx6HOF9P",
+    "authorImageLocal": "/assets/images/codementor/18_salma_elshahawy_QeLQ1gITqmvjYx6HOF9P.jpg"
+  },
+  {
+    "id": "review-19",
+    "author": "CapTec Partners",
+    "date": "June 2018",
+    "rating": 5,
+    "text": "Nick helped me solve my issue within minutes and was very patient doing so. Would be happy to work with Nick again"
+  },
+  {
+    "id": "review-20",
+    "author": "עפר יער",
+    "date": "June 2018",
+    "rating": 5,
+    "text": "Nick Is a Very nice guy. Too bad He could only solve a part of my problem.",
+    "authorImage": "https://lh5.googleusercontent.com/-PjYdQSRtURY/AAAAAAAAAAI/AAAAAAAAACc/eWFpmhpGbIA/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/20_________photo.jpg"
+  },
+  {
+    "id": "review-21",
+    "author": "A",
+    "date": "June 2018",
+    "rating": 5,
+    "text": "Helped me to solve the issue, despite of my very sceptical approach he was very technical and managed to establish the connection to a mongo db. He was extremely diligent and also took time to explain the steps he was taking so that I was able to also learn throughout the process. I would highly recommend Nick.",
+    "authorImage": "https://pbs.twimg.com/profile_images/664310022814453760/s32r4Iz2.jpg",
+    "authorImageLocal": "/assets/images/codementor/21_a_s32r4Iz2.jpg"
+  },
+  {
+    "id": "review-22",
+    "author": "Brett Artmann",
+    "date": "June 2018",
+    "rating": 5,
+    "text": "Nick did a great job of helping me untangle a web of problems in deploying my app to digital ocean using node/postgres. Very patient and helpful."
+  },
+  {
+    "id": "review-23",
+    "author": "Stephen Sullivan",
+    "date": "June 2018",
+    "rating": 5,
+    "text": "Nick is very knowledgable and experienced with debugging. I had a bug and he systematically walked through all of the potential issues until he discovered the source of my problem.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/23_stephen_sullivan_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-24",
+    "author": "Arina Matveeva",
+    "date": "May 2018",
+    "rating": 5,
+    "text": "Very helpful and explains everything making easier to understand."
+  },
+  {
+    "id": "review-25",
+    "author": "Mr. Yi",
+    "date": "May 2018",
+    "rating": 5,
+    "text": "Very professional and helpful on debugging my issue.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/iVgskKGyTJSY2p1V74pI",
+    "authorImageLocal": "/assets/images/codementor/25_mr__yi_iVgskKGyTJSY2p1V74pI.jpg"
+  },
+  {
+    "id": "review-26",
+    "author": "Mario Azzopardi",
+    "date": "April 2018",
+    "rating": 5,
+    "text": "Very helpful."
+  },
+  {
+    "id": "review-27",
+    "author": "Sarah A",
+    "date": "April 2018",
+    "rating": 5,
+    "text": "Extremely friendly and knowledgeable! Helped me at the last minute! Highly reccomend!",
+    "authorImage": "https://lh4.googleusercontent.com/-mvMLuxbgsl0/AAAAAAAAAAI/AAAAAAAAAVk/RNbCp0WN4eg/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/27_sarah_a_photo.jpg"
+  },
+  {
+    "id": "review-28",
+    "author": "Shirley Shaw",
+    "date": "April 2018",
+    "rating": 5,
+    "text": "Quick and to the point. I had been knocking my head for days trying to figure out a simple issue and Nick nailed it. Worth it.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/lX9eOT0LT1uAn2HWmdwJ",
+    "authorImageLocal": "/assets/images/codementor/28_shirley_shaw_lX9eOT0LT1uAn2HWmdwJ.jpg"
+  },
+  {
+    "id": "review-29",
+    "author": "Matthew Briggs",
+    "date": "April 2018",
+    "rating": 5,
+    "text": "Nick knows his stuff, very helpful.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/29_matthew_briggs_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-30",
+    "author": "amanda Morrow",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Nick was amazing! He took the time to really ensure I understood everything. He is a very nice guy and explains everything well. Thank you Nick!!",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/XbGFUht1QXqCgkM8dHZJ",
+    "authorImageLocal": "/assets/images/codementor/30_amanda_morrow_XbGFUht1QXqCgkM8dHZJ.jpg"
+  },
+  {
+    "id": "review-31",
+    "author": "Tashia",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Nick is awesome! He's very knowledgeable, reliable, and fast. I needed help with my bootcamp project and Nick helped me with the problem I was having with my code."
+  },
+  {
+    "id": "review-32",
+    "author": "Removed User",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Took the time to instruct me on how to approach the problem. Some bugs on my end stopped us from diving deeper."
+  },
+  {
+    "id": "review-33",
+    "author": "Peter Dushkin",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Clear thinker and communicator. Sound approach to my problem which turned out to be a silly error. Great guy to work with."
+  },
+  {
+    "id": "review-34",
+    "author": "Gawain",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Nick was great at walking me through and helping me gain a clear understanding of my question."
+  },
+  {
+    "id": "review-35",
+    "author": "Farah",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Was a great help!"
+  },
+  {
+    "id": "review-36",
+    "author": "Ahmad John",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Can fix any problem, very determined and went into his own time so solve my problem, I highly recommend Nick."
+  },
+  {
+    "id": "review-37",
+    "author": "Jimi Odeyemi",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Nick took his time to understand my problem and walked me through a better solution. Also recommended some good tools to use to solve future parts of the project as well. Very pleased!",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/ShLRw5RxSq6jDcgrIcHQ",
+    "authorImageLocal": "/assets/images/codementor/37_jimi_odeyemi_ShLRw5RxSq6jDcgrIcHQ.jpg"
+  },
+  {
+    "id": "review-38",
+    "author": "Michael Montgomery",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Nick was great. He gave me exactly what I was looking for - expert advice in choosing the right tech stack and approach for my serverless project. He helped me get unstuck by advising on key concepts and specific tools. Before our call I was confused by all the tools and architectural approaches. I was fortunate to have Nick pick up exactly where I had left off. With my understanding of the tooling ecosystem from many hours of research, Nick brought necessary strategic guidance.",
+    "authorImage": "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/38_michael_montgomery_photo.jpg"
+  },
+  {
+    "id": "review-39",
+    "author": "Nicholas Brac",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Helpful as always! Great session!"
+  },
+  {
+    "id": "review-40",
+    "author": "p singh",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Very good mentor. Good listening and speaking skills. He was able to understand and solve my issues and provide constructive feedback."
+  },
+  {
+    "id": "review-41",
+    "author": "Jackson Holiday Wheeler",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Fantastic mentor, probably the best I've ever had! Explained everything so clearly and efficiently, solving my problem and educating me as to the root cause of it within minutes. Highly impressed. And to boot, he's pleasant company! He's on my shortlist now for sure.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/41_jackson_holiday_wheeler_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-42",
+    "author": "Nicholas Brac",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Genuinely nice guy with a passion for what he is doing. He knows his stuff very well! I had a great time learning."
+  },
+  {
+    "id": "review-43",
+    "author": "TheCopBot",
+    "date": "March 2018",
+    "rating": 5,
+    "text": "Best person on this whole site. Would 100% recommend to anyone. THIS GUY IS A LEGEND!"
+  },
+  {
+    "id": "review-44",
+    "author": "cherise knox",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "awesome in explaining and going things step by step."
+  },
+  {
+    "id": "review-45",
+    "author": "Cara Tracewell",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "Thank you again!",
+    "authorImage": "https://lh4.googleusercontent.com/-yv5NCkBQYc8/AAAAAAAAAAI/AAAAAAAAA6Y/8cfudGUtZbQ/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/45_cara_tracewell_photo.jpg"
+  },
+  {
+    "id": "review-46",
+    "author": "Cara Tracewell",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "Nick is great! He took the time to understand what I was trying to do using python before he accepted the job, and he completed the job and reviewed the code with me. Thanks for your help!",
+    "authorImage": "https://lh4.googleusercontent.com/-yv5NCkBQYc8/AAAAAAAAAAI/AAAAAAAAA6Y/8cfudGUtZbQ/photo.jpg",
+    "authorImageLocal": "/assets/images/codementor/46_cara_tracewell_photo.jpg"
+  },
+  {
+    "id": "review-47",
+    "author": "Dave Ekhaus",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "Nick did an awesome job helping me.",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/47_dave_ekhaus_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-48",
+    "author": "Dave Ekhaus",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "Did a great job of getting me started on my project",
+    "authorImage": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg",
+    "authorImageLocal": "/assets/images/codementor/48_dave_ekhaus_Kg4RHGrpSmehCIxVR0lg.jpg"
+  },
+  {
+    "id": "review-49",
+    "author": "jb",
+    "date": "February 2018",
+    "rating": 5,
+    "text": "Awesome mentor! I learned so much from Nick and I am a beginner in React. Friendly, speaks clearly. Highly recommend. Thank you."
+  }
+]
