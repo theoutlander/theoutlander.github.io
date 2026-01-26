@@ -3,11 +3,12 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import { redirectPlugin } from "./src/plugins/vite-redirect-plugin";
+import { blogPlugin } from "./src/plugins/vite-blog-plugin";
 import fs from "fs";
 
 export default defineConfig({
 	base: "/",
-	plugins: [react(), TanStackRouterVite(), redirectPlugin()],
+	plugins: [react(), TanStackRouterVite(), redirectPlugin(), blogPlugin()],
 	server: {
 		host: true, // Listen on all network interfaces
 		port: 5173,

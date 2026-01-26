@@ -67,6 +67,40 @@ function getSlugFromFilename(filename: string): string {
 	return filename.replace(/\.md$/, "");
 }
 
+/**
+ * Removes all Mermaid code blocks from markdown.
+ * Images are preserved, but all Mermaid blocks are removed.
+ */
+function removeAllMermaidBlocks(markdown: string): string {
+	const lines = markdown.split('\n');
+	const processedLines: string[] = [];
+	let i = 0;
+
+	while (i < lines.length) {
+		// Check if current line starts a Mermaid block
+		if (lines[i].trim() === '```mermaid') {
+			const mermaidStart = i;
+			let mermaidEnd = i;
+
+			// Find the end of the Mermaid block
+			for (let j = i + 1; j < lines.length; j++) {
+				if (lines[j].trim() === '```') {
+					mermaidEnd = j;
+					break;
+				}
+			}
+
+			// Remove the Mermaid block (skip it)
+			i = mermaidEnd + 1;
+		} else {
+			processedLines.push(lines[i]);
+			i++;
+		}
+	}
+
+	return processedLines.join('\n');
+}
+
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 	const contentDir = join(process.cwd(), "content", "blog");
 	const files = readdirSync(contentDir).filter(
@@ -82,7 +116,10 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 			const { frontMatter, markdown } = parseFrontMatter(content);
 			const slug = getSlugFromFilename(file);
 
-			const contentHtml = await marked(markdown, {
+			// Remove all Mermaid blocks
+			const processedMarkdown = removeAllMermaidBlocks(markdown);
+
+			const contentHtml = await marked(processedMarkdown, {
 				breaks: true,
 				gfm: true,
 			});
@@ -96,7 +133,7 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 				date: frontMatter.date,
 				cover: frontMatter.cover || null,
 				tags: frontMatter.tags || [],
-				contentMarkdown: markdown,
+				contentMarkdown: processedMarkdown,
 				contentHtml,
 			};
 

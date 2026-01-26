@@ -2,11 +2,10 @@
 id: "the-modern-attack-surface-how-computers-get-compromised"
 title: "The Modern Attack Surface: How Computers Get Compromised"
 date: "2026-01-26T10:00:00.000Z"
-cover: "/assets/images/blog/how-rag-works-cover.png"
+cover: "/assets/images/blog/modern-attack-surface/the-modern-attack-surface-cover.png"
 excerpt: "An overview of how the attack surface has evolved in modern computing, and the ways computers and accounts get compromised today."
 tags: ["Security", "Attack Surface", "Cybersecurity", "Threats", "Virus"]
 ---
-# The Modern Attack Surface: How Computers Get Compromised
 
 This post started with a simple question a friend asked me: which antivirus should I be using?
 
@@ -26,14 +25,7 @@ The reason is simple. The attack surface moved. It is no longer centered on the 
 
 For a long time, compromise looked straightforward. Something bad landed on your machine, the computer was infected, and the damage lived there.
 
-```mermaid
-graph LR
-A[Attacker] --> B[Virus or Malware] --> C[Your Computer] --> D[Damage]
-```
-
-![alt text](../../public/assets/images/blog/modern-attack-surface/attack-model-old.svg)
-
-attack-model-old.svg
+![Traditional Virus Flow](/assets/images/blog/modern-attack-surface/traditional-virus-flow.png)
 
 That model made sense when systems were fragile and defenses were thin. If you avoided sketchy downloads, you were mostly safe.
 
@@ -45,10 +37,7 @@ Today, the computer is often fine. The operating system is doing its job. Nothin
 
 What fails is access.
 
-```mermaid
-graph LR
-A[Attacker] --> B[Fake Login or Approval] --> C[Account Access] --> D[Everything Else]
-```
+![Modern Virus Flow](/assets/images/blog/modern-attack-surface/modern-virus-flow.png)
 
 Once someone controls an account, they rarely need to touch the device. Email access alone is enough to reset passwords, read private documents, send convincing messages, and stay invisible for a long time.
 
@@ -58,20 +47,7 @@ This works the same way on Windows, macOS, and iOS. The platform matters far les
 
 Most of what matters now happens inside a browser. Email, documents, calendars, dashboards, payments, internal tools. That is where work lives and where trust accumulates.
 
-```mermaid
-graph TD
-A[You] --> B[Browser Session]
-B --> C[Email]
-B --> D[Documents]
-B --> E[Calendars]
-B --> F[Payments]
-B --> G[Internal Tools]
-C --> H[Actions and Data]
-D --> H
-E --> H
-F --> H
-G --> H
-```
+![Browser Session Compromised](/assets/images/blog/modern-attack-surface/browser-session.png)
 
 Modern attacks aim for that session, not the computer underneath it.
 
@@ -93,19 +69,7 @@ That uncertainty is often the worst part. You stop trusting your own systems. Yo
 
 Once one core account is compromised, others tend to follow quickly.
 
-```mermaid
-graph TD
-A[Email Compromised] --> B[Password Resets]
-A --> C[Cloud Access]
-A --> D[Contacts]
-B --> E[Other Accounts Locked Out]
-C --> F[Document Exposure]
-D --> G[Social Trust Abuse]
-E --> H[Multiple Accounts Involved]
-F --> H
-G --> H
-H --> I[Time Consuming Cleanup]
-```
+![Email Compromised](/assets/images/blog/modern-attack-surface/email-compromised.png)
 
 By the time most people realize something is wrong, multiple accounts are already involved. Cleaning it up becomes time consuming, stressful, and disruptive.
 
@@ -141,19 +105,7 @@ At the same time, AI tools are becoming part of daily workflows. People paste se
 
 There is a comforting belief that choosing the right operating system solves most of this. Better defaults help, but they do not solve the core issue.
 
-```mermaid
-graph TD
-A[Compromised Account] --> B[Windows Laptop]
-A --> C[macOS Laptop]
-A --> D[iPhone]
-A --> E[iPad]
-A --> F[Work Computer]
-B --> G[Identity Flows Across All Devices]
-C --> G
-D --> G
-E --> G
-F --> G
-```
+![Compromised Account](/assets/images/blog/modern-attack-surface/compromised-account.png)
 
 Identity flows across devices. Once access is compromised, it follows you everywhere.
 
@@ -189,20 +141,9 @@ When you hear that a service you use suffered a data breach, it's worth understa
 
 A breach means attackers got data that shouldn't be public. If it's a password, that password is now known. If it's your email and password together, that combination is in a list somewhere that gets shared and tested against other services.
 
-```mermaid
-graph LR
-A[Breach at Service X] --> B[Password Leaked]
-B --> C{Same Password Used Elsewhere?}
-C -->|Yes| D[Gmail Compromised]
-C -->|Yes| E[Banking Compromised]
-C -->|Yes| F[Work Email Compromised]
-C -->|No| G[Safe - Different Passwords Used]
-D --> H[Cascade of Compromises]
-E --> H
-F --> H
-```
+![Breach at Service X](/assets/images/blog/modern-attack-surface/password-breach.png)
 
-Check if you're in a known breach at haveibeenpwned.com. Enter your email and you'll see which services leaked your information. This is useful. Not panic-inducing. Just useful.
+Check if you're in a known breach at [Have I Been Pwned](haveibeenpwned.com). Enter your email and you'll see which services leaked your information. This is useful. Not panic-inducing. Just useful.
 
 A breach is past tense. Your password was leaked in 2018. That doesn't mean someone is using it now. But if you reused that password on other sites, those accounts are exposed.
 
@@ -402,22 +343,7 @@ The pattern is the same: don't rely on a single location. Don't trust convenienc
 
 Act fast. The first 24 hours matter.
 
-```mermaid
-graph TD
-A[Realize Compromise] --> B["HOUR 1: Change Email Password<br/>from clean device"]
-B --> C["Sign out all sessions<br/>everywhere"]
-C --> D["Check devices connected<br/>to account"]
-D --> E["Verify recovery methods<br/>haven't changed"]
-E --> F["Audit connected apps<br/>revoke suspicious ones"]
-F --> G{Email Access<br/>Compromised?}
-G -->|Yes| H["Change passwords<br/>on financial accounts"]
-G -->|Yes| I["Change passwords<br/>on healthcare accounts"]
-H --> J{Financial<br/>Accounts?}
-I --> J
-J -->|Yes| K["Consider credit freeze<br/>Stop new accounts opening"]
-J -->|No| L["Damage Control Complete<br/>Monitor for weeks"]
-K --> L
-```
+![What to do when you realize you are compromised?](/assets/images/blog/modern-attack-surface/what-to-do-when-you-realize-you-are-compromised.png)
 
 **Step by step:**
 
@@ -443,7 +369,7 @@ Logging in. Approving access. Staying signed in. Reusing trust across contexts.
 
 These are not technical actions. They are everyday habits. That is why they are so easy to exploit.
 
-## Closing thought
+## What really matters
 
 If modern compromise feels unfair, it is because the rules changed quietly.
 
@@ -452,21 +378,3 @@ Your computer did not suddenly become unsafe. The way trust moves through your d
 Once you start thinking in terms of identity, sessions, and approvals, these incidents stop feeling mysterious. They start feeling structural.
 
 Not because systems are weak, but because trust is easier to steal than code is to break.
-
----
-
-## Visual Assets (Placeholders for images)
-
-The following sections could benefit from custom designed images/icons:
-
-- **[IMAGE PLACEHOLDER 1]** - Illustration of old attack model (virus → computer → damage) vs new model (fake login → account → everything)
-
-- **[IMAGE PLACEHOLDER 2]** - Icon set showing the five key protections (2FA, password manager, app audit, activity monitoring, recovery methods)
-
-- **[IMAGE PLACEHOLDER 3]** - Visual comparison of password storage methods (email vs. notes vs. password manager)
-
-- **[IMAGE PLACEHOLDER 4]** - Timeline or infographic showing compromise cascade (email → passwords → cloud → contacts)
-
-- **[IMAGE PLACEHOLDER 5]** - Device ecosystem diagram showing how one compromised account affects all devices
-
-- **[IMAGE PLACEHOLDER 6]** - Safe/security imagery for document storage strategy
