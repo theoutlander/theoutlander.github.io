@@ -65,6 +65,10 @@ Nothing screams virus. It just feels like control slipping.
 
 That uncertainty is often the worst part. You stop trusting your own systems. You hesitate on legitimate prompts because everything suddenly looks suspicious.
 
+I learned this the hard way. In the early 2000s, I used to think the worst that could happen was someone looking at my emails. Then that account got hacked and the attackers deleted everything. I lost all that data, but I was lucky in a strange way. They could have used all those passwords and bank details I kept emailing myself to access my accounts. The data loss was bad, but account takeover would have been catastrophic.
+
+What I didn't realize then is that the real threat isn't what attackers can see. It's what they can become. An email account is basically a gateway to everything else you own online. Once they're in there, they can reset passwords, drain bank accounts, impersonate you across every service. The deletion was painful, but a complete account takeover would have destroyed me.
+
 ## Why this keeps cascading once it starts
 
 Once one core account is compromised, others tend to follow quickly.
@@ -141,8 +145,6 @@ When you hear that a service you use suffered a data breach, it's worth understa
 
 A breach means attackers got data that shouldn't be public. If it's a password, that password is now known. If it's your email and password together, that combination is in a list somewhere that gets shared and tested against other services.
 
-![Breach at Service X](/assets/images/blog/modern-attack-surface/password-breach.png)
-
 Check if you're in a known breach at [Have I Been Pwned](haveibeenpwned.com). Enter your email and you'll see which services leaked your information. This is useful. Not panic-inducing. Just useful.
 
 A breach is past tense. Your password was leaked in 2018. That doesn't mean someone is using it now. But if you reused that password on other sites, those accounts are exposed.
@@ -215,36 +217,19 @@ Android and iOS protect you in different ways, but both flow personal data throu
 
 ## What actually helps
 
-```
-PRIORITY ACTIONS FOR ACCOUNT SECURITY
-═════════════════════════════════════════════════════
+The defenses that matter now are different from what most people expect.
 
-✓ Two-factor authentication
-  Use it on email, cloud storage, and banking
-  Most effective defense against account takeover
-  
-✓ Password manager (Chrome or Apple Keychain)
-  Generate random passwords automatically
-  Never reuse passwords across sites
-  
-✓ Audit connected apps
-  Periodically check what has access to your account
-  Revoke anything suspicious
-  
-✓ Monitor account activity
-  Check unusual login locations and devices
-  Pay attention to reset emails you didn't request
-  
-✓ Backup authentication methods
-  Recovery email, phone number, recovery codes
-  Stored safely in case you get locked out
-  
-═════════════════════════════════════════════════════
-What doesn't help as much anymore: antivirus software,
-avoiding downloads, keeping a clean system.
+Two-factor authentication is the most effective thing you can do. It breaks the account takeover chain. Even if someone has your password, they still can't get in without your phone or authentication app. Use it on email, cloud storage, and banking. Those are the accounts that unlock everything else.
 
-Those still help, but they don't solve the modern problem.
-```
+A password manager changes the math entirely. Chrome and Apple Keychain both work well. They generate random passwords automatically, so you never have to come up with one yourself. More importantly, they make it trivial to use different passwords everywhere. One breach stops being a key to all your accounts.
+
+Periodically check what apps have connected to your accounts. Google and Microsoft both show you this. Revoke anything you don't recognize or don't remember approving. That access often survives password changes because it was never tied to your password in the first place.
+
+Watch for unusual activity. Most services show you where you're signed in and recent login locations. An unfamiliar city or device is a genuine warning sign. Pay attention to password reset emails you didn't request. Those are often the first signal something is wrong.
+
+Set up backup authentication methods and store them safely. Recovery email, phone number, recovery codes. You need these if you get locked out, but they're also attack vectors if someone else controls them. Keep them secure, but don't forget where you put them.
+
+What doesn't help as much anymore? Antivirus software, avoiding downloads, keeping a clean system. Those still help, but they don't solve the modern problem. The attack surface moved, and so should your defenses.
 
 ## How to actually implement this
 
@@ -252,92 +237,29 @@ The biggest gap between understanding the problem and staying safe is actually d
 
 Don't reuse passwords. Use the password manager built into your browser or phone. You already have it.
 
-**INSECURE vs. SECURE PASSWORD STORAGE**
-
-```
-❌ INSECURE - Do NOT do these:
-═════════════════════════════════════════════════
-Email to yourself      → Unencrypted, accessible to anyone with email
-Desktop text file      → No encryption, visible to anyone with access
-Notebook at desk       → Physical security issue, can be photographed
-Spreadsheet            → Centralized, unencrypted, ripple effect if stolen
-Same password reused   → One breach = all accounts compromised
-Phone photo of note    → Backed up to cloud, searchable
-
-
-✓ SECURE - Do these:
-═════════════════════════════════════════════════
-Chrome Password Manager    → Encrypted, syncs across devices, autofills
-Apple Keychain            → Encrypted, syncs across Apple devices
-Generated random password → Let the manager create it, never memorize
-Different password per site → One breach doesn't cascade to other accounts
-Auto-fill enabled         → Never type password manually, especially on WiFi
-```
-
 If you use Chrome or Android, use the password manager that comes with it. If you use Apple devices, use Keychain. Both work everywhere. Both are encrypted. Both sync across your devices. You don't need anything else.
 
 When you create a password on a website, let the password manager generate a random one. Don't come up with it yourself. Don't try to make it memorable. The whole point is that you never have to remember it or type it. The password manager fills it in.
 
 The temptation is to reuse a password you already know because it feels simpler. It's not. It's the opposite. One breach leaks that password everywhere.
 
-Never email yourself a password. Never write it in a note on your desktop or phone. Never keep a spreadsheet of passwords. These are worse than reusing the same password because they're unencrypted and centralized.
+What doesn't work? If you email yourself a password, it's unencrypted and accessible to anyone with your email. A desktop text file has no encryption and anyone with access to your computer can see it. A notebook on your desk is a physical security issue. It can be photographed or stolen. A spreadsheet of passwords is centralized and unencrypted, so if it's stolen, the damage ripples everywhere. A phone photo of a password note gets backed up to the cloud and becomes searchable.
+
+These approaches are worse than reusing the same password because they're unencrypted and centralized. One breach or one moment of access exposes everything.
+
+Use the password manager. Let it generate random passwords. Use a different password for every site. Enable auto-fill so you never type passwords manually, especially on public WiFi. One breach stops being a key to all your accounts.
 
 For critical documents, use a combination of physical and digital storage.
 
-**CRITICAL DOCUMENTS STORAGE STRATEGY**
+Keep the originals in a physical safe or safe deposit box. Birth certificates, passports, property deeds, insurance policies, medical records, financial statements. Not on your desk. Not easily accessible. These are documents you rarely need, so the inconvenience of accessing them is worth the security.
 
-```
-ORIGINAL DOCUMENTS (Physical)
-═════════════════════════════════════════════════
-  Birth Certificate
-  Passport
-  Property Deeds
-  Insurance Policies
-  
-  ↓ STORE IN ↓
-  
-  □ Safe deposit box at bank
-  □ Personal safe at home (fireproof)
-  □ NOT on desk, NOT easily accessible
+Scan them or take photos and store the digital copies in cloud storage. Google Drive, Microsoft OneDrive, or iCloud all work. Enable two-factor authentication on that account. You get access from anywhere and automatic backup, but the encryption and authentication keep it protected.
 
+Don't keep important documents on your desktop or in random folders. Don't email them to yourself as attachments. Don't store them on a USB drive left in a drawer. Those feel convenient but they're not actually protected.
 
-DIGITAL COPIES (Encrypted Cloud)
-═════════════════════════════════════════════════
-  Scan originals or take photos
-  Store in encrypted cloud storage:
-  
-  ✓ Google Drive (with 2FA enabled)
-  ✓ Microsoft OneDrive (with 2FA enabled)
-  ✓ iCloud (with 2FA enabled)
-  
-  Enable two-factor authentication on the account
-  Access from anywhere, backed up automatically
+For recovery codes from two-factor authentication, print them out or write them down and store the physical copy in a safe place. A safe or safe deposit box. Not in a desk drawer. Not a photo on your phone. Not in unencrypted notes. You need these if you get locked out, but if someone else finds them, they become an attack vector.
 
-
-RECOVERY CODES (Physical Backup)
-═════════════════════════════════════════════════
-  Print recovery codes from 2FA setup
-  Write them down (if preferred)
-  
-  ✓ Store in safe or safe deposit box
-  ✗ NOT in desk drawer
-  ✗ NOT as phone photo
-  ✗ NOT unencrypted notes
-
-
-═════════════════════════════════════════════════
-PATTERN: Don't rely on single location
-         Don't sacrifice security for access
-         Multi-layer physical + digital backup
-```
-
-Critical documents: birth certificates, passports, insurance policies, property deeds, medical records, financial statements. Keep the originals in a physical safe or safe deposit box. Scan them or take photos and store the digital copies in cloud storage like Google Drive, Microsoft OneDrive, or iCloud with two-factor authentication enabled on that account.
-
-Don't keep important documents on your desktop or in random folders. Don't email them to yourself as attachments. Don't store them on a USB drive left in a drawer.
-
-For recovery codes from two-factor authentication, print them out or write them down and store the physical copy in a safe place. A safe or safe deposit box. Not in a desk drawer. Not a photo on your phone.
-
-The pattern is the same: don't rely on a single location. Don't trust convenience over security. Don't store sensitive information in places that feel easy to access but aren't actually protected.
+The pattern is the same: don't rely on a single location. Don't sacrifice security for access. Use multiple layers, both physical and digital backup, so one failure doesn't lose everything.
 
 ## If you realize you're compromised
 
@@ -347,7 +269,7 @@ Act fast. The first 24 hours matter.
 
 **Step by step:**
 
-1. Change your email password immediately from a clean device (computer you know hasn't been compromised). Email is your master key.
+1. Change your email password immediately from a clean device (computer you know hasn't been compromised). Email unlocks everything else.
 
 2. Sign out all sessions. Most email and cloud services have an option to sign out everywhere at once.
 
