@@ -28,6 +28,7 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 				display: "grid",
 				gridTemplateColumns: { base: "1fr", md: "repeat(2, 1fr)", lg: "repeat(3, 1fr)" },
 				gap: 6,
+				alignItems: "stretch",
 			})}
 		>
 			{reviews.map((review) => (
@@ -42,6 +43,8 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 						p: { base: 4, md: 5 },
 						display: "flex",
 						flexDir: "column",
+						height: "100%",
+						minHeight: "200px",
 						transition: "all 0.2s",
 						_hover: {
 							boxShadow: "md",
@@ -95,16 +98,20 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 							lineHeight: "1.7",
 							fontSize: "sm",
 							mb: 4,
+							overflow: "hidden",
+							display: "-webkit-box",
+							WebkitLineClamp: 6,
+							WebkitBoxOrient: "vertical",
+							textOverflow: "ellipsis",
 						})}
 					>
 						{review.text}
 					</p>
 
-					{/* Footer with author and date */}
+					{/* Footer with author */}
 					<div
 						className={css({
 							display: "flex",
-							justifyContent: "space-between",
 							alignItems: "center",
 							pt: 3,
 							borderTopWidth: "1px",
@@ -166,14 +173,6 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 								{review.author}
 							</span>
 						</div>
-						<span
-							className={css({
-								fontSize: "xs",
-								color: "gray.500",
-							})}
-						>
-							{review.date}
-						</span>
 					</div>
 				</article>
 			))}
