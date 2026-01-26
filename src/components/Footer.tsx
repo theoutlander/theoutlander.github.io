@@ -41,6 +41,48 @@ const iconWrapper = css({
 	justifyContent: "center",
 });
 
+// Custom cursor SVG for links (interactive circle with plus)
+const linkCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="%236366f1" stroke="%23e2e8f0" stroke-width="1"/><path d="M10 6V14M6 10H14" stroke="%23e2e8f0" stroke-width="1"/></svg>') 10 10, pointer`;
+
+// Shared link style with mobile optimizations and custom cursor
+const linkStyle = css({
+	display: "flex",
+	alignItems: "center",
+	gap: "2",
+	fontSize: "sm",
+	color: { base: "gray.700", _dark: "dark.text" },
+	textDecoration: "none",
+	cursor: linkCursor,
+	minHeight: { base: "44px", md: "auto" },
+	padding: { base: "0.5rem", md: "0" },
+	borderRadius: "4px",
+	transition: "all 200ms ease-in-out",
+	"@media (prefers-reduced-motion: reduce)": {
+		transition: "none",
+	},
+	_hover: {
+		color: "brand.600",
+		textDecoration: "underline",
+		backgroundColor: { base: "gray.50", _dark: "gray.800" },
+	},
+	_active: {
+		backgroundColor: { base: "gray.100", _dark: "gray.700" },
+		transform: { base: "scale(0.98)", md: "none" },
+	},
+	_focus: {
+		outline: "2px solid brand.600",
+		outlineOffset: "2px",
+		borderRadius: "4px",
+	},
+	"@media (hover: none) and (pointer: coarse)": {
+		minHeight: "44px",
+		padding: "0.5rem",
+		_hover: {
+			backgroundColor: "transparent",
+		},
+	},
+});
+
 export default function Footer() {
 	const currentYear = new Date().getFullYear();
 	
@@ -62,27 +104,21 @@ export default function Footer() {
 					px: { base: "4", md: "6", lg: "8" },
 				})}
 			>
-				<div
-					className={css({
-						maxW: "768px",
-						mx: "auto",
-					})}
-				>
 					<div
-						className={flex({
-							direction: { base: "column", md: "row" },
-							gap: { base: "8", md: "12" },
+						className={css({
+							display: "flex",
+							flexDirection: { base: "column", md: "row" },
+							gap: { base: "8", md: "8", lg: "12" },
 							alignItems: { base: "flex-start", md: "flex-start" },
 							justifyContent: { base: "flex-start", md: "space-between" },
 						})}
 					>
-						{/* Left column - Bio */}
+						{/* Column 1 - Name & Title */}
 						<div
 							className={css({
 								flex: 1,
 								width: "100%",
 								textAlign: { base: "center", md: "left" },
-								alignSelf: "stretch",
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
@@ -103,154 +139,12 @@ export default function Footer() {
 							>
 								Engineering Leader - AI & Product Strategy
 							</p>
-
 							<p
 								className={css({
 									fontSize: "xs",
 									color: "gray.600",
-									paddingLeft: { base: "0", md: "12px" },
-								})}
-							>
-								© {currentYear} Nick Karnik. All rights reserved.
-							</p>
-						</div>
-
-						{/* Right column - Links */}
-						<div
-							className={css({
-								flex: 1,
-								width: "100%",
-								textAlign: { base: "center", md: "left" },
-								display: "flex",
-								flexDirection: "column",
-								alignItems: { base: "center", md: "flex-start" },
-							})}
-						>
-							<div
-								className={css({
-									display: "flex",
-									flexWrap: "wrap",
-									gap: "1",
-									mb: "4",
-									justifyContent: { base: "center", md: "flex-start" },
-								})}
-							>
-								<a
-									href="mailto:nick@karnik.io"
-									target="_blank"
-									rel="noopener"
-									aria-label="Send email to Nick Karnik"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("email"))}
-									>
-										<MdEmail size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://github.com/theoutlander"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's GitHub profile"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("github"))}
-									>
-										<FaGithub size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://www.linkedin.com/in/theoutlander"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's LinkedIn profile"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("linkedin"))}
-									>
-										<FaLinkedin size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://x.com/theoutlander"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's X profile"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("twitter"))}
-									>
-										<FaTwitter size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://youtube.com/@nick-karnik"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's YouTube channel"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("youtube"))}
-									>
-										<FaYoutube size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://stackoverflow.com/users/460472/nick"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's Stack Overflow profile"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(
-											iconWrapper,
-											getIconColorStyles("stackoverflow")
-										)}
-									>
-										<FaStackOverflow size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="https://www.codementor.io/@theoutlander"
-									target="_blank"
-									rel="noopener"
-									aria-label="Visit Nick Karnik's Codementor profile"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(
-											iconWrapper,
-											getIconColorStyles("codementor")
-										)}
-									>
-										<CodementorIcon size={ICON_SIZE} />
-									</div>
-								</a>
-								<a
-									href="/assets/documents/resume-nick-karnik.pdf"
-									target="_blank"
-									rel="noopener"
-									aria-label="Download Nick Karnik's resume (PDF)"
-									className={iconLinkContainer}
-								>
-									<div
-										className={css(iconWrapper, getIconColorStyles("resume"))}
-									>
-										<HiOutlineDocumentText size={ICON_SIZE} />
-									</div>
-								</a>
-							</div>
-							<p
-								className={css({
-									fontSize: "xs",
-									color: "gray.600",
-									paddingLeft: { base: "0", md: "12px" },
+									mb: "2",
+									textAlign: { base: "center", md: "left" },
 								})}
 							>
 								Available for consulting at{" "}
@@ -261,27 +155,190 @@ export default function Footer() {
 									className={css({
 										color: "brand.600",
 										textDecoration: "none",
+										cursor: linkCursor,
+										minHeight: { base: "44px", md: "auto" },
+										padding: { base: "0.25rem", md: "0" },
+										borderRadius: "4px",
+										transition: "all 200ms ease-in-out",
+										"@media (prefers-reduced-motion: reduce)": {
+											transition: "none",
+										},
 										_hover: {
 											textDecoration: "underline",
 											color: "brand.600",
+											backgroundColor: { base: "gray.50", _dark: "gray.800" },
+										},
+										_active: {
+											backgroundColor: { base: "gray.100", _dark: "gray.700" },
 										},
 										_focus: {
 											outline: "2px solid brand.700",
 											outlineOffset: "2px",
-											borderRadius: "2px",
+											borderRadius: "4px",
 										},
-										transition: "color 200ms ease-in-out",
-										"@media (prefers-reduced-motion: reduce)": {
-											transition: "none",
+										"@media (hover: none) and (pointer: coarse)": {
+											minHeight: "44px",
+											padding: "0.25rem",
 										},
 									})}
 								>
 									Plutonic Consulting
 								</a>
 							</p>
+							<p
+								className={css({
+									fontSize: "xs",
+									color: "gray.600",
+									textAlign: { base: "center", md: "left" },
+								})}
+							>
+								© {currentYear} Nick Karnik. All rights reserved.
+							</p>
+						</div>
+
+						{/* Columns 2 & 3 Container - Side by side on mobile */}
+						<div
+							className={css({
+								display: "flex",
+								flexDirection: { base: "row", md: "row" },
+								gap: { base: "6", md: "8", lg: "12" },
+								width: "100%",
+								flex: { base: "none", md: "2" },
+							})}
+						>
+							{/* Column 2 - Contact */}
+							<div
+								className={css({
+									flex: 1,
+									width: "100%",
+									textAlign: { base: "center", md: "left" },
+									display: "flex",
+									flexDirection: "column",
+									alignItems: { base: "center", md: "flex-start" },
+									gap: "2",
+								})}
+							>
+							<a
+								href="mailto:nick@karnik.io"
+								className={linkStyle}
+							>
+								<div className={css(iconWrapper, getIconColorStyles("email"))}>
+									<MdEmail size={ICON_SIZE} />
+								</div>
+								<span>nick@karnik.io</span>
+							</a>
+							<a
+								href="/assets/documents/resume-nick-karnik.pdf"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div className={css(iconWrapper, getIconColorStyles("resume"))}>
+									<HiOutlineDocumentText size={ICON_SIZE} />
+								</div>
+								<span>Resume</span>
+							</a>
+							<a
+								href="https://stackoverflow.com/users/460472/nick"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(
+										iconWrapper,
+										getIconColorStyles("stackoverflow")
+									)}
+								>
+									<FaStackOverflow size={ICON_SIZE} />
+								</div>
+								<span>Stack Overflow</span>
+							</a>
+							<a
+								href="https://www.codementor.io/@theoutlander"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(
+										iconWrapper,
+										getIconColorStyles("codementor")
+									)}
+								>
+									<CodementorIcon size={ICON_SIZE} />
+								</div>
+								<span>Codementor</span>
+							</a>
+						</div>
+
+						{/* Column 3 - Social Links */}
+						<div
+							className={css({
+								flex: 1,
+								width: "100%",
+								textAlign: { base: "center", md: "left" },
+								display: "flex",
+								flexDirection: "column",
+								alignItems: { base: "center", md: "flex-start" },
+								gap: "2",
+							})}
+						>
+							<a
+								href="https://github.com/theoutlander"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(iconWrapper, getIconColorStyles("github"))}
+								>
+									<FaGithub size={ICON_SIZE} />
+								</div>
+								<span>GitHub</span>
+							</a>
+							<a
+								href="https://www.linkedin.com/in/theoutlander"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(iconWrapper, getIconColorStyles("linkedin"))}
+								>
+									<FaLinkedin size={ICON_SIZE} />
+								</div>
+								<span>LinkedIn</span>
+							</a>
+							<a
+								href="https://x.com/theoutlander"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(iconWrapper, getIconColorStyles("twitter"))}
+								>
+									<FaTwitter size={ICON_SIZE} />
+								</div>
+								<span>Twitter</span>
+							</a>
+							<a
+								href="https://youtube.com/@nick-karnik"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div
+									className={css(iconWrapper, getIconColorStyles("youtube"))}
+								>
+									<FaYoutube size={ICON_SIZE} />
+								</div>
+								<span>YouTube</span>
+							</a>
+						</div>
 						</div>
 					</div>
-				</div>
 			</div>
 		</footer>
 	);
