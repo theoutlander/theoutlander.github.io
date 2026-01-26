@@ -3,6 +3,7 @@ import { createRoot } from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { HelmetProvider } from "./components/seo/HelmetShim";
 import { routeTree } from "./routeTree.gen";
+import { clearBlogCache } from "./lib/content";
 
 const router = createRouter({
 	routeTree,
@@ -39,6 +40,24 @@ declare module "@tanstack/react-router" {
 	interface Register {
 		router: typeof router;
 	}
+}
+
+// Handle HMR for blog data updates
+if (import.meta.hot) {
+	import.meta.hot.on('blog-data-updated', () => {
+		console.log('🔄 Blog data updated, clearing cache and reloading route...');
+		// Clear the blog data cache
+		clearBlogCache();
+		// Reload the current route to refetch data without full page reload
+		const currentLocation = router.state.location;
+		router.invalidate();
+		// Navigate to the same route to trigger loader refresh
+		router.navigate({
+			to: currentLocation.pathname,
+			search: currentLocation.search,
+			replace: true,
+		});
+	});
 }
 
 // Only run on client side

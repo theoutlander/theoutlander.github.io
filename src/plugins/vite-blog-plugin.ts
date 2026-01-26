@@ -9,39 +9,59 @@ let regenerationTimeout: NodeJS.Timeout | null = null;
 
 function regenerateBlogData(server: ViteDevServer) {
   if (isRegenerating) return;
-  
+
   // Debounce rapid file changes
   if (regenerationTimeout) {
     clearTimeout(regenerationTimeout);
   }
-  
+
   regenerationTimeout = setTimeout(() => {
     isRegenerating = true;
     console.log('🔄 Regenerating blog data from markdown files...');
-    
+
     const child = spawn('tsx', ['scripts/generate-blog-data.ts'], {
       stdio: 'inherit',
       shell: true,
       cwd: process.cwd()
     });
-    
+
     child.on('close', (code) => {
       isRegenerating = false;
       if (code === 0) {
         console.log('✅ Blog data regenerated successfully');
-        // Trigger a full page reload via Vite's WebSocket
+        // Trigger HMR update instead of full reload
         if (server && server.ws) {
-          server.ws.send({
-            type: 'full-reload',
-            path: '*'
+          // Invalidate route modules that use blog data
+          const routeModules = [
+            '/src/routes/blog/$slug.tsx',
+            '/src/routes/blog/index.tsx',
+            '/src/routes/index.tsx',
+            '/src/lib/content.ts'
+          ];
+
+          routeModules.forEach(modulePath => {
+            const module = server.moduleGraph.getModuleById(modulePath);
+            if (module) {
+              server.moduleGraph.invalidateModule(module);
+            }
           });
-          console.log('🔄 Triggered page reload');
+
+          // Send custom HMR event for blog data update
+          server.ws.send({
+            type: 'custom',
+            event: 'blog-data-updated',
+            data: {
+              timestamp: Date.now()
+            }
+          });
+
+          console.log('🔄 Triggered HMR update for blog data');
         }
       } else {
         console.error(`❌ Blog data regeneration failed with code ${code}`);
       }
     });
-    
+
     child.on('error', (error) => {
       isRegenerating = false;
       console.error('❌ Error regenerating blog data:', error);

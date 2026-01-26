@@ -116,3 +116,11 @@ export function getBlogPostSlugs(): string[] {
 	// For now, return empty array as it's mainly used server-side
 	return [];
 }
+
+// Clear cache for HMR updates
+export function clearBlogCache() {
+	cachedAllPosts = null;
+	Object.keys(cachedPostsBySlug).forEach(key => {
+		delete cachedPostsBySlug[key];
+	});
+}
