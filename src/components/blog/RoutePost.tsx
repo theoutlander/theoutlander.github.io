@@ -154,7 +154,9 @@ export default function RoutePost({ slug }: { slug: string }) {
 					})}
 				>
 					{post.contentMarkdown ? (
-						<ReactMarkdown>{post.contentMarkdown}</ReactMarkdown>
+						<ReactMarkdown>
+							{post.contentMarkdown}
+						</ReactMarkdown>
 					) : post.contentHtml ? (
 						<div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
 					) : (

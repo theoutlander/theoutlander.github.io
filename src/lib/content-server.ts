@@ -63,6 +63,7 @@ function parseFrontMatter(content: string): {
 }
 
 function getSlugFromFilename(filename: string): string {
+	if (!filename) return "";
 	return filename.replace(/\.md$/, "");
 }
 
@@ -81,6 +82,11 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 			const { frontMatter, markdown } = parseFrontMatter(content);
 			const slug = getSlugFromFilename(file);
 
+			const contentHtml = await marked(markdown, {
+				breaks: true,
+				gfm: true,
+			});
+
 			const post: BlogPost = {
 				id: frontMatter.id,
 				slug,
@@ -91,7 +97,7 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 				cover: frontMatter.cover || null,
 				tags: frontMatter.tags || [],
 				contentMarkdown: markdown,
-				contentHtml: await marked(markdown),
+				contentHtml,
 			};
 
 			posts.push(post);

@@ -54,8 +54,11 @@ const linkStyle = css({
 	textDecoration: "none",
 	cursor: linkCursor,
 	minHeight: { base: "44px", md: "auto" },
-	padding: { base: "0.5rem", md: "0" },
-	borderRadius: "4px",
+	bg: { base: "gray.50", _dark: "gray.800" },
+	px: { base: "0.5rem", md: "3" },
+	py: { base: "0.5rem", md: "2.5" },
+	borderRadius: { base: "4px", md: "md" },
+	whiteSpace: "nowrap",
 	transition: "all 200ms ease-in-out",
 	"@media (prefers-reduced-motion: reduce)": {
 		transition: "none",
@@ -63,23 +66,19 @@ const linkStyle = css({
 	_hover: {
 		color: "brand.600",
 		textDecoration: "underline",
-		backgroundColor: { base: "gray.50", _dark: "gray.800" },
 	},
 	_active: {
-		backgroundColor: { base: "gray.100", _dark: "gray.700" },
 		transform: { base: "scale(0.98)", md: "none" },
 	},
 	_focus: {
 		outline: "2px solid brand.600",
 		outlineOffset: "2px",
-		borderRadius: "4px",
+		borderRadius: { base: "4px", md: "md" },
 	},
 	"@media (hover: none) and (pointer: coarse)": {
 		minHeight: "44px",
-		padding: "0.5rem",
-		_hover: {
-			backgroundColor: "transparent",
-		},
+		px: "0.5rem",
+		py: "0.5rem",
 	},
 });
 
@@ -106,22 +105,26 @@ export default function Footer() {
 			>
 					<div
 						className={css({
-							display: "flex",
+							display: { base: "flex", md: "grid" },
 							flexDirection: { base: "column", md: "row" },
-							gap: { base: "8", md: "8", lg: "12" },
-							alignItems: { base: "flex-start", md: "flex-start" },
-							justifyContent: { base: "flex-start", md: "space-between" },
+							gridTemplateColumns: { md: "1fr 1fr 1fr" },
+							gap: { base: "2rem", md: "2rem" },
+							alignItems: { base: "flex-start", md: "stretch" },
 						})}
 					>
 						{/* Column 1 - Name & Title */}
 						<div
 							className={css({
-								flex: 1,
 								width: "100%",
 								textAlign: { base: "center", md: "left" },
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
+								paddingRight: { base: "0", md: "2rem" },
+								borderRight: { base: "none", md: "1px solid" },
+								borderColor: { base: "transparent", md: "gray.200", _dark: "dark.border" },
+								height: "100%",
+								minHeight: { md: "100%" },
 							})}
 						>
 							<h2
@@ -199,23 +202,21 @@ export default function Footer() {
 						{/* Columns 2 & 3 Container - Side by side on mobile */}
 						<div
 							className={css({
-								display: "flex",
-								flexDirection: { base: "row", md: "row" },
-								gap: { base: "6", md: "8", lg: "12" },
+								display: { base: "grid", md: "contents" },
+								gridTemplateColumns: { base: "1fr 1fr", md: "none" },
+								gap: { base: "1.5rem", md: "0" },
 								width: "100%",
-								flex: { base: "none", md: "2" },
 							})}
 						>
 							{/* Column 2 - Contact */}
 							<div
 								className={css({
-									flex: 1,
 									width: "100%",
 									textAlign: { base: "center", md: "left" },
 									display: "flex",
 									flexDirection: "column",
 									alignItems: { base: "center", md: "flex-start" },
-									gap: "2",
+									gap: "0.5rem",
 								})}
 							>
 							<a
@@ -275,13 +276,12 @@ export default function Footer() {
 						{/* Column 3 - Social Links */}
 						<div
 							className={css({
-								flex: 1,
 								width: "100%",
 								textAlign: { base: "center", md: "left" },
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
-								gap: "2",
+								gap: "0.5rem",
 							})}
 						>
 							<a

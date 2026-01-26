@@ -14,6 +14,7 @@ type BlogPostPageProps = {
 };
 
 export function BlogPostPagePanda({ post }: BlogPostPageProps) {
+
 	return (
 		<div
 			className={css({
