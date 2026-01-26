@@ -269,19 +269,14 @@ Act fast. The first 24 hours matter.
 
 **Step by step:**
 
-1. Change your email password immediately from a clean device (computer you know hasn't been compromised). Email unlocks everything else.
-
-2. Sign out all sessions. Most email and cloud services have an option to sign out everywhere at once.
-
-3. Check what devices are signed in and revoke any you don't recognize.
-
-4. Verify your phone number and recovery options haven't been changed. If they have, compromise is more serious.
-
-5. Check what apps have connected to your account and revoke access to anything suspicious.
-
-6. If your email was compromised, assume other accounts with similar passwords are at risk. Change passwords on financial accounts, healthcare, and anything important.
-
-7. Consider freezing credit if financial accounts are involved. This stops attackers from opening accounts in your name.
+1. Use a clean, trusted device and go directly to the real website. Don't click links in emails or messages. Type the URL yourself or use a bookmark you know is safe.
+2. Change your email password immediately. Use a strong, unique password. Email unlocks everything else.
+3. Sign out of all sessions. Most email and cloud services have an option to sign out everywhere at once. This invalidates any active sessions attackers might be using.
+4. Check for persistence. Look for email forwarding rules, filters, or delegates that you didn't set up. Attackers often leave these behind to maintain access even after you change your password.
+5. Review connected apps and devices. Check what devices are signed in and revoke any you don't recognize. Check what third-party apps have access to your account and revoke anything suspicious.
+6. Was your email compromised? If yes, change passwords on critical accounts immediately. Financial accounts, healthcare, government services, and your phone carrier. Assume any account with a similar password is at risk.
+7. Freeze your credit and set fraud alerts if financial accounts were involved. This stops attackers from opening new accounts in your name.
+8. Continue monitoring. Watch for unusual activity across all your accounts. Check account activity logs regularly for the next few weeks.
 
 ## The real shift to internalize
 

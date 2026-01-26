@@ -124,6 +124,12 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 								mb: 4,
 								pl: 6,
 							},
+							"& ol": {
+								listStyleType: "decimal",
+							},
+							"& ul": {
+								listStyleType: "disc",
+							},
 							"& li": {
 								mb: 2,
 							},
