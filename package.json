@@ -4,10 +4,10 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"build": "tsx scripts/generate-blog-data.ts && pnpm panda codegen && pnpm panda cssgen && vite build && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
+		"build": "tsx scripts/generate-blog-data.ts && tsx scripts/generate-codementor-reviews.ts && pnpm panda codegen && pnpm panda cssgen && vite build && tsx scripts/render-static-pages.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/make-sitemap.ts && SITE_URL=${SITE_URL:-https://nick.karnik.io} tsx scripts/generate-robots.ts && tsx scripts/generate-redirects.ts && tsx scripts/generate-redirect-html.ts",
 		"build:prod": "NODE_ENV=production pnpm build",
 		"preview": "pnpm build:prod && vite preview --host --port 5173",
-		"dev": "tsx scripts/generate-blog-data.ts && NODE_ENV=${NODE_ENV:-development} pnpm build && vite --host",
+		"dev": "tsx scripts/generate-blog-data.ts && tsx scripts/generate-codementor-reviews.ts && NODE_ENV=${NODE_ENV:-development} pnpm build && vite --host",
 		"test": "vitest run --coverage",
 		"test:watch": "vitest --watch --coverage",
 		"test:unit": "vitest run --coverage",

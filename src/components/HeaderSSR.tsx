@@ -2,7 +2,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import { container } from "../../styled-system/patterns/index.mjs";
 
 interface HeaderProps {
-	currentPage?: "home" | "blogs" | "about" | "resume";
+	currentPage?: "home" | "blogs" | "about" | "resume" | "reviews";
 }
 
 export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
@@ -134,6 +134,30 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 							})}
 						>
 							Resume
+						</a>
+						<a
+							href="/reviews"
+							aria-current={currentPage === "reviews" ? "page" : undefined}
+							className={css({
+								color: currentPage === "reviews" ? "brand.600" : "gray.600",
+								fontWeight: currentPage === "reviews" ? "medium" : "normal",
+								textDecoration: "none",
+								padding: "8px 12px",
+								borderRadius: "4px",
+								minHeight: "44px",
+								display: "flex",
+								alignItems: "center",
+								_hover: {
+									color: "brand.600",
+									textDecoration: "underline",
+								},
+								_focus: {
+									outline: "2px solid brand.600",
+									outlineOffset: "2px",
+								},
+							})}
+						>
+							Reviews
 						</a>
 						<a
 							href="/schedule"
