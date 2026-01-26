@@ -31,6 +31,10 @@ graph LR
 A[Attacker] --> B[Virus or Malware] --> C[Your Computer] --> D[Damage]
 ```
 
+![alt text](../../public/assets/images/blog/modern-attack-surface/attack-model-old.svg)
+
+attack-model-old.svg
+
 That model made sense when systems were fragile and defenses were thin. If you avoided sketchy downloads, you were mostly safe.
 
 That world quietly disappeared.
