@@ -44,7 +44,6 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 						display: "flex",
 						flexDir: "column",
 						height: "100%",
-						minHeight: "200px",
 						transition: "all 0.2s",
 						_hover: {
 							boxShadow: "md",
@@ -91,22 +90,38 @@ export function CodementorReviews({ reviews }: CodementorReviewsProps) {
 					</div>
 
 					{/* Review text */}
-					<p
+					<div
 						className={css({
 							flex: 1,
-							color: "gray.700",
-							lineHeight: "1.7",
-							fontSize: "sm",
 							mb: 4,
-							overflow: "hidden",
-							display: "-webkit-box",
-							WebkitLineClamp: 6,
-							WebkitBoxOrient: "vertical",
-							textOverflow: "ellipsis",
+							minHeight: 0,
 						})}
 					>
-						{review.text}
-					</p>
+						<p
+							className={css({
+								color: "gray.700",
+								lineHeight: "1.7",
+								fontSize: "sm",
+								margin: 0,
+								overflow: "hidden",
+								display: "-webkit-box",
+								WebkitLineClamp: 6,
+								WebkitBoxOrient: "vertical",
+								textOverflow: "ellipsis",
+								maxHeight: "10.2em", // 6 lines * 1.7 line-height
+							})}
+							style={{
+								display: "-webkit-box",
+								WebkitLineClamp: 6,
+								WebkitBoxOrient: "vertical",
+								overflow: "hidden",
+								textOverflow: "ellipsis",
+								maxHeight: "10.2em",
+							}}
+						>
+							{review.text}
+						</p>
+					</div>
 
 					{/* Footer with author */}
 					<div
