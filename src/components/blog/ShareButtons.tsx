@@ -6,11 +6,12 @@ import { getIconColorStyles } from "../../utils/iconColors";
 type ShareButtonsProps = {
 	title: string;
 	url: string;
+	variant?: "default" | "compact";
 };
 
 const ICON_SIZE = 20;
 
-export default function ShareButtons({ title, url }: ShareButtonsProps) {
+export default function ShareButtons({ title, url, variant = "default" }: ShareButtonsProps) {
 	const [copied, setCopied] = useState(false);
 	const fullUrl = url.startsWith("http") ? url : `https://nick.karnik.io${url}`;
 	const encodedUrl = encodeURIComponent(fullUrl);
@@ -42,32 +43,40 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 		}
 	};
 
+	const isCompact = variant === "compact";
+
 	return (
 		<div
 			className={css({
 				display: "flex",
 				alignItems: "center",
-				gap: 3,
-				mt: 8,
-				pt: 6,
-				borderTop: "1px solid",
-				borderColor: "#e5e5e5",
+				gap: isCompact ? 2 : 3,
+				...(isCompact
+					? {}
+					: {
+							mt: 8,
+							pt: 6,
+							borderTop: "1px solid",
+							borderColor: "#e5e5e5",
+					  }),
 			})}
 		>
-			<span
-				className={css({
-					fontSize: "14px",
-					color: "#666",
-					fontWeight: "500",
-					mr: 2,
-				})}
-			>
-				Share:
-			</span>
+			{!isCompact && (
+				<span
+					className={css({
+						fontSize: "14px",
+						color: "#666",
+						fontWeight: "500",
+						mr: 2,
+					})}
+				>
+					Share:
+				</span>
+			)}
 			<div
 				className={css({
 					display: "flex",
-					gap: 2,
+					gap: isCompact ? 1.5 : 2,
 					alignItems: "center",
 				})}
 			>
@@ -80,8 +89,8 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						width: "36px",
-						height: "36px",
+						width: isCompact ? "32px" : "36px",
+						height: isCompact ? "32px" : "36px",
 						borderRadius: "6px",
 						cursor: "pointer",
 						transition: "all 0.2s ease-in-out",
@@ -103,8 +112,13 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 					})}
 				>
 					<FaTwitter
-						size={ICON_SIZE}
-						className={css(getIconColorStyles("twitter"))}
+						size={isCompact ? 18 : ICON_SIZE}
+						style={{ color: "#1DA1F2" }}
+						className={css({
+							_hover: {
+								color: "#0d8bd9",
+							},
+						})}
 					/>
 				</a>
 				<a
@@ -116,8 +130,8 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						width: "36px",
-						height: "36px",
+						width: isCompact ? "32px" : "36px",
+						height: isCompact ? "32px" : "36px",
 						borderRadius: "6px",
 						cursor: "pointer",
 						transition: "all 0.2s ease-in-out",
@@ -139,8 +153,13 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 					})}
 				>
 					<FaLinkedin
-						size={ICON_SIZE}
-						className={css(getIconColorStyles("linkedin"))}
+						size={isCompact ? 18 : ICON_SIZE}
+						style={{ color: "#0A66C2" }}
+						className={css({
+							_hover: {
+								color: "#004182",
+							},
+						})}
 					/>
 				</a>
 				<a
@@ -152,8 +171,8 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						width: "36px",
-						height: "36px",
+						width: isCompact ? "32px" : "36px",
+						height: isCompact ? "32px" : "36px",
 						borderRadius: "6px",
 						cursor: "pointer",
 						transition: "all 0.2s ease-in-out",
@@ -175,11 +194,11 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 					})}
 				>
 					<FaFacebook
-						size={ICON_SIZE}
+						size={isCompact ? 18 : ICON_SIZE}
+						style={{ color: "#1877F2" }}
 						className={css({
-							color: "#1877F2",
 							_hover: {
-								color: "#0d5fcc",
+								color: "#166FE5",
 							},
 						})}
 					/>
@@ -191,8 +210,8 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 						display: "flex",
 						alignItems: "center",
 						justifyContent: "center",
-						width: "36px",
-						height: "36px",
+						width: isCompact ? "32px" : "36px",
+						height: isCompact ? "32px" : "36px",
 						borderRadius: "6px",
 						cursor: "pointer",
 						border: "none",
@@ -216,7 +235,7 @@ export default function ShareButtons({ title, url }: ShareButtonsProps) {
 					})}
 				>
 					<FaLink
-						size={ICON_SIZE}
+						size={isCompact ? 18 : ICON_SIZE}
 						className={css({
 							color: copied ? "#10b981" : "#666",
 							transition: "color 0.2s ease-in-out",

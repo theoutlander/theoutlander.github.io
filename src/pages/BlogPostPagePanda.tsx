@@ -43,7 +43,7 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							className={css({
 								fontSize: { base: "2xl", md: "2.5rem" },
 								fontWeight: "600",
-								mb: 4,
+								mb: 2,
 								color: "#000",
 								lineHeight: 1.2,
 							})}
@@ -55,34 +55,49 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							className={css({
 								display: "flex",
 								alignItems: "center",
-								gap: 2,
-								mb: 6,
-								fontSize: "14px",
-								color: "#666",
+								justifyContent: "space-between",
+								flexWrap: "wrap",
+								gap: 3,
+								mb: 3,
 							})}
 						>
-							<time>
-								{post.date
-									? new Date(post.date).toLocaleDateString("en-US", {
-											year: "numeric",
-											month: "long",
-											day: "numeric",
-									  })
-									: ""}
-							</time>
-							<span>│</span>
-							<span>
-								{estimateReadingTime(
-									post.contentHtml || post.html || post.excerpt || ""
-								)}{" "}
-								min read
-							</span>
-							{post.tags && post.tags.length > 0 && (
-								<>
-									<span>│</span>
-									<span>{post.tags[0]}</span>
-								</>
-							)}
+							<div
+								className={css({
+									display: "flex",
+									alignItems: "center",
+									gap: 2,
+									fontSize: "14px",
+									color: "#666",
+								})}
+							>
+								<time>
+									{post.date
+										? new Date(post.date).toLocaleDateString("en-US", {
+												year: "numeric",
+												month: "long",
+												day: "numeric",
+										  })
+										: ""}
+								</time>
+								<span>│</span>
+								<span>
+									{estimateReadingTime(
+										post.contentHtml || post.html || post.excerpt || ""
+									)}{" "}
+									min read
+								</span>
+								{post.tags && post.tags.length > 0 && (
+									<>
+										<span>│</span>
+										<span>{post.tags[0]}</span>
+									</>
+								)}
+							</div>
+							<ShareButtons
+								title={post.title}
+								url={`/blog/${post.slug}`}
+								variant="compact"
+							/>
 						</div>
 
 						{post.cover && (
