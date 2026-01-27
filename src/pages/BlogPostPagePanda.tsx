@@ -236,8 +236,15 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 									<span
 										key={tag}
 										className={css({
+											display: "inline-block",
 											color: "#666",
-											fontSize: "14px",
+											fontSize: "13px",
+											fontWeight: "500",
+											bg: "#f5f5f5",
+											px: 3,
+											py: 1.5,
+											borderRadius: "9999px",
+											lineHeight: 1,
 										})}
 									>
 										{capitalizeFirstLetter(tag)}
