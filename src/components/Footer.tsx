@@ -126,76 +126,88 @@ export default function Footer() {
 								minHeight: { md: "100%" },
 							})}
 						>
-							<h2
+							<div
 								className={css({
-									fontSize: "md",
-									fontWeight: "bold",
-									mb: "2",
-									color: { base: "gray.800", _dark: "dark.text" },
+									fontSize: { base: "2.5rem", md: "3.5rem"},
+									fontWeight: "700",
+									color: { base: "gray.900", _dark: "gray.100" },
+									lineHeight: "1.1",
+									marginBottom: { base: "1.5rem", md: "2rem" },
+									letterSpacing: "-0.5px",
 								})}
 							>
-								Nick Karnik
-							</h2>
-							<p
-								className={css({ fontSize: "sm", color: "gray.600", mb: "4" })}
-							>
-								Engineering Leader - AI & Product Strategy
-							</p>
-							<p
+								Nick<br />
+								Karnik
+							</div>
+							<div
 								className={css({
-									fontSize: "xs",
-									color: "gray.600",
-									mb: "2",
-									textAlign: { base: "center", md: "left" },
+									fontSize: { base: "1.75rem", md: "xx-large", lg: "medium" },
+									color: { base: "gray.600", _dark: "gray.300" },
+									lineHeight: "1.8",
+									marginBottom: { base: "2rem", md: "2rem" },
+									fontWeight: "500",
 								})}
 							>
-								Available for consulting at{" "}
+								Engineering Leader – AI & Product Strategy
+							</div>
+							<div
+								className={css({
+									fontSize: { base: "0.9rem", md: "0.95rem" },
+									color: { base: "gray.700", _dark: "gray.300" },
+									marginTop: { base: "1rem", md: "1.5rem" },
+									// marginBottom: { base: "2rem", md: "2rem" },
+									lineHeight: "1.6",
+								})}
+							>
+								Available for consulting at<br />
 								<a
-									href="https://plutonic.consulting"
+									href="https://plutonicconsulting.com"
 									target="_blank"
 									rel="noopener"
 									className={css({
 										color: "brand.600",
 										textDecoration: "none",
+										fontWeight: "600",
 										cursor: linkCursor,
-										minHeight: { base: "44px", md: "auto" },
-										padding: { base: "0.25rem", md: "0" },
-										borderRadius: "4px",
-										transition: "all 200ms ease-in-out",
+										transition: "color 0.2s ease",
 										"@media (prefers-reduced-motion: reduce)": {
 											transition: "none",
 										},
 										_hover: {
-											textDecoration: "underline",
-											color: "brand.600",
-											backgroundColor: { base: "gray.50", _dark: "gray.800" },
-										},
-										_active: {
-											backgroundColor: { base: "gray.100", _dark: "gray.700" },
+											color: "brand.700",
 										},
 										_focus: {
-											outline: "2px solid brand.700",
+											outline: "2px solid brand.600",
 											outlineOffset: "2px",
 											borderRadius: "4px",
-										},
-										"@media (hover: none) and (pointer: coarse)": {
-											minHeight: "44px",
-											padding: "0.25rem",
 										},
 									})}
 								>
 									Plutonic Consulting
 								</a>
-							</p>
-							<p
+							</div>
+							<div
 								className={css({
-									fontSize: "xs",
-									color: "gray.600",
-									textAlign: { base: "center", md: "left" },
+									fontSize: { base: "0.85rem", md: "0.9rem" },
+									color: { base: "gray.600", _dark: "gray.300" },
+									lineHeight: "1.6",
+									marginTop: { base: "1.5rem", md: "0.0.5rem" },
+									paddingTop: { base: "1.5rem", md: "2rem" },
+									borderTop: "1px solid",
+									borderColor: { base: "gray.200", _dark: "dark.border" },
 								})}
 							>
-								© {currentYear} Nick Karnik. All rights reserved.
-							</p>
+								© {currentYear}{" "}
+								<span
+									className={css({
+										fontWeight: "700",
+										color: { base: "gray.900", _dark: "gray.100" },
+									})}
+								>
+									Nick Karnik
+								</span>
+								. All rights reserved.
+							</div>
 						</div>
 
 						{/* Column 2 - Contact & Professional Links */}
