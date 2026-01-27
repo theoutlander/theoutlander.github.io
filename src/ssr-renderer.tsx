@@ -10,8 +10,10 @@ import fs, {
 } from "node:fs";
 import { join } from "node:path";
 import { createHash } from "node:crypto";
+import { execSync } from "node:child_process";
 import { capitalizeFirstLetter } from "./utils/stringUtils";
 import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
+import { CodementorReview } from "./types/codementor";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -21,6 +23,7 @@ import { ResumePagePanda } from "./pages/ResumePagePanda";
 import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
 import { CalendarPagePanda } from "./pages/CalendarPagePanda";
+import { ReviewsPagePanda } from "./pages/ReviewsPagePanda";
 
 type Post = BlogPost;
 
@@ -51,6 +54,43 @@ function hashContent(content: string, length = 8) {
 function serializeForInlineScript(data: unknown) {
 	// Prevent closing the script tag and escape minimal characters
 	return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+
+// Get image dimensions from a local file path
+function getImageDimensions(imagePath: string): { width: number; height: number } | null {
+	try {
+		// Try to use 'file' command first (available on macOS/Linux)
+		const fileOutput = execSync(`file "${imagePath}"`, { encoding: "utf-8" });
+		const dimensionsMatch = fileOutput.match(/(\d+)\s+x\s+(\d+)/);
+		if (dimensionsMatch) {
+			return {
+				width: parseInt(dimensionsMatch[1], 10),
+				height: parseInt(dimensionsMatch[2], 10),
+			};
+		}
+	} catch (error) {
+		// Fall through to try other methods
+	}
+
+	try {
+		// Try 'sips' on macOS
+		const sipsOutput = execSync(
+			`sips -g pixelWidth -g pixelHeight "${imagePath}"`,
+			{ encoding: "utf-8" }
+		);
+		const widthMatch = sipsOutput.match(/pixelWidth:\s*(\d+)/);
+		const heightMatch = sipsOutput.match(/pixelHeight:\s*(\d+)/);
+		if (widthMatch && heightMatch) {
+			return {
+				width: parseInt(widthMatch[1], 10),
+				height: parseInt(heightMatch[1], 10),
+			};
+		}
+	} catch (error) {
+		// Fall through
+	}
+
+	return null;
 }
 
 function buildInlineDataScript(id: string, data: unknown) {
@@ -96,6 +136,16 @@ const generateComprehensiveCSS = async (
 ) => {
 	console.log("🎨 Generating comprehensive CSS...");
 
+	// Load reviews data for CSS generation
+	let reviewsData: CodementorReview[] = [];
+	try {
+		reviewsData = JSON.parse(
+			readFileSync("public/data/codementor-reviews.json", "utf8")
+		) as CodementorReview[];
+	} catch (error) {
+		console.warn("⚠️  Could not load reviews data for CSS generation:", error);
+	}
+
 	// Render all pages to collect all CSS
 	const pages: Array<{
 		name: string;
@@ -107,6 +157,7 @@ const generateComprehensiveCSS = async (
 		{ name: "about", component: AboutPagePanda, props: { aboutData } },
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
+		{ name: "reviews", component: ReviewsPagePanda, props: { reviews: reviewsData } },
 	];
 
 	// Add blog post pages
@@ -308,7 +359,9 @@ const generateBaseHTML = (
 	},
 	jsBundle?: string | null,
 	jsonLd?: object | object[],
-	inlineDataScript?: string
+	inlineDataScript?: string,
+	ogImageWidth?: number,
+	ogImageHeight?: number
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	const defaultOgImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
@@ -320,6 +373,7 @@ const generateBaseHTML = (
 		: defaultOgImage;
 	const finalOgType = ogType || "website";
 	const finalCanonicalUrl = canonicalUrl || siteUrl;
+	const facebookAppId = process.env.FACEBOOK_APP_ID;
 	
 	// Determine image type from URL
 	const imageType = finalOgImage.endsWith(".png")
@@ -375,11 +429,20 @@ const generateBaseHTML = (
 		<meta property="og:url" content="${finalCanonicalUrl}" />
 		<meta property="og:image" content="${finalOgImage}" />
 		<meta property="og:image:alt" content="${title}" />
-		<meta property="og:image:width" content="1200" />
-		<meta property="og:image:height" content="630" />
+		${
+			ogImageWidth && ogImageHeight
+				? `<meta property="og:image:width" content="${ogImageWidth}" />
+		<meta property="og:image:height" content="${ogImageHeight}" />`
+				: ""
+		}
 		<meta property="og:image:type" content="${imageType}" />
 		<meta property="og:site_name" content="Nick Karnik" />
 		<meta property="og:locale" content="en_US" />
+		${
+			facebookAppId
+				? `<meta property="fb:app_id" content="${facebookAppId}" />`
+				: ""
+		}
 
 		<!-- Twitter Card Meta Tags -->
 		<meta name="twitter:card" content="summary_large_image" />
@@ -796,6 +859,41 @@ export async function renderAllStaticPagesSSR() {
 	const calendarHTML = removeInlineStyles(calendarHTMLWithStyles);
 	writeFileSync(join(calendarDir, "index.html"), calendarHTML);
 
+	// Render reviews page
+	console.log("📄 Rendering reviews page with SSR...");
+	const reviewsDir = join("dist", "reviews");
+	mkdirSync(reviewsDir, { recursive: true });
+	
+	// Load reviews data
+	let reviewsData: CodementorReview[] = [];
+	try {
+		reviewsData = JSON.parse(
+			readFileSync("public/data/codementor-reviews.json", "utf8")
+		) as CodementorReview[];
+	} catch (error) {
+		console.warn("⚠️  Could not load reviews data:", error);
+	}
+	
+	const reviewsResult = renderPageToHTML(ReviewsPagePanda, { reviews: reviewsData });
+	const reviewsJsonLd = generatePersonJsonLd("https://nick.karnik.io/reviews");
+	const reviewsHTMLWithStyles = generateBaseHTML(
+		"Codementor Reviews | Nick Karnik",
+		"Client reviews and testimonials from Codementor sessions with Nick Karnik.",
+		reviewsResult.html,
+		cssHref,
+		reviewsResult.helmet.title +
+			reviewsResult.helmet.meta +
+			reviewsResult.helmet.link,
+		"https://nick.karnik.io/reviews",
+		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		"website",
+		undefined,
+		jsBundle,
+		reviewsJsonLd
+	);
+	const reviewsHTML = removeInlineStyles(reviewsHTMLWithStyles);
+	writeFileSync(join(reviewsDir, "index.html"), reviewsHTML);
+
 	// Render individual blog post pages
 	console.log("📄 Rendering individual blog post pages with SSR...");
 	for (const post of blogData) {
@@ -819,12 +917,36 @@ export async function renderAllStaticPagesSSR() {
 		});
 
 		// Use post cover image if available, otherwise use profile image
-		const postOgImage =
-			post.cover ||
-			"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg";
+		// Prefer optimized -og version for social media sharing (smaller file size)
+		let postOgImage = post.cover || "https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg";
+		if (post.cover && !post.cover.startsWith("http")) {
+			// Check for optimized OG versions (-og.jpg or -og.png)
+			const basePath = post.cover.replace(/\.(png|jpg|jpeg)$/i, "");
+			const ogJpgPath = join("public", `${basePath}-og.jpg`);
+			const ogPngPath = join("public", `${basePath}-og.png`);
+			
+			if (fs.existsSync(ogJpgPath)) {
+				postOgImage = post.cover.replace(/\.(png|jpg|jpeg)$/i, "-og.jpg");
+			} else if (fs.existsSync(ogPngPath)) {
+				postOgImage = post.cover.replace(/\.(png|jpg|jpeg)$/i, "-og.png");
+			}
+		}
+		
 		const postDescription =
 			post.excerpt ||
 			`Read ${post.title} on Nick Karnik's blog about engineering, AI, and technology.`;
+
+		// Get actual image dimensions if cover image exists
+		let ogImageWidth: number | undefined;
+		let ogImageHeight: number | undefined;
+		if (postOgImage && !postOgImage.startsWith("http")) {
+			const imagePath = join("public", postOgImage);
+			const dimensions = getImageDimensions(imagePath);
+			if (dimensions) {
+				ogImageWidth = dimensions.width;
+				ogImageHeight = dimensions.height;
+			}
+		}
 
 		// Prepare article-specific data
 		const articleData = {
@@ -859,7 +981,9 @@ export async function renderAllStaticPagesSSR() {
 			articleData,
 			jsBundle,
 			postJsonLd,
-			postInlineScript
+			postInlineScript,
+			ogImageWidth,
+			ogImageHeight
 		);
 		const postHTML = removeInlineStyles(postHTMLWithStyles);
 		writeFileSync(join(postDir, "index.html"), postHTML);

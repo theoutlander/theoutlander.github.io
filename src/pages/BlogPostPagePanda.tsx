@@ -4,6 +4,7 @@ import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import SkipLink from "../components/SkipLink";
 import BackToTop from "../components/ui/BackToTop";
+import ShareButtons from "../components/blog/ShareButtons";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
 import { Post } from "../types/blog";
 
@@ -230,6 +231,11 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 							</div>
 						</div>
 					)}
+
+					<ShareButtons
+						title={post.title}
+						url={`/blog/${post.slug}`}
+					/>
 				</article>
 
 				{/* Comments Section */}

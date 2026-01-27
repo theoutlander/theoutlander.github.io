@@ -1,4 +1,4 @@
-import { BlogPost } from "../types/blog";
+import type { BlogPost } from "../types/blog";
 
 const ALL_POSTS_INLINE_ID = "__ALL_POSTS__";
 const SINGLE_POST_INLINE_ID = "__POST_DATA__";

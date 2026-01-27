@@ -1,7 +1,7 @@
 import { readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import { marked } from "marked";
-import { BlogPost } from "../types/blog";
+import type { BlogPost } from "../types/blog";
 
 interface FrontMatter {
 	id: string;
@@ -159,3 +159,5 @@ export function getBlogPostSlugs(): string[] {
 	const files = readdirSync(contentDir).filter((file) => file.endsWith(".md"));
 	return files.map((file) => getSlugFromFilename(file));
 }
+
+export type { BlogPost };
