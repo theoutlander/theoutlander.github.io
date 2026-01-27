@@ -922,6 +922,10 @@
     background: var(--colors-blue-100);
 }
 
+  .bg_transparent {
+    background: var(--colors-transparent);
+}
+
   .py_8 {
     padding-block: var(--spacing-8);
 }
@@ -1198,8 +1202,20 @@
     padding-block: 6px;
 }
 
+  .gap_1\.5 {
+    gap: var(--spacing-1\.5);
+}
+
+  .bdr_6px {
+    border-radius: 6px;
+}
+
   .trs_all_0\.2s_ease-in-out {
     transition: all 0.2s ease-in-out;
+}
+
+  .trs_color_0\.2s_ease-in-out {
+    transition: color 0.2s ease-in-out;
 }
 
   .trs_width_0\.1s_ease-out {
@@ -1659,6 +1675,10 @@
     letter-spacing: 0.025em;
 }
 
+  .c_\#10b981 {
+    color: #10b981;
+}
+
   .pos_fixed {
     position: fixed;
 }
@@ -1997,6 +2017,14 @@
 
   .max-w_none {
     max-width: none;
+}
+
+  .w_36px {
+    width: 36px;
+}
+
+  .h_36px {
+    height: 36px;
 }
 
   .bottom_24px {
@@ -2446,6 +2474,10 @@
     outline: 2px solid white;
 }
 
+  .focus\:ring_2px_solid:is(:focus, [data-focus]) {
+    outline: 2px solid;
+}
+
   .focus\:ring-o_2px:is(:focus, [data-focus]) {
     outline-offset: 2px;
 }
@@ -2472,6 +2504,10 @@
 
   .focusVisible\:ring-c_brand\.700:is(:focus-visible, [data-focus-visible]) {
     outline-color: var(--colors-brand-700);
+}
+
+  .focus\:ring-c_\#6366f1:is(:focus, [data-focus]) {
+    outline-color: #6366f1;
 }
 
   .focus\:top_6px:is(:focus, [data-focus]) {
@@ -2520,6 +2556,10 @@
 
   .hover\:bg_blue\.200:is(:hover, [data-hover]) {
     background: var(--colors-blue-200);
+}
+
+  .hover\:bg_\#f5f5f5:is(:hover, [data-hover]) {
+    background: #f5f5f5;
 }
 
   .hover\:td_underline:is(:hover, [data-hover]) {
@@ -2588,6 +2628,18 @@
 
   .hover\:c_blue\.700:is(:hover, [data-hover]) {
     color: var(--colors-blue-700);
+}
+
+  .hover\:c_\#0d8bd9:is(:hover, [data-hover]) {
+    color: #0d8bd9;
+}
+
+  .hover\:c_\#004182:is(:hover, [data-hover]) {
+    color: #004182;
+}
+
+  .hover\:c_\#166FE5:is(:hover, [data-hover]) {
+    color: #166FE5;
 }
 
   .hover\:bx-sh_0_6px_16px_rgba\(0\,_0\,_0\,_0\.2\):is(:hover, [data-hover]) {
