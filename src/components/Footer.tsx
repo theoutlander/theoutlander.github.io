@@ -107,8 +107,11 @@ export default function Footer() {
 							display: { base: "flex", md: "grid" },
 							flexDirection: { base: "column", md: "row" },
 							gridTemplateColumns: { md: "1fr 1fr 1fr" },
-							gap: { base: "2rem", md: "2rem" },
-							alignItems: { base: "stretch", md: "stretch" },
+							gap: { base: "0", md: "2rem" },
+							alignItems: { base: "center", md: "stretch" },
+							"& > *:first-child": {
+								mb: { base: "2rem", md: "0" },
+							},
 						})}
 					>
 						{/* Column 1 - Name & Title */}
@@ -218,7 +221,7 @@ export default function Footer() {
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
-								gap: "0.5rem",
+								gap: { base: "0.5rem", md: "0.5rem" },
 								paddingRight: { base: "0", md: "2rem" },
 								borderRight: { base: "none", md: "1px solid" },
 								borderColor: { base: "transparent", md: "gray.200", _dark: "dark.border" },
@@ -286,7 +289,7 @@ export default function Footer() {
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
-								gap: "0.5rem",
+								gap: { base: "0.5rem", md: "0.5rem" },
 							})}
 						>
 							<a
