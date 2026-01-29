@@ -172,7 +172,7 @@ const generateComprehensiveCSS = async (
 		pages.push({
 			name: `post-${post.slug}`,
 			component: BlogPostPagePanda as any,
-			props: { post: fullPostData },
+			props: { post: fullPostData, posts: blogData },
 		});
 	}
 
@@ -914,6 +914,7 @@ export async function renderAllStaticPagesSSR() {
 
 		const postResult = renderPageToHTML(BlogPostPagePanda, {
 			post: fullPostData,
+			posts: blogData,
 		});
 
 		// Use post cover image if available, otherwise use profile image

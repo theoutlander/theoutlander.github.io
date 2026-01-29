@@ -5,14 +5,16 @@ import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import BlogList from "../components/blog/BlogList";
 import BlogIntro from "../components/blog/BlogIntro";
+import BlogSidebar from "../components/blog/BlogSidebar";
 import SkipLink from "../components/SkipLink";
 import { Post } from "../types/blog";
 
 type BlogPageProps = {
 	posts: Post[];
+	filterTag?: string;
 };
 
-export function BlogPagePanda({ posts }: BlogPageProps) {
+export function BlogPagePanda({ posts, filterTag }: BlogPageProps) {
 	return (
 		<div
 			className={css({
@@ -20,6 +22,8 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 				minH: "100vh",
 				width: "100%",
 				overflowX: "hidden",
+				display: "flex",
+				flexDirection: "column",
 			})}
 		>
 			<SkipLink />
@@ -35,14 +39,34 @@ export function BlogPagePanda({ posts }: BlogPageProps) {
 			<main
 				id="main-content"
 				className={css({
+					flex: 1,
 					maxW: "6xl",
 					py: { base: 6, md: 10 },
 					mx: "auto",
 					px: 4,
+					width: "100%",
+					display: "flex",
+					flexDirection: { base: "column", md: "row" },
+					gap: { base: 8, md: 12 },
+					alignItems: "flex-start",
 				})}
 			>
-				<BlogIntro />
-				<BlogList posts={posts} />
+				<div
+					className={css({
+						flex: "1 1 0",
+						minW: 0,
+					})}
+				>
+					<BlogIntro />
+					<BlogList posts={posts} filterTag={filterTag} />
+				</div>
+				<div
+					className={css({
+						order: { base: -1, md: 0 },
+					})}
+				>
+					<BlogSidebar posts={posts} />
+				</div>
 			</main>
 			<Footer />
 		</div>

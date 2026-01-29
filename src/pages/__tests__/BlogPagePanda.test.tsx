@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "../../test/test-utils";
+import { render, screen, within } from "../../test/test-utils";
 import { BlogPagePanda } from "../BlogPagePanda";
 
 // Mock the styled-system css function
@@ -100,10 +100,11 @@ describe("BlogPagePanda", () => {
 	it("passes posts to BlogList component", () => {
 		render(<BlogPagePanda posts={mockPosts} />);
 
-		expect(screen.getByTestId("post-test-post-1")).toBeInTheDocument();
-		expect(screen.getByTestId("post-test-post-2")).toBeInTheDocument();
-		expect(screen.getByText("Test Post 1")).toBeInTheDocument();
-		expect(screen.getByText("Test Post 2")).toBeInTheDocument();
+		const blogList = screen.getByTestId("blog-list");
+		expect(within(blogList).getByTestId("post-test-post-1")).toBeInTheDocument();
+		expect(within(blogList).getByTestId("post-test-post-2")).toBeInTheDocument();
+		expect(within(blogList).getByText("Test Post 1")).toBeInTheDocument();
+		expect(within(blogList).getByText("Test Post 2")).toBeInTheDocument();
 	});
 
 	it("handles empty posts array", () => {

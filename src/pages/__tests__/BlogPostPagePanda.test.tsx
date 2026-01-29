@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "../../test/test-utils";
+import { render, screen, within } from "../../test/test-utils";
 import { BlogPostPagePanda } from "../BlogPostPagePanda";
 
 // Mock the styled-system css function
@@ -37,15 +37,21 @@ const mockPost = {
 	contentHtml: "<p>This is the full article content in HTML format.</p>",
 };
 
+const mockPosts = [mockPost];
+
+function getArticle() {
+	return screen.getByRole("article");
+}
+
 describe("BlogPostPagePanda", () => {
 	it("renders post with contentHtml", () => {
-		render(<BlogPostPagePanda post={mockPost} />);
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
 		expect(
-			screen.getByText("How Engineers Can Use AI Effectively")
+			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
 		).toBeInTheDocument();
 		expect(
-			screen.getByText("This is the full article content in HTML format.")
+			within(getArticle()).getByText("This is the full article content in HTML format.")
 		).toBeInTheDocument();
 		expect(screen.getByTestId("header")).toBeInTheDocument();
 		expect(screen.getByTestId("footer")).toBeInTheDocument();
@@ -58,13 +64,13 @@ describe("BlogPostPagePanda", () => {
 			html: "<p>This is content from the html property.</p>",
 		};
 
-		render(<BlogPostPagePanda post={postWithHtml} />);
+		render(<BlogPostPagePanda post={postWithHtml} posts={[postWithHtml]} />);
 
 		expect(
-			screen.getByText("How Engineers Can Use AI Effectively")
+			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
 		).toBeInTheDocument();
 		expect(
-			screen.getByText("This is content from the html property.")
+			within(getArticle()).getByText("This is content from the html property.")
 		).toBeInTheDocument();
 	});
 
@@ -75,22 +81,22 @@ describe("BlogPostPagePanda", () => {
 			html: undefined,
 		};
 
-		render(<BlogPostPagePanda post={postWithExcerptOnly} />);
+		render(<BlogPostPagePanda post={postWithExcerptOnly} posts={[postWithExcerptOnly]} />);
 
 		expect(
-			screen.getByText("How Engineers Can Use AI Effectively")
+			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
 		).toBeInTheDocument();
 		expect(
-			screen.getByText(
+			within(getArticle()).getByText(
 				"AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown."
 			)
 		).toBeInTheDocument();
 	});
 
 	it("renders cover image when available", () => {
-		render(<BlogPostPagePanda post={mockPost} />);
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		const coverImage = screen.getByRole("img", { name: "How Engineers Can Use AI Effectively" });
+		const coverImage = within(getArticle()).getByRole("img", { name: "How Engineers Can Use AI Effectively" });
 		expect(coverImage).toBeInTheDocument();
 		expect(coverImage).toHaveAttribute("src", mockPost.cover);
 		expect(coverImage).toHaveAttribute("alt", "How Engineers Can Use AI Effectively");
@@ -102,18 +108,19 @@ describe("BlogPostPagePanda", () => {
 			cover: "",
 		};
 
-		render(<BlogPostPagePanda post={postWithoutCover} />);
+		render(<BlogPostPagePanda post={postWithoutCover} posts={[postWithoutCover]} />);
 
-		expect(screen.queryByRole("img")).not.toBeInTheDocument();
+		expect(within(getArticle()).queryByRole("img")).not.toBeInTheDocument();
 	});
 
 	it("renders tags when available", () => {
-		render(<BlogPostPagePanda post={mockPost} />);
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		expect(screen.getByText("Ai")).toBeInTheDocument();
-		expect(screen.getByText("Engineering")).toBeInTheDocument();
-		expect(screen.getByText("Productivity")).toBeInTheDocument();
-		expect(screen.getByText("Programming")).toBeInTheDocument();
+		const article = getArticle();
+		expect(within(article).getByText("Ai")).toBeInTheDocument();
+		expect(within(article).getByText("Engineering")).toBeInTheDocument();
+		expect(within(article).getByText("Productivity")).toBeInTheDocument();
+		expect(within(article).getByText("Programming")).toBeInTheDocument();
 	});
 
 	it("does not render tags section when no tags available", () => {
@@ -122,23 +129,23 @@ describe("BlogPostPagePanda", () => {
 			tags: [],
 		};
 
-		render(<BlogPostPagePanda post={postWithoutTags} />);
+		render(<BlogPostPagePanda post={postWithoutTags} posts={[postWithoutTags]} />);
 
-		expect(screen.queryByText("Ai")).not.toBeInTheDocument();
+		expect(within(getArticle()).queryByText("Ai")).not.toBeInTheDocument();
 	});
 
 	it("formats date correctly", () => {
-		render(<BlogPostPagePanda post={mockPost} />);
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
 		// The date should be formatted as "September 26, 2025" (timezone difference)
-		expect(screen.getByText("September 26, 2025")).toBeInTheDocument();
+		expect(within(getArticle()).getByText("September 26, 2025")).toBeInTheDocument();
 	});
 
 	it("calculates reading time correctly", () => {
-		render(<BlogPostPagePanda post={mockPost} />);
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
 		// The excerpt is about 20 words, so reading time should be 1 min
-		expect(screen.getByText("1 min read")).toBeInTheDocument();
+		expect(within(getArticle()).getByText("1 min read")).toBeInTheDocument();
 	});
 
 	it("handles missing date gracefully", () => {
@@ -147,10 +154,10 @@ describe("BlogPostPagePanda", () => {
 			date: "",
 		};
 
-		render(<BlogPostPagePanda post={postWithoutDate} />);
+		render(<BlogPostPagePanda post={postWithoutDate} posts={[postWithoutDate]} />);
 
 		expect(
-			screen.getByText("How Engineers Can Use AI Effectively")
+			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
 		).toBeInTheDocument();
 		// Should not crash when date is empty
 	});
@@ -161,10 +168,10 @@ describe("BlogPostPagePanda", () => {
 			excerpt: "",
 		};
 
-		render(<BlogPostPagePanda post={postWithoutExcerpt} />);
+		render(<BlogPostPagePanda post={postWithoutExcerpt} posts={[postWithoutExcerpt]} />);
 
 		expect(
-			screen.getByText("How Engineers Can Use AI Effectively")
+			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
 		).toBeInTheDocument();
 		// Should not crash when excerpt is empty
 	});

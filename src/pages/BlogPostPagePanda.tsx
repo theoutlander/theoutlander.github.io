@@ -1,21 +1,20 @@
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import SkipLink from "../components/SkipLink";
 import BackToTop from "../components/ui/BackToTop";
 import ShareButtons from "../components/blog/ShareButtons";
+import BlogSidebar from "../components/blog/BlogSidebar";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
 import { Post } from "../types/blog";
 
-const Comments = lazy(() => import("../components/blog/Comments"));
-
 type BlogPostPageProps = {
 	post: Post;
+	posts: Post[];
 };
 
-export function BlogPostPagePanda({ post }: BlogPostPageProps) {
-
+export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 	return (
 		<div
 			className={css({
@@ -30,14 +29,24 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 			<main
 				id="main-content"
 				className={css({
-					maxW: "768px",
+					maxW: "6xl",
 					py: { base: 6, md: 10 },
 					mx: "auto",
 					px: { base: 4, md: 6 },
 					width: "100%",
+					display: "flex",
+					flexDirection: { base: "column", md: "row" },
+					gap: { base: 8, md: 12 },
+					alignItems: "flex-start",
 				})}
 			>
-				<article>
+				<article
+					className={css({
+						flex: "1 1 0",
+						maxW: "768px",
+						minW: 0,
+					})}
+				>
 					<header className={css({ mb: 8 })}>
 						<h1
 							className={css({
@@ -260,13 +269,13 @@ export function BlogPostPagePanda({ post }: BlogPostPageProps) {
 					/>
 				</article>
 
-				{/* Comments Section */}
-				<Suspense fallback={null}>
-					<Comments
-						postTitle={post.title}
-						postUrl={`/blog/${post.slug}`}
-					/>
-				</Suspense>
+				<div
+					className={css({
+						order: { base: -1, md: 0 },
+					})}
+				>
+					<BlogSidebar posts={posts} />
+				</div>
 			</main>
 			<Footer />
 			<BackToTop />
