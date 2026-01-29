@@ -84,34 +84,37 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 						>
 							Categories
 						</h2>
-						<div
+						<ul
 							className={css({
+								listStyle: "none",
+								p: 0,
+								m: 0,
 								display: "flex",
-								flexWrap: "wrap",
+								flexDirection: "column",
 								gap: 2,
 							})}
 						>
-							{categories.map((cat) =>
-								isSSR ? (
-									<a
-										key={cat}
-										href={`/blog?category=${encodeURIComponent(cat)}`}
-										className={linkClass}
-									>
-										{cat}
-									</a>
-								) : (
-									<Link
-										key={cat}
-										to="/blog"
-										search={{ category: cat }}
-										className={linkClass}
-									>
-										{cat}
-									</Link>
-								)
-							)}
-						</div>
+							{categories.map((cat) => (
+								<li key={cat}>
+									{isSSR ? (
+										<a
+											href={`/blog?category=${encodeURIComponent(cat)}`}
+											className={linkClass}
+										>
+											{cat}
+										</a>
+									) : (
+										<Link
+											to="/blog"
+											search={{ category: cat }}
+											className={linkClass}
+										>
+											{cat}
+										</Link>
+									)}
+								</li>
+							))}
+						</ul>
 					</section>
 				)}
 
