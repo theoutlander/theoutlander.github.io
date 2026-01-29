@@ -132,34 +132,37 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 						>
 							Tags
 						</h2>
-						<div
+						<ul
 							className={css({
+								listStyle: "none",
+								p: 0,
+								m: 0,
 								display: "flex",
-								flexWrap: "wrap",
+								flexDirection: "column",
 								gap: 2,
 							})}
 						>
-							{tags.map((tag) =>
-								isSSR ? (
-									<a
-										key={tag}
-										href={`/blog?tag=${encodeURIComponent(tag)}`}
-										className={linkClass}
-									>
-										{tag}
-									</a>
-								) : (
-									<Link
-										key={tag}
-										to="/blog"
-										search={{ tag }}
-										className={linkClass}
-									>
-										{tag}
-									</Link>
-								)
-							)}
-						</div>
+							{tags.map((tag) => (
+								<li key={tag}>
+									{isSSR ? (
+										<a
+											href={`/blog?tag=${encodeURIComponent(tag)}`}
+											className={linkClass}
+										>
+											{tag}
+										</a>
+									) : (
+										<Link
+											to="/blog"
+											search={{ tag }}
+											className={linkClass}
+										>
+											{tag}
+										</Link>
+									)}
+								</li>
+							))}
+						</ul>
 					</section>
 				)}
 
