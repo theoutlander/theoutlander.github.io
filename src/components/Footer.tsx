@@ -48,14 +48,15 @@ const linkCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2
 const linkStyle = css({
 	display: "flex",
 	alignItems: "center",
-	gap: "2",
-	fontSize: "sm",
+	gap: { base: "0.75rem", md: "2" },
+	fontSize: { base: "sm", md: "sm" },
 	color: { base: "gray.700", _dark: "dark.text" },
 	textDecoration: "none",
 	cursor: linkCursor,
 	minHeight: { base: "44px", md: "auto" },
-	px: { base: "0.5rem", md: "3" },
-	py: { base: "0.5rem", md: "2.5" },
+	minWidth: { base: "44px", md: "auto" },
+	px: { base: "0", md: "3" },
+	py: { base: "0.625rem", md: "2.5" },
 	borderRadius: { base: "4px", md: "md" },
 	whiteSpace: "nowrap",
 	transition: "all 200ms ease-in-out",
@@ -76,8 +77,7 @@ const linkStyle = css({
 	},
 	"@media (hover: none) and (pointer: coarse)": {
 		minHeight: "44px",
-		px: "0.5rem",
-		py: "0.5rem",
+		py: "0.625rem",
 	},
 });
 
@@ -108,7 +108,7 @@ export default function Footer() {
 							flexDirection: { base: "column", md: "row" },
 							gridTemplateColumns: { md: "1fr 1fr 1fr" },
 							gap: { base: "2rem", md: "2rem" },
-							alignItems: { base: "flex-start", md: "stretch" },
+							alignItems: { base: "stretch", md: "stretch" },
 						})}
 					>
 						{/* Column 1 - Name & Title */}

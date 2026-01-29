@@ -5,7 +5,7 @@ date: "2026-01-26T10:00:00.000Z"
 cover: "/assets/images/blog/modern-attack-surface/the-modern-attack-surface-cover.png"
 excerpt: "An overview of how the attack surface has evolved in modern computing, and the ways computers and accounts get compromised today."
 category: "Security"
-tags: ["Security", "Cybersecurity", "Attack Surface"]
+tags: ["Cybersecurity", "Attack Surface"]
 ---
 
 This post started with a simple question a friend asked me: which antivirus should I be using?

@@ -38,8 +38,22 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 					flexDirection: { base: "column", md: "row" },
 					gap: { base: 8, md: 12 },
 					alignItems: "flex-start",
+					justifyContent: { base: "stretch", md: "center" },
 				})}
 			>
+				{/* Centered wrapper: article gets full width up to 768px, sidebar to its right */}
+				<div
+					className={css({
+						display: "flex",
+						flexDirection: { base: "column", md: "row" },
+						gap: { base: 8, md: 12 },
+						flex: { base: "1 1 0", md: "0 1 auto" },
+						maxW: { md: "1048px" },
+						minW: 0,
+						width: { base: "100%", md: "auto" },
+						mx: { base: 0, md: "auto" },
+					})}
+				>
 				<article
 					className={css({
 						flex: "1 1 0",
@@ -286,10 +300,12 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 
 				<div
 					className={css({
-						order: { base: -1, md: 0 },
+						flexShrink: 0,
+						order: { base: 1, md: 0 },
 					})}
 				>
 					<BlogSidebar posts={posts} />
+				</div>
 				</div>
 			</main>
 			<Footer />
