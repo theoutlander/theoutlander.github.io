@@ -2,6 +2,23 @@ import { Link } from "@tanstack/react-router";
 import { css } from "../../../styled-system/css/index.mjs";
 import type { Post } from "../../types/blog";
 
+const isSSR = typeof window === "undefined";
+
+const linkClass = css({
+	fontSize: "sm",
+	color: "#333",
+	textDecoration: "none",
+	_hover: { textDecoration: "underline" },
+});
+
+const linkClassTight = css({
+	fontSize: "sm",
+	color: "#333",
+	textDecoration: "none",
+	lineHeight: 1.4,
+	_hover: { textDecoration: "underline" },
+});
+
 const RECENT_COUNT = 10;
 
 type BlogSidebarProps = {
@@ -74,21 +91,26 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 								gap: 2,
 							})}
 						>
-							{categories.map((cat) => (
-								<Link
-									key={cat}
-									to="/blog"
-									search={{ category: cat }}
-									className={css({
-										fontSize: "sm",
-										color: "#333",
-										textDecoration: "none",
-										_hover: { textDecoration: "underline" },
-									})}
-								>
-									{cat}
-								</Link>
-							))}
+							{categories.map((cat) =>
+								isSSR ? (
+									<a
+										key={cat}
+										href={`/blog?category=${encodeURIComponent(cat)}`}
+										className={linkClass}
+									>
+										{cat}
+									</a>
+								) : (
+									<Link
+										key={cat}
+										to="/blog"
+										search={{ category: cat }}
+										className={linkClass}
+									>
+										{cat}
+									</Link>
+								)
+							)}
 						</div>
 					</section>
 				)}
@@ -114,21 +136,26 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 								gap: 2,
 							})}
 						>
-							{tags.map((tag) => (
-								<Link
-									key={tag}
-									to="/blog"
-									search={{ tag }}
-									className={css({
-										fontSize: "sm",
-										color: "#333",
-										textDecoration: "none",
-										_hover: { textDecoration: "underline" },
-									})}
-								>
-									{tag}
-								</Link>
-							))}
+							{tags.map((tag) =>
+								isSSR ? (
+									<a
+										key={tag}
+										href={`/blog?tag=${encodeURIComponent(tag)}`}
+										className={linkClass}
+									>
+										{tag}
+									</a>
+								) : (
+									<Link
+										key={tag}
+										to="/blog"
+										search={{ tag }}
+										className={linkClass}
+									>
+										{tag}
+									</Link>
+								)
+							)}
 						</div>
 					</section>
 				)}
@@ -160,19 +187,19 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 									mb: 2,
 								})}
 							>
-								<Link
-									to="/blog/$slug"
-									params={{ slug: p.slug }}
-									className={css({
-										fontSize: "sm",
-										color: "#333",
-										textDecoration: "none",
-										lineHeight: 1.4,
-										_hover: { textDecoration: "underline" },
-									})}
-								>
-									{p.title}
-								</Link>
+								{isSSR ? (
+									<a href={`/blog/${p.slug}`} className={linkClassTight}>
+										{p.title}
+									</a>
+								) : (
+									<Link
+										to="/blog/$slug"
+										params={{ slug: p.slug }}
+										className={linkClassTight}
+									>
+										{p.title}
+									</Link>
+								)}
 							</li>
 						))}
 					</ul>
