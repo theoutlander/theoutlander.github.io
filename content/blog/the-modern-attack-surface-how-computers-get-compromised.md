@@ -4,7 +4,8 @@ title: "The Modern Attack Surface: How Computers Get Compromised"
 date: "2026-01-26T10:00:00.000Z"
 cover: "/assets/images/blog/modern-attack-surface/the-modern-attack-surface-cover.png"
 excerpt: "An overview of how the attack surface has evolved in modern computing, and the ways computers and accounts get compromised today."
-tags: ["Security", "Attack Surface", "Cybersecurity", "Threats", "Virus"]
+category: "Security"
+tags: ["Security", "Cybersecurity", "Attack Surface"]
 ---
 
 This post started with a simple question a friend asked me: which antivirus should I be using?
@@ -47,8 +48,6 @@ This works the same way on Windows, macOS, and iOS. The platform matters far les
 
 Most of what matters now happens inside a browser. Email, documents, calendars, dashboards, payments, internal tools. That is where work lives and where trust accumulates.
 
-![Browser Session Compromised](/assets/images/blog/modern-attack-surface/browser-session.png)
-
 Modern attacks aim for that session, not the computer underneath it.
 
 A fake login page that looks familiar. A browser extension that seemed useful at the time. A stolen session token that never triggers a password prompt.
@@ -72,8 +71,6 @@ What I didn't realize then is that the real threat isn't what attackers can see.
 ## Why this keeps cascading once it starts
 
 Once one core account is compromised, others tend to follow quickly.
-
-![Email Compromised](/assets/images/blog/modern-attack-surface/email-compromised.png)
 
 By the time most people realize something is wrong, multiple accounts are already involved. Cleaning it up becomes time consuming, stressful, and disruptive.
 
@@ -108,8 +105,6 @@ At the same time, AI tools are becoming part of daily workflows. People paste se
 ## Why platform choice alone no longer protects you
 
 There is a comforting belief that choosing the right operating system solves most of this. Better defaults help, but they do not solve the core issue.
-
-![Compromised Account](/assets/images/blog/modern-attack-surface/compromised-account.png)
 
 Identity flows across devices. Once access is compromised, it follows you everywhere.
 
@@ -264,8 +259,6 @@ The pattern is the same: don't rely on a single location. Don't sacrifice securi
 ## If you realize you're compromised
 
 Act fast. The first 24 hours matter.
-
-![What to do when you realize you are compromised?](/assets/images/blog/modern-attack-surface/what-to-do-when-you-realize-you-are-compromised.png)
 
 **Step by step:**
 

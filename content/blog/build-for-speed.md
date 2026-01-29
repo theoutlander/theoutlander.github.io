@@ -4,7 +4,8 @@ title: "How to Build for Speed: What It Actually Takes to Release Fast"
 date: "2025-10-23T13:47:00.000Z"
 cover: "/assets/images/blog/build-for-speed-cover.png"
 excerpt: "Everyone wants to move fast, but not everyone knows how. Speed isn’t about heroics or skipping QA. It’s about trust in your systems, your telemetry, and your ability to roll back safely. Lessons from years of shipping at Microsoft, Google, Salesforce, Tableau, and startups on what it actually takes to release fast."
-tags: ["Engineering Leadership", "Software Engineering", "CI/CD", "DevOps", "Release Velocity", "Culture"]
+category: "Engineering"
+tags: ["Engineering", "CI/CD", "DevOps", "Release Velocity"]
 slug: "build-for-speed"
 ---
 

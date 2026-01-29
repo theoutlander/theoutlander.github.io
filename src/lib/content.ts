@@ -29,7 +29,8 @@ function normalizePost(raw: any, slug: string): BlogPost {
 		url: raw.url ?? `/blog/${slug}`,
 		date: raw.date,
 		cover: raw.cover,
-		tags: raw.tags,
+		category: raw.category ?? null,
+		tags: raw.tags ?? [],
 		contentMarkdown: raw.contentMarkdown ?? "",
 		contentHtml: raw.contentHtml ?? raw.html ?? "",
 	};

@@ -60,6 +60,21 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 							{post.title}
 						</h1>
 
+						{post.category && (
+							<p
+								className={css({
+									fontSize: "sm",
+									fontWeight: "600",
+									color: "brand.600",
+									textTransform: "uppercase",
+									letterSpacing: "wider",
+									mb: 3,
+								})}
+							>
+								{post.category}
+							</p>
+						)}
+
 						<div
 							className={css({
 								display: "flex",

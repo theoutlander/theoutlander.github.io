@@ -23,6 +23,7 @@ async function generateBlogData() {
       url: post.url,
       date: post.date,
       cover: post.cover,
+      category: post.category,
       tags: post.tags,
       contentMarkdown: post.contentMarkdown,
       contentHtml: post.contentHtml
@@ -48,6 +49,7 @@ async function generateBlogData() {
         excerpt: post.excerpt,
         html: post.contentHtml,
         url: post.url,
+        category: post.category,
         tags: post.tags
       };
 

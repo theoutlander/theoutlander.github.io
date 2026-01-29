@@ -9,6 +9,7 @@ interface FrontMatter {
 	date: string;
 	cover: string;
 	excerpt: string;
+	category?: string;
 	tags: string[];
 }
 
@@ -132,6 +133,7 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 				url: `https://nick.karnik.io/blog/${slug}`,
 				date: frontMatter.date,
 				cover: frontMatter.cover || null,
+				category: frontMatter.category?.trim() || null,
 				tags: frontMatter.tags || [],
 				contentMarkdown: processedMarkdown,
 				contentHtml,

@@ -6,11 +6,17 @@ import { capitalizeFirstLetter } from "../../utils/stringUtils";
 export default function BlogList({
 	posts,
 	filterTag,
+	filterCategory,
 }: {
 	posts: Post[];
 	filterTag?: string;
+	filterCategory?: string;
 }) {
-	const items = posts.filter((p) => !filterTag || p.tags?.includes(filterTag));
+	const items = posts.filter((p) => {
+		if (filterCategory) return p.category === filterCategory;
+		if (filterTag) return p.tags?.includes(filterTag);
+		return true;
+	});
 
 	// Empty state
 	if (items.length === 0) {
@@ -45,9 +51,11 @@ export default function BlogList({
 							mb: "2",
 						})}
 					>
-						{filterTag
-							? `No posts tagged "${capitalizeFirstLetter(filterTag)}"`
-							: "No posts yet"}
+						{filterCategory
+							? `No posts in "${filterCategory}"`
+							: filterTag
+								? `No posts tagged "${capitalizeFirstLetter(filterTag)}"`
+								: "No posts yet"}
 					</h2>
 					<p
 						className={css({
@@ -56,11 +64,11 @@ export default function BlogList({
 							mb: "6",
 						})}
 					>
-						{filterTag
-							? "Try a different tag or check back later for new content."
+						{filterCategory || filterTag
+							? "Try a different category or tag, or check back later for new content."
 							: "I'm working on some great content. Check back soon!"}
 					</p>
-					{filterTag && (
+					{(filterTag || filterCategory) && (
 						<a
 							href="/blog"
 							className={css({

@@ -6,8 +6,9 @@ export const Route = createFileRoute("/blog/")({
 	component: BlogPage,
 	validateSearch: (search: Record<string, unknown>) => ({
 		tag: typeof search.tag === "string" ? search.tag : undefined,
+		category: typeof search.category === "string" ? search.category : undefined,
 	}),
-	// Don't re-run loader when only search (tag) changes — we filter in the component
+	// Don't re-run loader when only search changes — we filter in the component
 	loaderDeps: () => ({}),
 	loader: async (): Promise<{ posts: BlogPost[] }> => {
 		try {
@@ -22,6 +23,6 @@ export const Route = createFileRoute("/blog/")({
 
 function BlogPage() {
 	const { posts } = Route.useLoaderData();
-	const { tag } = Route.useSearch();
-	return <BlogPagePanda posts={posts} filterTag={tag} />;
+	const { tag, category } = Route.useSearch();
+	return <BlogPagePanda posts={posts} filterTag={tag} filterCategory={category} />;
 }

@@ -4,7 +4,8 @@ title: "A Practical Way to Think About RAG"
 date: "2025-12-12T10:00:00.000Z"
 cover: "/assets/images/blog/how-rag-works-cover.png"
 excerpt: "A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter."
-tags: ["LLM", "RAG", "Architecture"]
+category: "AI"
+tags: ["RAG", "LLM", "AI"]
 ---
 
 Retrieval-Augmented Generation (RAG) shows up constantly in conversations about LLM applications, especially once private or fast-changing data enters the picture. What I kept noticing was a gap between two kinds of explanations. Some stayed so abstract that it was hard to tell when RAG actually helped. Others jumped straight into tools and pipelines without first explaining what problem the system was really solving.

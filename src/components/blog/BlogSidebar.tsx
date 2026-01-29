@@ -8,6 +8,14 @@ type BlogSidebarProps = {
 	posts?: Post[] | null;
 };
 
+function getAllCategories(posts: Post[]): string[] {
+	const set = new Set<string>();
+	for (const p of posts) {
+		if (p.category?.trim()) set.add(p.category.trim());
+	}
+	return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
+}
+
 function getAllTags(posts: Post[]): string[] {
 	const set = new Set<string>();
 	for (const p of posts) {
@@ -20,6 +28,7 @@ function getAllTags(posts: Post[]): string[] {
 
 export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 	const posts = postsProp ?? [];
+	const categories = getAllCategories(posts);
 	const tags = getAllTags(posts);
 	const recent = posts
 		.slice()
@@ -44,6 +53,46 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 					gap: 8,
 				})}
 			>
+				{categories.length > 0 && (
+					<section>
+						<h2
+							className={css({
+								fontSize: "sm",
+								fontWeight: "700",
+								color: "#333",
+								mb: 3,
+								textTransform: "uppercase",
+								letterSpacing: "wider",
+							})}
+						>
+							Categories
+						</h2>
+						<div
+							className={css({
+								display: "flex",
+								flexWrap: "wrap",
+								gap: 2,
+							})}
+						>
+							{categories.map((cat) => (
+								<Link
+									key={cat}
+									to="/blog"
+									search={{ category: cat }}
+									className={css({
+										fontSize: "sm",
+										color: "#333",
+										textDecoration: "none",
+										_hover: { textDecoration: "underline" },
+									})}
+								>
+									{cat}
+								</Link>
+							))}
+						</div>
+					</section>
+				)}
+
 				{tags.length > 0 && (
 					<section>
 						<h2

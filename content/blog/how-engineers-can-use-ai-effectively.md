@@ -4,7 +4,8 @@ title: "How Engineers Can Use AI Effectively"
 date: "2025-09-27T00:25:27.274Z"
 cover: "/assets/images/blog/how-engineers-can-use-ai-effectively-bc5411bc-f5fb-4a4f-aecf-62ae5358c42c.png"
 excerpt: "AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used.\nUsed carelessly, it produces garbage. Us..."
-tags: ["AI", "Engineering", "Productivity", "Programming"]
+category: "AI"
+tags: ["AI", "Engineering", "Productivity"]
 ---
 
 AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used.

@@ -12,9 +12,10 @@ import { Post } from "../types/blog";
 type BlogPageProps = {
 	posts: Post[];
 	filterTag?: string;
+	filterCategory?: string;
 };
 
-export function BlogPagePanda({ posts, filterTag }: BlogPageProps) {
+export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProps) {
 	return (
 		<div
 			className={css({
@@ -58,7 +59,7 @@ export function BlogPagePanda({ posts, filterTag }: BlogPageProps) {
 					})}
 				>
 					<BlogIntro />
-					<BlogList posts={posts} filterTag={filterTag} />
+					<BlogList posts={posts} filterTag={filterTag} filterCategory={filterCategory} />
 				</div>
 				<div
 					className={css({
