@@ -1,7 +1,13 @@
 import React from "react";
 import { useEffect, useRef } from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
-import { FaLinkedin, FaGithub, FaYoutube, FaTwitter } from "react-icons/fa";
+import {
+	FaLinkedin,
+	FaGithub,
+	FaYoutube,
+	FaTwitter,
+	FaStackOverflow,
+} from "react-icons/fa";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { getIconColorStyles, iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
@@ -381,6 +387,22 @@ export default function NameHeader({
 								<FaTwitter
 									size={ICON_SIZE}
 									color={iconColors.twitter.light}
+								/>
+							</div>
+						</a>
+						<a
+							href="https://stackoverflow.com/users/460472/nick"
+							target="_blank"
+							rel="noopener"
+							aria-label="Visit Nick Karnik's Stack Overflow profile"
+							className={iconLinkContainer}
+						>
+							<div
+								className={css(iconWrapper, getIconColorStyles("stackoverflow"))}
+							>
+								<FaStackOverflow
+									size={ICON_SIZE}
+									color={iconColors.stackoverflow.light}
 								/>
 							</div>
 						</a>

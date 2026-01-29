@@ -6,7 +6,7 @@ import {
 	ArrowTopRightOnSquareIcon,
 	CalendarIcon,
 } from "@heroicons/react/24/outline";
-import { FaLinkedin, FaGithub, FaTwitter } from "react-icons/fa";
+import { FaLinkedin, FaGithub, FaTwitter, FaStackOverflow } from "react-icons/fa";
 import { iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
 
@@ -198,6 +198,29 @@ const ghostBtn = cva({
 					},
 				},
 			},
+			stackoverflow: {
+				color: {
+					base: iconColors.stackoverflow.light,
+					_dark: iconColors.stackoverflow.dark,
+				},
+				_hover: {
+					bg: { base: "orange.50", _dark: "orange.900/20" },
+					transform: "translateY(-1px)",
+					boxShadow: {
+						base: "0 4px 12px rgba(249, 115, 22, 0.15)",
+						_dark: "0 4px 12px rgba(249, 115, 22, 0.1)",
+					},
+					color: {
+						base: iconColors.stackoverflow.hoverLight,
+						_dark: iconColors.stackoverflow.hoverDark,
+					},
+				},
+				"@media (prefers-reduced-motion: reduce)": {
+					_hover: {
+						transform: "none",
+					},
+				},
+			},
 		},
 	},
 	defaultVariants: { variant: "email" },
@@ -299,6 +322,23 @@ export default function ContactSection({ className }: ContactSectionProps) {
 							className={css({ flexShrink: 0 })}
 						/>
 						<span>Twitter</span>
+					</div>
+					<ArrowTopRightOnSquareIcon
+						className={css({ w: 4, h: 4, opacity: 0.6 })}
+					/>
+				</a>
+				<a
+					className={ghostBtn({ variant: "stackoverflow" })}
+					href="https://stackoverflow.com/users/460472/nick"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					<div className={iconContainer}>
+						<FaStackOverflow
+							size={ICON_SIZE}
+							className={css({ flexShrink: 0 })}
+						/>
+						<span>Stack Overflow</span>
 					</div>
 					<ArrowTopRightOnSquareIcon
 						className={css({ w: 4, h: 4, opacity: 0.6 })}
