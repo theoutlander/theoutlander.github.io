@@ -75,6 +75,7 @@ describe("PostView", () => {
 		excerpt: "This is a test post excerpt",
 		html: "<p>This is the post content</p>",
 		url: "https://example.com/test-post",
+		category: null,
 		tags: ["react", "testing", "typescript"],
 	};
 

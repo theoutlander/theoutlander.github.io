@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "../../../test/test-utils";
 import BlogCard from "../BlogCard";
-import type { Post } from "../RoutePost";
+import type { Post } from "../../types/blog";
 
 // Mock the styled-system css function
 vi.mock("../../styled-system/css/index.mjs", () => ({
@@ -27,6 +27,7 @@ const mockPost: Post = {
 	excerpt: "This is a test post excerpt that should be displayed in the card.",
 	date: "2024-01-15",
 	cover: "https://example.com/cover.jpg",
+	category: null,
 	tags: ["react", "testing", "typescript"],
 	url: "https://example.com/test-post",
 };

@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "../../../test/test-utils";
 import BlogList from "../BlogList";
-import type { Post } from "../RoutePost";
+import type { Post } from "../../types/blog";
 
 // Mock fetch
 const mockFetch = vi.fn();
@@ -34,6 +34,7 @@ const mockPosts: Post[] = [
 		excerpt: "This is the first post excerpt.",
 		date: "2024-01-15",
 		cover: "https://example.com/cover1.jpg",
+		category: "Engineering",
 		tags: ["react", "javascript"],
 		url: "https://example.com/post-1",
 	},
@@ -43,6 +44,7 @@ const mockPosts: Post[] = [
 		excerpt: "This is the second post excerpt.",
 		date: "2024-01-16",
 		cover: "https://example.com/cover2.jpg",
+		category: "AI",
 		tags: ["typescript", "testing"],
 		url: "https://example.com/post-2",
 	},
@@ -52,6 +54,7 @@ const mockPosts: Post[] = [
 		excerpt: "This is the third post excerpt.",
 		date: "2024-01-17",
 		cover: "",
+		category: "Product",
 		tags: ["react", "typescript"],
 		url: "https://example.com/post-3",
 	},
@@ -81,6 +84,19 @@ describe("BlogList", () => {
 		expect(screen.getByText("First Post")).toBeInTheDocument();
 		expect(screen.getByText("Third Post")).toBeInTheDocument();
 		expect(screen.queryByText("Second Post")).not.toBeInTheDocument();
+	});
+
+	it("filters posts by category when filterCategory is provided", () => {
+		render(
+			<BlogList
+				posts={mockPosts}
+				filterCategory="AI"
+			/>
+		);
+
+		expect(screen.getByText("Second Post")).toBeInTheDocument();
+		expect(screen.queryByText("First Post")).not.toBeInTheDocument();
+		expect(screen.queryByText("Third Post")).not.toBeInTheDocument();
 	});
 
 	it("shows all posts when filterTag is not provided", () => {

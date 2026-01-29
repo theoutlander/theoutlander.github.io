@@ -33,7 +33,8 @@ const mockPost = {
 	date: "2025-09-27T00:25:27.274Z",
 	cover:
 		"/assets/images/blog/how-engineers-can-use-ai-effectively-bc5411bc-f5fb-4a4f-aecf-62ae5358c42c.png",
-	tags: ["AI", "engineering", "Productivity", "programming"],
+	category: "AI",
+	tags: ["AI", "engineering", "Productivity"],
 	contentHtml: "<p>This is the full article content in HTML format.</p>",
 };
 
@@ -113,6 +114,13 @@ describe("BlogPostPagePanda", () => {
 		expect(within(getArticle()).queryByRole("img")).not.toBeInTheDocument();
 	});
 
+	it("renders category below title when available", () => {
+		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
+
+		const article = getArticle();
+		expect(within(article).getByText("AI")).toBeInTheDocument();
+	});
+
 	it("renders tags when available", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
@@ -120,7 +128,6 @@ describe("BlogPostPagePanda", () => {
 		expect(within(article).getByText("Ai")).toBeInTheDocument();
 		expect(within(article).getByText("Engineering")).toBeInTheDocument();
 		expect(within(article).getByText("Productivity")).toBeInTheDocument();
-		expect(within(article).getByText("Programming")).toBeInTheDocument();
 	});
 
 	it("does not render tags section when no tags available", () => {
