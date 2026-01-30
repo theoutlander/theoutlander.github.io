@@ -55,9 +55,9 @@ const linkStyle = css({
 	color: { base: "gray.700", _dark: "dark.text" },
 	textDecoration: "none",
 	cursor: linkCursor,
-	width: { base: "100%", md: "auto" },
+	width: "100%",
 	minHeight: { base: "44px", md: "auto" },
-	minWidth: { base: "44px", md: "auto" },
+	minWidth: { base: "44px", md: "0" },
 	px: { base: "4", md: "3" },
 	py: { base: "0.75rem", md: "2.5" },
 	borderRadius: { base: "md", md: "md" },
@@ -66,14 +66,16 @@ const linkStyle = css({
 	"@media (prefers-reduced-motion: reduce)": {
 		transition: "none",
 	},
-	// Mobile: each link is a label/button (box)
-	bg: { base: "gray.50", _dark: "gray.800", md: "transparent" },
+	// Mobile: each link is its own outlined box, stacked
+	bg: { base: "transparent", md: "transparent" },
 	borderWidth: { base: "1px", md: "0" },
-	borderColor: { base: "gray.200", _dark: "gray.700", md: "transparent" },
+	borderColor: { base: "gray.300", _dark: "gray.600", md: "transparent" },
+	borderStyle: { base: "solid", md: "none" },
 	_hover: {
 		color: "brand.600",
 		textDecoration: "underline",
-		bg: { base: "gray.100", _dark: "gray.700", md: "transparent" },
+		bg: { base: "gray.50", _dark: "gray.800/50", md: "transparent" },
+		borderColor: { base: "gray.400", _dark: "gray.500", md: "transparent" },
 	},
 	_active: {
 		transform: { base: "scale(0.98)", md: "none" },
@@ -93,7 +95,7 @@ const linkStyle = css({
 const linksBoxMobile = css({
 	display: { base: "flex", md: "contents" },
 	flexDirection: { base: "column", md: "row" },
-	alignItems: { base: "center", md: "stretch" },
+	alignItems: { base: "stretch", md: "stretch" },
 	gap: { base: "0.5rem", md: "0" },
 	width: { base: "100%", md: "auto" },
 });
@@ -124,7 +126,7 @@ export default function Footer() {
 							display: { base: "flex", md: "grid" },
 							flexDirection: { base: "column", md: "row" },
 							gridTemplateColumns: { md: "1fr 1fr 1fr" },
-							gap: { base: "0", md: "2rem" },
+							gap: { base: "0", md: "5rem" },
 							alignItems: { base: "center", md: "stretch" },
 							"& > *:first-child": {
 								mb: { base: "4rem", md: "0" },
@@ -139,7 +141,7 @@ export default function Footer() {
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
-								paddingRight: { base: "0", md: "2rem" },
+								paddingRight: { base: "0", md: "5rem" },
 								borderRight: { base: "none", md: "1px solid" },
 								borderColor: { base: "transparent", md: "gray.200", _dark: "dark.border" },
 								height: "100%",
@@ -168,81 +170,25 @@ export default function Footer() {
 									fontWeight: "500",
 								})}
 							>
-								Engineering Leader – AI & Product Strategy
-							</div>
-							<div
-								className={css({
-									fontSize: { base: "0.9rem", md: "0.95rem" },
-									color: { base: "gray.700", _dark: "gray.300" },
-									marginTop: { base: "1rem", md: "1.5rem" },
-									// marginBottom: { base: "2rem", md: "2rem" },
-									lineHeight: "1.6",
-								})}
-							>
-								Available for consulting at<br />
-								<a
-									href="https://plutonicconsulting.com"
-									target="_blank"
-									rel="noopener"
-									className={css({
-										color: "brand.600",
-										textDecoration: "none",
-										fontWeight: "600",
-										cursor: linkCursor,
-										transition: "color 0.2s ease",
-										"@media (prefers-reduced-motion: reduce)": {
-											transition: "none",
-										},
-										_hover: {
-											color: "brand.700",
-										},
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-											borderRadius: "4px",
-										},
-									})}
-								>
-									Plutonic Consulting
-								</a>
-							</div>
-							<div
-								className={css({
-									fontSize: { base: "0.85rem", md: "0.9rem" },
-									color: { base: "gray.600", _dark: "gray.300" },
-									lineHeight: "1.6",
-									marginTop: { base: "1.5rem", md: "0.0.5rem" },
-									paddingTop: { base: "1.5rem", md: "2rem" },
-									borderTop: "1px solid",
-									borderColor: { base: "gray.200", _dark: "dark.border" },
-								})}
-							>
-								© {currentYear}{" "}
-								<span
-									className={css({
-										fontWeight: "700",
-										color: { base: "gray.900", _dark: "gray.100" },
-									})}
-								>
-									Nick Karnik
-								</span>
-								. All rights reserved.
+								Engineering Leader<br/>AI & Product Strategy
 							</div>
 						</div>
 
-						<div className={linksBoxMobile}>
+						{/* <div className={linksBoxMobile}> */}
 						{/* Column 2 - Contact & Professional Links */}
 						<div
 							className={css({
-								width: "100%",
+								width: { base: "100%", md: "22rem" },
 								textAlign: { base: "center", md: "left" },
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
 								gap: { base: "0.5rem", md: "0.5rem" },
+								margin: { base: "10px", md: "0" },
 								paddingRight: { base: "0", md: "2rem" },
 								borderRight: { base: "none", md: "1px solid" },
 								borderColor: { base: "transparent", md: "gray.200", _dark: "dark.border" },
+								marginLeft: { base: "0", md: "0" },
 							})}
 						>
 							<a
@@ -302,12 +248,13 @@ export default function Footer() {
 						{/* Column 3 - Social Links */}
 						<div
 							className={css({
-								width: "100%",
+								width: { base: "100%", md: "22rem" },
 								textAlign: { base: "center", md: "left" },
 								display: "flex",
 								flexDirection: "column",
 								alignItems: { base: "center", md: "flex-start" },
 								gap: { base: "0.5rem", md: "0.5rem" },
+								// paddingLeft: { base: "0", md: "0.5rem" },
 							})}
 						>
 							<a
@@ -363,6 +310,89 @@ export default function Footer() {
 								<span>YouTube</span>
 							</a>
 						</div>
+						{/* </div> */}
+					</div>
+
+					{/* Footer bottom: consulting + copyright – mobile stack, desktop one line */}
+					<div
+						className={css({
+							mt: { base: "2.5rem", md: "2rem" },
+							pt: { base: "0.75rem", md: "1rem" },
+							pb: { base: "2.5rem", md: "3rem" },
+							borderTop: "1px solid",
+							borderColor: { base: "gray.200", _dark: "gray.700" },
+							textAlign: "center",
+						})}
+						role="contentinfo"
+						aria-label="Footer legal and consulting"
+					>
+						<div
+							className={css({
+								display: "flex",
+								flexDirection: "column",
+								alignItems: "center",
+								justifyContent: "center",
+								gap: "0.75rem",
+							})}
+						>
+							<span
+								className={css({
+									fontSize: { base: "0.8125rem", md: "0.875rem" },
+									fontWeight: "500",
+									letterSpacing: "0.01em",
+									color: { base: "gray.600", _dark: "gray.400" },
+									lineHeight: "1.5",
+								})}
+							>
+								Available for consulting at{" "}
+								<a
+									href="https://plutonicconsulting.com"
+									target="_blank"
+									rel="noopener"
+									className={css({
+										color: { base: "brand.600", _dark: "brand.400" },
+										textDecoration: "none",
+										fontWeight: "600",
+										letterSpacing: "0.02em",
+										cursor: linkCursor,
+										transition: "color 0.2s ease",
+										"@media (prefers-reduced-motion: reduce)": {
+											transition: "none",
+										},
+										_hover: {
+											color: { base: "brand.700", _dark: "brand.300" },
+											textDecoration: "underline",
+										},
+										_focus: {
+											outline: "2px solid brand.600",
+											outlineOffset: "2px",
+											borderRadius: "4px",
+										},
+									})}
+								>
+									Plutonic Consulting
+								</a>
+							</span>
+							<span
+								className={css({
+									fontSize: { base: "0.75rem", md: "0.8125rem" },
+									fontWeight: "400",
+									letterSpacing: "0.02em",
+									color: { base: "gray.500", _dark: "gray.500" },
+									lineHeight: "1.5",
+								})}
+							>
+								© {currentYear}{" "}
+								<span
+									className={css({
+										fontWeight: "600",
+										color: { base: "gray.700", _dark: "gray.300" },
+									})}
+								>
+									Nick Karnik
+								</span>
+								. All rights reserved.
+							</span>
 						</div>
 					</div>
 			</div>
