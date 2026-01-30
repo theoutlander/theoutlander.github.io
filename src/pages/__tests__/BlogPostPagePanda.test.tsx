@@ -23,6 +23,10 @@ vi.mock("../../components/Footer", () => ({
 	default: () => <footer data-testid="footer">Footer</footer>,
 }));
 
+vi.mock("../../components/blog/BlogSidebar", () => ({
+	default: () => <aside data-testid="blog-sidebar">Sidebar</aside>,
+}));
+
 const mockPost = {
 	id: "68d72ef766a499385385e183",
 	slug: "how-engineers-can-use-ai-effectively",
@@ -118,7 +122,9 @@ describe("BlogPostPagePanda", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
 		const article = getArticle();
-		expect(within(article).getByText("AI")).toBeInTheDocument();
+		// Category and first tag both show "AI"; assert at least one (category) is present
+		const aiElements = within(article).getAllByText("AI");
+		expect(aiElements.length).toBeGreaterThanOrEqual(1);
 	});
 
 	it("renders tags when available", () => {

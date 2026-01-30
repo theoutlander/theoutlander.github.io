@@ -41,6 +41,10 @@ vi.mock("../../components/blog/BlogList", () => ({
 	),
 }));
 
+vi.mock("../../components/blog/BlogSidebar", () => ({
+	default: () => <aside data-testid="blog-sidebar">Sidebar</aside>,
+}));
+
 vi.mock("../../components/SkipLink", () => ({
 	default: () => (
 		<a
