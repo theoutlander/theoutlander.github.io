@@ -45,27 +45,35 @@ const iconWrapper = css({
 const linkCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="%236366f1" stroke="%23e2e8f0" stroke-width="1"/><path d="M10 6V14M6 10H14" stroke="%23e2e8f0" stroke-width="1"/></svg>') 10 10, pointer`;
 
 // Shared link style with mobile optimizations and custom cursor
+// On mobile each link looks like a label/button (box per link)
 const linkStyle = css({
 	display: "flex",
 	alignItems: "center",
+	justifyContent: { base: "center", md: "flex-start" },
 	gap: { base: "0.75rem", md: "2" },
 	fontSize: { base: "sm", md: "sm" },
 	color: { base: "gray.700", _dark: "dark.text" },
 	textDecoration: "none",
 	cursor: linkCursor,
+	width: { base: "100%", md: "auto" },
 	minHeight: { base: "44px", md: "auto" },
 	minWidth: { base: "44px", md: "auto" },
-	px: { base: "0", md: "3" },
-	py: { base: "0.625rem", md: "2.5" },
-	borderRadius: { base: "4px", md: "md" },
+	px: { base: "4", md: "3" },
+	py: { base: "0.75rem", md: "2.5" },
+	borderRadius: { base: "md", md: "md" },
 	whiteSpace: "nowrap",
 	transition: "all 200ms ease-in-out",
 	"@media (prefers-reduced-motion: reduce)": {
 		transition: "none",
 	},
+	// Mobile: each link is a label/button (box)
+	bg: { base: "gray.50", _dark: "gray.800", md: "transparent" },
+	borderWidth: { base: "1px", md: "0" },
+	borderColor: { base: "gray.200", _dark: "gray.700", md: "transparent" },
 	_hover: {
 		color: "brand.600",
 		textDecoration: "underline",
+		bg: { base: "gray.100", _dark: "gray.700", md: "transparent" },
 	},
 	_active: {
 		transform: { base: "scale(0.98)", md: "none" },
@@ -73,12 +81,21 @@ const linkStyle = css({
 	_focus: {
 		outline: "2px solid brand.600",
 		outlineOffset: "2px",
-		borderRadius: { base: "4px", md: "md" },
+		borderRadius: { base: "md", md: "md" },
 	},
 	"@media (hover: none) and (pointer: coarse)": {
 		minHeight: "44px",
-		py: "0.625rem",
+		py: "0.75rem",
 	},
+});
+
+// Wrapper for link columns: flex stack on mobile, no box (each link has its own box)
+const linksBoxMobile = css({
+	display: { base: "flex", md: "contents" },
+	flexDirection: { base: "column", md: "row" },
+	alignItems: { base: "center", md: "stretch" },
+	gap: { base: "0.5rem", md: "0" },
+	width: { base: "100%", md: "auto" },
 });
 
 export default function Footer() {
@@ -110,7 +127,7 @@ export default function Footer() {
 							gap: { base: "0", md: "2rem" },
 							alignItems: { base: "center", md: "stretch" },
 							"& > *:first-child": {
-								mb: { base: "2rem", md: "0" },
+								mb: { base: "4rem", md: "0" },
 							},
 						})}
 					>
@@ -213,6 +230,7 @@ export default function Footer() {
 							</div>
 						</div>
 
+						<div className={linksBoxMobile}>
 						{/* Column 2 - Contact & Professional Links */}
 						<div
 							className={css({
@@ -344,6 +362,7 @@ export default function Footer() {
 								</div>
 								<span>YouTube</span>
 							</a>
+						</div>
 						</div>
 					</div>
 			</div>
