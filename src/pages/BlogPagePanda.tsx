@@ -41,21 +41,24 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 				id="main-content"
 				className={css({
 					flex: 1,
-					maxW: "6xl",
+					maxW: { base: "6xl", lg: "1400px" },
 					py: { base: 6, md: 10 },
 					mx: "auto",
-					px: 4,
+					px: { base: 4, lg: 6 },
 					width: "100%",
-					display: "flex",
-					flexDirection: { base: "column", md: "row" },
-					gap: { base: 8, md: 12 },
-					alignItems: "flex-start",
+					display: "grid",
+					gridTemplateColumns: { base: "1fr", md: "minmax(0, 1fr) 280px" },
+					columnGap: { md: 16, lg: 20 },
+					rowGap: { base: 8, md: 0 },
+					alignItems: "start",
 				})}
 			>
 				<div
 					className={css({
-						flex: "1 1 0",
 						minW: 0,
+						w: "full",
+						maxW: { md: "960px" },
+						mx: { md: "auto" },
 					})}
 				>
 					<BlogIntro />
@@ -64,6 +67,8 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 				<div
 					className={css({
 						order: { base: -1, md: 0 },
+						justifySelf: { md: "end" },
+						w: { md: "280px" },
 					})}
 				>
 					<BlogSidebar posts={posts} />
