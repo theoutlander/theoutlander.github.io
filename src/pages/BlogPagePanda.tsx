@@ -47,9 +47,9 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 					px: { base: 4, lg: 6 },
 					width: "100%",
 					display: "grid",
-					gridTemplateColumns: { base: "1fr", md: "minmax(0, 1fr) 280px" },
+					gridTemplateColumns: { base: "1fr", lg: "1fr 280px" },
 					columnGap: { md: 16, lg: 20 },
-					rowGap: { base: 8, md: 0 },
+					rowGap: { base: 8, lg: 0 },
 					alignItems: "start",
 				})}
 			>
