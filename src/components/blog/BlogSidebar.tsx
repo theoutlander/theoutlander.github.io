@@ -23,6 +23,7 @@ const RECENT_COUNT = 10;
 
 type BlogSidebarProps = {
 	posts?: Post[] | null;
+	placement?: "sidebar" | "bottom";
 };
 
 function getAllCategories(posts: Post[]): string[] {
@@ -43,8 +44,11 @@ function getAllTags(posts: Post[]): string[] {
 	return Array.from(set).sort((a, b) => a.localeCompare(b, undefined, { sensitivity: "base" }));
 }
 
-export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
+export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }: BlogSidebarProps) {
 	const posts = postsProp ?? [];
+	const isBottomPlacement = placement === "bottom";
+	const showTags = !isBottomPlacement;
+	const showRecent = !isBottomPlacement;
 	const categories = getAllCategories(posts);
 	const tags = getAllTags(posts);
 	const recent = posts
@@ -56,22 +60,32 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 		<aside
 			className={css({
 				w: "full",
-				"@media (min-width: 768px)": {
-					w: "280px",
-					flexShrink: 0,
-				},
+				...(isBottomPlacement
+					? {}
+					: {
+							"@media (min-width: 768px)": {
+								w: "280px",
+								flexShrink: 0,
+							},
+					  }),
 			})}
 			aria-label="Blog navigation"
 		>
 			<nav
 				className={css({
-					display: "flex",
-					flexDirection: "column",
+					display: isBottomPlacement ? "flex" : "grid",
+					gridTemplateColumns: { base: "1fr" },
+					justifyContent: isBottomPlacement ? "center" : "initial",
 					gap: 8,
 				})}
 			>
 				{categories.length > 0 && (
-					<section>
+					<section
+						className={css({
+							textAlign: isBottomPlacement ? "center" : "left",
+							...(isBottomPlacement ? { mt: 8 } : {}),
+						})}
+					>
 						<h2
 							className={css({
 								fontSize: "sm",
@@ -90,8 +104,10 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 								p: 0,
 								m: 0,
 								display: "flex",
-								flexDirection: "column",
-								gap: 2,
+								flexDirection: isBottomPlacement ? "row" : "column",
+								flexWrap: isBottomPlacement ? "wrap" : "nowrap",
+								justifyContent: isBottomPlacement ? "center" : "flex-start",
+								gap: isBottomPlacement ? 3 : 2,
 							})}
 						>
 							{categories.map((cat) => (
@@ -118,7 +134,7 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 					</section>
 				)}
 
-				{tags.length > 0 && (
+				{showTags && tags.length > 0 && (
 					<section>
 						<h2
 							className={css({
@@ -166,50 +182,52 @@ export default function BlogSidebar({ posts: postsProp }: BlogSidebarProps) {
 					</section>
 				)}
 
-				<section>
-					<h2
-						className={css({
-							fontSize: "sm",
-							fontWeight: "700",
-							color: "#333",
-							mb: 3,
-							textTransform: "uppercase",
-							letterSpacing: "wider",
-						})}
-					>
-						Recent
-					</h2>
-					<ul
-						className={css({
-							listStyle: "none",
-							p: 0,
-							m: 0,
-						})}
-					>
-						{recent.map((p) => (
-							<li
-								key={p.slug}
-								className={css({
-									mb: 2,
-								})}
-							>
-								{isSSR ? (
-									<a href={`/blog/${p.slug}`} className={linkClassTight}>
-										{p.title}
-									</a>
-								) : (
-									<Link
-										to="/blog/$slug"
-										params={{ slug: p.slug }}
-										className={linkClassTight}
-									>
-										{p.title}
-									</Link>
-								)}
-							</li>
-						))}
-					</ul>
-				</section>
+				{showRecent && (
+					<section>
+						<h2
+							className={css({
+								fontSize: "sm",
+								fontWeight: "700",
+								color: "#333",
+								mb: 3,
+								textTransform: "uppercase",
+								letterSpacing: "wider",
+							})}
+						>
+							Recent
+						</h2>
+						<ul
+							className={css({
+								listStyle: "none",
+								p: 0,
+								m: 0,
+							})}
+						>
+							{recent.map((p) => (
+								<li
+									key={p.slug}
+									className={css({
+										mb: 2,
+									})}
+								>
+									{isSSR ? (
+										<a href={`/blog/${p.slug}`} className={linkClassTight}>
+											{p.title}
+										</a>
+									) : (
+										<Link
+											to="/blog/$slug"
+											params={{ slug: p.slug }}
+											className={linkClassTight}
+										>
+											{p.title}
+										</Link>
+									)}
+								</li>
+							))}
+						</ul>
+					</section>
+				)}
 			</nav>
 		</aside>
 	);
