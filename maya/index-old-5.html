@@ -382,17 +382,13 @@ async function sendDoodle(){
   const btn=document.getElementById('send-doodle-btn');
   btn.disabled=true;btn.textContent='Sending... 🎨';
 
-  // Shrink canvas to stay under EmailJS 50KB limit
+  // Get canvas as base64 image with dark background
   const tmp=document.createElement('canvas');
-  const MAX=400;
-  const scale=Math.min(1,MAX/Math.max(dc.width,dc.height));
-  tmp.width=Math.floor(dc.width*scale);
-  tmp.height=Math.floor(dc.height*scale);
+  tmp.width=dc.width;tmp.height=dc.height;
   const tx=tmp.getContext('2d');
   tx.fillStyle='#0a0718';tx.fillRect(0,0,tmp.width,tmp.height);
-  tx.drawImage(dc,0,0,tmp.width,tmp.height);
-  // Use JPEG at 0.6 quality — much smaller than PNG
-  const imgData=tmp.toDataURL('image/jpeg',0.6);
+  tx.drawImage(dc,0,0);
+  const imgData=tmp.toDataURL('image/png');
 
   // Build a small HTML email with the image embedded
   const htmlBody=`<div style="background:#0f0a1e;padding:24px;font-family:sans-serif;text-align:center;border-radius:12px">
