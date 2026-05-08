@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Maya's Game Lab 🎮</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;900&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0a1e;
+  --surface: #1a1030;
+  --card: #221640;
+  --border: rgba(255,255,255,0.07);
+  --pink: #ff6eb4;
+  --yellow: #ffe14d;
+  --green: #5dffb0;
+  --blue: #5bc8ff;
+  --purple: #c77dff;
+  --orange: #ff9a3c;
+  --text: #f0e6ff;
+  --muted: rgba(240,230,255,0.45);
+  --radius: 20px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden}
+
+/* Stars background */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,2s) infinite alternate}
+@keyframes twinkle{0%{opacity:.1}100%{opacity:var(--o,.8)}}
+
+/* Layout */
+#app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 20px 80px}
+
+/* Header */
+header{text-align:center;padding:52px 0 36px;position:relative}
+.lab-title{font-family:'Fredoka One',cursive;font-size:clamp(48px,10vw,88px);line-height:1;background:linear-gradient(135deg,var(--pink),var(--yellow),var(--green),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(255,110,180,.3));letter-spacing:.02em}
+.lab-sub{font-size:15px;color:var(--muted);letter-spacing:.15em;text-transform:uppercase;margin-top:8px}
+.dad-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:6px 16px;font-size:13px;color:var(--muted);margin-top:14px}
+
+/* Section headings */
+.section-head{display:flex;align-items:center;gap:12px;margin:44px 0 20px}
+.section-head h2{font-family:'Fredoka One',cursive;font-size:28px;color:var(--text)}
+.section-line{flex:1;height:1px;background:var(--border)}
+
+/* Game cards */
+.games-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px}
+.game-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;cursor:pointer;text-decoration:none;display:block;position:relative}
+.game-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(0,0,0,.5)}
+.game-card-art{height:130px;display:flex;align-items:center;justify-content:center;font-size:64px;position:relative;overflow:hidden}
+.game-card-art::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--card))}
+.game-card-body{padding:14px 18px 18px}
+.game-card-title{font-family:'Fredoka One',cursive;font-size:20px;line-height:1.1;margin-bottom:4px}
+.game-card-desc{font-size:13px;color:var(--muted);line-height:1.5}
+.game-card-tag{display:inline-block;font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:99px;margin-top:10px}
+.tag-made{background:rgba(93,255,176,.12);color:var(--green);border:1px solid rgba(93,255,176,.2)}
+.tag-new{background:rgba(255,110,180,.12);color:var(--pink);border:1px solid rgba(255,110,180,.2)}
+.play-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;margin-top:12px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:900;color:var(--text);cursor:pointer;transition:background .12s}
+.play-btn:hover{background:rgba(255,255,255,.14)}
+
+/* Game modal */
+#game-modal{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;background:#000}
+#game-modal.open{display:flex}
+#modal-bar{background:#0f0a1e;padding:10px 16px;display:flex;align-items:center;gap:14px;border-bottom:1px solid var(--border);flex-shrink:0}
+#modal-close{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:14px;font-weight:900;padding:6px 16px;border-radius:99px;cursor:pointer;font-family:'Nunito',sans-serif}
+#modal-close:hover{background:rgba(255,255,255,.16)}
+#modal-title{font-family:'Fredoka One',cursive;font-size:20px}
+#game-frame{flex:1;border:none;width:100%;background:#000}
+
+/* AI Builder */
+#builder{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:28px;position:relative;overflow:hidden}
+#builder::before{content:'';position:absolute;top:-60px;right:-60px;width:240px;height:240px;background:radial-gradient(circle,rgba(199,125,255,.12),transparent 70%);pointer-events:none}
+.builder-label{font-size:13px;font-weight:900;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:10px}
+#idea-input{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.25);border-radius:14px;padding:16px 18px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);resize:vertical;min-height:100px;transition:border-color .15s;outline:none}
+#idea-input:focus{border-color:rgba(199,125,255,.6)}
+#idea-input::placeholder{color:var(--muted)}
+.builder-row{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.idea-chip{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:99px;padding:7px 16px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;transition:all .12s;white-space:nowrap}
+.idea-chip:hover{background:rgba(199,125,255,.15);border-color:rgba(199,125,255,.4);color:var(--purple)}
+#build-btn{margin-top:16px;width:100%;padding:16px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:14px;font-family:'Fredoka One',cursive;font-size:22px;color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 0 rgba(0,0,0,.4),0 0 40px rgba(199,125,255,.2);letter-spacing:.04em}
+#build-btn:hover{transform:translateY(-2px);box-shadow:0 6px 0 rgba(0,0,0,.4),0 0 60px rgba(199,125,255,.35)}
+#build-btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.4)}
+#build-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Build progress */
+#build-progress{display:none;margin-top:20px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:14px;padding:20px;text-align:center}
+#build-progress.show{display:block}
+.progress-emoji{font-size:36px;animation:bounce .6s ease-in-out infinite alternate}
+@keyframes bounce{0%{transform:translateY(0)}100%{transform:translateY(-8px)}}
+.progress-text{font-size:14px;color:var(--muted);margin-top:10px}
+.progress-bar-wrap{width:100%;height:6px;background:rgba(255,255,255,.08);border-radius:99px;margin-top:14px;overflow:hidden}
+.progress-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:99px;width:0%;transition:width .3s}
+
+/* Gallery */
+#gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.gallery-card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;position:relative}
+.gallery-card-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:10px}
+.gallery-card-title{font-family:'Fredoka One',cursive;font-size:18px;line-height:1.2;flex:1}
+.gallery-card-date{font-size:11px;color:var(--muted);white-space:nowrap}
+.gallery-card-idea{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.gallery-btns{display:flex;gap:8px}
+.gbtn{flex:1;padding:8px;border-radius:10px;border:none;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;cursor:pointer;transition:opacity .1s}
+.gbtn:hover{opacity:.8}
+.gbtn-play{background:var(--green);color:#0f0a1e}
+.gbtn-del{background:rgba(255,90,90,.15);color:#ff7070;border:1px solid rgba(255,90,90,.2)}
+.gallery-empty{text-align:center;padding:44px 20px;color:var(--muted);font-size:15px}
+.gallery-empty span{font-size:40px;display:block;margin-bottom:12px}
+
+/* Toast */
+#toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:12px 24px;border-radius:99px;z-index:200;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Responsive */
+@media(max-width:600px){
+  .lab-title{font-size:52px}
+  .games-grid{grid-template-columns:1fr 1fr}
+  .builder-row{gap:8px}
+}
+</style>
+</head>
+<body>
+
+<div id="stars"></div>
+
+<div id="app">
+  <header>
+    <div class="lab-title">Maya's Game Lab</div>
+    <div class="lab-sub">✨ Your very own game studio ✨</div>
+    <div class="dad-badge">🎮 Made with Dad &nbsp;·&nbsp; New games every week</div>
+  </header>
+
+  <!-- OUR GAMES -->
+  <div class="section-head">
+    <h2>🕹️ Our Games</h2>
+    <div class="section-line"></div>
+  </div>
+  <div class="games-grid" id="built-games">
+
+    <div class="game-card">
+      <div class="game-card-art" style="background:linear-gradient(135deg,#2d1260,#1a0a3c)">🪅</div>
+      <div class="game-card-body">
+        <div class="game-card-title">Piñata Piano!</div>
+        <div class="game-card-desc">Play songs on the piano to pop candy and smash the piñata. Can you get 3 stars?</div>
+        <span class="game-card-tag tag-made">Made together 💕</span>
+        <button class="play-btn" onclick="openGame('pinata-piano.html','Piñata Piano!')">▶ Play Now</button>
+      </div>
+    </div>
+
+    <div class="game-card">
+      <div class="game-card-art" style="background:linear-gradient(135deg,#0d0520,#2d1260)">👻</div>
+      <div class="game-card-body">
+        <div class="game-card-title">Dust Chasers</div>
+        <div class="game-card-desc">Invisible dust people are in your room! Find their trails, vacuum the calm ones, dodge the fast ones.</div>
+        <span class="game-card-tag tag-made">Made together 💕</span>
+        <button class="play-btn" onclick="openGame('dust-chasers.html','Dust Chasers')">▶ Play Now</button>
+      </div>
+    </div>
+
+    <div class="game-card" style="opacity:.5;pointer-events:none">
+      <div class="game-card-art" style="background:linear-gradient(135deg,#1a1030,#0f0a1e)">🌙</div>
+      <div class="game-card-body">
+        <div class="game-card-title">Coming Soon...</div>
+        <div class="game-card-desc">The next game is being dreamed up. Check back after our next call!</div>
+        <span class="game-card-tag tag-new">In progress ✨</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AI GAME BUILDER -->
+  <div class="section-head">
+    <h2>🪄 Build Your Own Game</h2>
+    <div class="section-line"></div>
+  </div>
+  <div id="builder">
+    <div class="builder-label">💬 Describe your game idea</div>
+    <textarea id="idea-input" placeholder="A game where you catch falling stars before they hit the ground... or a game where a frog has to dodge raindrops... or anything you imagine!"></textarea>
+    <div class="builder-row" id="chips"></div>
+    <button id="build-btn" onclick="buildGame()">✨ Build My Game!</button>
+    <div id="build-progress">
+      <div class="progress-emoji" id="prog-emoji">🪄</div>
+      <div class="progress-text" id="prog-text">Getting the magic ready...</div>
+      <div class="progress-bar-wrap"><div class="progress-bar" id="prog-bar"></div></div>
+    </div>
+  </div>
+
+  <!-- GALLERY -->
+  <div class="section-head">
+    <h2>🌟 Maya's Creations</h2>
+    <div class="section-line"></div>
+  </div>
+  <div id="gallery-grid"></div>
+
+</div>
+
+<!-- Game modal -->
+<div id="game-modal">
+  <div id="modal-bar">
+    <button id="modal-close" onclick="closeGame()">✕ Back to Lab</button>
+    <div id="modal-title"></div>
+  </div>
+  <iframe id="game-frame" allowfullscreen></iframe>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ===== STARS =====
+const starsEl = document.getElementById('stars');
+for(let i=0;i<80;i++){
+  const s=document.createElement('div');s.className='star';
+  const sz=Math.random()*2.5+.5;
+  s.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;--o:${.3+Math.random()*.7};animation-delay:${Math.random()*3}s`;
+  starsEl.appendChild(s);
+}
+
+// ===== IDEA CHIPS =====
+const IDEAS = [
+  "🌟 Catch falling stars",
+  "🐸 Frog dodges raindrops",
+  "🦋 Butterfly maze",
+  "🍕 Pizza topping stacker",
+  "🐉 Dragon vs balloons",
+  "🌈 Color matching puzzle",
+  "🐠 Feed the fish",
+  "🎃 Pumpkin jump game",
+];
+const chipsEl = document.getElementById('chips');
+IDEAS.forEach(idea=>{
+  const btn=document.createElement('button');
+  btn.className='idea-chip';
+  btn.textContent=idea;
+  btn.onclick=()=>{
+    document.getElementById('idea-input').value=idea.replace(/^.+? /,'');
+    document.getElementById('idea-input').focus();
+  };
+  chipsEl.appendChild(btn);
+});
+
+// ===== STORAGE =====
+function getGallery(){
+  try{return JSON.parse(localStorage.getItem('maya_gallery')||'[]');}
+  catch{return [];}
+}
+function saveGallery(g){localStorage.setItem('maya_gallery',JSON.stringify(g));}
+
+// ===== GALLERY RENDER =====
+function renderGallery(){
+  const grid=document.getElementById('gallery-grid');
+  const gallery=getGallery();
+  if(gallery.length===0){
+    grid.innerHTML=`<div class="gallery-empty"><span>🎮</span>Your first game will appear here once you build it!</div>`;
+    return;
+  }
+  grid.innerHTML='';
+  [...gallery].reverse().forEach((item,idx)=>{
+    const realIdx=gallery.length-1-idx;
+    const card=document.createElement('div');card.className='gallery-card';
+    const date=new Date(item.created).toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    card.innerHTML=`
+      <div class="gallery-card-top">
+        <div class="gallery-card-title">${escHtml(item.title)}</div>
+        <div class="gallery-card-date">${date}</div>
+      </div>
+      <div class="gallery-card-idea">"${escHtml(item.idea)}"</div>
+      <div class="gallery-btns">
+        <button class="gbtn gbtn-play" onclick="playGalleryGame(${realIdx})">▶ Play</button>
+        <button class="gbtn gbtn-del" onclick="deleteGame(${realIdx})">🗑</button>
+      </div>`;
+    grid.appendChild(card);
+  });
+}
+
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function playGalleryGame(idx){
+  const g=getGallery()[idx];
+  if(!g)return;
+  // Write to blob and open in modal
+  const blob=new Blob([g.html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  openGameUrl(url, g.title);
+}
+
+function deleteGame(idx){
+  if(!confirm('Delete this game?'))return;
+  const g=getGallery();g.splice(idx,1);saveGallery(g);renderGallery();
+  showToast('Game deleted 🗑');
+}
+
+// ===== GAME MODAL =====
+function openGame(file, title){
+  document.getElementById('game-modal').classList.add('open');
+  document.getElementById('game-frame').src=file;
+  document.getElementById('modal-title').textContent=title;
+  document.body.style.overflow='hidden';
+}
+function openGameUrl(url, title){
+  document.getElementById('game-modal').classList.add('open');
+  document.getElementById('game-frame').src=url;
+  document.getElementById('modal-title').textContent=title;
+  document.body.style.overflow='hidden';
+}
+function closeGame(){
+  document.getElementById('game-modal').classList.remove('open');
+  document.getElementById('game-frame').src='';
+  document.body.style.overflow='';
+}
+
+// ===== TOAST =====
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// ===== PROGRESS STATES =====
+const PROGRESS_STATES=[
+  {emoji:'🪄',text:'Waving the magic wand...',pct:15},
+  {emoji:'🎮',text:'Designing the game...',pct:35},
+  {emoji:'⚙️',text:'Building the controls...',pct:55},
+  {emoji:'🎨',text:'Adding colors and effects...',pct:75},
+  {emoji:'✨',text:'Adding sparkles and finishing touches...',pct:92},
+];
+
+// ===== AI GAME BUILDER =====
+async function buildGame(){
+  const idea=document.getElementById('idea-input').value.trim();
+  if(!idea){document.getElementById('idea-input').focus();return;}
+
+  const btn=document.getElementById('build-btn');
+  btn.disabled=true;
+  const prog=document.getElementById('build-progress');
+  prog.classList.add('show');
+
+  let stateIdx=0;
+  function nextState(){
+    if(stateIdx>=PROGRESS_STATES.length)return;
+    const s=PROGRESS_STATES[stateIdx++];
+    document.getElementById('prog-emoji').textContent=s.emoji;
+    document.getElementById('prog-text').textContent=s.text;
+    document.getElementById('prog-bar').style.width=s.pct+'%';
+  }
+  nextState();
+  const progInterval=setInterval(nextState, 2200);
+
+  const prompt=`You are a game developer making a fun, simple browser game for a kid named Maya (age 8-12).
+
+The game idea is: "${idea}"
+
+Create a complete, self-contained HTML file with the game inside. Requirements:
+- Fun, colorful, and easy to understand immediately
+- Works on iPad touch (use both mouse and touch events)  
+- Simple controls — one or two actions max
+- Has a score, a win/lose condition, and a restart button
+- Bright cheerful colors, big fonts, fun emoji where appropriate
+- Everything in one HTML file — no external dependencies except Google Fonts
+- The game should actually be fun and playable, not just a demo
+- Include a title at the top with the game name
+
+Reply with ONLY the complete HTML file, nothing else. No explanation, no markdown, just raw HTML starting with <!DOCTYPE html>`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:4000,
+        messages:[{role:'user',content:prompt}]
+      })
+    });
+
+    clearInterval(progInterval);
+    document.getElementById('prog-bar').style.width='100%';
+    document.getElementById('prog-emoji').textContent='🎉';
+    document.getElementById('prog-text').textContent='Done! Your game is ready!';
+
+    if(!res.ok){throw new Error(`API error ${res.status}`);}
+    const data=await res.json();
+    let html=data.content?.[0]?.text||'';
+
+    // Strip any markdown fences just in case
+    html=html.replace(/^```html?\n?/i,'').replace(/\n?```$/,'').trim();
+
+    if(!html.includes('<!DOCTYPE')){throw new Error('No valid HTML returned');}
+
+    // Extract a title from the HTML
+    const titleMatch=html.match(/<title>([^<]+)<\/title>/i);
+    const gameTitle=titleMatch?titleMatch[1].replace(/[<>]/g,''):idea.slice(0,40);
+
+    // Save to gallery
+    const gallery=getGallery();
+    gallery.push({title:gameTitle,idea,html,created:Date.now()});
+    saveGallery(gallery);
+    renderGallery();
+
+    setTimeout(()=>{
+      prog.classList.remove('show');
+      btn.disabled=false;
+      document.getElementById('idea-input').value='';
+      showToast('🎉 New game added to your gallery!');
+      // Auto-play it
+      const blob=new Blob([html],{type:'text/html'});
+      openGameUrl(URL.createObjectURL(blob),gameTitle);
+    },1000);
+
+  }catch(err){
+    clearInterval(progInterval);
+    document.getElementById('prog-emoji').textContent='😬';
+    document.getElementById('prog-text').textContent='Something went wrong. Try again!';
+    document.getElementById('prog-bar').style.width='0%';
+    btn.disabled=false;
+    console.error(err);
+    setTimeout(()=>prog.classList.remove('show'),3000);
+  }
+}
+
+// ===== INIT =====
+renderGallery();
+</script>
+</body>
+</html>
