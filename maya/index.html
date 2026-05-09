@@ -167,11 +167,20 @@ header{text-align:center;padding:48px 0 36px}
         <button class="pb" onclick="openGame('dust-chasers.html','Dust Chasers 👻')">▶ Play Now</button>
       </div>
     </div>
+    <div class="gc">
+      <div class="ga" style="background:linear-gradient(135deg,#1a3a20,#0a2010)">🌈</div>
+      <div class="gb">
+        <div class="gt">Spell It! 🌈</div>
+        <div class="gd">Letters rain down — tap them in order to spell the word! Grade 1 to 5.</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" onclick="openGame('letter-tumble.html','Letter Tumble! 🌈')">▶ Play Now</button>
+      </div>
+    </div>
     <div class="gc soon">
       <div class="ga" style="background:linear-gradient(135deg,#1a1030,#0f0a1e)">🌙✨</div>
       <div class="gb">
         <div class="gt">Coming Soon...</div>
-        <div class="gd">Dad is making something new! Check back after our next call.</div>
+        <div class="gd">Dad is dreaming up something new. Check back after our next call!</div>
         <span class="tag ts">In progress ✨</span>
       </div>
     </div>
@@ -320,6 +329,7 @@ setTimeout(()=>{
 const GLIST=[
   {em:'🪅',title:'Piñata Piano!',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'pinata-piano-v2.html'},
   {em:'👻',title:'Dust Chasers',desc:'Find the invisible dust people lurking in the dark!',file:'dust-chasers.html'},
+  {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
 ];
 const wk=Math.floor(Date.now()/1000/60/60/24/7);
 const gw=GLIST[wk%GLIST.length];
@@ -394,21 +404,21 @@ async function sendDoodle(){
   // Use JPEG at 0.6 quality — much smaller than PNG
   const imgData=tmp.toDataURL('image/jpeg',0.6);
 
-  // Build a small HTML email with the image embedded
-  const htmlBody=`<div style="background:#0f0a1e;padding:24px;font-family:sans-serif;text-align:center;border-radius:12px">
-    <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:8px">🎨 Maya sent you a doodle!</h2>
-    <p style="color:#c8b8f0;margin-bottom:16px">Here is what she drew for you today 💕</p>
-    <img src="${imgData}" style="max-width:100%;border-radius:10px;border:2px solid #c77dff"/>
-    <p style="color:#c77dff;margin-top:16px;font-size:14px">From Maya, with love 💕</p>
-  </div>`;
+  // Open the doodle in a new tab so Maya can screenshot/share it
+  // AND send a plain text email that works with any EmailJS template
+  const doodleWindow=window.open();
+  doodleWindow.document.write(`<!DOCTYPE html><html><head><title>Maya's Doodle 🎨</title></head><body style="margin:0;background:#0a0718;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif">
+    <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:12px">🎨 Maya's Doodle!</h2>
+    <img src="${imgData}" style="max-width:90vw;border-radius:12px;border:3px solid #c77dff"/>
+    <p style="color:#c77dff;margin-top:16px">From Maya, with love 💕</p>
+  </body></html>`);
+  doodleWindow.document.close();
 
   try{
     emailjs.init(EJS_KEY);
     await emailjs.send(EJS_SVC,EJS_TPL,{
-      message:'Maya sent you a doodle! See the image below.',
-      from_name:'Maya',
-      html_content: htmlBody,
-      doodle_image: imgData
+      message:'🎨 Maya sent you a doodle! She will show it to you on your next call 💕',
+      from_name:'Maya'
     });
   }catch(e){console.log('email err',e);}
 
