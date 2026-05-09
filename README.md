@@ -19,26 +19,48 @@ pnpm build
 pnpm deploy
 ```
 
+## 📚 Documentation
+
+Complete guides for all aspects of the site:
+
+| Guide | Purpose |
+|-------|---------|
+| [📖 ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) | **Start here!** Step-by-step guide to create and publish articles |
+| [⌨️ COMMANDS.md](./COMMANDS.md) | Reference for all available pnpm commands |
+| [📝 BLOG_GUIDE.md](./BLOG_GUIDE.md) | Comprehensive blog management and markdown reference |
+| [🚀 DEPLOYMENT.md](./DEPLOYMENT.md) | How to deploy to production (GitHub Pages configured) |
+| [⚙️ ENVIRONMENT.md](./ENVIRONMENT.md) | Environment variables and build configuration |
+| [💬 COMMENTS.md](./COMMENTS.md) | Comments system setup (Giscus or Utterances) |
+| [🔗 REDIRECTS.md](./REDIRECTS.md) | Custom URL redirects (social media, contact, etc.) |
+
 ## 📝 Blog Management
 
-This website includes a self-hosted blog system. To create and manage blog posts, see the comprehensive [Blog Guide](./BLOG_GUIDE.md).
+This website includes a self-hosted blog system. To create and manage blog posts:
 
-### Quick Blog Post Creation
-1. Create a new `.md` file in `content/blog/`
-2. Add front matter with metadata
-3. Write your content in Markdown
-4. Run `pnpm dev` to preview or `pnpm build` to publish
+1. **New to blogging?** Start with [ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) for step-by-step instructions
+2. **Need details?** See [BLOG_GUIDE.md](./BLOG_GUIDE.md) for comprehensive reference
+3. **Ready to publish?** Use [DEPLOYMENT.md](./DEPLOYMENT.md) to go live
 
-For detailed instructions, see [BLOG_GUIDE.md](./BLOG_GUIDE.md).
+### Quick Start
+```bash
+touch content/blog/my-article.md
+pnpm dev                    # Preview at http://localhost:5173
+pnpm build && pnpm deploy   # Publish to production
+```
+
+For detailed instructions with examples, see the guides above.
 
 ## 🛠️ Technology Stack
 
-- **Frontend**: React 19 + TypeScript
+- **Frontend**: React 19.1.1 + TypeScript
 - **Build Tool**: Vite
 - **Styling**: Panda CSS
-- **Routing**: TanStack Router
-- **Content**: Markdown with front matter
-- **Deployment**: GitHub Pages
+- **Routing**: TanStack Router v1.132
+- **Content**: Markdown with front matter (marked parser)
+- **Deployment**: GitHub Pages (`gh-pages` branch)
+- **Testing**: Vitest (unit, integration, E2E)
+- **Icons**: Heroicons, React Icons
+- **Animation**: Framer Motion
 
 ## Testing
 

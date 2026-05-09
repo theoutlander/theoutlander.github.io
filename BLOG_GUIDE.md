@@ -22,9 +22,11 @@ Every blog post must start with front matter (metadata) between `---` markers:
 id: "unique-post-id"
 title: "Your Amazing Blog Post Title"
 date: "2025-01-15T10:30:00.000Z"
-cover: "https://example.com/your-cover-image.jpg"
 excerpt: "A brief description of your post that will appear in listings and social media previews..."
+category: "Engineering"
 tags: ["tag1", "tag2", "tag3"]
+cover: "https://example.com/your-cover-image.jpg"
+slug: "your-post-slug"
 ---
 
 Your blog post content starts here...
@@ -38,8 +40,10 @@ Your blog post content starts here...
 | `title` | ✅ | The post title | `"How to Build Amazing Things"` |
 | `date` | ✅ | Publication date (ISO 8601 format) | `"2025-01-15T10:30:00.000Z"` |
 | `excerpt` | ✅ | Short description for previews | `"Learn the secrets of building..."` |
+| `category` | ✅ | Article category for organization | `"Engineering"`, `"Tutorial"`, `"Opinion"` |
+| `tags` | ✅ | Array of tags for categorization | `["React", "TypeScript", "Tutorial"]` |
 | `cover` | ❌ | Cover image URL | `"https://example.com/image.jpg"` |
-| `tags` | ❌ | Array of tags | `["React", "TypeScript", "Tutorial"]` |
+| `slug` | ❌ | URL slug (derived from filename if not specified) | `"my-awesome-post"` |
 
 ### 4. Write Your Content
 

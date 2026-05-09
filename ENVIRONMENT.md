@@ -64,11 +64,33 @@ If environment variables are not set, the following defaults are used:
 
 ## Scripts
 
-- `pnpm prebuild` - Generates blog data from markdown files
-- `pnpm build` - Builds the application
-- `pnpm postbuild` - Generates sitemap
-- `NODE_ENV=production pnpm build` - Runs all build steps for production
-- `pnpm dev` - Starts development server
+- `pnpm dev` - Starts development server (with auto-reload)
+  - Generates blog data from markdown files
+  - Builds the application
+  - Starts Vite dev server at `http://localhost:5173`
+  - Use for local development and testing
+
+- `pnpm build` - Builds the application for production
+  - Generates blog data from markdown files
+  - Builds the application
+  - Generates sitemap
+  - Generates robots.txt with AI crawler rules
+  - Generates RSS feed
+  - Generates redirects
+  - Output: `dist/` folder
+
+- `NODE_ENV=production pnpm build` - Same as `pnpm build` with production optimizations
+
+- `pnpm run preview` - Preview production build locally
+  - Builds for production
+  - Starts server at `http://localhost:5173`
+  - Use to test production build before deploying
+
+- `pnpm deploy` - Deploy to production (GitHub Pages)
+  - Builds for production
+  - Pushes `dist/` folder to `gh-pages` branch
+  - Site updates at `https://nick.karnik.io`
+  - See [DEPLOYMENT.md](./DEPLOYMENT.md) for details
 
 ## Troubleshooting
 
