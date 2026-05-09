@@ -687,6 +687,27 @@ export async function renderAllStaticPagesSSR() {
 		console.warn("⚠️  Could not copy assets:", error);
 	}
 
+	console.log("📁 Copying standalone app folders to dist...");
+	const standaloneFolders = [
+		{ source: "maya", destinations: ["dist/maya"] },
+	];
+	for (const folder of standaloneFolders) {
+		try {
+			for (const destination of folder.destinations) {
+				mkdirSync(destination, { recursive: true });
+				copyDirectory(folder.source, destination);
+			}
+			console.log(
+				`✅ Copied ${folder.source} to ${folder.destinations.join(", ")}`
+			);
+		} catch (error) {
+			console.warn(
+				`⚠️  Could not copy standalone folder ${folder.source}:`,
+				error instanceof Error ? error.message : String(error)
+			);
+		}
+	}
+
 	// Copy other static files from public to dist
 	// Note: robots.txt and sitemap.xml are generated fresh to dist/ during build,
 	// so we don't copy them from public/ to avoid overwriting with stale data
