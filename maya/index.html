@@ -135,9 +135,9 @@ header{text-align:center;padding:48px 0 36px}
   </header>
 
   <!-- GAME OF THE WEEK -->
-  <div class="sh"><h2>🌟 Game of the Week</h2><div class="sl"></div></div>
+  <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
   <div id="gotw" onclick="gotwPlay()">
-    <span class="gotw-badge">⭐ This Week</span>
+    <span class="gotw-badge">✨ New!</span>
     <div class="gotw-em" id="ge">🪅</div>
     <div class="gotw-info">
       <div class="gotw-title" id="gtt">Piñata Piano!</div>
@@ -174,6 +174,15 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gd">Letters rain down — tap them in order to spell the word! Grade 1 to 5.</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" onclick="openGame('letter-tumble.html','Letter Tumble! 🌈')">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga" style="background:linear-gradient(135deg,#1a3a1a,#0a2010)">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders!</div>
+        <div class="gd">Chop wood by day, forge weapons at the forge, then fight off the zombie horde at night!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" onclick="openGame('castle-defenders.html','Castle Defenders! 🏰')">▶ Play Now</button>
       </div>
     </div>
     <div class="gc soon">
@@ -327,6 +336,7 @@ setTimeout(()=>{
 
 // ===== GAME OF THE WEEK =====
 const GLIST=[
+  {em:'🏰',title:'Castle Defenders!',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'castle-defenders.html'},
   {em:'🪅',title:'Piñata Piano!',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'pinata-piano-v2.html'},
   {em:'👻',title:'Dust Chasers',desc:'Find the invisible dust people lurking in the dark!',file:'dust-chasers.html'},
   {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
