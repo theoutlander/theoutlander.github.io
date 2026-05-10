@@ -25,13 +25,13 @@ Complete guides for all aspects of the site:
 
 | Guide | Purpose |
 |-------|---------|
-| [📖 ARTICLE_CREATION_GUIDE.md](./ARTICLE_CREATION_GUIDE.md) | **Start here!** Step-by-step guide to create and publish articles |
-| [⌨️ COMMANDS.md](./COMMANDS.md) | Reference for all available pnpm commands |
-| [📝 BLOG_GUIDE.md](./BLOG_GUIDE.md) | Comprehensive blog management and markdown reference |
-| [🚀 DEPLOYMENT.md](./DEPLOYMENT.md) | How to deploy to production (GitHub Pages configured) |
-| [⚙️ ENVIRONMENT.md](./ENVIRONMENT.md) | Environment variables and build configuration |
-| [💬 COMMENTS.md](./COMMENTS.md) | Comments system setup (Giscus or Utterances) |
-| [🔗 REDIRECTS.md](./REDIRECTS.md) | Custom URL redirects (social media, contact, etc.) |
+| [📖 ARTICLE_CREATION_GUIDE.md](./docs/ARTICLE_CREATION_GUIDE.md) | **Start here!** Step-by-step guide to create and publish articles |
+| [⌨️ COMMANDS.md](./docs/COMMANDS.md) | Reference for all available pnpm commands |
+| [📝 BLOG_GUIDE.md](./docs/BLOG_GUIDE.md) | Comprehensive blog management and markdown reference |
+| [🚀 DEPLOYMENT.md](./docs/DEPLOYMENT.md) | How to deploy to production (GitHub Pages configured) |
+| [⚙️ ENVIRONMENT.md](./docs/ENVIRONMENT.md) | Environment variables and build configuration |
+| [💬 COMMENTS.md](./docs/COMMENTS.md) | Comments system setup (Giscus or Utterances) |
+| [🔗 REDIRECTS.md](./docs/REDIRECTS.md) | Custom URL redirects (social media, contact, etc.) |
 
 ## 📝 Blog Management
 
