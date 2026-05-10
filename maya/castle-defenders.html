@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Castle Defenders 🏰</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky-day:#87ceeb;--sky-dusk:#ff8c42;--sky-night:#0a0618;
+  --ground:#4a7c3f;--ground-dark:#2d4a25;
+  --castle:#8b7355;--castle-dark:#6b5a3e;
+  --text:#fff;--muted:rgba(255,255,255,0.6);
+  --yellow:#ffe14d;--green:#5dffb0;--red:#ff5a5a;--orange:#ff9a3c;--purple:#c77dff;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif;touch-action:none}
+
+/* ── CANVAS AREA ── */
+#game{width:100%;height:100%;position:relative;overflow:hidden}
+#sky{position:absolute;inset:0;transition:background 3s}
+#ground{position:absolute;bottom:0;left:0;right:0;height:30%;background:var(--ground)}
+#ground::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:var(--ground-dark);border-radius:0}
+
+/* Stars */
+#stars{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 2s}
+.star{position:absolute;background:#fff;border-radius:50%;animation:twink var(--d,2s) infinite alternate}
+@keyframes twink{0%{opacity:.2}100%{opacity:1}}
+
+/* Moon/Sun */
+#celestial{position:absolute;width:60px;height:60px;border-radius:50%;top:14%;transition:left 4s linear,background 3s,box-shadow 3s}
+#celestial.sun{background:#ffe14d;box-shadow:0 0 30px 10px rgba(255,225,77,.6)}
+#celestial.moon{background:#e8e8d0;box-shadow:0 0 20px 6px rgba(232,232,208,.4)}
+
+/* Castle */
+#castle-wrap{position:absolute;bottom:30%;left:2%;display:flex;flex-direction:column;align-items:flex-start}
+#castle-svg{width:160px;height:180px}
+#castle-hp-bar{width:140px;height:8px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;margin-top:4px}
+#castle-hp-fill{height:100%;background:linear-gradient(90deg,#5dffb0,#ffe14d);border-radius:99px;transition:width .4s}
+
+/* Trees area */
+#trees-area{position:absolute;bottom:30%;right:5%;display:flex;gap:20px;align-items:flex-end}
+.tree{cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:transform .1s;position:relative}
+.tree:active{transform:scale(.88) rotate(-5deg)}
+.tree-top{font-size:52px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
+.tree-trunk{width:10px;height:20px;background:#6b4226;border-radius:3px}
+.tree-count{position:absolute;top:-8px;right:-8px;background:#ffe14d;color:#0a0618;font-size:10px;font-weight:900;border-radius:99px;padding:1px 5px;font-family:'Fredoka One',cursive}
+.tree.depleted .tree-top{filter:grayscale(1) brightness(.5)}
+
+/* Wood pile */
+#wood-pile{position:absolute;bottom:30%;right:30%;display:flex;flex-direction:column;align-items:center;gap:4px}
+#wood-label{font-size:11px;color:rgba(255,255,255,.7);font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+#wood-count{font-family:'Fredoka One',cursive;font-size:32px;color:#ff9a3c;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.4)}
+#wood-emoji{font-size:28px}
+
+/* Forge / craft area */
+#forge{position:absolute;bottom:30%;left:22%;display:flex;flex-direction:column;align-items:center;gap:6px}
+#forge-label{font-size:11px;color:rgba(255,255,255,.7);font-weight:900;letter-spacing:.05em;text-transform:uppercase}
+.weapon-btn{background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .1s,border-color .1s;min-width:70px}
+.weapon-btn:active{transform:scale(.92)}
+.weapon-btn.affordable{border-color:var(--yellow);background:rgba(255,225,77,.1)}
+.weapon-btn.owned{border-color:var(--green);background:rgba(93,255,176,.1)}
+.weapon-btn .wem{font-size:26px}
+.weapon-btn .wname{font-size:10px;font-weight:900;color:rgba(255,255,255,.8)}
+.weapon-btn .wcost{font-size:10px;color:var(--orange)}
+#weapons-row{display:flex;gap:8px}
+
+/* HUD */
+#hud{position:absolute;top:0;left:0;right:0;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;z-index:20;pointer-events:none}
+#day-badge{font-family:'Fredoka One',cursive;font-size:18px;background:rgba(0,0,0,.4);padding:5px 16px;border-radius:99px;color:#fff;backdrop-filter:blur(4px)}
+#phase-badge{font-family:'Fredoka One',cursive;font-size:14px;padding:5px 14px;border-radius:99px;color:#0a0618;background:var(--yellow)}
+#score-badge{font-family:'Fredoka One',cursive;font-size:16px;background:rgba(0,0,0,.4);padding:5px 14px;border-radius:99px;color:#ffe14d;backdrop-filter:blur(4px)}
+
+/* Phase instruction banner */
+#phase-banner{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);border-radius:12px;padding:8px 20px;font-size:13px;font-weight:900;color:#fff;text-align:center;backdrop-filter:blur(4px);z-index:20;pointer-events:none;transition:opacity .5s}
+
+/* Actions left */
+#actions-wrap{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);display:flex;gap:4px}
+.action-pip{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
+.action-pip.used{background:rgba(255,255,255,.2);box-shadow:none}
+
+/* NIGHT BATTLE */
+#battle-layer{position:absolute;inset:0;pointer-events:none;z-index:10}
+.zombie{position:absolute;font-size:36px;cursor:pointer;pointer-events:all;transition:none;z-index:11;filter:drop-shadow(2px 2px 4px rgba(0,0,0,.5))}
+.zombie:active{transform:scale(.8)}
+.zombie.dying{animation:zdeath .4s ease-out forwards;pointer-events:none}
+@keyframes zdeath{0%{transform:scale(1.3) rotate(-10deg);filter:brightness(3)}100%{transform:scale(0) rotate(30deg);opacity:0}}
+
+/* Weapon ready */
+#weapon-ready{position:absolute;bottom:32%;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:15;pointer-events:none}
+.active-weapon{font-size:36px;background:rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.3);border-radius:12px;padding:6px 10px;cursor:pointer;pointer-events:all;transition:transform .1s;position:relative}
+.active-weapon:active{transform:scale(.88)}
+.active-weapon .wcharge{position:absolute;bottom:2px;right:2px;font-size:9px;font-weight:900;color:var(--yellow);background:rgba(0,0,0,.6);border-radius:4px;padding:1px 3px}
+
+/* Night overlay */
+#night-overlay{position:absolute;inset:0;background:rgba(5,2,20,.5);pointer-events:none;opacity:0;transition:opacity 3s;z-index:5}
+
+/* Wave counter */
+#wave-info{position:absolute;top:56px;right:14px;background:rgba(0,0,0,.5);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:900;color:#fff;text-align:right;z-index:20;display:none}
+#wave-info .big{font-family:'Fredoka One',cursive;font-size:22px;color:var(--red)}
+
+/* Chop effect */
+.chop-fx{position:absolute;font-size:20px;pointer-events:none;z-index:25;animation:chopfx .6s ease-out forwards}
+@keyframes chopfx{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(.5);opacity:0}}
+
+/* Hit effect */
+.hit-fx{position:absolute;font-size:24px;pointer-events:none;z-index:25;animation:hitfx .5s ease-out forwards}
+@keyframes hitfx{0%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-80px) scale(.5);opacity:0}}
+
+/* Phase transition */
+#phase-transition{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;opacity:0}
+#phase-transition.show{opacity:1;animation:ptin .6s ease-out}
+@keyframes ptin{0%{transform:scale(1.2)}100%{transform:scale(1)}}
+#pt-bg{position:absolute;inset:0;background:rgba(0,0,0,.75)}
+#pt-text{font-family:'Fredoka One',cursive;font-size:clamp(36px,8vw,64px);color:#fff;text-align:center;z-index:1;text-shadow:0 0 30px rgba(255,255,255,.4)}
+#pt-sub{font-size:14px;color:rgba(255,255,255,.6);z-index:1;text-align:center}
+
+/* Overlays */
+.ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:90;padding:24px;gap:14px;text-align:center}
+.ov.hidden{display:none}
+#start-ov{background:linear-gradient(180deg,#0a0618,#1a0a3c)}
+#over-ov{background:rgba(5,2,20,.95)}
+.big-title{font-family:'Fredoka One',cursive;font-size:clamp(44px,10vw,80px);line-height:1;margin-bottom:4px}
+.sub{font-size:13px;color:var(--muted);line-height:1.7;max-width:320px}
+.big-btn{font-family:'Fredoka One',cursive;font-size:20px;color:#07031a;background:var(--yellow);border:none;padding:12px 40px;border-radius:10px;cursor:pointer;box-shadow:0 5px 0 rgba(140,110,0,1);transition:transform .1s}
+.big-btn:hover{transform:translateY(-2px)}.big-btn:active{transform:translateY(2px)}
+.sec-btn{font-family:'Fredoka One',cursive;font-size:15px;padding:9px 22px;border-radius:10px;border:none;cursor:pointer;background:rgba(255,255,255,.1);color:#fff}
+.stat-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
+.stat{text-align:center}
+.stat-lbl{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+.stat-val{font-family:'Fredoka One',cursive;font-size:40px;color:var(--yellow);line-height:1}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="sky"></div>
+  <div id="stars"></div>
+  <div id="celestial"></div>
+  <div id="night-overlay"></div>
+  <div id="ground"></div>
+
+  <!-- Castle -->
+  <div id="castle-wrap">
+    <svg id="castle-svg" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Battlements -->
+      <rect x="0" y="20" width="25" height="40" rx="3" fill="#8b7355"/>
+      <rect x="30" y="30" width="25" height="30" rx="3" fill="#8b7355"/>
+      <rect x="60" y="20" width="25" height="40" rx="3" fill="#8b7355"/>
+      <rect x="90" y="30" width="25" height="30" rx="3" fill="#8b7355"/>
+      <rect x="120" y="20" width="40" height="40" rx="3" fill="#8b7355"/>
+      <!-- Main wall -->
+      <rect x="0" y="55" width="160" height="125" rx="4" fill="#9b8365"/>
+      <!-- Gate -->
+      <rect x="55" y="110" width="50" height="70" rx="6" fill="#3d2b1a"/>
+      <!-- Windows -->
+      <rect x="15" y="80" width="22" height="28" rx="4" fill="#3d2b1a"/>
+      <rect x="118" y="80" width="22" height="28" rx="4" fill="#3d2b1a"/>
+      <!-- Flag -->
+      <line x1="80" y1="0" x2="80" y2="22" stroke="#6b5a3e" stroke-width="3"/>
+      <polygon points="80,2 104,10 80,18" fill="#ff5a5a"/>
+    </svg>
+    <div id="castle-hp-bar"><div id="castle-hp-fill"></div></div>
+  </div>
+
+  <!-- Trees -->
+  <div id="trees-area">
+    <div class="tree" id="tree-0" onclick="chopTree(0)">
+      <div class="tree-top">🌲</div>
+      <div class="tree-trunk"></div>
+      <div class="tree-count" id="tc-0">3</div>
+    </div>
+    <div class="tree" id="tree-1" onclick="chopTree(1)">
+      <div class="tree-top">🌳</div>
+      <div class="tree-trunk"></div>
+      <div class="tree-count" id="tc-1">3</div>
+    </div>
+  </div>
+
+  <!-- Wood pile -->
+  <div id="wood-pile">
+    <div id="wood-emoji">🪵</div>
+    <div id="wood-count">0</div>
+    <div id="wood-label">Wood</div>
+  </div>
+
+  <!-- Forge -->
+  <div id="forge">
+    <div id="forge-label">⚒️ Forge</div>
+    <div id="weapons-row">
+      <div class="weapon-btn" id="wb-sword" onclick="craftWeapon('sword')">
+        <div class="wem">⚔️</div>
+        <div class="wname">Sword</div>
+        <div class="wcost">3 🪵</div>
+      </div>
+      <div class="weapon-btn" id="wb-bow" onclick="craftWeapon('bow')">
+        <div class="wem">🏹</div>
+        <div class="wname">Bow</div>
+        <div class="wcost">2 🪵</div>
+      </div>
+      <div class="weapon-btn" id="wb-axe" onclick="craftWeapon('axe')">
+        <div class="wem">🪓</div>
+        <div class="wname">Axe</div>
+        <div class="wcost">4 🪵</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Actions left -->
+  <div id="actions-wrap"></div>
+
+  <!-- Phase banner -->
+  <div id="phase-banner">🌅 Morning — Chop trees to gather wood!</div>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div id="day-badge">Day 1</div>
+    <div id="phase-badge">☀️ Morning</div>
+    <div id="score-badge">⭐ 0</div>
+  </div>
+
+  <!-- Wave info -->
+  <div id="wave-info">
+    <div>Zombies left</div>
+    <div class="big" id="zombie-count">30</div>
+  </div>
+
+  <!-- Battle layer -->
+  <div id="battle-layer"></div>
+
+  <!-- Active weapons -->
+  <div id="weapon-ready"></div>
+
+  <!-- Phase transition -->
+  <div id="phase-transition">
+    <div id="pt-bg"></div>
+    <div id="pt-text"></div>
+    <div id="pt-sub"></div>
+  </div>
+</div>
+
+<!-- START -->
+<div class="ov" id="start-ov">
+  <div class="big-title">🏰 Castle<br>Defenders!</div>
+  <div class="sub">
+    🌅 <strong style="color:var(--yellow)">Morning</strong> — Tap trees to chop wood<br>
+    ⚒️ <strong style="color:var(--orange)">Day</strong> — Forge weapons at the forge<br>
+    🌙 <strong style="color:var(--purple)">Night</strong> — Tap zombies to fight them off!<br><br>
+    Protect your castle! 30 zombies come each night.
+  </div>
+  <button class="big-btn" onclick="startGame()">Defend the Castle! 🏰</button>
+</div>
+
+<!-- GAME OVER -->
+<div class="ov hidden" id="over-ov">
+  <div style="font-size:56px" id="ov-icon">💀</div>
+  <div class="big-title" id="ov-title" style="color:var(--red)">Castle Fallen!</div>
+  <div style="font-size:13px;color:var(--muted)" id="ov-msg"></div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-lbl">Days</div><div class="stat-val" id="ov-days">0</div></div>
+    <div class="stat"><div class="stat-lbl">Zombies</div><div class="stat-val" id="ov-zombies">0</div></div>
+    <div class="stat"><div class="stat-lbl">Score</div><div class="stat-val" id="ov-score">0</div></div>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
+    <button class="big-btn" onclick="startGame()">Try Again! ⚔️</button>
+  </div>
+</div>
+
+<script>
+// ===== STATE =====
+let day=1, phase='morning', wood=0, score=0, castleHp=100;
+let weapons={sword:0,bow:0,axe:0};
+let actionsLeft=2, actionsMax=2;
+let treeLogs=[3,3];
+let zombiesTotal=30, zombiesLeft=0, zombiesKilled=0, totalKilled=0;
+let gameRunning=false, battleActive=false;
+let zombieIntervals=[], celestialTimer=null;
+let audioCtx;
+
+const WEAPON_COST={sword:3,bow:2,axe:4};
+const WEAPON_DMG={sword:1,bow:1,axe:2}; // hits per tap
+const WEAPON_EM={sword:'⚔️',bow:'🏹',axe:'🪓'};
+const ZOMBIE_EMOJIS=['🧟','🧟‍♀️','🧟‍♂️'];
+
+// ===== AUDIO =====
+function au(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function tone(f,d,type='sine',v=0.18){try{const c=au(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
+function playChop(){tone(200,.12,'sawtooth',.2);setTimeout(()=>tone(300,.08,'sine',.1),80);}
+function playCraft(){[400,500,600].forEach((f,i)=>setTimeout(()=>tone(f,.1,'sine',.18),i*60));}
+function playHit(){tone(180,.1,'sawtooth',.22);}
+function playKill(){tone(600,.08,'sine',.2);setTimeout(()=>tone(800,.12,'sine',.18),60);}
+function playNight(){[300,250,200,150].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.15),i*120));}
+function playMorning(){[400,500,600,700].forEach((f,i)=>setTimeout(()=>tone(f,.18,'sine',.2),i*100));}
+function playCastleHit(){tone(100,.2,'sawtooth',.25);}
+
+// ===== SKY / DAY-NIGHT =====
+function setSky(ph){
+  const sky=document.getElementById('sky');
+  const stars=document.getElementById('stars');
+  const overlay=document.getElementById('night-overlay');
+  const cel=document.getElementById('celestial');
+  if(ph==='morning'){
+    sky.style.background='linear-gradient(180deg,#87ceeb 0%,#d4f0ff 100%)';
+    stars.style.opacity='0';overlay.style.opacity='0';
+    cel.className='sun';cel.style.left='15%';cel.style.top='12%';
+  } else if(ph==='day'){
+    sky.style.background='linear-gradient(180deg,#5bb8e8 0%,#c8eaff 100%)';
+    cel.style.left='50%';
+  } else if(ph==='dusk'){
+    sky.style.background='linear-gradient(180deg,#ff6b35 0%,#ff8c42 40%,#1a0a3c 100%)';
+    cel.style.left='80%';
+  } else {
+    sky.style.background='linear-gradient(180deg,#0a0618 0%,#1a0a3c 100%)';
+    stars.style.opacity='1';overlay.style.opacity='0.5';
+    cel.className='moon';cel.style.left='70%';cel.style.top='10%';
+  }
+}
+
+function buildStars(){
+  const s=document.getElementById('stars');s.innerHTML='';
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div');el.className='star';
+    const sz=Math.random()*2+.5;
+    el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*60}%;--d:${1.5+Math.random()*2}s;animation-delay:${Math.random()*2}s`;
+    s.appendChild(el);
+  }
+}
+
+// ===== HUD =====
+function updateHUD(){
+  document.getElementById('day-badge').textContent='Day '+day;
+  document.getElementById('score-badge').textContent='⭐ '+score;
+  document.getElementById('wood-count').textContent=wood;
+  document.getElementById('castle-hp-fill').style.width=castleHp+'%';
+  document.getElementById('castle-hp-fill').style.background=castleHp>50?'linear-gradient(90deg,#5dffb0,#ffe14d)':castleHp>25?'linear-gradient(90deg,#ffe14d,#ff9a3c)':'linear-gradient(90deg,#ff5a5a,#ff9a3c)';
+  // Phase badge
+  const pb=document.getElementById('phase-badge');
+  if(phase==='morning'){pb.textContent='🌅 Morning';pb.style.background='#ffe14d';}
+  else if(phase==='day'){pb.textContent='⚒️ Forge';pb.style.background='#ff9a3c';}
+  else{pb.textContent='🌙 Night!';pb.style.background='#c77dff';}
+  // Weapon buttons
+  ['sword','bow','axe'].forEach(w=>{
+    const btn=document.getElementById('wb-'+w);
+    btn.classList.toggle('affordable',wood>=WEAPON_COST[w]&&weapons[w]===0);
+    btn.classList.toggle('owned',weapons[w]>0);
+  });
+  // Action pips
+  const aw=document.getElementById('actions-wrap');aw.innerHTML='';
+  for(let i=0;i<actionsMax;i++){
+    const pip=document.createElement('div');
+    pip.className='action-pip'+(i>=actionsLeft?' used':'');
+    aw.appendChild(pip);
+  }
+  // Trees
+  treeLogs.forEach((logs,i)=>{
+    document.getElementById('tc-'+i).textContent=logs;
+    document.getElementById('tree-'+i).classList.toggle('depleted',logs===0);
+  });
+}
+
+function setBanner(txt){document.getElementById('phase-banner').textContent=txt;}
+
+// ===== PHASES =====
+function startGame(){
+  day=1;phase='morning';wood=0;score=0;castleHp=100;
+  weapons={sword:0,bow:0,axe:0};
+  actionsLeft=2;actionsMax=2;treeLogs=[3,3];
+  zombiesKilled=0;totalKilled=0;battleActive=false;
+  gameRunning=true;
+  document.getElementById('start-ov').classList.add('hidden');
+  document.getElementById('over-ov').classList.add('hidden');
+  document.getElementById('battle-layer').innerHTML='';
+  document.getElementById('weapon-ready').innerHTML='';
+  document.getElementById('wave-info').style.display='none';
+  buildStars();
+  setSky('morning');
+  showForge(true);
+  showTrees(true);
+  setPhase('morning');
+}
+
+function setPhase(ph){
+  phase=ph;
+  updateHUD();
+  if(ph==='morning'){
+    setSky('morning');
+    actionsLeft=actionsMax;
+    treeLogs=[3,3];
+    setBanner('🌅 Morning — Tap trees to chop wood! ('+actionsLeft+' chops left)');
+    showForge(false);showTrees(true);
+    document.getElementById('battle-layer').innerHTML='';
+    document.getElementById('weapon-ready').innerHTML='';
+    document.getElementById('wave-info').style.display='none';
+    playMorning();
+  } else if(ph==='day'){
+    setSky('day');
+    setBanner('⚒️ Forge time — craft weapons before night falls!');
+    showForge(true);showTrees(false);
+  } else if(ph==='night'){
+    setSky('night');
+    showForge(false);showTrees(false);
+    buildWeaponBar();
+    startNight();
+    playNight();
+  }
+}
+
+function showForge(show){
+  document.getElementById('forge').style.display=show?'flex':'none';
+  document.getElementById('wood-pile').style.display=show?'flex':'none';
+  document.getElementById('actions-wrap').style.display=show?'flex':'none';
+}
+function showTrees(show){
+  document.getElementById('trees-area').style.display=show?'flex':'none';
+  document.getElementById('wood-pile').style.display=show?'flex':'none';
+  document.getElementById('actions-wrap').style.display=show?'flex':'none';
+}
+
+// ===== PHASE TRANSITION SCREEN =====
+function showTransition(title,sub,cb){
+  const pt=document.getElementById('phase-transition');
+  document.getElementById('pt-text').textContent=title;
+  document.getElementById('pt-sub').textContent=sub;
+  pt.classList.add('show');pt.style.opacity='1';pt.style.pointerEvents='all';
+  setTimeout(()=>{
+    pt.style.opacity='0';pt.style.pointerEvents='none';
+    setTimeout(()=>{pt.classList.remove('show');cb&&cb();},600);
+  },1800);
+}
+
+// ===== CHOP =====
+function chopTree(idx){
+  if(phase!=='morning'||actionsLeft<=0||treeLogs[idx]<=0||!gameRunning)return;
+  treeLogs[idx]=Math.max(0,treeLogs[idx]-1);
+  wood++;actionsLeft--;
+  playChop();
+  // Chop FX
+  const tree=document.getElementById('tree-'+idx);
+  const r=tree.getBoundingClientRect();
+  spawnFX(r.left+r.width/2,r.top,'🪵',r.left+r.width/2,r.top-10);
+  updateHUD();
+  setBanner('🌅 Morning — '+actionsLeft+' chop'+(actionsLeft!==1?'s':'')+' left!');
+  if(actionsLeft<=0){
+    setTimeout(()=>showTransition('⚒️ Forge Time!','Use your wood to craft weapons before night!',()=>setPhase('day')),400);
+  }
+}
+
+// ===== CRAFT =====
+function craftWeapon(w){
+  if(phase!=='day'||wood<WEAPON_COST[w]||weapons[w]>0||!gameRunning)return;
+  wood-=WEAPON_COST[w];
+  weapons[w]++;
+  playCraft();
+  updateHUD();
+  spawnFX(window.innerWidth/2,window.innerHeight*.5,WEAPON_EM[w],window.innerWidth/2,window.innerHeight*.4);
+  // Check if enough wood for more or proceed to night
+  const canAffordMore=Object.keys(WEAPON_COST).some(k=>weapons[k]===0&&wood>=WEAPON_COST[k]);
+  if(!canAffordMore&&wood<2){
+    setBanner('⚒️ Ready for battle! Tap "Go to Night" when ready.');
+    showGoNight();
+  }
+}
+
+function showGoNight(){
+  const forge=document.getElementById('forge');
+  if(document.getElementById('go-night-btn'))return;
+  const btn=document.createElement('button');
+  btn.id='go-night-btn';btn.className='big-btn';btn.textContent='⚔️ To Battle!';
+  btn.style.cssText='margin-top:8px;font-size:16px;padding:10px 28px';
+  btn.onclick=()=>showTransition('🌙 Night Falls!','Zombies incoming — tap them to fight!',()=>setPhase('night'));
+  forge.appendChild(btn);
+}
+
+// Always show go-night in day phase
+function checkShowGoNight(){
+  if(!document.getElementById('go-night-btn'))showGoNight();
+}
+
+// ===== NIGHT BATTLE =====
+function buildWeaponBar(){
+  const wrap=document.getElementById('weapon-ready');wrap.innerHTML='';
+  Object.keys(weapons).forEach(w=>{
+    if(weapons[w]<=0)return;
+    const btn=document.createElement('div');btn.className='active-weapon';
+    btn.innerHTML=`${WEAPON_EM[w]}<div class="wcharge">${WEAPON_DMG[w]}x</div>`;
+    btn.dataset.weapon=w;
+    wrap.appendChild(btn);
+  });
+}
+
+function startNight(){
+  battleActive=true;
+  zombiesTotal=20+day*10;
+  zombiesLeft=zombiesTotal;
+  const waveEl=document.getElementById('wave-info');
+  waveEl.style.display='block';
+  document.getElementById('zombie-count').textContent=zombiesLeft;
+  setBanner('🌙 NIGHT — Tap zombies to fight! Use your weapons!');
+
+  // Spawn zombies in waves
+  let spawned=0;
+  const spawnZombie=()=>{
+    if(!battleActive||spawned>=zombiesTotal)return;
+    createZombie();spawned++;
+    const delay=Math.max(400,1200-day*50);
+    if(spawned<zombiesTotal)setTimeout(spawnZombie,delay);
+  };
+  setTimeout(spawnZombie,800);
+}
+
+function createZombie(){
+  const fz=document.getElementById('battle-layer');
+  const el=document.createElement('div');el.className='zombie';
+  const em=ZOMBIE_EMOJIS[Math.floor(Math.random()*ZOMBIE_EMOJIS.length)];
+  el.textContent=em;
+  // Start off-screen right, random height in ground zone
+  const startX=window.innerWidth+60;
+  const y=window.innerHeight*(0.45+Math.random()*0.22);
+  el.style.left=startX+'px';
+  el.style.top=y+'px';
+  fz.appendChild(el);
+
+  // March left
+  const speed=0.4+day*0.15+Math.random()*0.3;
+  let x=startX;
+  let hp=1+Math.floor(day/3);
+  el.dataset.hp=hp;
+
+  const march=setInterval(()=>{
+    if(!battleActive){clearInterval(march);return;}
+    x-=speed;
+    el.style.left=x+'px';
+    // Reached castle
+    if(x<180){
+      clearInterval(march);
+      el.remove();
+      if(!battleActive)return;
+      castleHp=Math.max(0,castleHp-10);
+      playCastleHit();
+      updateHUD();
+      shakecastle();
+      zombiesLeft=Math.max(0,zombiesLeft-1);
+      document.getElementById('zombie-count').textContent=zombiesLeft;
+      if(castleHp<=0){endGame();return;}
+      if(zombiesLeft<=0)nightOver();
+    }
+  },16);
+  zombieIntervals.push(march);
+
+  // Tap to hit
+  el.addEventListener('click',e=>{e.stopPropagation();hitZombie(el,march,y);});
+  el.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();hitZombie(el,march,y);});
+}
+
+function hitZombie(el,march,y){
+  if(!battleActive||el.classList.contains('dying'))return;
+  let hp=parseInt(el.dataset.hp)||1;
+  // Use best available weapon
+  const dmg=getBestWeaponDmg();
+  hp-=dmg;el.dataset.hp=hp;
+  playHit();
+  // Hit fx
+  const r=el.getBoundingClientRect();
+  spawnHitFX(r.left+r.width/2,r.top+r.height/2);
+  if(hp<=0){
+    clearInterval(march);
+    el.classList.add('dying');
+    playKill();
+    score+=10*(1+Math.floor(day/2));
+    totalKilled++;zombiesLeft=Math.max(0,zombiesLeft-1);
+    document.getElementById('zombie-count').textContent=zombiesLeft;
+    document.getElementById('score-badge').textContent='⭐ '+score;
+    setTimeout(()=>{el.remove();},420);
+    if(zombiesLeft<=0)setTimeout(nightOver,500);
+  }
+}
+
+function getBestWeaponDmg(){
+  if(weapons.axe>0)return WEAPON_DMG.axe;
+  if(weapons.sword>0)return WEAPON_DMG.sword;
+  if(weapons.bow>0)return WEAPON_DMG.bow;
+  return 1;
+}
+
+function shakecastle(){
+  const c=document.getElementById('castle-wrap');
+  c.style.transform='translateX(-8px)';
+  setTimeout(()=>c.style.transform='translateX(4px)',100);
+  setTimeout(()=>c.style.transform='',200);
+}
+
+function nightOver(){
+  if(!battleActive)return;
+  battleActive=false;
+  zombieIntervals.forEach(clearInterval);zombieIntervals=[];
+  document.getElementById('battle-layer').innerHTML='';
+  document.getElementById('wave-info').style.display='none';
+  day++;weapons={sword:0,bow:0,axe:0};wood=0;
+  const survived=zombiesTotal-zombiesLeft;
+  score+=survived*5;
+  showTransition('☀️ You survived!',`Day ${day} begins — chop wood and prepare!`,()=>setPhase('morning'));
+}
+
+function endGame(){
+  battleActive=false;gameRunning=false;
+  zombieIntervals.forEach(clearInterval);zombieIntervals=[];
+  document.getElementById('over-ov').classList.remove('hidden');
+  document.getElementById('ov-title').textContent=castleHp<=0?'Castle Fallen! 💀':'You Survived!';
+  document.getElementById('ov-icon').textContent=castleHp<=0?'💀':'🏆';
+  document.getElementById('ov-msg').textContent=castleHp<=0?`The zombies broke through on Day ${day}!`:`Amazing defence on Day ${day}!`;
+  document.getElementById('ov-days').textContent=day;
+  document.getElementById('ov-zombies').textContent=totalKilled;
+  document.getElementById('ov-score').textContent=score;
+}
+
+// ===== EFFECTS =====
+function spawnFX(x,y,em){
+  const el=document.createElement('div');el.className='chop-fx';
+  el.textContent=em;el.style.cssText=`left:${x}px;top:${y}px;transform:translateX(-50%)`;
+  document.getElementById('game').appendChild(el);
+  setTimeout(()=>el.remove(),700);
+}
+function spawnHitFX(x,y){
+  const el=document.createElement('div');el.className='hit-fx';
+  el.textContent=['💥','⚡','✨'][Math.floor(Math.random()*3)];
+  el.style.cssText=`left:${x}px;top:${y}px`;
+  document.getElementById('game').appendChild(el);
+  setTimeout(()=>el.remove(),550);
+}
+
+// Day phase — always show go to night button
+document.addEventListener('DOMContentLoaded',()=>{});
+
+// Update day phase to show go-night button after building
+const _origSetPhase=setPhase;
+</script>
+</body>
+</html>
