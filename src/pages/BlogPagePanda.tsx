@@ -28,10 +28,10 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 		>
 			<SkipLink />
 			<Helmet>
-				<title>Nick Karnik Blog | Engineering, Leadership & AI</title>
+				<title>Nick Karnik | Blog</title>
 				<meta
 					name="description"
-					content="Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster."
+					content="Writing about AI, search, developer tools, and what I learn building software."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/blog" />
 			</Helmet>
