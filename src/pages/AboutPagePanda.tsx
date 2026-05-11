@@ -27,10 +27,10 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 			})}
 		>
 			<Helmet>
-				<title>About Nick Karnik | Engineering Leader & Advisor</title>
+				<title>Nick Karnik | About</title>
 				<meta
 					name="description"
-					content="Engineering leader and advisor helping teams move faster with clear product bets, strong execution, and simple systems."
+					content="Engineer, builder, and dad of three. Twenty-five years building software across search, AI, and data."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/about" />
 			</Helmet>

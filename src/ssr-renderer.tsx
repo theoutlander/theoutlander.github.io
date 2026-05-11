@@ -838,8 +838,8 @@ export async function renderAllStaticPagesSSR() {
 	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
 	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
-		"About Nick Karnik | Engineering Leader & Advisor",
-		"Nick Karnik is a software engineer and leader with decades of experience across Big Tech and startups. Advisor to founders on AI, developer experience, and reliable systems.",
+		"Nick Karnik | About",
+		"Engineer, builder, and dad of three. Twenty-five years building software across search, AI, and data.",
 		aboutResult.html,
 		cssHref,
 		aboutResult.helmet.title +
@@ -862,7 +862,7 @@ export async function renderAllStaticPagesSSR() {
 	const resumeResult = renderPageToHTML(ResumePagePanda, {});
 	const resumeJsonLd = generatePersonJsonLd("https://nick.karnik.io/resume");
 	const resumeHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik Resume | Engineering Leadership & Expertise",
+		"Nick Karnik | Resume",
 		"Explore Nick Karnik's professional background: 10+ years leading teams, 25+ years building software, and a track record of delivering reliable, scalable systems.",
 		resumeResult.html,
 		cssHref,

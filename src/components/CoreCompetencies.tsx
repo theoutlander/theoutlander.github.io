@@ -16,6 +16,11 @@ const items = [
 		body:
 			"Currently building new tools. Making games with my three kids. Always something cooking.",
 	},
+	{
+		title: "Engineering Leadership",
+		body:
+			"Led teams across Google, Microsoft, Tableau, and T-Mobile. Hired, mentored, and scaled engineering organizations from zero to production.",
+	},
 ];
 
 export default function CoreCompetencies() {

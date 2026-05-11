@@ -34,6 +34,9 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 						href="/"
 						aria-current={currentPage === "home" ? "page" : undefined}
 						className={css({
+							display: "flex",
+							alignItems: "center",
+							gap: "2",
 							textDecoration: "none",
 							_focus: {
 								outline: "2px solid brand.600",
@@ -42,6 +45,19 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 							},
 						})}
 					>
+						<img
+							src="/assets/images/profile/nick-karnik.jpeg"
+							alt=""
+							width={32}
+							height={32}
+							className={css({
+								width: "32px",
+								height: "32px",
+								borderRadius: "full",
+								objectFit: "cover",
+								flexShrink: 0,
+							})}
+						/>
 						<h1
 							className={css({
 								fontSize: "md",

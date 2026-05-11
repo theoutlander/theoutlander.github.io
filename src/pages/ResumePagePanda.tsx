@@ -10,7 +10,7 @@ export function ResumePagePanda() {
 	return (
 		<>
 			<Helmet>
-				<title>Nick Karnik Resume | Engineering Leadership & Expertise</title>
+				<title>Nick Karnik | Resume</title>
 				<meta
 					name="description"
 					content="Browse the resume of Nick Karnik: engineering leadership, staff software engineering, and delivery at scale."
