@@ -270,7 +270,7 @@ const experience: Exp[] = [
 		company: "Fullstack Consulting",
 		dates: "Mar 2018 – Nov 2018",
 		blurb:
-			"Trained 100+ students in React, Node, GraphQL; created technical content for YouTube and dev.to. Consulted on MVPs and scale-up projects with clients including Hims, ForHers, CopBot, and Sensei Ag. Built and delivered mobile applications using React Native for early-stage clients.",
+			"Consulted on MVPs and scale-up projects for clients including Hims/Hers, Sensei Ag (founded by Larry Ellison), and CopBot. Trained 100+ developers in React, Node, and GraphQL via Codementor, YouTube, and dev.to. Built and delivered mobile applications using React Native for early stage clients.",
 		tags: ["React Native", "GraphQL", "Training", "Consulting", "Mobile Apps"],
 	},
 	{

@@ -140,8 +140,8 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 									mb: 4,
 								})}
 							>
-								My work on geospatial visualization of epidemiological modeling was featured in
-								this TED Talk by Bill Gates.
+								My work on geospatial visualization of epidemiological{" "}
+								modeling was featured in this TED Talk by Bill Gates.
 							</p>
 							<div
 								className={css({
