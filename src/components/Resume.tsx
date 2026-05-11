@@ -24,7 +24,6 @@ const getCompanyKey = (companyName: string): string => {
 		"Fullstack Consulting": "fullstack",
 		"Treasure Technologies": "treasure",
 		Jobbatical: "jobbatical",
-		"Gates Foundation": "idm",
 		"Institute for Disease Modeling (Gates Foundation)": "idm",
 		Microsoft: "microsoft",
 		Tableau: "tableau",
@@ -55,7 +54,6 @@ const getCompanyUrl = (companyName: string): string | null => {
 		Google: "https://www.google.com",
 		Salesforce: "https://www.salesforce.com",
 		"T-Mobile": "https://www.t-mobile.com",
-		"Gates Foundation": "https://www.gatesfoundation.org",
 		"Institute for Disease Modeling (Gates Foundation)":
 			"https://www.idmod.org",
 		Microsoft: "https://www.microsoft.com",
@@ -290,7 +288,7 @@ const experience: Exp[] = [
 	},
 	{
 		role: "Senior Software Engineer",
-		company: "Gates Foundation",
+		company: "Institute for Disease Modeling (Gates Foundation)",
 		dates: "Sep 2012 – Oct 2016",
 		blurb:
 			"Built simulation and visualization tools for malaria, HIV, TB, polio, and more. Developed software and spatial models featured in Bill Gates' TED Talk \"The next outbreak? We're not ready.\" Collaborated with organizations like WHO, ministries of health, NGOs, and universities.",
@@ -400,7 +398,7 @@ const projects = [
 		company: "Videoly",
 		dates: "2007 - 2009",
 		description:
-			"Co-founded video mail platform allowing users to send video messages via webcam or upload existing videos through email accounts. Accepted into YCombinator 2007. Experimented with ad-based and paid revenue models for consumer space and B2B platform services.",
+			"Co-founded video mail platform allowing users to send video messages via webcam or upload existing videos through email accounts. Reached final stages of YCombinator 2007 application process. Experimented with ad-based and paid revenue models for consumer space and B2B platform services.",
 		tags: [
 			"Ruby on Rails",
 			"Flex",
@@ -476,14 +474,13 @@ export default function Resume() {
 						<h3 className={sectionHeader}>Summary</h3>
 						<div className={css({ p: { base: 4, md: 6 } })}>
 							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-								Engineering leader with 25+ years building scalable platforms at
-								Google, Microsoft, Salesforce, Tableau, and startups. Led Gemini
-								Code Assist from inception to adoption by millions of
-								developers. Developed epidemiological modeling systems featured
-								in Bill Gates’ TED Talk and led high-performing engineering
-								teams across Big Tech and high-growth environments. After a
-								brief transition in April 2025, now focused on full-time
-								engineering leadership in AI, platform, and product engineering.
+								Twenty-five years building software across search, data, and AI.
+								At Microsoft I spent six years on Bing search building relevance
+								systems, data pipelines, and ML classifiers. At the Institute for
+								Disease Modeling I built epidemiological software featured in a
+								Bill Gates TED Talk. At Tableau I led the data connectivity
+								platform. At Google I led Gemini Code Assist from inception to
+								adoption by millions of developers.
 							</p>
 						</div>
 					</article>
@@ -598,8 +595,9 @@ export default function Resume() {
 														/US Patent 8,918,354: Intelligent intent detection from social network messages/,
 														'<a href="https://patents.google.com/patent/US8918354B2/en" target="_blank" rel="noopener noreferrer" class="patent-link">US Patent 8,918,354: Intelligent intent detection from social network messages</a>'
 												  )
-												: e.company === "Gates Foundation" &&
-												  e.blurb.includes(
+												: e.company ===
+														"Institute for Disease Modeling (Gates Foundation)" &&
+													e.blurb.includes(
 														"The next outbreak? We're not ready."
 												  )
 												? e.blurb.replace(

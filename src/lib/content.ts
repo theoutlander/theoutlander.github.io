@@ -74,9 +74,9 @@ function getInlinePost(slug: string): BlogPost | null {
 // Client-side functions that fetch from the generated JSON files
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 	try {
-		// Route loaders and SSR run in Node without `document`. Reading `public/data/*.json`
-		// via relative fetch is unreliable here; load directly from `content/blog` instead.
-		if (typeof window === "undefined") {
+		// Vite SSR only: read markdown from disk (client builds replace `import.meta.env.SSR`
+		// with false so Rollup drops this branch and does not bundle Node-only `content-server`).
+		if (import.meta.env.SSR) {
 			const { loadAllBlogPosts: loadFromDisk } = await import("./content-server");
 			const posts = await loadFromDisk();
 			cachedAllPosts = posts.map((post) => normalizePost(post, post.slug));
@@ -107,7 +107,7 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 
 export async function loadBlogPost(slug: string): Promise<BlogPost | null> {
 	try {
-		if (typeof window === "undefined") {
+		if (import.meta.env.SSR) {
 			const { loadBlogPost: loadOne } = await import("./content-server");
 			const post = await loadOne(slug);
 			if (!post) return null;
