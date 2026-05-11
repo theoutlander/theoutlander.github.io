@@ -30,7 +30,7 @@ export default function HeroSSR() {
 				bg: "white",
 				_dark: { bg: "dark.surface" },
 				pt: { base: "10", md: "16" },
-				pb: { base: "10", md: "14" },
+				pb: { base: "4", md: "6" },
 				display: "flex",
 				alignItems: "flex-start",
 			})}
