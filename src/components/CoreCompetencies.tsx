@@ -33,29 +33,20 @@ export default function CoreCompetencies() {
 				_dark: { bg: "dark.surface" },
 			})}
 		>
-			<div
+			<h2
 				className={css({
-					maxW: "1040px",
-					mx: "auto",
-					mb: { base: "8", lg: "16" },
-					px: "0",
+					fontWeight: "bold",
+					fontSize: { base: "2xl", sm: "3xl" },
+					mb: "6",
+					mt: "0",
+					color: { base: "gray.900", _dark: "dark.text" },
+					lineHeight: "1.2",
 					textAlign: "left",
+					width: "100%",
 				})}
 			>
-				<h2
-					className={css({
-						fontWeight: "bold",
-						fontSize: { base: "2xl", sm: "3xl" },
-						mb: "6",
-						mt: "2",
-						color: { base: "gray.900", _dark: "dark.text" },
-						lineHeight: "1.2",
-						textAlign: "left",
-					})}
-				>
-					What I Work On
-				</h2>
-			</div>
+				What I Work On
+			</h2>
 
 			<div
 				className={css({
