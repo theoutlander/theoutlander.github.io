@@ -77,7 +77,9 @@ The model catches most of the real negative reviews but a third of its flags are
 
 Precision and recall move in opposite directions. Most classifiers output a confidence score and you set a threshold to decide what counts as a positive prediction.
 
+<!-- build-todo -->
 **Note:** Want to understand how models generate these confidence scores? See [How Models Output Confidence Scores](./how-models-output-confidence-scores.md) to learn how they learn to output probabilities during training.
+<!-- /build-todo -->
 
 Raise the threshold and the model becomes more selective. Fewer false alarms, but more missed cases. Precision improves, recall drops.
 

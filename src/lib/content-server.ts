@@ -110,6 +110,30 @@ function removeAllMermaidBlocks(markdown: string): string {
 	return processedLines.join('\n');
 }
 
+/**
+ * Removes `<!-- build-todo --> ... <!-- /build-todo -->` regions from markdown
+ * before HTML conversion. Content is omitted from published JSON/HTML but logged
+ * during `generate-blog-data` / dev loads so unfinished cross-links stay tracked.
+ */
+function removeBuildTodoSections(markdown: string, slug: string): string {
+	const pattern =
+		/<!--\s*build-todo\s*-->([\s\S]*?)<!--\s*\/build-todo\s*-->/gi;
+	let matchCount = 0;
+
+	const stripped = markdown.replace(pattern, (_full, inner: string) => {
+		matchCount += 1;
+		const body = inner.trim();
+		const preview =
+			body.length > 400 ? `${body.slice(0, 400)}…` : body;
+		console.log(
+			`[blog build-todo] ${slug} (#${matchCount}):\n${preview}\n`
+		);
+		return "";
+	});
+
+	return stripped.replace(/\n{3,}/g, "\n\n");
+}
+
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 	const contentDir = join(process.cwd(), "content", "blog");
 	const files = readdirSync(contentDir).filter(
@@ -126,7 +150,8 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 			const slug = getSlugFromFilename(file);
 
 			// Remove all Mermaid blocks
-			const processedMarkdown = removeAllMermaidBlocks(markdown);
+			let processedMarkdown = removeAllMermaidBlocks(markdown);
+			processedMarkdown = removeBuildTodoSections(processedMarkdown, slug);
 
 			const rawHtml = await marked(processedMarkdown, {
 				breaks: true,

@@ -221,7 +221,7 @@ export default function Footer() {
 								<div className={css(iconWrapper, getIconColorStyles("resume"))}>
 									<FaGamepad size={ICON_SIZE} />
 								</div>
-								<span>maya.karnik.io</span>
+								<span>Maya's Game Lab</span>
 							</a>
 							<a
 								href="https://stackoverflow.com/users/460472/nick"
@@ -325,7 +325,7 @@ export default function Footer() {
 						{/* </div> */}
 					</div>
 
-					{/* Footer bottom: consulting + copyright – mobile stack, desktop one line */}
+					{/* Footer bottom: copyright */}
 					<div
 						className={css({
 							mt: { base: "2.5rem", md: "2rem" },
@@ -336,76 +336,28 @@ export default function Footer() {
 							textAlign: "center",
 						})}
 						role="contentinfo"
-						aria-label="Footer legal and consulting"
+						aria-label="Footer legal"
 					>
-						<div
+						<span
 							className={css({
-								display: "flex",
-								flexDirection: "column",
-								alignItems: "center",
-								justifyContent: "center",
-								gap: "0.75rem",
+								fontSize: { base: "0.75rem", md: "0.8125rem" },
+								fontWeight: "400",
+								letterSpacing: "0.02em",
+								color: { base: "gray.500", _dark: "gray.500" },
+								lineHeight: "1.5",
 							})}
 						>
+							© {currentYear}{" "}
 							<span
 								className={css({
-									fontSize: { base: "0.8125rem", md: "0.875rem" },
-									fontWeight: "500",
-									letterSpacing: "0.01em",
-									color: { base: "gray.600", _dark: "gray.400" },
-									lineHeight: "1.5",
+									fontWeight: "600",
+									color: { base: "gray.700", _dark: "gray.300" },
 								})}
 							>
-								Available for consulting at{" "}
-								<a
-									href="https://plutonicconsulting.com"
-									target="_blank"
-									rel="noopener"
-									className={css({
-										color: { base: "brand.600", _dark: "brand.400" },
-										textDecoration: "none",
-										fontWeight: "600",
-										letterSpacing: "0.02em",
-										cursor: linkCursor,
-										transition: "color 0.2s ease",
-										"@media (prefers-reduced-motion: reduce)": {
-											transition: "none",
-										},
-										_hover: {
-											color: { base: "brand.700", _dark: "brand.300" },
-											textDecoration: "underline",
-										},
-										_focus: {
-											outline: "2px solid brand.600",
-											outlineOffset: "2px",
-											borderRadius: "4px",
-										},
-									})}
-								>
-									Plutonic Consulting
-								</a>
+								Nick Karnik
 							</span>
-							<span
-								className={css({
-									fontSize: { base: "0.75rem", md: "0.8125rem" },
-									fontWeight: "400",
-									letterSpacing: "0.02em",
-									color: { base: "gray.500", _dark: "gray.500" },
-									lineHeight: "1.5",
-								})}
-							>
-								© {currentYear}{" "}
-								<span
-									className={css({
-										fontWeight: "600",
-										color: { base: "gray.700", _dark: "gray.300" },
-									})}
-								>
-									Nick Karnik
-								</span>
-								. All rights reserved.
-							</span>
-						</div>
+							. All rights reserved.
+						</span>
 					</div>
 			</div>
 		</footer>
