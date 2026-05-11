@@ -1,5 +1,4 @@
 import { css } from "../../styled-system/css/index.mjs";
-import { flex, hstack } from "../../styled-system/patterns/index.mjs";
 import {
 	FaGithub,
 	FaGamepad,
@@ -110,6 +109,8 @@ export default function Footer() {
 				pt: { base: "6", md: "10" },
 				pb: { base: "8", md: "10" },
 				mt: "8",
+				flexShrink: 0,
+				width: "100%",
 			})}
 		>
 			<div

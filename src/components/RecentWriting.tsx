@@ -34,7 +34,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 			data-testid="recent-writing"
 			className={css({
 				bg: "white",
-				mt: "40px",
+				mt: "0",
 				py: { base: "10", md: "12" },
 				_dark: { bg: "dark.surface" },
 			})}

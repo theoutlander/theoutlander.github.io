@@ -38,7 +38,13 @@ export function HomePagePanda({ posts }: HomePageProps) {
 				<HeaderSSR currentPage="home" />
 				<main
 					id="main-content"
-					className={css({ flex: "1" })}
+					className={css({
+						flex: "1",
+						display: "flex",
+						flexDirection: "column",
+						bg: { base: "white", _dark: "dark.surface" },
+						minHeight: 0,
+					})}
 				>
 					<HeroSSR />
 					<RecentWriting posts={posts ?? []} />
