@@ -268,15 +268,15 @@ export default function NameHeader({
 				alt="Nick Karnik"
 				className={avatarClass}
 				style={{
-					width: "96px",
-					height: "96px",
-					minWidth: "96px",
-					minHeight: "96px",
+					width: "128px",
+					height: "128px",
+					minWidth: "128px",
+					minHeight: "128px",
 				}}
 				loading="lazy"
 			/>
 			<div className={titleBox}>
-				<span className={nameCss}>Nick Karnik</span>
+				{!plain && <span className={nameCss}>Nick Karnik</span>}
 				{showSubtitle && (
 					<span className={subtitleCss}>
 						Engineering Leader - AI & Product Strategy

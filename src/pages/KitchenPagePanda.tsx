@@ -14,6 +14,8 @@ export function KitchenPagePanda() {
 				minH: "100vh",
 				width: "100%",
 				overflowX: "hidden",
+				display: "flex",
+				flexDirection: "column",
 			})}
 		>
 			<Helmet>
@@ -33,6 +35,8 @@ export function KitchenPagePanda() {
 					mx: "auto",
 					px: { base: 4, md: 6 },
 					py: 8,
+					flex: "1",
+					width: "100%",
 				})}
 			>
 				<h1

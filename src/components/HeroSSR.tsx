@@ -26,10 +26,10 @@ export default function HeroSSR() {
 
 	return (
 		<section
+			style={{ paddingTop: "64px" }}
 			className={css({
 				bg: "white",
 				_dark: { bg: "dark.surface" },
-				pt: { base: "12", md: "16" },
 				pb: { base: "4", md: "6" },
 				display: "flex",
 				alignItems: "flex-start",

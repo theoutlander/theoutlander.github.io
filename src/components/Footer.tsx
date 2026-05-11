@@ -315,9 +315,8 @@ export default function Footer() {
 					{/* Footer bottom: copyright */}
 					<div
 						className={css({
-							mt: { base: "2.5rem", md: "2rem" },
+							mt: { base: "2rem", md: "2rem" },
 							pt: { base: "0.75rem", md: "1rem" },
-							pb: { base: "2.5rem", md: "3rem" },
 							borderTop: "1px solid",
 							borderColor: { base: "gray.200", _dark: "gray.700" },
 							textAlign: "center",
