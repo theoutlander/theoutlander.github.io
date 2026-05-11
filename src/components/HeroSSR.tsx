@@ -19,8 +19,8 @@ export default function HeroSSR() {
 			})}
 		>
 			Twenty-five years of building software across search engines, disease models, data platforms, and
-			AI tools. I cook seriously, make cocktails, travel when I can, and build games with my three
-			kids. Still figuring out what comes next and building it anyway.
+			AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still
+			figuring out what comes next and building it anyway.
 		</p>
 	);
 
