@@ -183,29 +183,6 @@ export default function HeaderSSR({ currentPage }: HeaderProps = {}) {
 						>
 							Reviews
 						</a>
-						<a
-							href="/schedule"
-							className={css({
-								color: "gray.600",
-								fontWeight: "normal",
-								textDecoration: "none",
-								padding: "8px 12px",
-								borderRadius: "4px",
-								minHeight: "44px",
-								display: "flex",
-								alignItems: "center",
-								_hover: {
-									color: "brand.600",
-									textDecoration: "underline",
-								},
-								_focus: {
-									outline: "2px solid brand.600",
-									outlineOffset: "2px",
-								},
-							})}
-						>
-							Schedule
-						</a>
 					</nav>
 				</div>
 			</div>
