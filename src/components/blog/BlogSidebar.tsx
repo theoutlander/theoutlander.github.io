@@ -23,27 +23,21 @@ const linkClassTight = css({
 /** Blog index (bottom): obvious filter-style pills. Sidebar keeps compact text links. */
 const categoryPillBottomClass = css({
 	display: "inline-block",
-	fontSize: { base: "md", md: "lg" },
+	fontSize: "md",
 	fontWeight: "600",
-	lineHeight: "1.2",
-	color: { base: "gray.900", _dark: "dark.text" },
+	color: { base: "gray.900", _dark: "white" },
 	textDecoration: "none",
-	padding: { base: "10px 16px", md: "12px 20px" },
+	padding: "10px 20px",
 	borderRadius: "9999px",
-	borderWidth: "1px",
+	borderWidth: "2px",
 	borderStyle: "solid",
-	borderColor: { base: "gray.300", _dark: "gray.600" },
-	backgroundColor: { base: "white", _dark: "dark.surface" },
-	transitionProperty: "background-color, border-color",
-	transitionDuration: "150ms",
+	borderColor: { base: "gray.900", _dark: "gray.400" },
+	backgroundColor: "transparent",
+	cursor: "pointer",
+	transition: "all 150ms ease",
 	_hover: {
-		backgroundColor: { base: "gray.100", _dark: "gray.800" },
-		borderColor: { base: "gray.500", _dark: "gray.500" },
-	},
-	_focusVisible: {
-		outline: "2px solid",
-		outlineColor: { base: "brand.600", _dark: "brand.400" },
-		outlineOffset: "2px",
+		backgroundColor: { base: "gray.900", _dark: "white" },
+		color: { base: "white", _dark: "gray.900" },
 	},
 });
 
