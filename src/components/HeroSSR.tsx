@@ -39,7 +39,7 @@ export default function HeroSSR() {
 				className={css({
 					maxW: "1040px",
 					mx: "auto",
-					px: { base: "4", md: "6", lg: "8" },
+					px: "0",
 					width: "100%",
 				})}
 			>

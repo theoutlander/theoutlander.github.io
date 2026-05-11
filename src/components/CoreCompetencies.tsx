@@ -26,9 +26,10 @@ const items = [
 export default function CoreCompetencies() {
 	return (
 		<section
+			data-testid="core-competencies"
 			className={css({
 				bg: "white",
-				py: "12",
+				py: "0",
 				_dark: { bg: "dark.surface" },
 			})}
 		>
@@ -36,8 +37,8 @@ export default function CoreCompetencies() {
 				className={css({
 					maxW: "1040px",
 					mx: "auto",
-					mb: "16",
-					px: { base: "4", md: "6", lg: "8" },
+					mb: { base: "8", lg: "16" },
+					px: "0",
 					textAlign: "left",
 				})}
 			>
@@ -58,9 +59,10 @@ export default function CoreCompetencies() {
 				className={css({
 					maxW: "5xl",
 					mx: "auto",
-					px: { base: "4", md: "6" },
+					px: "0",
 					display: "flex",
 					flexDirection: { base: "column", md: "row" },
+					flexWrap: { base: "nowrap", lg: "wrap" },
 					gap: { base: "6", md: "8" },
 					alignItems: "stretch",
 					justifyContent: "center",

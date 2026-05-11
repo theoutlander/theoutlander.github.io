@@ -35,10 +35,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 			className={css({
 				bg: "white",
 				mt: "0",
-				py: { base: "6", md: "8" },
-				borderBottomWidth: "1px",
-				borderBottomStyle: "solid",
-				borderBottomColor: { base: "gray.200", _dark: "gray.700" },
+				py: { base: "0", lg: "0" },
 				_dark: { bg: "dark.surface" },
 			})}
 			aria-labelledby="recent-writing-heading"
@@ -47,15 +44,16 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 				className={css({
 					maxW: "1040px",
 					mx: "auto",
-					px: { base: "4", md: "6", lg: "8" },
+					px: { base: "0", lg: "0" },
+					width: "100%",
 				})}
 			>
 				<h2
 					id="recent-writing-heading"
 					className={css({
 						fontWeight: "bold",
-						fontSize: { base: "2xl", sm: "3xl", md: "4xl" },
-						mb: { base: "6", md: "8" },
+						fontSize: { base: "2xl", sm: "3xl", md: "4xl", lg: "xl" },
+						mb: { base: "6", md: "8", lg: "4" },
 						color: { base: "gray.900", _dark: "dark.text" },
 						lineHeight: "1.2",
 					})}
@@ -69,7 +67,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 						p: 0,
 						display: "flex",
 						flexDirection: "column",
-						gap: { base: "6", md: "8" },
+						gap: { base: "6", md: "8", lg: "5" },
 					})}
 				>
 					{list.map((post) => (
@@ -90,7 +88,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 							>
 								<h3
 									className={css({
-										fontSize: { base: "lg", md: "xl" },
+										fontSize: { base: "lg", md: "xl", lg: "md" },
 										fontWeight: "semibold",
 										color: { base: "brand.700", _dark: "brand.400" },
 										mb: "1",
@@ -113,7 +111,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 								</time>
 								<p
 									className={css({
-										fontSize: "md",
+										fontSize: { base: "md", lg: "sm" },
 										lineHeight: "1.6",
 										color: { base: "gray.600", _dark: "gray.300" },
 										m: 0,
