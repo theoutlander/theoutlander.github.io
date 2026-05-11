@@ -19,10 +19,10 @@ export function KitchenPagePanda() {
 			})}
 		>
 			<Helmet>
-				<title>Kitchen</title>
+				<title>Nick Karnik | Kitchen</title>
 				<meta
 					name="description"
-					content="Coming soon. Good things take time."
+					content="Recipes, cocktails, and things I cook."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/kitchen" />
 			</Helmet>

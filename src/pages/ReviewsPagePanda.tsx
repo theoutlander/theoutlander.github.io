@@ -22,10 +22,10 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 			})}
 		>
 			<Helmet>
-				<title>What People Say | Nick Karnik</title>
+				<title>Nick Karnik | Reviews</title>
 				<meta
 					name="description"
-					content="Client reviews and testimonials from Codementor sessions with Nick Karnik."
+					content="Reviews from people I have worked with and mentored over the years."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/reviews" />
 			</Helmet>

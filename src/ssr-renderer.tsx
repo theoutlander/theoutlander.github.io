@@ -768,7 +768,7 @@ export async function renderAllStaticPagesSSR() {
 	];
 	const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik",
-		"25 years building software at Google, Microsoft, and startups. Writing about AI, search, and developer tools from first principles.",
+		"Twenty-five years building software across search, AI, and data. Engineer, builder, dad of three.",
 		homeResult.html,
 		cssHref,
 		homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link,
@@ -790,8 +790,8 @@ export async function renderAllStaticPagesSSR() {
 	const blogResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
 	const blogJsonLd = generateBlogJsonLd();
 	const blogHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik Blog | Engineering, Leadership & AI",
-		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
+		"Nick Karnik | Blog",
+		"Writing about AI, search, developer tools, and what I learn building software.",
 		blogResult.html,
 		cssHref,
 		blogResult.helmet.title + blogResult.helmet.meta + blogResult.helmet.link,
@@ -813,8 +813,8 @@ export async function renderAllStaticPagesSSR() {
 	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
 	const blogsJsonLd = generateBlogJsonLd();
 	const blogsHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik Blogs | Engineering, Leadership & AI",
-		"Practical essays and reflections on software engineering, leadership, and AI. Lessons from shipping products at scale and helping teams move faster.",
+		"Nick Karnik | Blog",
+		"Writing about AI, search, developer tools, and what I learn building software.",
 		blogsResult.html,
 		cssHref,
 		blogsResult.helmet.title +
@@ -839,7 +839,7 @@ export async function renderAllStaticPagesSSR() {
 	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | About",
-		"Engineer, builder, and dad of three. Twenty-five years building software across search, AI, and data.",
+		"Engineer, builder, dad of three. Twenty-five years building software across search, AI, and data.",
 		aboutResult.html,
 		cssHref,
 		aboutResult.helmet.title +
@@ -863,7 +863,7 @@ export async function renderAllStaticPagesSSR() {
 	const resumeJsonLd = generatePersonJsonLd("https://nick.karnik.io/resume");
 	const resumeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Resume",
-		"Explore Nick Karnik's professional background: 10+ years leading teams, 25+ years building software, and a track record of delivering reliable, scalable systems.",
+		"Software engineer and engineering leader with 25 years across Google, Microsoft, Tableau, and startups.",
 		resumeResult.html,
 		cssHref,
 		resumeResult.helmet.title +
@@ -907,8 +907,8 @@ export async function renderAllStaticPagesSSR() {
 	mkdirSync(kitchenDir, { recursive: true });
 	const kitchenResult = renderPageToHTML(KitchenPagePanda, {});
 	const kitchenHTMLWithStyles = generateBaseHTML(
-		"Kitchen",
-		"Coming soon. Good things take time.",
+		"Nick Karnik | Kitchen",
+		"Recipes, cocktails, and things I cook.",
 		kitchenResult.html,
 		cssHref,
 		kitchenResult.helmet.title +
@@ -941,8 +941,8 @@ export async function renderAllStaticPagesSSR() {
 	const reviewsResult = renderPageToHTML(ReviewsPagePanda, { reviews: reviewsData });
 	const reviewsJsonLd = generatePersonJsonLd("https://nick.karnik.io/reviews");
 	const reviewsHTMLWithStyles = generateBaseHTML(
-		"What People Say | Nick Karnik",
-		"Client reviews and testimonials from Codementor sessions with Nick Karnik.",
+		"Nick Karnik | Reviews",
+		"Reviews from people I have worked with and mentored over the years.",
 		reviewsResult.html,
 		cssHref,
 		reviewsResult.helmet.title +

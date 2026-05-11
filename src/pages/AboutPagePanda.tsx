@@ -30,7 +30,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				<title>Nick Karnik | About</title>
 				<meta
 					name="description"
-					content="Engineer, builder, and dad of three. Twenty-five years building software across search, AI, and data."
+					content="Engineer, builder, dad of three. Twenty-five years building software across search, AI, and data."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/about" />
 			</Helmet>

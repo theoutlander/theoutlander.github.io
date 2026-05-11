@@ -13,7 +13,7 @@ export function ResumePagePanda() {
 				<title>Nick Karnik | Resume</title>
 				<meta
 					name="description"
-					content="Browse the resume of Nick Karnik: engineering leadership, staff software engineering, and delivery at scale."
+					content="Software engineer and engineering leader with 25 years across Google, Microsoft, Tableau, and startups."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io/resume" />
 			</Helmet>
