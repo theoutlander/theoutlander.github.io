@@ -39,7 +39,7 @@ export function CalendarPagePanda() {
             <HeaderSSR />
             <main
                 id="main-content"
-                className={container({ maxW: "6xl", mx: "auto", px: { base: 4, md: 6 }, py: 8 })}
+                className={container({ maxW: "5xl", mx: "auto", px: { base: 4, md: 6 }, py: 8 })}
             >
                 <h1
                     className={css({

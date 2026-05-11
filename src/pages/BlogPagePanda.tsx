@@ -41,7 +41,7 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 				id="main-content"
 				className={css({
 					flex: 1,
-					maxW: "6xl",
+					maxW: "5xl",
 					py: { base: 6, md: 10 },
 					mx: "auto",
 					px: { base: 4, md: 6 },

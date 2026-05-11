@@ -9,6 +9,7 @@ import {
 import { FaLinkedin, FaGithub, FaTwitter, FaStackOverflow } from "react-icons/fa";
 import { iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
+import { analytics } from "../lib/analytics";
 
 // Shared icon size constant - matches resume icon size
 const ICON_SIZE = 18;
@@ -281,6 +282,7 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="https://www.linkedin.com/in/theoutlander/"
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={() => analytics.outboundClick("https://www.linkedin.com/in/theoutlander/", "LinkedIn")}
 				>
 					<div className={iconContainer}>
 						<FaLinkedin
@@ -298,6 +300,7 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="https://github.com/theoutlander"
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={() => analytics.outboundClick("https://github.com/theoutlander", "GitHub")}
 				>
 					<div className={iconContainer}>
 						<FaGithub
@@ -315,6 +318,7 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="https://x.com/theoutlander"
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={() => analytics.outboundClick("https://x.com/theoutlander", "Twitter")}
 				>
 					<div className={iconContainer}>
 						<FaTwitter
@@ -332,6 +336,7 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="https://stackoverflow.com/users/460472/nick"
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={() => analytics.outboundClick("https://stackoverflow.com/users/460472/nick", "Stack Overflow")}
 				>
 					<div className={iconContainer}>
 						<FaStackOverflow
@@ -349,6 +354,7 @@ export default function ContactSection({ className }: ContactSectionProps) {
 					href="https://www.codementor.io/@theoutlander"
 					target="_blank"
 					rel="noopener noreferrer"
+					onClick={() => analytics.outboundClick("https://www.codementor.io/@theoutlander", "Codementor")}
 				>
 					<div className={iconContainer}>
 						<CodementorIcon

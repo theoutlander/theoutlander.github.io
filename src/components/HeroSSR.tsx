@@ -1,6 +1,7 @@
 import { css } from "../../styled-system/css/index.mjs";
 import { flex, hstack } from "../../styled-system/patterns/index.mjs";
 import { cva } from "../../styled-system/css/index.mjs";
+import { analytics } from "../lib/analytics";
 
 export default function HeroSSR() {
 	return (
@@ -239,6 +240,7 @@ export default function HeroSSR() {
 						<a
 							href="/blog"
 							className={chip({ variant: "cta" })}
+							onClick={() => analytics.ctaClick("Read the blog", "hero")}
 						>
 							<span>Read the blog</span>
 							<span aria-hidden="true">→</span>

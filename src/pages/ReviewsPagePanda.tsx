@@ -32,7 +32,7 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 			<HeaderSSR currentPage="reviews" />
 			<main
 				className={container({
-					maxW: "1280px",
+					maxW: "5xl",
 					mx: "auto",
 					px: { base: 4, md: 6 },
 					py: 8,

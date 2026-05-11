@@ -54,7 +54,7 @@ export default function CoreCompetencies() {
 
 			<div
 				className={css({
-					maxW: "6xl",
+					maxW: "5xl",
 					mx: "auto",
 					px: { base: "4", md: "6" },
 					display: "flex",

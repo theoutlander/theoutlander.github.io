@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { css } from "../../../styled-system/css/index.mjs";
 import { FaTwitter, FaLinkedin, FaFacebook, FaLink } from "react-icons/fa";
 import { getIconColorStyles } from "../../utils/iconColors";
+import { analytics } from "../../lib/analytics";
 
 type ShareButtonsProps = {
 	title: string;
@@ -26,6 +27,7 @@ export default function ShareButtons({ title, url, variant = "default" }: ShareB
 	const handleCopyLink = async () => {
 		try {
 			await navigator.clipboard.writeText(fullUrl);
+			analytics.share('copy_link', url);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		} catch (err) {
@@ -38,6 +40,7 @@ export default function ShareButtons({ title, url, variant = "default" }: ShareB
 			textArea.select();
 			document.execCommand("copy");
 			document.body.removeChild(textArea);
+			analytics.share('copy_link', url);
 			setCopied(true);
 			setTimeout(() => setCopied(false), 2000);
 		}
@@ -85,6 +88,7 @@ export default function ShareButtons({ title, url, variant = "default" }: ShareB
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Share on Twitter"
+					onClick={() => analytics.share('twitter', url)}
 					className={css({
 						display: "flex",
 						alignItems: "center",
@@ -126,6 +130,7 @@ export default function ShareButtons({ title, url, variant = "default" }: ShareB
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Share on LinkedIn"
+					onClick={() => analytics.share('linkedin', url)}
 					className={css({
 						display: "flex",
 						alignItems: "center",
@@ -167,6 +172,7 @@ export default function ShareButtons({ title, url, variant = "default" }: ShareB
 					target="_blank"
 					rel="noopener noreferrer"
 					aria-label="Share on Facebook"
+					onClick={() => analytics.share('facebook', url)}
 					className={css({
 						display: "flex",
 						alignItems: "center",

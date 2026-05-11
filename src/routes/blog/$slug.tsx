@@ -1,6 +1,8 @@
+import React from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { BlogPostPagePanda } from "../../pages/BlogPostPagePanda";
 import { loadBlogPost, loadAllBlogPosts, type BlogPost } from "../../lib/content";
+import { analytics } from "../../lib/analytics";
 
 export const Route = createFileRoute("/blog/$slug")({
 	component: BlogPostPage,
@@ -23,7 +25,26 @@ export const Route = createFileRoute("/blog/$slug")({
 	},
 });
 
+function estimateReadingTime(text: string) {
+	const cleanText = text.replace(/<[^>]*>/g, "");
+	const words = cleanText.trim().split(/\s+/).length;
+	return Math.max(1, Math.round(words / 200));
+}
+
 function BlogPostPage() {
 	const { post, posts } = Route.useLoaderData();
+
+	React.useEffect(() => {
+		analytics.blogPostView({
+			slug: post.slug,
+			title: post.title,
+			category: post.category,
+			tags: post.tags,
+			readingTime: estimateReadingTime(
+				post.contentHtml || post.html || post.excerpt || ""
+			),
+		});
+	}, [post.slug]);
+
 	return <BlogPostPagePanda post={post} posts={posts} />;
 }

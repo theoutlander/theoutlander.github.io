@@ -1,9 +1,12 @@
+import "./index.css";
+
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { HelmetProvider } from "./components/seo/HelmetShim";
 import { routeTree } from "./routeTree.gen";
 import { clearBlogCache } from "./lib/content";
+import { analytics } from "./lib/analytics";
 
 const router = createRouter({
 	routeTree,
@@ -15,9 +18,11 @@ const router = createRouter({
 	},
 });
 
-// Add debugging
+// Track page views on every route change
 router.subscribe("onLoad", (event) => {
-	console.log("Route loaded:", event.toLocation.pathname);
+	const pathname = event.toLocation.pathname;
+	const search = event.toLocation.search ? `?${event.toLocation.search}` : '';
+	analytics.pageView(pathname + search, document.title);
 });
 
 // Handle GitHub Pages SPA redirect

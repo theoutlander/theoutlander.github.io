@@ -145,6 +145,25 @@ See: `docs/castle-defenders.md`
 
 ---
 
+## Google Analytics Tracking
+
+All game files and the portal (`index.html`) include Google Analytics (GA ID: `G-62FC7BDSGJ`).
+
+### Analytics setup
+- GA loads lazily: only on first click (if consent hasn't been granted) or immediately (if `ga_consent: 'granted'` is in localStorage)
+- Consent-aware: respects user's privacy preference stored in localStorage
+- Anonymizes IP addresses for privacy
+
+### When adding a new game
+Use the **`game-template.html`** as your starting point. It includes the GA code already in the `<head>`. Just:
+1. Copy `game-template.html` to your new game filename
+2. Replace the `<title>` with your game name
+3. Add your CSS and JavaScript
+
+**DO NOT** skip the GA script when creating a new game file. All games at `maya.karnik.io/...` should track engagement.
+
+---
+
 ## Notes for Claude Code
 - Always check this file at session start
 - Check individual game docs before modifying a game

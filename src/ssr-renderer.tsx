@@ -100,6 +100,23 @@ function buildInlineDataScript(id: string, data: unknown) {
 }
 
 // Recursively copy directory contents, skipping system files
+/** Blog prose components (tables, concept-box, list fixes) — must ship with SSR CSS too */
+function appendBlogComponentsCss(sourceCss: string): string {
+	try {
+		const blogCss = readFileSync(
+			join(process.cwd(), "src", "styles", "blog-components.css"),
+			"utf8"
+		);
+		return `${sourceCss}\n${blogCss}`;
+	} catch (error) {
+		console.warn(
+			"⚠️  Could not read src/styles/blog-components.css:",
+			error instanceof Error ? error.message : String(error)
+		);
+		return sourceCss;
+	}
+}
+
 const copyDirectory = (src: string, dest: string) => {
 	const items = readdirSync(src);
 
@@ -670,6 +687,8 @@ export async function renderAllStaticPagesSSR() {
 		await generateComprehensiveCSS(blogData, aboutData);
 		sourceCss = readFileSync("dist/styles.css", "utf8");
 	}
+
+	sourceCss = appendBlogComponentsCss(sourceCss);
 
 	const minCss = minifyCss(sourceCss);
 	const cssHash = hashContent(minCss);

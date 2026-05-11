@@ -2,6 +2,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import { flex, hstack } from "../../styled-system/patterns/index.mjs";
 import {
 	FaGithub,
+	FaGamepad,
 	FaLinkedin,
 	FaTwitter,
 	FaYoutube,
@@ -116,7 +117,7 @@ export default function Footer() {
 		>
 			<div
 				className={css({
-					maxW: "6xl",
+					maxW: "5xl",
 					mx: "auto",
 					px: { base: "4", md: "6", lg: "8" },
 				})}
@@ -210,6 +211,17 @@ export default function Footer() {
 									<HiOutlineDocumentText size={ICON_SIZE} />
 								</div>
 								<span>Resume</span>
+							</a>
+							<a
+								href="https://maya.karnik.io"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div className={css(iconWrapper, getIconColorStyles("resume"))}>
+									<FaGamepad size={ICON_SIZE} />
+								</div>
+								<span>maya.karnik.io</span>
 							</a>
 							<a
 								href="https://stackoverflow.com/users/460472/nick"

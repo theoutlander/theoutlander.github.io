@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { css } from "../../../styled-system/css/index.mjs";
 import type { Post } from "../../types/blog";
+import { analytics } from "../../lib/analytics";
 
 const isSSR = typeof window === "undefined";
 
@@ -116,6 +117,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 										<a
 											href={`/blog?category=${encodeURIComponent(cat)}`}
 											className={linkClass}
+											onClick={() => analytics.blogFilterApplied('category', cat)}
 										>
 											{cat}
 										</a>
@@ -124,6 +126,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 											to="/blog"
 											search={{ category: cat }}
 											className={linkClass}
+											onClick={() => analytics.blogFilterApplied('category', cat)}
 										>
 											{cat}
 										</Link>
@@ -164,6 +167,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 										<a
 											href={`/blog?tag=${encodeURIComponent(tag)}`}
 											className={linkClass}
+											onClick={() => analytics.blogFilterApplied('tag', tag)}
 										>
 											{tag}
 										</a>
@@ -172,6 +176,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 											to="/blog"
 											search={{ tag }}
 											className={linkClass}
+											onClick={() => analytics.blogFilterApplied('tag', tag)}
 										>
 											{tag}
 										</Link>

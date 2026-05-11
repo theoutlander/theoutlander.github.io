@@ -29,7 +29,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 			<main
 				id="main-content"
 				className={css({
-					maxW: "6xl",
+					maxW: "5xl",
 					py: { base: 6, md: 10 },
 					mx: "auto",
 					px: { base: 4, md: 6 },
@@ -144,29 +144,17 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
 								alt={post.title || "Blog post cover image"}
 								loading="lazy"
 								className={css({
+									display: "block",
 									width: "100%",
+									maxW: { base: "100%", md: "min(100%, 560px)" },
 									height: "auto",
 									mb: 6,
+									mx: "auto",
 								})}
 							/>
 						)}
 					</header>
 
-					<style dangerouslySetInnerHTML={{
-						__html: `
-							.blog-post-content ol {
-								list-style: decimal outside !important;
-								list-style-type: decimal !important;
-							}
-							.blog-post-content ul {
-								list-style: disc outside !important;
-								list-style-type: disc !important;
-							}
-							.blog-post-content li {
-								display: list-item !important;
-							}
-						`
-					}} />
 
 					<div
 						className={`blog-post-content ${css({

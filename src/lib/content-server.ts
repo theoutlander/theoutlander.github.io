@@ -68,6 +68,14 @@ function getSlugFromFilename(filename: string): string {
 	return filename.replace(/\.md$/, "");
 }
 
+/** Wrap each markdown-generated table for horizontal scroll without breaking table layout */
+function wrapBlogPostTables(html: string): string {
+	return html.replace(
+		/<table\b[^>]*>[\s\S]*?<\/table>/gi,
+		'<div class="blog-post-table-wrap">$&</div>'
+	);
+}
+
 /**
  * Removes all Mermaid code blocks from markdown.
  * Images are preserved, but all Mermaid blocks are removed.
@@ -120,10 +128,11 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 			// Remove all Mermaid blocks
 			const processedMarkdown = removeAllMermaidBlocks(markdown);
 
-			const contentHtml = await marked(processedMarkdown, {
+			const rawHtml = await marked(processedMarkdown, {
 				breaks: true,
 				gfm: true,
 			});
+			const contentHtml = wrapBlogPostTables(rawHtml);
 
 			const post: BlogPost = {
 				id: frontMatter.id,

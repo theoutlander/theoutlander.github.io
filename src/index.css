@@ -1,5 +1,8 @@
 @layer reset, base, tokens, recipes, utilities;
 
+/* Component styles */
+@import './styles/blog-components.css';
+
 /* Mobile-specific fixes */
 html {
 	overflow-x: hidden;
@@ -14,9 +17,17 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 }
 
-/* Prevent horizontal scroll on all elements */
-* {
+/*
+ * Do NOT use a universal max-width selector — it out-specifies Panda `max-w_*` utilities on
+ * main/article/div and forces full viewport width. Clip overflow on the root instead; cap
+ * replaced elements only.
+ */
+img,
+video,
+iframe,
+svg {
 	max-width: 100%;
+	height: auto;
 }
 
 /* Improve tap targets on mobile */
