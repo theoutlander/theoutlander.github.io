@@ -42,10 +42,7 @@ const iconWrapper = css({
 	justifyContent: "center",
 });
 
-// Custom cursor SVG for links (interactive circle with plus)
-const linkCursor = `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="8" fill="%236366f1" stroke="%23e2e8f0" stroke-width="1"/><path d="M10 6V14M6 10H14" stroke="%23e2e8f0" stroke-width="1"/></svg>') 10 10, pointer`;
-
-// Shared link style with mobile optimizations and custom cursor
+// Shared link style with mobile optimizations
 // On mobile each link looks like a label/button (box per link)
 const linkStyle = css({
 	display: "flex",
@@ -55,7 +52,7 @@ const linkStyle = css({
 	fontSize: { base: "sm", md: "sm" },
 	color: { base: "gray.700", _dark: "dark.text" },
 	textDecoration: "none",
-	cursor: linkCursor,
+	cursor: "pointer",
 	width: "100%",
 	minHeight: { base: "44px", md: "auto" },
 	minWidth: { base: "44px", md: "0" },
@@ -202,17 +199,6 @@ export default function Footer() {
 								<span>nick@karnik.io</span>
 							</a>
 							<a
-								href="/assets/documents/resume-nick-karnik.pdf"
-								target="_blank"
-								rel="noopener"
-								className={linkStyle}
-							>
-								<div className={css(iconWrapper, getIconColorStyles("resume"))}>
-									<HiOutlineDocumentText size={ICON_SIZE} />
-								</div>
-								<span>Resume</span>
-							</a>
-							<a
 								href="https://maya.karnik.io"
 								target="_blank"
 								rel="noopener"
@@ -222,6 +208,17 @@ export default function Footer() {
 									<FaGamepad size={ICON_SIZE} />
 								</div>
 								<span>Maya's Game Lab</span>
+							</a>
+							<a
+								href="/assets/documents/resume-nick-karnik.pdf"
+								target="_blank"
+								rel="noopener"
+								className={linkStyle}
+							>
+								<div className={css(iconWrapper, getIconColorStyles("resume"))}>
+									<HiOutlineDocumentText size={ICON_SIZE} />
+								</div>
+								<span>Resume</span>
 							</a>
 							<a
 								href="https://stackoverflow.com/users/460472/nick"
