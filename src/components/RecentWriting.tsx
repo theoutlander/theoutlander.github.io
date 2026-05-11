@@ -36,6 +36,9 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 				bg: "white",
 				mt: "0",
 				py: { base: "6", md: "8" },
+				borderBottomWidth: "1px",
+				borderBottomStyle: "solid",
+				borderBottomColor: { base: "gray.200", _dark: "gray.700" },
 				_dark: { bg: "dark.surface" },
 			})}
 			aria-labelledby="recent-writing-heading"

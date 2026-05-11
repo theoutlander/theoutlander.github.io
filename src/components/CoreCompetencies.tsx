@@ -32,7 +32,15 @@ export default function CoreCompetencies() {
 				_dark: { bg: "dark.surface" },
 			})}
 		>
-			<div className={css({ textAlign: "center", mb: "16", px: { base: "4", md: "6" } })}>
+			<div
+				className={css({
+					maxW: "1040px",
+					mx: "auto",
+					mb: "16",
+					px: { base: "4", md: "6", lg: "8" },
+					textAlign: "left",
+				})}
+			>
 				<h2
 					className={css({
 						fontWeight: "bold",
