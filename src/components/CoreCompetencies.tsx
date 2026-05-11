@@ -81,7 +81,6 @@ export default function CoreCompetencies() {
 						px: "8",
 						pb: "4",
 						shadow: "sm",
-						height: "100%",
 						minHeight: "160px",
 						gap: "3",
 						alignItems: "center",
