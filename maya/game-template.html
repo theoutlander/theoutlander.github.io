@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Game Title 🎮</title>
+
+<!-- Google Analytics -->
+<script>
+	(function(){
+		function loadGA(){
+			if (window.__gaLoaded) return;
+			window.__gaLoaded = true;
+			var s = document.createElement('script');
+			s.async = true;
+			s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
+			document.head.appendChild(s);
+			window.dataLayer = window.dataLayer || [];
+			window.gtag = function(){ dataLayer.push(arguments); };
+			gtag('js', new Date());
+			gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
+		}
+		var consent = null;
+		try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
+		if (consent === 'granted') {
+			(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
+		} else {
+			window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
+		}
+	})();
+</script>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+/* Add your CSS here */
+</style>
+</head>
+<body>
+<!-- Add your HTML here -->
+<script>
+// Add your JavaScript here
+</script>
+</body>
+</html>
