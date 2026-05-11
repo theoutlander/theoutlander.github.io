@@ -46,9 +46,58 @@ export function HomePagePanda({ posts }: HomePageProps) {
 						minHeight: 0,
 					})}
 				>
-					<HeroSSR />
-					<RecentWriting posts={posts ?? []} />
-					<CoreCompetencies />
+					<div
+						className={css({
+							width: "100%",
+							maxW: "1120px",
+							mx: "auto",
+							px: { base: "4", md: "6", lg: "8" },
+							pb: { base: "12", lg: "16" },
+							pt: { base: "2", lg: "4" },
+							display: "grid",
+							gridTemplateColumns: {
+								base: "minmax(0, 1fr)",
+								lg: "minmax(0, 13fr) minmax(0, 7fr)",
+							},
+							columnGap: { lg: "8", xl: "10" },
+							rowGap: { base: "10", md: "12", lg: "14" },
+							alignItems: "start",
+						})}
+					>
+						<div
+							className={css({
+								gridColumn: { base: "1", lg: "1" },
+								gridRow: { base: "1", lg: "1" },
+								minWidth: 0,
+								width: "100%",
+							})}
+						>
+							<HeroSSR />
+						</div>
+						<div
+							className={css({
+								gridColumn: { base: "1", lg: "2" },
+								gridRow: { base: "2", lg: "1 / span 2" },
+								minWidth: 0,
+								width: "100%",
+								position: { lg: "sticky" },
+								top: { lg: "5rem" },
+								alignSelf: { lg: "start" },
+							})}
+						>
+							<RecentWriting posts={posts ?? []} />
+						</div>
+						<div
+							className={css({
+								gridColumn: { base: "1", lg: "1" },
+								gridRow: { base: "3", lg: "2" },
+								minWidth: 0,
+								width: "100%",
+							})}
+						>
+							<CoreCompetencies />
+						</div>
+					</div>
 				</main>
 				<Footer />
 			</div>
