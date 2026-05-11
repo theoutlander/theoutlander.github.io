@@ -70,7 +70,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
 								gridRow: { base: "1", lg: "1" },
 								minWidth: 0,
 								width: "100%",
-								pt: { base: "12", lg: "20" },
+								pt: { base: "4", lg: "8" },
 							})}
 						>
 							<HeroSSR />
