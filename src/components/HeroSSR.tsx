@@ -29,7 +29,7 @@ export default function HeroSSR() {
 			className={css({
 				bg: "white",
 				_dark: { bg: "dark.surface" },
-				pt: { base: "10", md: "16" },
+				pt: { base: "12", md: "16" },
 				pb: { base: "4", md: "6" },
 				display: "flex",
 				alignItems: "flex-start",
