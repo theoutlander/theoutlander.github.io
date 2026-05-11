@@ -26,7 +26,7 @@ export default function HeroSSR() {
 
 	return (
 		<section
-			style={{ paddingTop: "64px" }}
+			style={{ paddingTop: "48px", paddingBottom: "32px" }}
 			className={css({
 				bg: "white",
 				_dark: { bg: "dark.surface" },

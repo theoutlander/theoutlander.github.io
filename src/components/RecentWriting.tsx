@@ -34,8 +34,8 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 			data-testid="recent-writing"
 			className={css({
 				bg: "white",
-				mt: "2",
-				py: { base: "10", md: "12" },
+				mt: "0",
+				py: { base: "6", md: "8" },
 				_dark: { bg: "dark.surface" },
 			})}
 			aria-labelledby="recent-writing-heading"
