@@ -221,6 +221,14 @@ type Exp = {
 
 const experience: Exp[] = [
 	{
+		role: "Lead Software Engineer",
+		company: "PitchBook (Morningstar)",
+		dates: "Mar 2026 – Present",
+		blurb:
+			"Building data and search infrastructure for financial intelligence platform used by investment professionals worldwide.",
+		tags: ["Data Infrastructure", "Search", "FinTech"],
+	},
+	{
 		role: "Engineering Manager (Gemini Code Assist)",
 		company: "Google",
 		dates: "May 2022 – Apr 2025",

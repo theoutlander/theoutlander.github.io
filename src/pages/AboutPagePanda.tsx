@@ -108,6 +108,67 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 						{/* Contact */}
 						<ContactSection />
 
+						{/* Featured Work */}
+						<div
+							className={css({
+								bg: "white",
+								borderWidth: "1px",
+								borderColor: "gray.200",
+								borderRadius: "xl",
+								boxShadow: "sm",
+								p: { base: 4, md: 5 },
+							})}
+						>
+							<div
+								className={css({
+									fontSize: "sm",
+									fontWeight: "semibold",
+									color: "gray.800",
+									mb: 3,
+									pb: 3,
+									borderBottomWidth: "1px",
+									borderColor: "gray.100",
+								})}
+							>
+								Featured Work
+							</div>
+							<p
+								className={css({
+									fontSize: "sm",
+									color: "gray.600",
+									lineHeight: "1.6",
+									mb: 4,
+								})}
+							>
+								My work on geospatial visualization of epidemiological modeling was featured in
+								this TED Talk by Bill Gates.
+							</p>
+							<div
+								className={css({
+									position: "relative",
+									width: "100%",
+									aspectRatio: "16 / 9",
+									borderRadius: "lg",
+									overflow: "hidden",
+								})}
+							>
+								<iframe
+									className={css({
+										position: "absolute",
+										top: 0,
+										left: 0,
+										width: "100%",
+										height: "100%",
+										border: "none",
+									})}
+									src="https://www.youtube.com/embed/6Af6b_wyiwI"
+									title="TED Talk featuring Institute for Disease Modeling software"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+									allowFullScreen
+								/>
+							</div>
+						</div>
+
 						{/* Patents */}
 						<div
 							className={css({
