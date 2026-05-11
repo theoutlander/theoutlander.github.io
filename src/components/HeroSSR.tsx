@@ -26,20 +26,16 @@ export default function HeroSSR() {
 
 	return (
 		<section
-			style={{ paddingTop: "48px", paddingBottom: "32px" }}
+			style={{ paddingTop: "0" }}
 			className={css({
 				bg: "white",
 				_dark: { bg: "dark.surface" },
-				pb: { base: "4", md: "6" },
-				display: "flex",
-				alignItems: "flex-start",
+				pb: { base: "6", md: "8" },
+				width: "100%",
 			})}
 		>
 			<div
 				className={css({
-					maxW: "1040px",
-					mx: "auto",
-					px: "0",
 					width: "100%",
 				})}
 			>

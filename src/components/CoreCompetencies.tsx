@@ -57,15 +57,11 @@ export default function CoreCompetencies() {
 
 			<div
 				className={css({
-					maxW: "5xl",
-					mx: "auto",
 					px: "0",
-					display: "flex",
-					flexDirection: { base: "column", md: "row" },
-					flexWrap: { base: "nowrap", lg: "wrap" },
+					display: "grid",
+					gridTemplateColumns: { base: "1fr", md: "repeat(2, 1fr)" },
 					gap: { base: "6", md: "8" },
 					alignItems: "stretch",
-					justifyContent: "center",
 				})}
 			>
 			{items.map((it) => (

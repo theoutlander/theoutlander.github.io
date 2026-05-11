@@ -35,16 +35,13 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 			className={css({
 				bg: "white",
 				mt: "0",
-				py: { base: "0", lg: "0" },
+				py: { base: "4", md: "6" },
 				_dark: { bg: "dark.surface" },
 			})}
 			aria-labelledby="recent-writing-heading"
 		>
 			<div
 				className={css({
-					maxW: "1040px",
-					mx: "auto",
-					px: { base: "0", lg: "0" },
 					width: "100%",
 				})}
 			>
