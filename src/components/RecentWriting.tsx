@@ -85,6 +85,20 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 									},
 								})}
 							>
+								{post.cover ? (
+									<img
+										src={post.cover}
+										alt={post.title || "Blog post cover image"}
+										loading="lazy"
+										className={css({
+											display: "block",
+											objectFit: "cover",
+											maxH: "260px",
+											w: "100%",
+											mb: "3",
+										})}
+									/>
+								) : null}
 								<h3
 									className={css({
 										fontSize: { base: "lg", md: "xl" },
