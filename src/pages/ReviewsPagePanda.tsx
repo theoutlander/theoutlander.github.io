@@ -22,7 +22,7 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 			})}
 		>
 			<Helmet>
-				<title>Codementor Reviews | Nick Karnik</title>
+				<title>What People Say | Nick Karnik</title>
 				<meta
 					name="description"
 					content="Client reviews and testimonials from Codementor sessions with Nick Karnik."
@@ -48,7 +48,7 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 							mb: 3,
 						})}
 					>
-						Codementor Reviews
+						What People Say
 					</h1>
 					<p
 						className={css({
@@ -58,41 +58,8 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 							mx: "auto",
 						})}
 					>
-						Client reviews and testimonials from mentoring sessions on Codementor.
+						Reviews from people I have worked with and mentored over the years.
 					</p>
-					<a
-						href="https://www.codementor.io/@theoutlander"
-						target="_blank"
-						rel="noopener noreferrer"
-						className={css({
-							display: "inline-flex",
-							alignItems: "center",
-							gap: 2,
-							mt: 4,
-							color: "blue.600",
-							textDecoration: "none",
-							fontSize: "sm",
-							fontWeight: "medium",
-							_hover: {
-								textDecoration: "underline",
-							},
-						})}
-					>
-						View profile on Codementor
-						<svg
-							className={css({ w: 4, h: 4 })}
-							fill="none"
-							stroke="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-							/>
-						</svg>
-					</a>
 				</div>
 
 				{/* Reviews Grid */}

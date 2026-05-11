@@ -941,7 +941,7 @@ export async function renderAllStaticPagesSSR() {
 	const reviewsResult = renderPageToHTML(ReviewsPagePanda, { reviews: reviewsData });
 	const reviewsJsonLd = generatePersonJsonLd("https://nick.karnik.io/reviews");
 	const reviewsHTMLWithStyles = generateBaseHTML(
-		"Codementor Reviews | Nick Karnik",
+		"What People Say | Nick Karnik",
 		"Client reviews and testimonials from Codementor sessions with Nick Karnik.",
 		reviewsResult.html,
 		cssHref,
