@@ -141,12 +141,12 @@ header{text-align:center;padding:48px 0 36px}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* Game modal */
-#gm{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;background:#000}
+#gm{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;background:#000;box-sizing:border-box}
 #gm.open{display:flex}
 #mb{background:#0f0a1e;padding:8px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:50px}
 #mc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:14px;font-weight:900;padding:8px 16px;border-radius:99px;cursor:pointer;font-family:'Nunito',sans-serif;min-width:44px;min-height:44px}
 #mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text)}
-#gf{flex:1;border:none;width:100%;background:#000}
+#gf{flex:1 1 auto;min-height:0;width:100%;border:none;background:#000}
 </style>
 </head>
 <body>
@@ -367,6 +367,7 @@ const GLIST=[
   {em:'👻',title:'Dust Chasers',desc:'Find the invisible dust people lurking in the dark!',file:'dust-chasers.html'},
   {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
 ];
+const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
 const wk=Math.floor(Date.now()/1000/60/60/24/7);
 const gw=GLIST[wk%GLIST.length];
 document.getElementById('ge').textContent=gw.em;
@@ -375,17 +376,80 @@ document.getElementById('gdt').textContent=gw.desc;
 function gotwPlay(){openGame(gw.file,gw.title);}
 
 // ===== GAME MODAL =====
-function openGame(file,title){
+const MAYA_PAGE_TITLE=document.title;
+function mayaDirectoryPath(){
+  let base=location.pathname;
+  if(!base.endsWith('/')){
+    if(/\.html?$/i.test(base))base=base.slice(0,base.lastIndexOf('/')+1);
+    else base=base+'/';
+  }
+  return base;
+}
+function resolveGameUrl(file){
+  return mayaDirectoryPath()+file;
+}
+function pathnameGameFile(){
+  const last=(location.pathname.split('/').filter(Boolean).pop())||'';
+  if(!/\.html?$/i.test(last)||last.toLowerCase()==='index.html')return null;
+  return MAYA_GAME_FILES.has(last)?last:null;
+}
+function titleForGameFile(file){
+  const row=GLIST.find(function(g){return g.file===file;});
+  return row?row.title:file.replace(/\.html?$/i,'');
+}
+function syncGameModalIframe(){
+  const gm=document.getElementById('gm');
+  if(!gm.classList.contains('open'))return;
+  const gf=document.getElementById('gf');
+  const mb=document.getElementById('mb');
+  const avail=Math.max(220,window.innerHeight-mb.getBoundingClientRect().height);
+  gf.style.flex='none';
+  gf.style.height=avail+'px';
+}
+function closeGameCore(){
+  const gf=document.getElementById('gf');
+  document.getElementById('gm').classList.remove('open');
+  gf.src='';
+  gf.style.height='';
+  gf.style.flex='';
+  document.body.style.overflow='';
+  document.title=MAYA_PAGE_TITLE;
+}
+function openGameInModal(file,title){
   const m=document.getElementById('gm');
-  document.getElementById('gf').src=file;
+  const gf=document.getElementById('gf');
   document.getElementById('mt').textContent=title;
+  document.title=title+' · '+MAYA_PAGE_TITLE;
   m.classList.add('open');
   document.body.style.overflow='hidden';
+  syncGameModalIframe();
+  gf.src=resolveGameUrl(file);
+}
+function openGame(file,title){
+  openGameInModal(file,title);
+  history.pushState({mayaIframe:true,file:file},'',resolveGameUrl(file));
 }
 function closeGame(){
-  document.getElementById('gm').classList.remove('open');
-  document.getElementById('gf').src='';
-  document.body.style.overflow='';
+  if(history.state&&history.state.mayaIframe){
+    history.back();
+    return;
+  }
+  closeGameCore();
+  if(pathnameGameFile())history.replaceState(history.state,'',mayaDirectoryPath());
+}
+function onGameModalPopState(){
+  const file=pathnameGameFile();
+  const gm=document.getElementById('gm');
+  if(!file){
+    if(gm.classList.contains('open'))closeGameCore();
+  }else if(!gm.classList.contains('open')){
+    openGameInModal(file,titleForGameFile(file));
+  }
+}
+window.addEventListener('popstate',onGameModalPopState);
+window.addEventListener('resize',syncGameModalIframe,{passive:true});
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize',syncGameModalIframe,{passive:true});
 }
 
 // ===== DOODLE PAD =====

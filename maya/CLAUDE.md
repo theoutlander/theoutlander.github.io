@@ -28,7 +28,7 @@ They load from CDN and work by just opening in a browser or deploying to GitHub 
 
 ### Frameworks in use
 - **Phaser 4.0.0** — for action/arcade games going forward
-  - CDN: `https://cdnjs.cloudflare.com/ajax/libs/phaser/4.0.0/phaser.min.js`
+  - CDN: `https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js`
   - Use scenes: `preload()`, `create()`, `update()`
   - Draw with graphics primitives — no external image files needed
   - Arcade physics for collision
@@ -107,6 +107,22 @@ const EJS_TPL  = 'template_b7g9ipp';
 ```
 Always include these when updating index.html.
 
+### EmailJS template (`template_b7g9ipp`) — required for doodles + wishlist
+
+If **text or images are missing** in the inbox, the template usually does not expose the variables the portal sends.
+
+1. **Content (email body)** — include at least:
+   - `{{message}}` — plain text (wishlist text, or doodle summary).
+   - Optional HTML: `{{{html_content}}}` or `{{{html_message}}}` (triple braces so tags are not escaped). If you omit this, you still get the plain `message`.
+
+2. **Doodle image (inline)** — The portal **uploads the JPEG to [bytebin.lucko.me](https://bytebin.lucko.me)** (free, no API key) and puts an **https://** URL in `{{{html_content}}}`. That displays in **Gmail** and other clients that block `data:` URLs. Treat doodles as **public for anyone with the link** (fine for kid art; do not put secrets in drawings).
+
+   **Fallback:** If the upload fails, the email uses an embedded `data:` image and may send **`doodle_image`** (raw base64) for an optional EmailJS Variable Attachment — same as before if you still use `cid:doodle_image` in the template.
+
+   **Template:** include `{{message}}` and `{{{html_content}}}` (or `{{{html_message}}}`). You do **not** need a CID `<img>` in the dashboard for the happy path.
+
+3. **Wishlist** — the portal sends the idea as `message`, and duplicates as `wish` and `idea` in case the template uses those names instead.
+
 ### Adding a new game to the portal
 1. Add a card to the `.gg` games grid in index.html
 2. Add to `GLIST` array (for "Our Latest Creation" rotation)
@@ -142,25 +158,6 @@ See: `docs/castle-defenders.md`
 - A 3D game using Babylon.js (TBD concept)
 - More word/spelling games
 - Something with unicorns 🦄
-
----
-
-## Google Analytics Tracking
-
-All game files and the portal (`index.html`) include Google Analytics (GA ID: `G-62FC7BDSGJ`).
-
-### Analytics setup
-- GA loads lazily: only on first click (if consent hasn't been granted) or immediately (if `ga_consent: 'granted'` is in localStorage)
-- Consent-aware: respects user's privacy preference stored in localStorage
-- Anonymizes IP addresses for privacy
-
-### When adding a new game
-Use the **`game-template.html`** as your starting point. It includes the GA code already in the `<head>`. Just:
-1. Copy `game-template.html` to your new game filename
-2. Replace the `<title>` with your game name
-3. Add your CSS and JavaScript
-
-**DO NOT** skip the GA script when creating a new game file. All games at `maya.karnik.io/...` should track engagement.
 
 ---
 

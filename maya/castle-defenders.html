@@ -4,660 +4,713 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Castle Defenders 🏰</title>
-
-<!-- Google Analytics -->
-<script>
-	(function(){
-		function loadGA(){
-			if (window.__gaLoaded) return;
-			window.__gaLoaded = true;
-			var s = document.createElement('script');
-			s.async = true;
-			s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
-			document.head.appendChild(s);
-			window.dataLayer = window.dataLayer || [];
-			window.gtag = function(){ dataLayer.push(arguments); };
-			gtag('js', new Date());
-			gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
-		}
-		var consent = null;
-		try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
-		if (consent === 'granted') {
-			(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
-		} else {
-			window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
-		}
-	})();
-</script>
-
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
-:root{
-  --sky-day:#87ceeb;--sky-dusk:#ff8c42;--sky-night:#0a0618;
-  --ground:#4a7c3f;--ground-dark:#2d4a25;
-  --castle:#8b7355;--castle-dark:#6b5a3e;
-  --text:#fff;--muted:rgba(255,255,255,0.6);
-  --yellow:#ffe14d;--green:#5dffb0;--red:#ff5a5a;--orange:#ff9a3c;--purple:#c77dff;
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Nunito',sans-serif;touch-action:none}
-
-/* ── CANVAS AREA ── */
-#game{width:100%;height:100%;position:relative;overflow:hidden}
-#sky{position:absolute;inset:0;transition:background 3s}
-#ground{position:absolute;bottom:0;left:0;right:0;height:30%;background:var(--ground)}
-#ground::before{content:'';position:absolute;top:0;left:0;right:0;height:8px;background:var(--ground-dark);border-radius:0}
-
-/* Stars */
-#stars{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity 2s}
-.star{position:absolute;background:#fff;border-radius:50%;animation:twink var(--d,2s) infinite alternate}
-@keyframes twink{0%{opacity:.2}100%{opacity:1}}
-
-/* Moon/Sun */
-#celestial{position:absolute;width:60px;height:60px;border-radius:50%;top:14%;transition:left 4s linear,background 3s,box-shadow 3s}
-#celestial.sun{background:#ffe14d;box-shadow:0 0 30px 10px rgba(255,225,77,.6)}
-#celestial.moon{background:#e8e8d0;box-shadow:0 0 20px 6px rgba(232,232,208,.4)}
-
-/* Castle */
-#castle-wrap{position:absolute;bottom:30%;left:2%;display:flex;flex-direction:column;align-items:flex-start}
-#castle-svg{width:160px;height:180px}
-#castle-hp-bar{width:140px;height:8px;background:rgba(0,0,0,.3);border-radius:99px;overflow:hidden;margin-top:4px}
-#castle-hp-fill{height:100%;background:linear-gradient(90deg,#5dffb0,#ffe14d);border-radius:99px;transition:width .4s}
-
-/* Trees area */
-#trees-area{position:absolute;bottom:30%;right:5%;display:flex;gap:20px;align-items:flex-end}
-.tree{cursor:pointer;display:flex;flex-direction:column;align-items:center;transition:transform .1s;position:relative}
-.tree:active{transform:scale(.88) rotate(-5deg)}
-.tree-top{font-size:52px;line-height:1;filter:drop-shadow(0 4px 8px rgba(0,0,0,.3))}
-.tree-trunk{width:10px;height:20px;background:#6b4226;border-radius:3px}
-.tree-count{position:absolute;top:-8px;right:-8px;background:#ffe14d;color:#0a0618;font-size:10px;font-weight:900;border-radius:99px;padding:1px 5px;font-family:'Fredoka One',cursive}
-.tree.depleted .tree-top{filter:grayscale(1) brightness(.5)}
-
-/* Wood pile */
-#wood-pile{position:absolute;bottom:30%;right:30%;display:flex;flex-direction:column;align-items:center;gap:4px}
-#wood-label{font-size:11px;color:rgba(255,255,255,.7);font-weight:900;letter-spacing:.05em;text-transform:uppercase}
-#wood-count{font-family:'Fredoka One',cursive;font-size:32px;color:#ff9a3c;line-height:1;text-shadow:0 2px 8px rgba(0,0,0,.4)}
-#wood-emoji{font-size:28px}
-
-/* Forge / craft area */
-#forge{position:absolute;bottom:30%;left:22%;display:flex;flex-direction:column;align-items:center;gap:6px}
-#forge-label{font-size:11px;color:rgba(255,255,255,.7);font-weight:900;letter-spacing:.05em;text-transform:uppercase}
-.weapon-btn{background:rgba(0,0,0,.35);border:2px solid rgba(255,255,255,.2);border-radius:12px;padding:8px 12px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .1s,border-color .1s;min-width:70px}
-.weapon-btn:active{transform:scale(.92)}
-.weapon-btn.affordable{border-color:var(--yellow);background:rgba(255,225,77,.1)}
-.weapon-btn.owned{border-color:var(--green);background:rgba(93,255,176,.1)}
-.weapon-btn .wem{font-size:26px}
-.weapon-btn .wname{font-size:10px;font-weight:900;color:rgba(255,255,255,.8)}
-.weapon-btn .wcost{font-size:10px;color:var(--orange)}
-#weapons-row{display:flex;gap:8px}
-
-/* HUD */
-#hud{position:absolute;top:0;left:0;right:0;padding:8px 14px;display:flex;justify-content:space-between;align-items:center;z-index:20;pointer-events:none}
-#day-badge{font-family:'Fredoka One',cursive;font-size:18px;background:rgba(0,0,0,.4);padding:5px 16px;border-radius:99px;color:#fff;backdrop-filter:blur(4px)}
-#phase-badge{font-family:'Fredoka One',cursive;font-size:14px;padding:5px 14px;border-radius:99px;color:#0a0618;background:var(--yellow)}
-#score-badge{font-family:'Fredoka One',cursive;font-size:16px;background:rgba(0,0,0,.4);padding:5px 14px;border-radius:99px;color:#ffe14d;backdrop-filter:blur(4px)}
-
-/* Phase instruction banner */
-#phase-banner{position:absolute;top:56px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,.55);border-radius:12px;padding:8px 20px;font-size:13px;font-weight:900;color:#fff;text-align:center;backdrop-filter:blur(4px);z-index:20;pointer-events:none;transition:opacity .5s}
-
-/* Actions left */
-#actions-wrap{position:absolute;bottom:30%;left:50%;transform:translateX(-50%);display:flex;gap:4px}
-.action-pip{width:12px;height:12px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green)}
-.action-pip.used{background:rgba(255,255,255,.2);box-shadow:none}
-
-/* NIGHT BATTLE */
-#battle-layer{position:absolute;inset:0;pointer-events:none;z-index:10}
-.zombie{position:absolute;font-size:36px;cursor:pointer;pointer-events:all;transition:none;z-index:11;filter:drop-shadow(2px 2px 4px rgba(0,0,0,.5))}
-.zombie:active{transform:scale(.8)}
-.zombie.dying{animation:zdeath .4s ease-out forwards;pointer-events:none}
-@keyframes zdeath{0%{transform:scale(1.3) rotate(-10deg);filter:brightness(3)}100%{transform:scale(0) rotate(30deg);opacity:0}}
-
-/* Weapon ready */
-#weapon-ready{position:absolute;bottom:32%;left:50%;transform:translateX(-50%);display:flex;gap:10px;z-index:15;pointer-events:none}
-.active-weapon{font-size:36px;background:rgba(0,0,0,.5);border:2px solid rgba(255,255,255,.3);border-radius:12px;padding:6px 10px;cursor:pointer;pointer-events:all;transition:transform .1s;position:relative}
-.active-weapon:active{transform:scale(.88)}
-.active-weapon .wcharge{position:absolute;bottom:2px;right:2px;font-size:9px;font-weight:900;color:var(--yellow);background:rgba(0,0,0,.6);border-radius:4px;padding:1px 3px}
-
-/* Night overlay */
-#night-overlay{position:absolute;inset:0;background:rgba(5,2,20,.5);pointer-events:none;opacity:0;transition:opacity 3s;z-index:5}
-
-/* Wave counter */
-#wave-info{position:absolute;top:56px;right:14px;background:rgba(0,0,0,.5);border-radius:10px;padding:6px 12px;font-size:12px;font-weight:900;color:#fff;text-align:right;z-index:20;display:none}
-#wave-info .big{font-family:'Fredoka One',cursive;font-size:22px;color:var(--red)}
-
-/* Chop effect */
-.chop-fx{position:absolute;font-size:20px;pointer-events:none;z-index:25;animation:chopfx .6s ease-out forwards}
-@keyframes chopfx{0%{transform:translateY(0) scale(1);opacity:1}100%{transform:translateY(-60px) scale(.5);opacity:0}}
-
-/* Hit effect */
-.hit-fx{position:absolute;font-size:24px;pointer-events:none;z-index:25;animation:hitfx .5s ease-out forwards}
-@keyframes hitfx{0%{transform:translate(-50%,-50%) scale(1.4);opacity:1}100%{transform:translate(-50%,-80px) scale(.5);opacity:0}}
-
-/* Phase transition */
-#phase-transition{position:fixed;inset:0;z-index:80;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;pointer-events:none;opacity:0}
-#phase-transition.show{opacity:1;animation:ptin .6s ease-out}
-@keyframes ptin{0%{transform:scale(1.2)}100%{transform:scale(1)}}
-#pt-bg{position:absolute;inset:0;background:rgba(0,0,0,.75)}
-#pt-text{font-family:'Fredoka One',cursive;font-size:clamp(36px,8vw,64px);color:#fff;text-align:center;z-index:1;text-shadow:0 0 30px rgba(255,255,255,.4)}
-#pt-sub{font-size:14px;color:rgba(255,255,255,.6);z-index:1;text-align:center}
-
-/* Overlays */
-.ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:90;padding:24px;gap:14px;text-align:center}
-.ov.hidden{display:none}
-#start-ov{background:linear-gradient(180deg,#0a0618,#1a0a3c)}
-#over-ov{background:rgba(5,2,20,.95)}
-.big-title{font-family:'Fredoka One',cursive;font-size:clamp(44px,10vw,80px);line-height:1;margin-bottom:4px}
-.sub{font-size:13px;color:var(--muted);line-height:1.7;max-width:320px}
-.big-btn{font-family:'Fredoka One',cursive;font-size:20px;color:#07031a;background:var(--yellow);border:none;padding:12px 40px;border-radius:10px;cursor:pointer;box-shadow:0 5px 0 rgba(140,110,0,1);transition:transform .1s}
-.big-btn:hover{transform:translateY(-2px)}.big-btn:active{transform:translateY(2px)}
-.sec-btn{font-family:'Fredoka One',cursive;font-size:15px;padding:9px 22px;border-radius:10px;border:none;cursor:pointer;background:rgba(255,255,255,.1);color:#fff}
-.stat-row{display:flex;gap:28px;flex-wrap:wrap;justify-content:center}
-.stat{text-align:center}
-.stat-lbl{font-size:10px;letter-spacing:.15em;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
-.stat-val{font-family:'Fredoka One',cursive;font-size:40px;color:var(--yellow);line-height:1}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;height:100%;overflow:hidden;background:#0a0618;touch-action:none}
+#game-container canvas{display:block}
 </style>
 </head>
 <body>
-<div id="game">
-  <div id="sky"></div>
-  <div id="stars"></div>
-  <div id="celestial"></div>
-  <div id="night-overlay"></div>
-  <div id="ground"></div>
-
-  <!-- Castle -->
-  <div id="castle-wrap">
-    <svg id="castle-svg" viewBox="0 0 160 180" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <!-- Battlements -->
-      <rect x="0" y="20" width="25" height="40" rx="3" fill="#8b7355"/>
-      <rect x="30" y="30" width="25" height="30" rx="3" fill="#8b7355"/>
-      <rect x="60" y="20" width="25" height="40" rx="3" fill="#8b7355"/>
-      <rect x="90" y="30" width="25" height="30" rx="3" fill="#8b7355"/>
-      <rect x="120" y="20" width="40" height="40" rx="3" fill="#8b7355"/>
-      <!-- Main wall -->
-      <rect x="0" y="55" width="160" height="125" rx="4" fill="#9b8365"/>
-      <!-- Gate -->
-      <rect x="55" y="110" width="50" height="70" rx="6" fill="#3d2b1a"/>
-      <!-- Windows -->
-      <rect x="15" y="80" width="22" height="28" rx="4" fill="#3d2b1a"/>
-      <rect x="118" y="80" width="22" height="28" rx="4" fill="#3d2b1a"/>
-      <!-- Flag -->
-      <line x1="80" y1="0" x2="80" y2="22" stroke="#6b5a3e" stroke-width="3"/>
-      <polygon points="80,2 104,10 80,18" fill="#ff5a5a"/>
-    </svg>
-    <div id="castle-hp-bar"><div id="castle-hp-fill"></div></div>
-  </div>
-
-  <!-- Trees -->
-  <div id="trees-area">
-    <div class="tree" id="tree-0" onclick="chopTree(0)">
-      <div class="tree-top">🌲</div>
-      <div class="tree-trunk"></div>
-      <div class="tree-count" id="tc-0">3</div>
-    </div>
-    <div class="tree" id="tree-1" onclick="chopTree(1)">
-      <div class="tree-top">🌳</div>
-      <div class="tree-trunk"></div>
-      <div class="tree-count" id="tc-1">3</div>
-    </div>
-  </div>
-
-  <!-- Wood pile -->
-  <div id="wood-pile">
-    <div id="wood-emoji">🪵</div>
-    <div id="wood-count">0</div>
-    <div id="wood-label">Wood</div>
-  </div>
-
-  <!-- Forge -->
-  <div id="forge">
-    <div id="forge-label">⚒️ Forge</div>
-    <div id="weapons-row">
-      <div class="weapon-btn" id="wb-sword" onclick="craftWeapon('sword')">
-        <div class="wem">⚔️</div>
-        <div class="wname">Sword</div>
-        <div class="wcost">3 🪵</div>
-      </div>
-      <div class="weapon-btn" id="wb-bow" onclick="craftWeapon('bow')">
-        <div class="wem">🏹</div>
-        <div class="wname">Bow</div>
-        <div class="wcost">2 🪵</div>
-      </div>
-      <div class="weapon-btn" id="wb-axe" onclick="craftWeapon('axe')">
-        <div class="wem">🪓</div>
-        <div class="wname">Axe</div>
-        <div class="wcost">4 🪵</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Actions left -->
-  <div id="actions-wrap"></div>
-
-  <!-- Phase banner -->
-  <div id="phase-banner">🌅 Morning — Chop trees to gather wood!</div>
-
-  <!-- HUD -->
-  <div id="hud">
-    <div id="day-badge">Day 1</div>
-    <div id="phase-badge">☀️ Morning</div>
-    <div id="score-badge">⭐ 0</div>
-  </div>
-
-  <!-- Wave info -->
-  <div id="wave-info">
-    <div>Zombies left</div>
-    <div class="big" id="zombie-count">30</div>
-  </div>
-
-  <!-- Battle layer -->
-  <div id="battle-layer"></div>
-
-  <!-- Active weapons -->
-  <div id="weapon-ready"></div>
-
-  <!-- Phase transition -->
-  <div id="phase-transition">
-    <div id="pt-bg"></div>
-    <div id="pt-text"></div>
-    <div id="pt-sub"></div>
-  </div>
-</div>
-
-<!-- START -->
-<div class="ov" id="start-ov">
-  <div class="big-title">🏰 Castle<br>Defenders!</div>
-  <div class="sub">
-    🌅 <strong style="color:var(--yellow)">Morning</strong> — Tap trees to chop wood<br>
-    ⚒️ <strong style="color:var(--orange)">Day</strong> — Forge weapons at the forge<br>
-    🌙 <strong style="color:var(--purple)">Night</strong> — Tap zombies to fight them off!<br><br>
-    Protect your castle! 30 zombies come each night.
-  </div>
-  <button class="big-btn" onclick="startGame()">Defend the Castle! 🏰</button>
-</div>
-
-<!-- GAME OVER -->
-<div class="ov hidden" id="over-ov">
-  <div style="font-size:56px" id="ov-icon">💀</div>
-  <div class="big-title" id="ov-title" style="color:var(--red)">Castle Fallen!</div>
-  <div style="font-size:13px;color:var(--muted)" id="ov-msg"></div>
-  <div class="stat-row">
-    <div class="stat"><div class="stat-lbl">Days</div><div class="stat-val" id="ov-days">0</div></div>
-    <div class="stat"><div class="stat-lbl">Zombies</div><div class="stat-val" id="ov-zombies">0</div></div>
-    <div class="stat"><div class="stat-lbl">Score</div><div class="stat-val" id="ov-score">0</div></div>
-  </div>
-  <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center">
-    <button class="big-btn" onclick="startGame()">Try Again! ⚔️</button>
-  </div>
-</div>
-
+<div id="game-container"></div>
+<script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js"></script>
 <script>
-// ===== STATE =====
-let day=1, phase='morning', wood=0, score=0, castleHp=100;
-let weapons={sword:0,bow:0,axe:0};
-let actionsLeft=2, actionsMax=2;
-let treeLogs=[3,3];
-let zombiesTotal=30, zombiesLeft=0, zombiesKilled=0, totalKilled=0;
-let gameRunning=false, battleActive=false;
-let zombieIntervals=[], celestialTimer=null;
-let audioCtx;
+const GW = Math.max(320, window.innerWidth || 0);
+const GH = Math.max(240, window.innerHeight || 0);
+const GROUND_Y = GH * 0.72;
+const CASTLE_X  = GW * 0.13;
 
-const WEAPON_COST={sword:3,bow:2,axe:4};
-const WEAPON_DMG={sword:1,bow:1,axe:2}; // hits per tap
-const WEAPON_EM={sword:'⚔️',bow:'🏹',axe:'🪓'};
-const ZOMBIE_EMOJIS=['🧟','🧟‍♀️','🧟‍♂️'];
+// ── shared state ──────────────────────────────────────────
+const G = {
+  day:1, wood:0, score:0, castleHp:100, totalKilled:0,
+  weapons:{ bow:0, sword:0, axe:0 },
+  activeWeapon:'bow',
+  plants:[],       // [{type, x, y, hp, lastShot}]
+  actionsLeft:2,
+  reset(){
+    Object.assign(this,{day:1,wood:0,score:0,castleHp:100,totalKilled:0,
+      weapons:{bow:0,sword:0,axe:0},activeWeapon:'bow',
+      plants:[],actionsLeft:2});
+  }
+};
 
-// ===== AUDIO =====
-function au(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
-function tone(f,d,type='sine',v=0.18){try{const c=au(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
-function playChop(){tone(200,.12,'sawtooth',.2);setTimeout(()=>tone(300,.08,'sine',.1),80);}
-function playCraft(){[400,500,600].forEach((f,i)=>setTimeout(()=>tone(f,.1,'sine',.18),i*60));}
-function playHit(){tone(180,.1,'sawtooth',.22);}
-function playKill(){tone(600,.08,'sine',.2);setTimeout(()=>tone(800,.12,'sine',.18),60);}
-function playNight(){[300,250,200,150].forEach((f,i)=>setTimeout(()=>tone(f,.2,'sine',.15),i*120));}
-function playMorning(){[400,500,600,700].forEach((f,i)=>setTimeout(()=>tone(f,.18,'sine',.2),i*100));}
-function playCastleHit(){tone(100,.2,'sawtooth',.25);}
+// ── audio helper ──────────────────────────────────────────
+let _actx;
+function AC(){ return _actx||(_actx=new(window.AudioContext||window.webkitAudioContext)()); }
+function beep(freq,dur,type='sine',vol=0.18){
+  try{const c=AC(),o=c.createOscillator(),g=c.createGain();
+  o.connect(g);g.connect(c.destination);o.type=type;
+  o.frequency.value=freq;g.gain.setValueAtTime(vol,c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+dur);
+  o.start();o.stop(c.currentTime+dur);}catch(e){}
+}
+function chord(freqs){ freqs.forEach((f,i)=>setTimeout(()=>beep(f,.15,'sine',.2),i*70)); }
 
-// ===== SKY / DAY-NIGHT =====
-function setSky(ph){
-  const sky=document.getElementById('sky');
-  const stars=document.getElementById('stars');
-  const overlay=document.getElementById('night-overlay');
-  const cel=document.getElementById('celestial');
-  if(ph==='morning'){
-    sky.style.background='linear-gradient(180deg,#87ceeb 0%,#d4f0ff 100%)';
-    stars.style.opacity='0';overlay.style.opacity='0';
-    cel.className='sun';cel.style.left='15%';cel.style.top='12%';
-  } else if(ph==='day'){
-    sky.style.background='linear-gradient(180deg,#5bb8e8 0%,#c8eaff 100%)';
-    cel.style.left='50%';
-  } else if(ph==='dusk'){
-    sky.style.background='linear-gradient(180deg,#ff6b35 0%,#ff8c42 40%,#1a0a3c 100%)';
-    cel.style.left='80%';
-  } else {
-    sky.style.background='linear-gradient(180deg,#0a0618 0%,#1a0a3c 100%)';
-    stars.style.opacity='1';overlay.style.opacity='0.5';
-    cel.className='moon';cel.style.left='70%';cel.style.top='10%';
+// ── colour palette ────────────────────────────────────────
+const C={
+  sky1:0x87ceeb,sky2:0x5bb8e8,skyNight:0x0a0618,
+  ground:0x4a7c3f,groundD:0x2d4a25,
+  castle:0x9b8365,castleD:0x6b5a3e,
+  ui:0x1a0a3c,uiB:0x3a2a5c,
+  yellow:0xffe14d,green:0x5dffb0,red:0xff5a5a,
+  orange:0xff9a3c,purple:0xc77dff,blue:0x5bc8ff,
+  white:0xffffff,black:0x000000,
+};
+
+// ═══════════════════════════════════════════════════════════
+// SCENE: MENU
+// ═══════════════════════════════════════════════════════════
+class MenuScene extends Phaser.Scene {
+  constructor(){ super('Menu'); }
+  create(){
+    G.reset();
+    const cx=GW/2, cy=GH/2;
+    this.add.rectangle(cx,cy,GW,GH,C.skyNight);
+    // stars
+    for(let i=0;i<80;i++) this.add.circle(
+      Phaser.Math.Between(10,GW-10), Phaser.Math.Between(10,GH*.65),
+      Phaser.Math.FloatBetween(.4,2), C.white, Phaser.Math.FloatBetween(.2,1));
+    // ground
+    this.add.rectangle(cx,GH*.86,GW,GH*.3,C.groundD);
+    // castle silhouette
+    drawCastleGraphic(this,CASTLE_X,GROUND_Y,true);
+    // title
+    this.add.text(cx,GH*.15,'🏰',{fontSize:fz(0.12)}).setOrigin(.5);
+    this.add.text(cx,GH*.30,'Castle Defenders!',
+      {fontFamily:'Fredoka One',fontSize:fz(.065),fill:'#ffe14d',stroke:'#000',strokeThickness:4})
+      .setOrigin(.5);
+    // instructions
+    const pw=Math.min(GW*.88,420), ph=GH*.26;
+    const panel=this.add.rectangle(cx,GH*.52,pw,ph,C.ui,.92);
+    panel.setStrokeStyle(2,C.uiB);
+    [
+      '🌅  Day — chop wood, forge weapons, plant defenders',
+      '🌙  Night — tap screen to shoot zombies',
+      '🌱  Plants auto-shoot — drag to place them!',
+    ].forEach((s,i)=>this.add.text(cx,GH*.42+i*GH*.075,s,
+      {fontFamily:'Nunito',fontSize:fz(.030),fill:'#f0e6ff',align:'center',wordWrap:{width:pw-30}})
+      .setOrigin(.5));
+    // play button
+    makeBtn(this,cx,GH*.79,'Defend the Castle! ⚔️',C.yellow,'#0a0618',fz(.04),()=>{
+      this.scene.start('Day');
+    });
   }
 }
 
-function buildStars(){
-  const s=document.getElementById('stars');s.innerHTML='';
-  for(let i=0;i<60;i++){
-    const el=document.createElement('div');el.className='star';
-    const sz=Math.random()*2+.5;
-    el.style.cssText=`width:${sz}px;height:${sz}px;left:${Math.random()*100}%;top:${Math.random()*60}%;--d:${1.5+Math.random()*2}s;animation-delay:${Math.random()*2}s`;
-    s.appendChild(el);
+// ═══════════════════════════════════════════════════════════
+// SCENE: DAY
+// ═══════════════════════════════════════════════════════════
+class DayScene extends Phaser.Scene {
+  constructor(){ super('Day'); }
+
+  create(){
+    G.actionsLeft = 2 + Math.floor(G.day/3);
+    G.plants = [];
+    G.weapons = {bow:0,sword:0,axe:0};
+    G.wood = 0;
+    G.activeWeapon = 'bow';
+
+    this.cameras.main.setBackgroundColor(C.sky1);
+    this.add.rectangle(GW/2,GH*.86,GW,GH*.3,C.ground);
+    this.add.rectangle(GW/2,GROUND_Y,GW,8,C.groundD);
+
+    // Castle
+    drawCastleGraphic(this,CASTLE_X,GROUND_Y,false);
+
+    // Castle HP bar
+    this.add.rectangle(CASTLE_X,GROUND_Y+14,110,10,0x330000);
+    this.hpFill=this.add.rectangle(CASTLE_X-55,GROUND_Y+14,110*(G.castleHp/100),10,C.green);
+    this.hpFill.setOrigin(0,.5);
+
+    // HUD
+    this.dayTxt = this.add.text(10,8,'Day '+G.day,
+      {fontFamily:'Fredoka One',fontSize:fz(.038),fill:'#ffe14d'});
+    this.woodTxt = this.add.text(GW/2,8,'🪵 '+G.wood,
+      {fontFamily:'Fredoka One',fontSize:fz(.042),fill:'#8b5e3c',stroke:'#000',strokeThickness:2})
+      .setOrigin(.5,0);
+    this.actionTxt = this.add.text(GW/2,GH*.09,'Chops left: ●●',
+      {fontFamily:'Nunito',fontSize:fz(.028),fill:'#2a6a2a',fontStyle:'bold'}).setOrigin(.5,0);
+
+    // Phase banner
+    this.banner=this.add.text(GW/2,GH*.15,
+      '🌅 Chop wood · Plant defenders · Forge weapons',
+      {fontFamily:'Nunito',fontSize:fz(.026),fill:'#1a4a1a',fontStyle:'bold',
+       align:'center',wordWrap:{width:GW*.9}}).setOrigin(.5);
+
+    // Trees
+    this.trees=[];
+    [{x:GW*.60,em:'🌲'},{x:GW*.80,em:'🌳'}].forEach(({x,em},i)=>{
+      const logs=[3,3];
+      const t=this.add.text(x,GROUND_Y-70,em,{fontSize:fz(.13)})
+        .setOrigin(.5,1).setInteractive({useHandCursor:true});
+      const lbl=this.add.text(x+30,GROUND_Y-115,'🪵×3',
+        {fontFamily:'Fredoka One',fontSize:fz(.030),fill:'#ffe14d',
+         stroke:'#000',strokeThickness:2}).setOrigin(.5);
+      t.on('pointerdown',()=>this.chop(i,t,lbl));
+      t.on('pointerover',()=>t.setScale(1.08));
+      t.on('pointerout', ()=>t.setScale(1));
+      this.trees.push({txt:t,lbl,logs:3});
+    });
+
+    // Forge
+    this.drawForge(GW*.38,GROUND_Y-55);
+
+    // Plant panel (bottom bar)
+    this.buildPlantPanel();
+
+    // Weapon crafting buttons
+    this.buildForgeButtons();
+
+    // To Battle button
+    this.battleBtn=makeBtn(this,GW/2,GH*.91,'🌙 To Battle! →',C.purple,'#fff',fz(.038),()=>{
+      if(G.weapons.bow===0&&G.weapons.sword===0&&G.weapons.axe===0){
+        this.flashBanner('⚠️ Craft at least one weapon first!','#ff5a5a'); return;
+      }
+      this.showTransition('🌙 Night Falls!','Zombies incoming — tap to shoot!',
+        ()=>this.scene.start('Night'));
+    });
+
+    // Drag state for plants
+    this.dragPlant=null;
+    this.dragSprite=null;
+
+    this.updateUI();
   }
-}
 
-// ===== HUD =====
-function updateHUD(){
-  document.getElementById('day-badge').textContent='Day '+day;
-  document.getElementById('score-badge').textContent='⭐ '+score;
-  document.getElementById('wood-count').textContent=wood;
-  document.getElementById('castle-hp-fill').style.width=castleHp+'%';
-  document.getElementById('castle-hp-fill').style.background=castleHp>50?'linear-gradient(90deg,#5dffb0,#ffe14d)':castleHp>25?'linear-gradient(90deg,#ffe14d,#ff9a3c)':'linear-gradient(90deg,#ff5a5a,#ff9a3c)';
-  // Phase badge
-  const pb=document.getElementById('phase-badge');
-  if(phase==='morning'){pb.textContent='🌅 Morning';pb.style.background='#ffe14d';}
-  else if(phase==='day'){pb.textContent='⚒️ Forge';pb.style.background='#ff9a3c';}
-  else{pb.textContent='🌙 Night!';pb.style.background='#c77dff';}
-  // Weapon buttons
-  ['sword','bow','axe'].forEach(w=>{
-    const btn=document.getElementById('wb-'+w);
-    btn.classList.toggle('affordable',wood>=WEAPON_COST[w]&&weapons[w]===0);
-    btn.classList.toggle('owned',weapons[w]>0);
-  });
-  // Action pips
-  const aw=document.getElementById('actions-wrap');aw.innerHTML='';
-  for(let i=0;i<actionsMax;i++){
-    const pip=document.createElement('div');
-    pip.className='action-pip'+(i>=actionsLeft?' used':'');
-    aw.appendChild(pip);
+  chop(idx,tree,lbl){
+    if(G.actionsLeft<=0||this.trees[idx].logs<=0) return;
+    this.trees[idx].logs--;
+    G.wood++;
+    G.actionsLeft--;
+    beep(200,.12,'sawtooth',.2);
+    this.floatText(tree.x,tree.y-20,'+1 🪵','#8b5e3c');
+    this.tweens.add({targets:tree,angle:[-12,8,0],duration:220});
+    lbl.setText('🪵×'+this.trees[idx].logs);
+    if(this.trees[idx].logs===0) tree.setAlpha(.35);
+    this.updateUI();
+    if(G.actionsLeft<=0) this.flashBanner('No chops left — forge and plant now!','#b86000');
   }
-  // Trees
-  treeLogs.forEach((logs,i)=>{
-    document.getElementById('tc-'+i).textContent=logs;
-    document.getElementById('tree-'+i).classList.toggle('depleted',logs===0);
-  });
-}
 
-function setBanner(txt){document.getElementById('phase-banner').textContent=txt;}
+  buildPlantPanel(){
+    const plants=[
+      {key:'sunflower',em:'🌻',cost:1,desc:'Slow shots, long range'},
+      {key:'cactus',   em:'🌵',cost:2,desc:'Medium shots'},
+      {key:'fire',     em:'🔥',cost:3,desc:'Short range, heavy'},
+    ];
+    const panelY=GH*.82;
+    this.add.rectangle(GW*.32,panelY,GW*.58,GH*.09,C.ui,.9)
+      .setStrokeStyle(1,C.uiB);
+    this.add.text(GW*.05,panelY,'🌱\nPlants',
+      {fontFamily:'Fredoka One',fontSize:fz(.024),fill:'#5dffb0',align:'center'}).setOrigin(.5);
 
-// ===== PHASES =====
-function startGame(){
-  day=1;phase='morning';wood=0;score=0;castleHp=100;
-  weapons={sword:0,bow:0,axe:0};
-  actionsLeft=2;actionsMax=2;treeLogs=[3,3];
-  zombiesKilled=0;totalKilled=0;battleActive=false;
-  gameRunning=true;
-  document.getElementById('start-ov').classList.add('hidden');
-  document.getElementById('over-ov').classList.add('hidden');
-  document.getElementById('battle-layer').innerHTML='';
-  document.getElementById('weapon-ready').innerHTML='';
-  document.getElementById('wave-info').style.display='none';
-  buildStars();
-  setSky('morning');
-  showForge(true);
-  showTrees(true);
-  setPhase('morning');
-}
+    plants.forEach(({key,em,cost},i)=>{
+      const px=GW*.18+i*(GW*.16);
+      const bg=this.add.rectangle(px,panelY,GW*.13,GH*.07,C.uiB).setStrokeStyle(1,0x5a4a8a);
+      const icon=this.add.text(px,panelY-8,em,{fontSize:fz(.055)}).setOrigin(.5);
+      this.add.text(px,panelY+14,cost+'🪵',
+        {fontFamily:'Fredoka One',fontSize:fz(.022),fill:'#ff9a3c'}).setOrigin(.5);
 
-function setPhase(ph){
-  phase=ph;
-  updateHUD();
-  if(ph==='morning'){
-    setSky('morning');
-    actionsLeft=actionsMax;
-    treeLogs=[3,3];
-    setBanner('🌅 Morning — Tap trees to chop wood! ('+actionsLeft+' chops left)');
-    showForge(false);showTrees(true);
-    document.getElementById('battle-layer').innerHTML='';
-    document.getElementById('weapon-ready').innerHTML='';
-    document.getElementById('wave-info').style.display='none';
-    playMorning();
-  } else if(ph==='day'){
-    setSky('day');
-    setBanner('⚒️ Forge time — craft weapons before night falls!');
-    showForge(true);showTrees(false);
-  } else if(ph==='night'){
-    setSky('night');
-    showForge(false);showTrees(false);
-    buildWeaponBar();
-    startNight();
-    playNight();
+      icon.setInteractive({useHandCursor:true,draggable:true});
+      icon.on('dragstart',(_,x,y)=>{
+        if(G.wood<cost){ this.flashBanner('Not enough wood!','#ff5a5a'); return; }
+        this.dragPlant={key,em,cost};
+        this.dragSprite=this.add.text(x,y,em,{fontSize:fz(.07)}).setOrigin(.5).setDepth(10);
+      });
+      icon.on('drag',(_,x,y)=>{ if(this.dragSprite)this.dragSprite.setPosition(x,y); });
+      icon.on('dragend',(_,x,y)=>this.placePlant(x,y));
+    });
   }
-}
 
-function showForge(show){
-  document.getElementById('forge').style.display=show?'flex':'none';
-  document.getElementById('wood-pile').style.display=show?'flex':'none';
-  document.getElementById('actions-wrap').style.display=show?'flex':'none';
-}
-function showTrees(show){
-  document.getElementById('trees-area').style.display=show?'flex':'none';
-  document.getElementById('wood-pile').style.display=show?'flex':'none';
-  document.getElementById('actions-wrap').style.display=show?'flex':'none';
-}
-
-// ===== PHASE TRANSITION SCREEN =====
-function showTransition(title,sub,cb){
-  const pt=document.getElementById('phase-transition');
-  document.getElementById('pt-text').textContent=title;
-  document.getElementById('pt-sub').textContent=sub;
-  pt.classList.add('show');pt.style.opacity='1';pt.style.pointerEvents='all';
-  setTimeout(()=>{
-    pt.style.opacity='0';pt.style.pointerEvents='none';
-    setTimeout(()=>{pt.classList.remove('show');cb&&cb();},600);
-  },1800);
-}
-
-// ===== CHOP =====
-function chopTree(idx){
-  if(phase!=='morning'||actionsLeft<=0||treeLogs[idx]<=0||!gameRunning)return;
-  treeLogs[idx]=Math.max(0,treeLogs[idx]-1);
-  wood++;actionsLeft--;
-  playChop();
-  // Chop FX
-  const tree=document.getElementById('tree-'+idx);
-  const r=tree.getBoundingClientRect();
-  spawnFX(r.left+r.width/2,r.top,'🪵',r.left+r.width/2,r.top-10);
-  updateHUD();
-  setBanner('🌅 Morning — '+actionsLeft+' chop'+(actionsLeft!==1?'s':'')+' left!');
-  if(actionsLeft<=0){
-    setTimeout(()=>showTransition('⚒️ Forge Time!','Use your wood to craft weapons before night!',()=>setPhase('day')),400);
-  }
-}
-
-// ===== CRAFT =====
-function craftWeapon(w){
-  if(phase!=='day'||wood<WEAPON_COST[w]||weapons[w]>0||!gameRunning)return;
-  wood-=WEAPON_COST[w];
-  weapons[w]++;
-  playCraft();
-  updateHUD();
-  spawnFX(window.innerWidth/2,window.innerHeight*.5,WEAPON_EM[w],window.innerWidth/2,window.innerHeight*.4);
-  // Check if enough wood for more or proceed to night
-  const canAffordMore=Object.keys(WEAPON_COST).some(k=>weapons[k]===0&&wood>=WEAPON_COST[k]);
-  if(!canAffordMore&&wood<2){
-    setBanner('⚒️ Ready for battle! Tap "Go to Night" when ready.');
-    showGoNight();
-  }
-}
-
-function showGoNight(){
-  const forge=document.getElementById('forge');
-  if(document.getElementById('go-night-btn'))return;
-  const btn=document.createElement('button');
-  btn.id='go-night-btn';btn.className='big-btn';btn.textContent='⚔️ To Battle!';
-  btn.style.cssText='margin-top:8px;font-size:16px;padding:10px 28px';
-  btn.onclick=()=>showTransition('🌙 Night Falls!','Zombies incoming — tap them to fight!',()=>setPhase('night'));
-  forge.appendChild(btn);
-}
-
-// Always show go-night in day phase
-function checkShowGoNight(){
-  if(!document.getElementById('go-night-btn'))showGoNight();
-}
-
-// ===== NIGHT BATTLE =====
-function buildWeaponBar(){
-  const wrap=document.getElementById('weapon-ready');wrap.innerHTML='';
-  Object.keys(weapons).forEach(w=>{
-    if(weapons[w]<=0)return;
-    const btn=document.createElement('div');btn.className='active-weapon';
-    btn.innerHTML=`${WEAPON_EM[w]}<div class="wcharge">${WEAPON_DMG[w]}x</div>`;
-    btn.dataset.weapon=w;
-    wrap.appendChild(btn);
-  });
-}
-
-function startNight(){
-  battleActive=true;
-  zombiesTotal=20+day*10;
-  zombiesLeft=zombiesTotal;
-  const waveEl=document.getElementById('wave-info');
-  waveEl.style.display='block';
-  document.getElementById('zombie-count').textContent=zombiesLeft;
-  setBanner('🌙 NIGHT — Tap zombies to fight! Use your weapons!');
-
-  // Spawn zombies in waves
-  let spawned=0;
-  const spawnZombie=()=>{
-    if(!battleActive||spawned>=zombiesTotal)return;
-    createZombie();spawned++;
-    const delay=Math.max(400,1200-day*50);
-    if(spawned<zombiesTotal)setTimeout(spawnZombie,delay);
-  };
-  setTimeout(spawnZombie,800);
-}
-
-function createZombie(){
-  const fz=document.getElementById('battle-layer');
-  const el=document.createElement('div');el.className='zombie';
-  const em=ZOMBIE_EMOJIS[Math.floor(Math.random()*ZOMBIE_EMOJIS.length)];
-  el.textContent=em;
-  // Start off-screen right, random height in ground zone
-  const startX=window.innerWidth+60;
-  const y=window.innerHeight*(0.45+Math.random()*0.22);
-  el.style.left=startX+'px';
-  el.style.top=y+'px';
-  fz.appendChild(el);
-
-  // March left
-  const speed=0.4+day*0.15+Math.random()*0.3;
-  let x=startX;
-  let hp=1+Math.floor(day/3);
-  el.dataset.hp=hp;
-
-  const march=setInterval(()=>{
-    if(!battleActive){clearInterval(march);return;}
-    x-=speed;
-    el.style.left=x+'px';
-    // Reached castle
-    if(x<180){
-      clearInterval(march);
-      el.remove();
-      if(!battleActive)return;
-      castleHp=Math.max(0,castleHp-10);
-      playCastleHit();
-      updateHUD();
-      shakecastle();
-      zombiesLeft=Math.max(0,zombiesLeft-1);
-      document.getElementById('zombie-count').textContent=zombiesLeft;
-      if(castleHp<=0){endGame();return;}
-      if(zombiesLeft<=0)nightOver();
+  placePlant(x,y){
+    if(!this.dragSprite) return;
+    this.dragSprite.destroy(); this.dragSprite=null;
+    const dp=this.dragPlant; if(!dp) return;
+    // Must be near ground
+    if(y<GROUND_Y-100||y>GROUND_Y+30||x<GW*.22){
+      this.flashBanner('Drop on the ground path!','#ff9a3c');
+      this.dragPlant=null; return;
     }
-  },16);
-  zombieIntervals.push(march);
+    if(G.plants.length>=5){ this.flashBanner('Max 5 plants!','#ff9a3c'); this.dragPlant=null; return; }
+    G.wood-=dp.cost;
+    G.plants.push({key:dp.key,em:dp.em,x,y:GROUND_Y-18,hp:3,lastShot:0});
+    // Show placed plant
+    this.add.text(x,GROUND_Y-18,dp.em,{fontSize:fz(.055)}).setOrigin(.5).setDepth(3);
+    beep(500,.1,'sine',.2); beep(700,.1,'sine',.15);
+    this.dragPlant=null;
+    this.updateUI();
+  }
 
-  // Tap to hit
-  el.addEventListener('click',e=>{e.stopPropagation();hitZombie(el,march,y);});
-  el.addEventListener('touchend',e=>{e.preventDefault();e.stopPropagation();hitZombie(el,march,y);});
-}
+  buildForgeButtons(){
+    const WEAPONS=[
+      {key:'bow',  em:'🏹',cost:2},
+      {key:'sword',em:'⚔️', cost:3},
+      {key:'axe',  em:'🪓',cost:4},
+    ];
+    const startX=GW*.52, gap=GW*.15;
+    WEAPONS.forEach(({key,em,cost},i)=>{
+      const bx=startX+i*gap, by=GROUND_Y-105;
+      const bg=this.add.rectangle(bx,by,GW*.12,GH*.1,C.ui).setStrokeStyle(2,C.uiB);
+      this.add.text(bx,by-15,em,{fontSize:fz(.055)}).setOrigin(.5);
+      const cTxt=this.add.text(bx,by+12,cost+'🪵',
+        {fontFamily:'Fredoka One',fontSize:fz(.024),fill:'#ff9a3c'}).setOrigin(.5);
+      bg.setInteractive({useHandCursor:true});
+      bg.on('pointerdown',()=>{
+        if(G.wood<cost){ this.flashBanner('Not enough wood!','#ff5a5a'); return; }
+        G.wood-=cost; G.weapons[key]+=10;
+        chord([400,500,600]);
+        this.floatText(bx,by-40,'⚔️ +10 charges','#5dffb0');
+        this.updateUI();
+      });
+      bg.on('pointerover',()=>bg.setFillStyle(0x2a1a50));
+      bg.on('pointerout', ()=>bg.setFillStyle(C.ui));
+    });
+  }
 
-function hitZombie(el,march,y){
-  if(!battleActive||el.classList.contains('dying'))return;
-  let hp=parseInt(el.dataset.hp)||1;
-  // Use best available weapon
-  const dmg=getBestWeaponDmg();
-  hp-=dmg;el.dataset.hp=hp;
-  playHit();
-  // Hit fx
-  const r=el.getBoundingClientRect();
-  spawnHitFX(r.left+r.width/2,r.top+r.height/2);
-  if(hp<=0){
-    clearInterval(march);
-    el.classList.add('dying');
-    playKill();
-    score+=10*(1+Math.floor(day/2));
-    totalKilled++;zombiesLeft=Math.max(0,zombiesLeft-1);
-    document.getElementById('zombie-count').textContent=zombiesLeft;
-    document.getElementById('score-badge').textContent='⭐ '+score;
-    setTimeout(()=>{el.remove();},420);
-    if(zombiesLeft<=0)setTimeout(nightOver,500);
+  drawForge(x,y){
+    const g=this.add.graphics();
+    g.fillStyle(0x4a3520,1); g.fillRect(x-35,y-40,70,42);
+    g.fillStyle(0x3a2510,1); g.fillRect(x-10,y-68,20,30);
+    g.fillStyle(0xff6600,.7); g.fillCircle(x,y-18,16);
+    g.fillStyle(0xff9900,.5); g.fillCircle(x,y-18,9);
+    this.add.text(x,y-55,'🔥',{fontSize:fz(.05)}).setOrigin(.5);
+    this.add.text(x,y+8,'Forge',{fontFamily:'Fredoka One',fontSize:fz(.024),fill:'#ff9a3c'}).setOrigin(.5);
+  }
+
+  updateUI(){
+    this.woodTxt.setText('🪵 '+G.wood);
+    const pips='●'.repeat(G.actionsLeft)+'○'.repeat(Math.max(0,G.actionsLeft===0?0:2+Math.floor(G.day/3)-G.actionsLeft));
+    this.actionTxt.setText('Chops: '+pips);
+    this.hpFill.setSize(110*(G.castleHp/100),10);
+  }
+
+  flashBanner(txt,color='#1a4a1a'){
+    this.banner.setText(txt).setStyle({fill:color});
+    this.time.delayedCall(2000,()=>this.banner.setText(
+      '🌅 Chop wood · Plant defenders · Forge weapons').setStyle({fill:'#1a4a1a'}));
+  }
+
+  showTransition(title,sub,cb){
+    const ov=this.add.rectangle(GW/2,GH/2,GW,GH,0x000000,.8).setDepth(20);
+    this.add.text(GW/2,GH/2-30,title,
+      {fontFamily:'Fredoka One',fontSize:fz(.06),fill:'#ffe14d',align:'center'}).setOrigin(.5).setDepth(21);
+    this.add.text(GW/2,GH/2+30,sub,
+      {fontFamily:'Nunito',fontSize:fz(.030),fill:'rgba(255,255,255,0.7)',align:'center'}).setOrigin(.5).setDepth(21);
+    this.time.delayedCall(1600,cb);
+  }
+
+  floatText(x,y,txt,color='#ffe14d'){
+    const t=this.add.text(x,y,txt,
+      {fontFamily:'Fredoka One',fontSize:fz(.030),fill:color,stroke:'#000',strokeThickness:2})
+      .setOrigin(.5).setDepth(15);
+    this.tweens.add({targets:t,y:y-60,alpha:0,duration:900,onComplete:()=>t.destroy()});
   }
 }
 
-function getBestWeaponDmg(){
-  if(weapons.axe>0)return WEAPON_DMG.axe;
-  if(weapons.sword>0)return WEAPON_DMG.sword;
-  if(weapons.bow>0)return WEAPON_DMG.bow;
-  return 1;
+// ═══════════════════════════════════════════════════════════
+// SCENE: NIGHT
+// ═══════════════════════════════════════════════════════════
+class NightScene extends Phaser.Scene {
+  constructor(){ super('Night'); }
+
+  create(){
+    this.nightOver=false;
+    this.zombies=[];
+    this.projectiles=[];
+    this.spawnCount=0;
+    this.zombiesTotal = 20+G.day*15;
+    this.spawnDelay = Math.max(300, 1000-G.day*30);
+    this.plantTimers={};
+
+    // Sky + ground
+    this.cameras.main.setBackgroundColor(C.skyNight);
+    for(let i=0;i<70;i++) this.add.circle(
+      Phaser.Math.Between(10,GW-10),Phaser.Math.Between(10,GH*.6),
+      Phaser.Math.FloatBetween(.4,2),C.white,Phaser.Math.FloatBetween(.2,.9));
+    this.add.circle(GW*.82,GH*.1,30,0xe8e8d0,.9);
+    this.add.rectangle(GW/2,GH*.86,GW,GH*.3,C.groundD);
+    this.add.rectangle(GW/2,GROUND_Y,GW,8,0x1a3010);
+
+    // Castle
+    drawCastleGraphic(this,CASTLE_X,GROUND_Y,false,true);
+
+    // Castle HP bar
+    this.hpBg=this.add.rectangle(CASTLE_X,GROUND_Y+18,120,12,0x330000);
+    this.hpFill=this.add.rectangle(CASTLE_X-60,GROUND_Y+18,120*(G.castleHp/100),12,C.green);
+    this.hpFill.setOrigin(0,.5);
+
+    // HUD
+    this.add.text(10,8,'Day '+G.day,{fontFamily:'Fredoka One',fontSize:fz(.036),fill:'#ffe14d'});
+    this.scoreTxt=this.add.text(GW-10,8,'⭐ '+G.score,
+      {fontFamily:'Fredoka One',fontSize:fz(.036),fill:'#ffe14d'}).setOrigin(1,0);
+    this.zombieTxt=this.add.text(GW/2,8,'🧟 '+this.zombiesTotal,
+      {fontFamily:'Fredoka One',fontSize:fz(.034),fill:'#ff5a5a'}).setOrigin(.5,0);
+
+    // Weapon bar
+    this.buildWeaponBar();
+
+    // Plants
+    G.plants.forEach(p=>{
+      const pe=this.add.text(p.x,p.y,p.em,{fontSize:fz(.055)}).setOrigin(.5).setDepth(3);
+      p.sprite=pe;
+    });
+
+    // Input — tap to shoot
+    this.input.on('pointerdown',(ptr)=>{
+      if(this.nightOver) return;
+      // Check if tapping weapon bar
+      if(ptr.y>GH*.84) return;
+      this.fireWeapon(ptr.x,ptr.y);
+    });
+
+    // Start spawning
+    this.time.delayedCall(800,()=>this.spawnZombie());
+
+    // Plant auto-fire loop
+    this.time.addEvent({delay:600,callback:this.plantFire,callbackScope:this,loop:true});
+  }
+
+  buildWeaponBar(){
+    const owned=Object.entries(G.weapons).filter(([,v])=>v>0);
+    if(!owned.length) return;
+    const barY=GH*.9, bw=GW*.18, bh=GH*.09;
+    const startX=GW/2-(owned.length-1)*bw/2;
+    this.weaponBtns={};
+    owned.forEach(([key,charges],i)=>{
+      const bx=startX+i*bw;
+      const em={bow:'🏹',sword:'⚔️',axe:'🪓'}[key];
+      const isActive=G.activeWeapon===key;
+      const bg=this.add.rectangle(bx,barY,bw*.9,bh,isActive?0x2a3a1a:C.ui,.95)
+        .setStrokeStyle(2,isActive?C.green:C.uiB).setDepth(10);
+      const icon=this.add.text(bx,barY-8,em,{fontSize:fz(.052)}).setOrigin(.5).setDepth(11);
+      const chargeTxt=this.add.text(bx,barY+14,charges+'x',
+        {fontFamily:'Fredoka One',fontSize:fz(.024),fill:isActive?'#5dffb0':'#aaa'})
+        .setOrigin(.5).setDepth(11);
+      this.weaponBtns[key]={bg,icon,chargeTxt};
+      bg.setInteractive({useHandCursor:true});
+      bg.on('pointerdown',()=>this.switchWeapon(key));
+    });
+  }
+
+  switchWeapon(key){
+    if(G.weapons[key]<=0) return;
+    G.activeWeapon=key;
+    Object.entries(this.weaponBtns).forEach(([k,{bg,chargeTxt}])=>{
+      const active=k===key;
+      bg.setFillStyle(active?0x2a3a1a:C.ui,.95);
+      bg.setStrokeStyle(2,active?C.green:C.uiB);
+      chargeTxt.setStyle({fill:active?'#5dffb0':'#aaa'});
+    });
+    beep(500,.06,'sine',.15);
+  }
+
+  fireWeapon(tx,ty){
+    const key=G.activeWeapon;
+    if(!G.weapons[key]||G.weapons[key]<=0){
+      // Auto-switch to next available
+      const next=Object.entries(G.weapons).find(([k,v])=>v>0&&k!==key);
+      if(next){ this.switchWeapon(next[0]); return; }
+      return;
+    }
+    G.weapons[key]--;
+    if(this.weaponBtns[key]) this.weaponBtns[key].chargeTxt.setText(G.weapons[key]+'x');
+    if(G.weapons[key]<=0&&this.weaponBtns[key]){
+      this.weaponBtns[key].bg.setFillStyle(0x333,.5);
+      this.weaponBtns[key].icon.setAlpha(.4);
+    }
+
+    const PROPS={
+      bow:  {em:'→',speed:14,dmg:1,splash:false},
+      sword:{em:'⚔️',speed:999,dmg:2,splash:true, range:GW*.12},
+      axe:  {em:'🪓',speed:9, dmg:3,splash:false,bounce:true},
+    };
+    const prop=PROPS[key];
+    const angle=Math.atan2(ty-GROUND_Y+30,tx-CASTLE_X);
+
+    if(key==='sword'){
+      // Instant arc — hit all zombies in range
+      beep(300,.1,'sawtooth',.25);
+      this.zombies.forEach(z=>{
+        if(!z.alive) return;
+        const dist=Phaser.Math.Distance.Between(CASTLE_X,GROUND_Y,z.x,z.y);
+        if(dist<prop.range) this.damageZombie(z,prop.dmg);
+      });
+      const slash=this.add.text(CASTLE_X+60,GROUND_Y-40,'⚔️✨',{fontSize:fz(.08)})
+        .setOrigin(.5).setDepth(8);
+      this.tweens.add({targets:slash,x:CASTLE_X+140,alpha:0,duration:350,
+        onComplete:()=>slash.destroy()});
+      return;
+    }
+
+    // Projectile
+    beep(key==='bow'?600:250,.08,'sine',.18);
+    const proj={
+      txt:this.add.text(CASTLE_X+50,GROUND_Y-30,prop.em,{fontSize:fz(.048)})
+        .setOrigin(.5).setDepth(8),
+      vx:Math.cos(angle)*prop.speed, vy:Math.sin(angle)*prop.speed,
+      dmg:prop.dmg, alive:true,
+      bounce:prop.bounce||false, bounced:false,
+    };
+    this.projectiles.push(proj);
+  }
+
+  plantFire(){
+    if(this.nightOver) return;
+    const now=this.time.now;
+    G.plants.forEach(plant=>{
+      if(!plant.sprite) return;
+      const fireRate={sunflower:2000,cactus:1400,fire:800}[plant.key]||2000;
+      if(now-plant.lastShot<fireRate) return;
+      // Find nearest zombie in range
+      const range={sunflower:GW*.7,cactus:GW*.45,fire:GW*.18}[plant.key]||GW*.4;
+      const nearest=this.zombies.filter(z=>z.alive&&z.x>plant.x-20)
+        .sort((a,b)=>a.x-b.x)[0];
+      if(!nearest) return;
+      if(Math.abs(nearest.x-plant.x)>range) return;
+      plant.lastShot=now;
+      // Fire a plant projectile
+      const em={sunflower:'🌱',cactus:'🔸',fire:'🔥'}[plant.key]||'•';
+      const dmg={sunflower:1,cactus:1,fire:2}[plant.key]||1;
+      const spd={sunflower:6,cactus:8,fire:10}[plant.key]||6;
+      const proj={
+        txt:this.add.text(plant.x,plant.y-20,em,{fontSize:fz(.036)}).setOrigin(.5).setDepth(7),
+        vx:-spd, vy:0, dmg, alive:true, bounce:false, bounced:false,
+      };
+      this.projectiles.push(proj);
+      beep({sunflower:400,cactus:300,fire:500}[plant.key]||400,.06,'sine',.12);
+    });
+  }
+
+  spawnZombie(){
+    if(this.nightOver||this.spawnCount>=this.zombiesTotal) return;
+    this.spawnCount++;
+    const remaining=this.zombiesTotal-this.spawnCount;
+    this.zombieTxt.setText('🧟 '+Math.max(0,remaining+this.zombies.filter(z=>z.alive).length));
+
+    // Pick type
+    const r=Math.random();
+    const type=r<.6?'normal':r<.8?'fast':'tank';
+    const props={
+      normal:{em:'🧟',spd:0.65+G.day*.1,  hp:1+Math.floor(G.day/2),scale:1},
+      fast:  {em:'🧟‍♀️',spd:1.4+G.day*.15, hp:1,                    scale:.85},
+      tank:  {em:'🧟‍♂️',spd:0.35+G.day*.06,hp:3+G.day,             scale:1.3},
+    }[type];
+
+    // Multiple lanes
+    const laneY=GROUND_Y-Phaser.Math.Between(10,45);
+    const z={
+      txt:this.add.text(GW+40,laneY,props.em,{fontSize:fz(.09*props.scale)})
+        .setOrigin(.5,1).setDepth(5).setInteractive({useHandCursor:true}),
+      hpBg:this.add.rectangle(GW+40,laneY-fz(.09*props.scale)*.6,36,6,0x220000).setDepth(6),
+      hpFill:this.add.rectangle(GW+22,laneY-fz(.09*props.scale)*.6,36,6,C.red).setOrigin(0,.5).setDepth(6),
+      x:GW+40, y:laneY, spd:props.spd, hp:props.hp, maxHp:props.hp,
+      alive:true, type,
+    };
+    z.txt.on('pointerdown',()=>this.damageZombie(z,this.getWeaponDmg()));
+    this.zombies.push(z);
+
+    // Schedule next
+    if(this.spawnCount<this.zombiesTotal){
+      this.time.delayedCall(this.spawnDelay,()=>this.spawnZombie());
+    }
+  }
+
+  getWeaponDmg(){
+    return {bow:1,sword:2,axe:3}[G.activeWeapon]||1;
+  }
+
+  damageZombie(z,dmg){
+    if(!z.alive) return;
+    z.hp-=dmg;
+    beep(180,.08,'sawtooth',.2);
+    this.tweens.add({targets:z.txt,alpha:.3,duration:60,yoyo:true});
+    // Update HP bar
+    const pct=Math.max(0,z.hp/z.maxHp);
+    z.hpFill.setSize(36*pct,6);
+    z.hpFill.setFillStyle(pct>.5?C.green:pct>.25?C.orange:C.red);
+    if(z.hp<=0) this.killZombie(z);
+  }
+
+  killZombie(z){
+    z.alive=false;
+    G.score+=10*(1+Math.floor(G.day/2));
+    G.totalKilled++;
+    this.scoreTxt.setText('⭐ '+G.score);
+    beep(600,.07,'sine',.2); beep(800,.1,'sine',.18);
+    this.spawnHitFX(z.x,z.y);
+    this.tweens.add({targets:[z.txt,z.hpBg,z.hpFill],
+      scaleX:0,scaleY:0,alpha:0,duration:300,ease:'Power2',
+      onComplete:()=>{z.txt.destroy();z.hpBg.destroy();z.hpFill.destroy();}});
+    this.zombies=this.zombies.filter(zz=>zz!==z);
+    this.checkNightOver();
+  }
+
+  checkNightOver(){
+    if(this.nightOver) return;
+    const alive=this.zombies.filter(z=>z.alive).length;
+    if(alive===0&&this.spawnCount>=this.zombiesTotal) this.endNight();
+  }
+
+  endNight(dead=false){
+    if(this.nightOver) return;
+    this.nightOver=true;
+    if(dead){ this.time.delayedCall(600,()=>this.scene.start('GameOver')); return; }
+    G.day++;
+    const ov=this.add.rectangle(GW/2,GH/2,GW,GH,0x000000,.82).setDepth(20);
+    this.add.text(GW/2,GH/2-40,'☀️ You Survived!',
+      {fontFamily:'Fredoka One',fontSize:fz(.06),fill:'#ffe14d'}).setOrigin(.5).setDepth(21);
+    this.add.text(GW/2,GH/2+10,'Day '+G.day+' begins...',
+      {fontFamily:'Nunito',fontSize:fz(.032),fill:'rgba(255,255,255,.7)'}).setOrigin(.5).setDepth(21);
+    this.add.text(GW/2,GH/2+50,'⭐ Score: '+G.score,
+      {fontFamily:'Fredoka One',fontSize:fz(.038),fill:'#5dffb0'}).setOrigin(.5).setDepth(21);
+    this.time.delayedCall(2200,()=>this.scene.start('Day'));
+  }
+
+  update(){
+    if(this.nightOver) return;
+
+    // Move zombies
+    this.zombies.forEach(z=>{
+      if(!z.alive) return;
+      z.x-=z.spd;
+      z.txt.setX(z.x); z.hpBg.setX(z.x); z.hpFill.setX(z.x-18);
+      // Check plant collision
+      G.plants.forEach(p=>{
+        if(!p.sprite) return;
+        if(Math.abs(z.x-p.x)<30&&Math.abs(z.y-p.y)<40){
+          p.hp--;
+          if(p.hp<=0&&p.sprite){
+            p.sprite.destroy();p.sprite=null;
+            beep(200,.15,'sawtooth',.2);
+          }
+        }
+      });
+      // Reached castle
+      if(z.x<CASTLE_X+60){
+        z.alive=false;
+        G.castleHp=Math.max(0,G.castleHp-8);
+        this.hpFill.setSize(120*(G.castleHp/100),12);
+        const pct=G.castleHp/100;
+        this.hpFill.setFillStyle(pct>.5?C.green:pct>.25?C.orange:C.red);
+        this.cameras.main.shake(220,.014);
+        beep(80,.25,'sawtooth',.3);
+        z.txt.destroy();z.hpBg.destroy();z.hpFill.destroy();
+        this.zombies=this.zombies.filter(zz=>zz!==z);
+        if(G.castleHp<=0){this.endNight(true);return;}
+        this.checkNightOver();
+      }
+    });
+
+    // Move projectiles
+    this.projectiles=this.projectiles.filter(p=>{
+      if(!p.alive) return false;
+      p.txt.x+=p.vx; p.txt.y+=p.vy;
+      // Off screen
+      if(p.txt.x<-30||p.txt.x>GW+30||p.txt.y>GH){
+        p.alive=false; p.txt.destroy(); return false;
+      }
+      // Hit zombie
+      let hit=false;
+      this.zombies.forEach(z=>{
+        if(!z.alive||hit) return;
+        if(Phaser.Math.Distance.Between(p.txt.x,p.txt.y,z.x,z.y)<32){
+          this.damageZombie(z,p.dmg);
+          if(p.bounce&&!p.bounced){
+            p.bounced=true;
+            p.vx*=-0.7; p.vy*=-0.3;
+          } else {
+            p.alive=false; p.txt.destroy(); hit=true;
+          }
+        }
+      });
+      return p.alive;
+    });
+  }
+
+  spawnHitFX(x,y){
+    const em=['💥','⚡','✨'][Phaser.Math.Between(0,2)];
+    const t=this.add.text(x,y-20,em,{fontSize:fz(.06)}).setOrigin(.5).setDepth(10);
+    this.tweens.add({targets:t,y:y-70,alpha:0,duration:500,onComplete:()=>t.destroy()});
+  }
 }
 
-function shakecastle(){
-  const c=document.getElementById('castle-wrap');
-  c.style.transform='translateX(-8px)';
-  setTimeout(()=>c.style.transform='translateX(4px)',100);
-  setTimeout(()=>c.style.transform='',200);
+// ═══════════════════════════════════════════════════════════
+// SCENE: GAME OVER
+// ═══════════════════════════════════════════════════════════
+class GameOverScene extends Phaser.Scene {
+  constructor(){ super('GameOver'); }
+  create(){
+    this.cameras.main.setBackgroundColor(C.skyNight);
+    const cx=GW/2,cy=GH/2;
+    this.add.text(cx,cy-GH*.26,'💀',{fontSize:fz(.14)}).setOrigin(.5);
+    this.add.text(cx,cy-GH*.1,'Castle Fallen!',
+      {fontFamily:'Fredoka One',fontSize:fz(.07),fill:'#ff5a5a',stroke:'#000',strokeThickness:4})
+      .setOrigin(.5);
+    this.add.text(cx,cy,'The zombies broke through on Day '+G.day+'!',
+      {fontFamily:'Nunito',fontSize:fz(.030),fill:'rgba(255,255,255,.6)',align:'center',
+       wordWrap:{width:GW*.8}}).setOrigin(.5);
+    // Stats
+    [['Days',G.day],['Killed',G.totalKilled],['Score',G.score]].forEach(([l,v],i)=>{
+      const sx=GW*(0.2+i*.3), sy=cy+GH*.18;
+      const bg=this.add.rectangle(sx,sy,GW*.22,GH*.1,C.ui,.9).setStrokeStyle(1,C.uiB);
+      this.add.text(sx,sy-GH*.025,l,{fontFamily:'Nunito',fontSize:fz(.022),fill:'rgba(255,255,255,.5)'}).setOrigin(.5);
+      this.add.text(sx,sy+GH*.01,''+v,{fontFamily:'Fredoka One',fontSize:fz(.046),fill:'#ffe14d'}).setOrigin(.5);
+    });
+    const bw=Math.min(GW*.4,170);
+    makeBtn(this,cx-bw*.6,cy+GH*.32,'Try Again ⚔️',C.yellow,'#0a0618',fz(.033),()=>{G.reset();this.scene.start('Day');});
+    makeBtn(this,cx+bw*.6,cy+GH*.32,'Menu 🏠',C.ui,'#f0e6ff',fz(.033),()=>this.scene.start('Menu'),C.uiB);
+  }
 }
 
-function nightOver(){
-  if(!battleActive)return;
-  battleActive=false;
-  zombieIntervals.forEach(clearInterval);zombieIntervals=[];
-  document.getElementById('battle-layer').innerHTML='';
-  document.getElementById('wave-info').style.display='none';
-  day++;weapons={sword:0,bow:0,axe:0};wood=0;
-  const survived=zombiesTotal-zombiesLeft;
-  score+=survived*5;
-  showTransition('☀️ You survived!',`Day ${day} begins — chop wood and prepare!`,()=>setPhase('morning'));
+// ── helpers ───────────────────────────────────────────────
+function fz(r){ return Math.floor(Math.min(GW,GH)*r)+'px'; }
+
+function makeBtn(scene,x,y,label,fill,textCol,fontSize,cb,stroke){
+  const fsNum = typeof fontSize === 'number' ? fontSize : parseFloat(String(fontSize)) || 24;
+  const tw=Math.max(label.length*fsNum*.55+20,140), th=54;
+  const btn=scene.add.rectangle(x,y,tw,th,fill).setStrokeStyle(3,stroke||0x000000,.5)
+    .setInteractive({useHandCursor:true});
+  scene.add.text(x,y,label,{fontFamily:'Fredoka One',fontSize,fill:textCol}).setOrigin(.5);
+  btn.on('pointerdown',cb);
+  btn.on('pointerover',()=>btn.setAlpha(.85));
+  btn.on('pointerout', ()=>btn.setAlpha(1));
+  return btn;
 }
 
-function endGame(){
-  battleActive=false;gameRunning=false;
-  zombieIntervals.forEach(clearInterval);zombieIntervals=[];
-  document.getElementById('over-ov').classList.remove('hidden');
-  document.getElementById('ov-title').textContent=castleHp<=0?'Castle Fallen! 💀':'You Survived!';
-  document.getElementById('ov-icon').textContent=castleHp<=0?'💀':'🏆';
-  document.getElementById('ov-msg').textContent=castleHp<=0?`The zombies broke through on Day ${day}!`:`Amazing defence on Day ${day}!`;
-  document.getElementById('ov-days').textContent=day;
-  document.getElementById('ov-zombies').textContent=totalKilled;
-  document.getElementById('ov-score').textContent=score;
+function drawCastleGraphic(scene,x,groundY,silhouette=false,night=false){
+  const g=scene.add.graphics().setDepth(2);
+  const wall=silhouette?0x3a2a1a:(night?0x4a3520:0x9b8365);
+  const dark=silhouette?0x2a1a0a:(night?0x3a2510:0x6b5a3e);
+  // Main wall
+  g.fillStyle(wall,1); g.fillRect(x-55,groundY-130,110,130);
+  // Battlements
+  [-40,-20,0,20,40].forEach(bx=>{
+    g.fillStyle(dark,1); g.fillRect(x+bx-8,groundY-152,16,24);
+  });
+  // Gate
+  g.fillStyle(silhouette?0x0a0618:0x3d2b1a,1); g.fillRect(x-20,groundY-60,40,60);
+  // Windows
+  g.fillRect(x-42,groundY-110,24,28); g.fillRect(x+18,groundY-110,24,28);
+  // Flag
+  g.lineStyle(3,dark,1); g.lineBetween(x,groundY-158,x,groundY-128);
+  g.fillStyle(0xff5a5a,1); g.fillTriangle(x,groundY-158,x+26,groundY-146,x,groundY-132);
+  // Night torches
+  if(night){
+    g.fillStyle(0xff6600,.35); g.fillCircle(x-18,groundY-35,16); g.fillCircle(x+18,groundY-35,16);
+    scene.add.text(x-18,groundY-42,'🕯️',{fontSize:fz(.033)}).setOrigin(.5).setDepth(3);
+    scene.add.text(x+18,groundY-42,'🕯️',{fontSize:fz(.033)}).setOrigin(.5).setDepth(3);
+  }
 }
 
-// ===== EFFECTS =====
-function spawnFX(x,y,em){
-  const el=document.createElement('div');el.className='chop-fx';
-  el.textContent=em;el.style.cssText=`left:${x}px;top:${y}px;transform:translateX(-50%)`;
-  document.getElementById('game').appendChild(el);
-  setTimeout(()=>el.remove(),700);
-}
-function spawnHitFX(x,y){
-  const el=document.createElement('div');el.className='hit-fx';
-  el.textContent=['💥','⚡','✨'][Math.floor(Math.random()*3)];
-  el.style.cssText=`left:${x}px;top:${y}px`;
-  document.getElementById('game').appendChild(el);
-  setTimeout(()=>el.remove(),550);
-}
-
-// Day phase — always show go to night button
-document.addEventListener('DOMContentLoaded',()=>{});
-
-// Update day phase to show go-night button after building
-const _origSetPhase=setPhase;
+// ── launch ─────────────────────────────────────────────────
+new Phaser.Game({
+  type: Phaser.AUTO,
+  width: GW, height: GH,
+  backgroundColor: '#0a0618',
+  parent: 'game-container',
+  scene: [MenuScene, DayScene, NightScene, GameOverScene],
+  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  input: { touch: true, activePointers: 3 },
+});
 </script>
 </body>
 </html>
