@@ -24,10 +24,14 @@ body {
  */
 img,
 video,
-iframe,
 svg {
 	max-width: 100%;
 	height: auto;
+}
+
+/* Unlayered `height:auto` on iframe overrides @layer utilities (e.g. h/full on calendar embed). */
+iframe {
+	max-width: 100%;
 }
 
 /* Improve tap targets on mobile */
