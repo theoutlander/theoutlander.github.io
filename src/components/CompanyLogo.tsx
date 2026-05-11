@@ -18,6 +18,14 @@ export function CompanyLogo({
 				className={css(companyLogo(), { width: width })}
 			/>
 		),
+		pitchbook: (
+			<img
+				src="/assets/images/companies/pitchbook-a-morningstar-company.png"
+				alt="PitchBook, a Morningstar company"
+				loading="lazy"
+				className={css(companyLogo(), { width: width })}
+			/>
+		),
 		microsoft: (
 			<img
 				src="/assets/images/companies/microsoft.png"

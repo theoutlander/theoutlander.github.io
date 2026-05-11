@@ -18,6 +18,7 @@ const border = { light: "gray.200", dark: "gray.700" };
 const getCompanyKey = (companyName: string): string => {
 	const mappings: Record<string, string> = {
 		"Plutonic Consulting": "plutonic",
+		"PitchBook (Morningstar)": "pitchbook",
 		Google: "google",
 		Salesforce: "salesforce",
 		"T-Mobile": "tmobile",
@@ -51,6 +52,7 @@ const getCompanyKey = (companyName: string): string => {
 // ----- Company URL mapping -----
 const getCompanyUrl = (companyName: string): string | null => {
 	const urlMap: Record<string, string> = {
+		"PitchBook (Morningstar)": "https://pitchbook.com",
 		Google: "https://www.google.com",
 		Salesforce: "https://www.salesforce.com",
 		"T-Mobile": "https://www.t-mobile.com",
