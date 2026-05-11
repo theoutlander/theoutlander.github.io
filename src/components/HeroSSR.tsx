@@ -14,7 +14,7 @@ export default function HeroSSR() {
 				mb: "0",
 				mt: { base: "1", md: "0" },
 				px: { base: "0", md: "0" },
-				maxW: { base: "100%", md: "42rem" },
+				maxW: { base: "100%", md: "38rem" },
 				mx: { base: "auto", md: "0" },
 			})}
 		>

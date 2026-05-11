@@ -45,10 +45,15 @@ export default function CoreCompetencies() {
 				<h2
 					className={css({
 						fontWeight: "bold",
-						fontSize: { base: "2xl", sm: "3xl", md: "4xl" },
-						mb: "0",
+						fontSize: { base: "2xl", sm: "3xl" },
+						mb: "6",
+						mt: "2",
+						pt: "8",
+						borderTop: "1px solid",
+						borderColor: { base: "gray.200", _dark: "gray.700" },
 						color: { base: "gray.900", _dark: "dark.text" },
 						lineHeight: "1.2",
+						textAlign: "left",
 					})}
 				>
 					What I Work On

@@ -32,6 +32,7 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 	return (
 		<section
 			data-testid="recent-writing"
+			style={{ borderLeft: "1px solid #e2e8f0", paddingLeft: "2rem" }}
 			className={css({
 				bg: "white",
 				mt: "0",

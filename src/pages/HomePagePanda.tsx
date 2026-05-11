@@ -60,7 +60,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
 								lg: "minmax(0, 13fr) minmax(0, 7fr)",
 							},
 							columnGap: { lg: "8", xl: "10" },
-							rowGap: { base: "10", md: "12", lg: "14" },
+							rowGap: { base: "6", md: "8", lg: "10" },
 							alignItems: "start",
 						})}
 					>
