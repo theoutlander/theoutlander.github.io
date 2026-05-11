@@ -76,11 +76,11 @@ const headerCard = css({
 	flexShrink: 0,
 });
 
-/** Home hero: no card chrome, photo and text align to top on larger screens */
+/** Home hero: no card chrome; avatar vertically centered beside bio column on md+ */
 const headerPlainOuter = css({
 	display: "flex",
 	flexDir: { base: "column", md: "row" },
-	alignItems: { base: "center", md: "flex-start" },
+	alignItems: "center",
 	gap: 6,
 	width: "100%",
 	flexShrink: 0,
@@ -97,7 +97,7 @@ const avatar = css({
 	borderColor: { base: "gray.200", _dark: "gray.700" },
 	flexShrink: 0,
 	flexGrow: 0,
-	alignSelf: "flex-start",
+	alignSelf: "center",
 });
 
 const avatarPlain = css({
