@@ -73,6 +73,7 @@ const headerCard = css({
 	alignItems: { base: "flex-start", md: "center" },
 	gap: { base: 4, md: 6 },
 	p: { base: 4, md: 6 },
+	flexShrink: 0,
 });
 
 /** Home hero: no card chrome, photo and text align to top on larger screens */
@@ -80,24 +81,23 @@ const headerPlainOuter = css({
 	display: "flex",
 	flexDir: { base: "column", md: "row" },
 	alignItems: { base: "center", md: "flex-start" },
-	gap: { base: 6, md: 8 },
+	gap: 6,
 	width: "100%",
+	flexShrink: 0,
 });
 
 const avatar = css({
-	w: { base: "160px", md: "120px" },
-	h: { base: "160px", md: "120px" },
-	maxW: { base: "160px", md: "120px" },
-	maxH: { base: "160px", md: "120px" },
+	width: "96px",
+	height: "96px",
+	maxWidth: "96px",
+	maxHeight: "96px",
 	borderRadius: "full",
 	objectFit: "cover",
 	borderWidth: "1px",
 	borderColor: { base: "gray.200", _dark: "gray.700" },
-	boxShadow: { base: "sm", _dark: "none" },
-	alignSelf: { base: "center", md: "flex-start" },
-	marginInline: { base: "auto", md: "0" },
 	flexShrink: 0,
 	flexGrow: 0,
+	alignSelf: "flex-start",
 });
 
 const avatarPlain = css({
@@ -267,6 +267,12 @@ export default function NameHeader({
 				src="/assets/images/profile/nick-karnik.jpeg"
 				alt="Nick Karnik"
 				className={avatarClass}
+				style={{
+					width: "96px",
+					height: "96px",
+					minWidth: "96px",
+					minHeight: "96px",
+				}}
 				loading="lazy"
 			/>
 			<div className={titleBox}>
@@ -413,7 +419,7 @@ export default function NameHeader({
 							display: "flex",
 							flexDirection: "column",
 							gap: "4",
-							mt: plain ? "3" : "0",
+							mt: plain ? "2" : "0",
 						})}
 					>
 						{footer}

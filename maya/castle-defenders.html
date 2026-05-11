@@ -15,8 +15,8 @@ html,body{width:100%;height:100%;overflow:hidden;background:#0a0618;touch-action
 <div id="game-container"></div>
 <script src="https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js"></script>
 <script>
-const GW = window.innerWidth;
-const GH = window.innerHeight;
+const GW = Math.max(320, window.innerWidth || 0);
+const GH = Math.max(240, window.innerHeight || 0);
 const GROUND_Y = GH * 0.72;
 const CASTLE_X  = GW * 0.13;
 

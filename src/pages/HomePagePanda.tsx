@@ -15,15 +15,7 @@ interface HomePageProps {
 
 export function HomePagePanda({ posts }: HomePageProps) {
 	return (
-		<div
-			className={css({
-				bg: { base: "white", _dark: "dark.surface" },
-				minHeight: "100vh",
-				width: "100%",
-				overflowX: "hidden",
-			})}
-		>
-			<SkipLink />
+		<>
 			<Helmet>
 				<title>Nick Karnik</title>
 				<meta
@@ -32,13 +24,28 @@ export function HomePagePanda({ posts }: HomePageProps) {
 				/>
 				<link rel="canonical" href="https://nick.karnik.io" />
 			</Helmet>
-			<HeaderSSR currentPage="home" />
-			<main id="main-content">
-				<HeroSSR />
-				<RecentWriting posts={posts ?? []} />
-				<CoreCompetencies />
-			</main>
-			<Footer />
-		</div>
+			<div
+				className={css({
+					bg: { base: "white", _dark: "dark.surface" },
+					minHeight: "100vh",
+					width: "100%",
+					overflowX: "hidden",
+					display: "flex",
+					flexDirection: "column",
+				})}
+			>
+				<SkipLink />
+				<HeaderSSR currentPage="home" />
+				<main
+					id="main-content"
+					className={css({ flex: "1" })}
+				>
+					<HeroSSR />
+					<RecentWriting posts={posts ?? []} />
+					<CoreCompetencies />
+				</main>
+				<Footer />
+			</div>
+		</>
 	);
 }

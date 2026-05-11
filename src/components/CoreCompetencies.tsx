@@ -66,7 +66,7 @@ export default function CoreCompetencies() {
 						bg: { base: "gray.50", _dark: "gray.900" },
 						pt: "5",
 						px: "8",
-						pb: "8",
+						pb: "4",
 						shadow: "sm",
 						height: "100%",
 						gap: "3",
