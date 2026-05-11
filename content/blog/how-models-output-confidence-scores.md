@@ -1,6 +1,7 @@
 ---
 id: "how-models-output-confidence-scores"
 title: "How Models Output Confidence Scores"
+draft: true
 date: "2025-05-10T15:00:00.000Z"
 cover: "/assets/images/blog/how-models-output-confidence-scores-cover.png"
 excerpt: "Models don't just say yes or no. They output a probability between 0 and 1. Here's how they learn to do it."

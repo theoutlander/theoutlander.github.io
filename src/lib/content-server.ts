@@ -1,7 +1,10 @@
-import { readFileSync, readdirSync } from "fs";
+import { existsSync, readFileSync, readdirSync } from "fs";
 import { join } from "path";
 import { marked } from "marked";
 import type { BlogPost } from "../types/blog";
+
+/** What to include when loading posts. `'public'` = shipped site (no drafts / future-dated). */
+export type BlogVisibility = "public" | "all";
 
 interface FrontMatter {
 	id: string;
@@ -11,6 +14,31 @@ interface FrontMatter {
 	excerpt: string;
 	category?: string;
 	tags: string[];
+	draft?: boolean;
+	published?: boolean;
+}
+
+/** Listing + JSON match the public site unless `BLOG_SHOW_ALL=1` (preview drafts / future-dated locally). */
+function defaultVisibility(): BlogVisibility {
+	if (process.env.BLOG_SHOW_ALL === "1") return "all";
+	return "public";
+}
+
+/** True if this post may appear on the public site (listing + JSON export + direct URL in prod). */
+export function isPostPublicForSite(fm: Pick<FrontMatter, "date"> & Partial<Pick<FrontMatter, "draft" | "published">>): boolean {
+	if (fm.draft === true) return false;
+	if (fm.published === false) return false;
+	if (!fm.date) return true;
+	if (isScheduledForFutureCalendarDay(fm.date)) return false;
+	return true;
+}
+
+function isScheduledForFutureCalendarDay(dateStr: string): boolean {
+	const post = new Date(dateStr);
+	if (Number.isNaN(post.getTime())) return false;
+	const postDay = post.toISOString().slice(0, 10);
+	const todayDay = new Date().toISOString().slice(0, 10);
+	return postDay > todayDay;
 }
 
 function parseFrontMatter(content: string): {
@@ -31,11 +59,14 @@ function parseFrontMatter(content: string): {
 	const lines = frontMatterText.split("\n");
 
 	for (const line of lines) {
-		const colonIndex = line.indexOf(":");
+		const trimmed = line.trim();
+		if (!trimmed || trimmed.startsWith("#")) continue;
+
+		const colonIndex = trimmed.indexOf(":");
 		if (colonIndex === -1) continue;
 
-		const key = line.slice(0, colonIndex).trim();
-		let value = line.slice(colonIndex + 1).trim();
+		const key = trimmed.slice(0, colonIndex).trim();
+		let value = trimmed.slice(colonIndex + 1).trim();
 
 		// Remove quotes if present
 		if (
@@ -43,6 +74,18 @@ function parseFrontMatter(content: string): {
 			(value.startsWith("'") && value.endsWith("'"))
 		) {
 			value = value.slice(1, -1);
+		}
+
+		if (key === "draft" || key === "published") {
+			const lower = value.toLowerCase();
+			if (lower === "true") {
+				(frontMatter as any)[key] = true;
+			} else if (lower === "false") {
+				(frontMatter as any)[key] = false;
+			} else {
+				(frontMatter as any)[key] = value;
+			}
+			continue;
 		}
 
 		// Handle array values
@@ -134,7 +177,51 @@ function removeBuildTodoSections(markdown: string, slug: string): string {
 	return stripped.replace(/\n{3,}/g, "\n\n");
 }
 
-export async function loadAllBlogPosts(): Promise<BlogPost[]> {
+async function compileMarkdownToBlogPost(
+	frontMatter: FrontMatter,
+	markdown: string,
+	slug: string
+): Promise<BlogPost> {
+	let processedMarkdown = removeAllMermaidBlocks(markdown);
+	processedMarkdown = removeBuildTodoSections(processedMarkdown, slug);
+
+	const rawHtml = await marked(processedMarkdown, {
+		breaks: true,
+		gfm: true,
+	});
+	const contentHtml = wrapBlogPostTables(rawHtml);
+
+	return {
+		id: frontMatter.id,
+		slug,
+		title: frontMatter.title,
+		excerpt: frontMatter.excerpt,
+		url: `https://nick.karnik.io/blog/${slug}`,
+		date: frontMatter.date,
+		cover: frontMatter.cover || null,
+		category: frontMatter.category?.trim() || null,
+		tags: frontMatter.tags || [],
+		contentMarkdown: processedMarkdown,
+		contentHtml,
+	};
+}
+
+async function buildBlogPostFromMarkdownContent(
+	content: string,
+	slug: string,
+	visibility: BlogVisibility
+): Promise<BlogPost | null> {
+	const { frontMatter, markdown } = parseFrontMatter(content);
+	if (visibility === "public" && !isPostPublicForSite(frontMatter)) {
+		return null;
+	}
+	return compileMarkdownToBlogPost(frontMatter, markdown, slug);
+}
+
+export async function loadAllBlogPosts(options?: {
+	visibility?: BlogVisibility;
+}): Promise<BlogPost[]> {
+	const visibility = options?.visibility ?? defaultVisibility();
 	const contentDir = join(process.cwd(), "content", "blog");
 	const files = readdirSync(contentDir).filter(
 		(file) => file.endsWith(".md") && !file.startsWith("_")
@@ -146,32 +233,14 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 		try {
 			const filePath = join(contentDir, file);
 			const content = readFileSync(filePath, "utf-8");
-			const { frontMatter, markdown } = parseFrontMatter(content);
 			const slug = getSlugFromFilename(file);
 
-			// Remove all Mermaid blocks
-			let processedMarkdown = removeAllMermaidBlocks(markdown);
-			processedMarkdown = removeBuildTodoSections(processedMarkdown, slug);
-
-			const rawHtml = await marked(processedMarkdown, {
-				breaks: true,
-				gfm: true,
-			});
-			const contentHtml = wrapBlogPostTables(rawHtml);
-
-			const post: BlogPost = {
-				id: frontMatter.id,
+			const post = await buildBlogPostFromMarkdownContent(
+				content,
 				slug,
-				title: frontMatter.title,
-				excerpt: frontMatter.excerpt,
-				url: `https://nick.karnik.io/blog/${slug}`,
-				date: frontMatter.date,
-				cover: frontMatter.cover || null,
-				category: frontMatter.category?.trim() || null,
-				tags: frontMatter.tags || [],
-				contentMarkdown: processedMarkdown,
-				contentHtml,
-			};
+				visibility
+			);
+			if (!post) continue;
 
 			posts.push(post);
 		} catch (error) {
@@ -186,14 +255,36 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 }
 
 export async function loadBlogPost(slug: string): Promise<BlogPost | null> {
-	const posts = await loadAllBlogPosts();
-	return posts.find((post) => post.slug === slug) || null;
+	const contentDir = join(process.cwd(), "content", "blog");
+	const filePath = join(contentDir, `${slug}.md`);
+	if (!existsSync(filePath)) return null;
+
+	const content = readFileSync(filePath, "utf-8");
+	return buildBlogPostFromMarkdownContent(
+		content,
+		slug,
+		defaultVisibility()
+	);
 }
 
 export function getBlogPostSlugs(): string[] {
 	const contentDir = join(process.cwd(), "content", "blog");
-	const files = readdirSync(contentDir).filter((file) => file.endsWith(".md"));
-	return files.map((file) => getSlugFromFilename(file));
+	const files = readdirSync(contentDir).filter(
+		(file) => file.endsWith(".md") && !file.startsWith("_")
+	);
+	const slugs: string[] = [];
+	for (const file of files) {
+		try {
+			const content = readFileSync(join(contentDir, file), "utf-8");
+			const { frontMatter } = parseFrontMatter(content);
+			if (isPostPublicForSite(frontMatter)) {
+				slugs.push(getSlugFromFilename(file));
+			}
+		} catch {
+			// skip invalid files
+		}
+	}
+	return slugs;
 }
 
 export type { BlogPost };

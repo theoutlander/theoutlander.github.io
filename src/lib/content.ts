@@ -74,6 +74,18 @@ function getInlinePost(slug: string): BlogPost | null {
 // Client-side functions that fetch from the generated JSON files
 export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 	try {
+		// Route loaders and SSR run in Node without `document`. Reading `public/data/*.json`
+		// via relative fetch is unreliable here; load directly from `content/blog` instead.
+		if (typeof window === "undefined") {
+			const { loadAllBlogPosts: loadFromDisk } = await import("./content-server");
+			const posts = await loadFromDisk();
+			cachedAllPosts = posts.map((post) => normalizePost(post, post.slug));
+			for (const post of cachedAllPosts) {
+				cachedPostsBySlug[post.slug] = post;
+			}
+			return cachedAllPosts;
+		}
+
 		const inline = getInlineAllPosts();
 		if (inline) return inline;
 
@@ -95,6 +107,15 @@ export async function loadAllBlogPosts(): Promise<BlogPost[]> {
 
 export async function loadBlogPost(slug: string): Promise<BlogPost | null> {
 	try {
+		if (typeof window === "undefined") {
+			const { loadBlogPost: loadOne } = await import("./content-server");
+			const post = await loadOne(slug);
+			if (!post) return null;
+			const normalized = normalizePost(post, slug);
+			cachedPostsBySlug[slug] = normalized;
+			return normalized;
+		}
+
 		const inlinePost = getInlinePost(slug);
 		if (inlinePost) return inlinePost;
 

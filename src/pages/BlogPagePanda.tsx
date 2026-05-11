@@ -4,8 +4,8 @@ import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import BlogList from "../components/blog/BlogList";
-import BlogIntro from "../components/blog/BlogIntro";
 import BlogSidebar from "../components/blog/BlogSidebar";
+import ProfileIntroHeader from "../components/ProfileIntroHeader";
 import SkipLink from "../components/SkipLink";
 import { Post } from "../types/blog";
 
@@ -56,8 +56,14 @@ export function BlogPagePanda({ posts, filterTag, filterCategory }: BlogPageProp
 						mx: "auto",
 					})}
 				>
-					<BlogIntro />
-					<BlogList posts={posts} filterTag={filterTag} filterCategory={filterCategory} />
+					<ProfileIntroHeader />
+					<div
+						className={css({
+							mt: 6,
+						})}
+					>
+						<BlogList posts={posts} filterTag={filterTag} filterCategory={filterCategory} />
+					</div>
 				</div>
 				<div
 					className={css({

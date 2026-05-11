@@ -1,13 +1,13 @@
-import { writeFileSync, mkdirSync } from 'fs';
+import { writeFileSync, mkdirSync, readdirSync, unlinkSync, existsSync } from 'fs';
 import { join } from 'path';
-import { loadAllBlogPosts, loadBlogPost } from '../src/lib/content-server.js';
+import { loadAllBlogPosts } from '../src/lib/content-server.js';
 
 async function generateBlogData() {
   try {
     console.log('Generating blog data from local markdown files...');
 
-    // Load all blog posts
-    const posts = await loadAllBlogPosts();
+    // Published posts only (same rules as the live site: draft / unpublished / future calendar day)
+    const posts = await loadAllBlogPosts({ visibility: 'public' });
     console.log(`Found ${posts.length} blog posts`);
 
     // Create public/data directory if it doesn't exist
@@ -38,6 +38,17 @@ async function generateBlogData() {
     // Create individual post files
     const postsDir = join(dataDir, 'posts');
     mkdirSync(postsDir, { recursive: true });
+
+    const allowedSlugs = new Set(posts.map((p) => p.slug));
+    if (existsSync(postsDir)) {
+      for (const name of readdirSync(postsDir)) {
+        if (!name.endsWith('.json')) continue;
+        const slug = name.replace(/\.json$/, '');
+        if (!allowedSlugs.has(slug)) {
+          unlinkSync(join(postsDir, name));
+        }
+      }
+    }
 
     for (const post of posts) {
       const postData = {

@@ -20,6 +20,33 @@ const linkClassTight = css({
 	_hover: { textDecoration: "underline" },
 });
 
+/** Blog index (bottom): obvious filter-style pills. Sidebar keeps compact text links. */
+const categoryPillBottomClass = css({
+	display: "inline-block",
+	fontSize: { base: "md", md: "lg" },
+	fontWeight: "600",
+	lineHeight: "1.2",
+	color: { base: "gray.900", _dark: "dark.text" },
+	textDecoration: "none",
+	padding: { base: "10px 16px", md: "12px 20px" },
+	borderRadius: "9999px",
+	borderWidth: "1px",
+	borderStyle: "solid",
+	borderColor: { base: "gray.300", _dark: "gray.600" },
+	backgroundColor: { base: "white", _dark: "dark.surface" },
+	transitionProperty: "background-color, border-color",
+	transitionDuration: "150ms",
+	_hover: {
+		backgroundColor: { base: "gray.100", _dark: "gray.800" },
+		borderColor: { base: "gray.500", _dark: "gray.500" },
+	},
+	_focusVisible: {
+		outline: "2px solid",
+		outlineColor: { base: "brand.600", _dark: "brand.400" },
+		outlineOffset: "2px",
+	},
+});
+
 const RECENT_COUNT = 10;
 
 type BlogSidebarProps = {
@@ -108,7 +135,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 								flexDirection: isBottomPlacement ? "row" : "column",
 								flexWrap: isBottomPlacement ? "wrap" : "nowrap",
 								justifyContent: isBottomPlacement ? "center" : "flex-start",
-								gap: isBottomPlacement ? 3 : 2,
+								gap: isBottomPlacement ? { base: 3, md: 4 } : 2,
 							})}
 						>
 							{categories.map((cat) => (
@@ -116,7 +143,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 									{isSSR ? (
 										<a
 											href={`/blog?category=${encodeURIComponent(cat)}`}
-											className={linkClass}
+											className={isBottomPlacement ? categoryPillBottomClass : linkClass}
 											onClick={() => analytics.blogFilterApplied('category', cat)}
 										>
 											{cat}
@@ -125,7 +152,7 @@ export default function BlogSidebar({ posts: postsProp, placement = "sidebar" }:
 										<Link
 											to="/blog"
 											search={{ category: cat }}
-											className={linkClass}
+											className={isBottomPlacement ? categoryPillBottomClass : linkClass}
 											onClick={() => analytics.blogFilterApplied('category', cat)}
 										>
 											{cat}

@@ -7,6 +7,8 @@ excerpt: "A compelling 1-2 sentence description of your post that will appear in
 category: "Category"
 # Tags: do not repeat the category; use only additional topics/themes.
 tags: ["tag1", "tag2", "tag3"]
+# draft: true — hide from public blog, listings, and JSON until removed (preview locally with BLOG_SHOW_ALL=1).
+# published: false — same effect as draft: true.
 ---
 
 Your blog post content starts here...

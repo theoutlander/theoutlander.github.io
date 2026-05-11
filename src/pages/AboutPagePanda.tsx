@@ -4,7 +4,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import { container } from "../../styled-system/patterns/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
-import NameHeader from "../components/NameHeader";
+import ProfileIntroHeader from "../components/ProfileIntroHeader";
 import ContactSection from "../components/ContactSection";
 
 type AboutData = {
@@ -44,11 +44,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				})}
 			>
 				{/* Header */}
-				<NameHeader
-					showDownloadButton={true}
-					showSubtitle={false}
-					showTagPills={false}
-				/>
+				<ProfileIntroHeader />
 
 				{/* Grid */}
 				<section

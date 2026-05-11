@@ -455,7 +455,11 @@ export default function Resume() {
 	return (
 		<main className={wrap}>
 			{/* Header card */}
-			<NameHeader showDownloadButton={true} />
+			<NameHeader
+				showDownloadButton={true}
+				showSubtitle={false}
+				showTagPills={false}
+			/>
 
 			{/* Top Grid - Experience and Skills */}
 			<section
