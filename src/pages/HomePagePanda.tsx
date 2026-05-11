@@ -5,21 +5,19 @@ import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import HeroSSR from "../components/HeroSSR";
 import CoreCompetencies from "../components/CoreCompetencies";
-import StatsStrip from "../components/StatsStrip";
+import RecentWriting from "../components/RecentWriting";
 import SkipLink from "../components/SkipLink";
+import type { BlogPost } from "../types/blog";
 
 interface HomePageProps {
-	posts: any[];
+	posts: BlogPost[];
 }
 
 export function HomePagePanda({ posts }: HomePageProps) {
 	return (
 		<div
 			className={css({
-				background: {
-					base: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-					_dark: "linear-gradient(135deg, #1e293b 0%, #0f172a 100%)",
-				},
+				bg: { base: "white", _dark: "dark.surface" },
 				minHeight: "100vh",
 				width: "100%",
 				overflowX: "hidden",
@@ -27,7 +25,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
 		>
 			<SkipLink />
 			<Helmet>
-				<title>Nick Karnik | Engineering Leader & Software Engineer</title>
+				<title>Nick Karnik</title>
 				<meta
 					name="description"
 					content="25 years building software at Google, Microsoft, and startups. Writing about AI, search, and developer tools from first principles."
@@ -37,8 +35,8 @@ export function HomePagePanda({ posts }: HomePageProps) {
 			<HeaderSSR currentPage="home" />
 			<main id="main-content">
 				<HeroSSR />
+				<RecentWriting posts={posts ?? []} />
 				<CoreCompetencies />
-				<StatsStrip />
 			</main>
 			<Footer />
 		</div>

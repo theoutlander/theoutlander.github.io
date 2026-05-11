@@ -423,6 +423,22 @@ document.querySelectorAll('.sb').forEach(b=>{
 });
 document.getElementById('clr').addEventListener('click',()=>dx.clearRect(0,0,dc.width,dc.height));
 
+/** Public JPEG URL for email <img> — Gmail blocks data: URLs; CID needs dashboard setup. Bytebin is free, no API key. */
+async function uploadDoodleForEmailUrl(jpegBlob){
+  try{
+    const r=await fetch('https://bytebin.lucko.me/post',{
+      method:'POST',
+      headers:{'Content-Type':'image/jpeg'},
+      body:jpegBlob
+    });
+    const raw=await r.text();
+    let j=null;
+    try{ j=JSON.parse(raw); }catch(_){ /* plain text error */ }
+    if(j&&j.key&&/^[\w-]+$/.test(j.key)) return 'https://bytebin.lucko.me/'+j.key;
+  }catch(e){ console.log('doodle host err',e); }
+  return null;
+}
+
 // ===== SEND DOODLE =====
 async function sendDoodle(){
   const btn=document.getElementById('send-doodle-btn');
@@ -437,26 +453,58 @@ async function sendDoodle(){
   const tx=tmp.getContext('2d');
   tx.fillStyle='#0a0718';tx.fillRect(0,0,tmp.width,tmp.height);
   tx.drawImage(dc,0,0,tmp.width,tmp.height);
-  // Use JPEG at 0.6 quality — much smaller than PNG
   const imgData=tmp.toDataURL('image/jpeg',0.6);
+  const jpegBlob=await new Promise(function(res){ tmp.toBlob(res,'image/jpeg',0.6); });
 
-  // Open the doodle in a new tab so Maya can screenshot/share it
-  // AND send a plain text email that works with any EmailJS template
+  // Optional: new tab so Maya can screenshot/share on iPad
   const doodleWindow=window.open();
-  doodleWindow.document.write(`<!DOCTYPE html><html><head><title>Maya's Doodle 🎨</title></head><body style="margin:0;background:#0a0718;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif">
+  if(doodleWindow){
+    doodleWindow.document.write(`<!DOCTYPE html><html><head><title>Maya's Doodle 🎨</title></head><body style="margin:0;background:#0a0718;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif">
     <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:12px">🎨 Maya's Doodle!</h2>
     <img src="${imgData}" style="max-width:90vw;border-radius:12px;border:3px solid #c77dff"/>
     <p style="color:#c77dff;margin-top:16px">From Maya, with love 💕</p>
   </body></html>`);
-  doodleWindow.document.close();
+    doodleWindow.document.close();
+  }
+
+  const hostedUrl=jpegBlob ? await uploadDoodleForEmailUrl(jpegBlob) : null;
+  const imgSrc=hostedUrl || imgData;
+  const doodleB64=(function(u){
+    const m=/^data:image\/\w+;base64,(.+)$/i.exec(u);
+    return m?m[1]:u;
+  })(imgData);
+
+  const msgLines=[
+    '🎨 Maya sent you a doodle!',
+    '',
+    'Here is what she drew for you today 💕'
+  ];
+  if(hostedUrl) msgLines.push('','Picture (tap / open in browser):',''+hostedUrl);
+  else msgLines.push('','If the picture does not show in Gmail, use the preview tab on her iPad after Send.');
+  const msgText=msgLines.join('\n');
+
+  const htmlBody=`<div style="background:#0f0a1e;padding:24px;font-family:sans-serif;text-align:center;border-radius:12px">
+    <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:8px">🎨 Maya sent you a doodle!</h2>
+    <p style="color:#c8b8f0;margin-bottom:16px">Here is what she drew for you today 💕</p>
+    <img src="${imgSrc}" alt="Maya's doodle" width="400" style="max-width:100%;height:auto;border-radius:10px;border:2px solid #c77dff;display:block;margin:12px auto"/>
+    <p style="color:#c77dff;margin-top:16px;font-size:14px">From Maya, with love 💕</p>
+  </div>`;
+
+  const params={
+    message:msgText,
+    from_name:'Maya',
+    html_content:htmlBody,
+    html_message:htmlBody
+  };
+  if(!hostedUrl) params.doodle_image=doodleB64;
 
   try{
     emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,{
-      message:'🎨 Maya sent you a doodle! She will show it to you on your next call 💕',
-      from_name:'Maya'
-    });
-  }catch(e){console.log('email err',e);}
+    await emailjs.send(EJS_SVC,EJS_TPL,params);
+  }catch(e){
+    console.log('email err',e);
+    showToast('Could not send email — try again');
+  }
 
   btn.style.display='none';
   document.getElementById('doodle-sent').style.display='block';
@@ -478,8 +526,16 @@ async function sendWish(){
   btn.disabled=true;btn.textContent='Sending... 🚀';
   try{
     emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,{message:val,from_name:'Maya'});
-  }catch(e){console.log('email err',e);}
+    await emailjs.send(EJS_SVC,EJS_TPL,{
+      message:val,
+      wish:val,
+      idea:val,
+      from_name:'Maya'
+    });
+  }catch(e){
+    console.log('email err',e);
+    showToast('Could not send — try again');
+  }
   document.getElementById('winput').value='';
   document.getElementById('wsend').style.display='none';
   document.getElementById('wsent').style.display='block';

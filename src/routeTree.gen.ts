@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ReviewsRouteImport } from './routes/reviews'
 import { Route as ResumeRouteImport } from './routes/resume'
+import { Route as KitchenRouteImport } from './routes/kitchen'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AboutRouteImport } from './routes/about'
@@ -26,6 +27,11 @@ const ReviewsRoute = ReviewsRouteImport.update({
 const ResumeRoute = ResumeRouteImport.update({
   id: '/resume',
   path: '/resume',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KitchenRoute = KitchenRouteImport.update({
+  id: '/kitchen',
+  path: '/kitchen',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignRoute = DesignRouteImport.update({
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
+  '/kitchen': typeof KitchenRoute
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -74,6 +81,7 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
+  '/kitchen': typeof KitchenRoute
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -85,6 +93,7 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
+  '/kitchen': typeof KitchenRoute
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
@@ -97,6 +106,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/calendar'
     | '/design'
+    | '/kitchen'
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
@@ -107,6 +117,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/calendar'
     | '/design'
+    | '/kitchen'
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
@@ -117,6 +128,7 @@ export interface FileRouteTypes {
     | '/about'
     | '/calendar'
     | '/design'
+    | '/kitchen'
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
@@ -128,6 +140,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CalendarRoute: typeof CalendarRoute
   DesignRoute: typeof DesignRoute
+  KitchenRoute: typeof KitchenRoute
   ResumeRoute: typeof ResumeRoute
   ReviewsRoute: typeof ReviewsRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -148,6 +161,13 @@ declare module '@tanstack/react-router' {
       path: '/resume'
       fullPath: '/resume'
       preLoaderRoute: typeof ResumeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/kitchen': {
+      id: '/kitchen'
+      path: '/kitchen'
+      fullPath: '/kitchen'
+      preLoaderRoute: typeof KitchenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/design': {
@@ -200,6 +220,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CalendarRoute: CalendarRoute,
   DesignRoute: DesignRoute,
+  KitchenRoute: KitchenRoute,
   ResumeRoute: ResumeRoute,
   ReviewsRoute: ReviewsRoute,
   BlogSlugRoute: BlogSlugRoute,

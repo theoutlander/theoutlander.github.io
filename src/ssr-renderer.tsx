@@ -23,6 +23,7 @@ import { ResumePagePanda } from "./pages/ResumePagePanda";
 import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
 import { CalendarPagePanda } from "./pages/CalendarPagePanda";
+import { KitchenPagePanda } from "./pages/KitchenPagePanda";
 import { ReviewsPagePanda } from "./pages/ReviewsPagePanda";
 
 type Post = BlogPost;
@@ -174,6 +175,7 @@ const generateComprehensiveCSS = async (
 		{ name: "about", component: AboutPagePanda, props: { aboutData } },
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
+		{ name: "kitchen", component: KitchenPagePanda, props: {} },
 		{ name: "reviews", component: ReviewsPagePanda, props: { reviews: reviewsData } },
 	];
 
@@ -765,7 +767,7 @@ export async function renderAllStaticPagesSSR() {
 		generateWebSiteJsonLd(),
 	];
 	const homeHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Engineering Leader & Software Engineer",
+		"Nick Karnik",
 		"25 years building software at Google, Microsoft, and startups. Writing about AI, search, and developer tools from first principles.",
 		homeResult.html,
 		cssHref,
@@ -898,6 +900,28 @@ export async function renderAllStaticPagesSSR() {
 	);
 	const calendarHTML = removeInlineStyles(calendarHTMLWithStyles);
 	writeFileSync(join(calendarDir, "index.html"), calendarHTML);
+
+	// Render kitchen page
+	console.log("📄 Rendering kitchen page with SSR...");
+	const kitchenDir = join("dist", "kitchen");
+	mkdirSync(kitchenDir, { recursive: true });
+	const kitchenResult = renderPageToHTML(KitchenPagePanda, {});
+	const kitchenHTMLWithStyles = generateBaseHTML(
+		"Kitchen",
+		"Coming soon. Good things take time.",
+		kitchenResult.html,
+		cssHref,
+		kitchenResult.helmet.title +
+			kitchenResult.helmet.meta +
+			kitchenResult.helmet.link,
+		"https://nick.karnik.io/kitchen",
+		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		"website",
+		undefined,
+		jsBundle
+	);
+	const kitchenHTML = removeInlineStyles(kitchenHTMLWithStyles);
+	writeFileSync(join(kitchenDir, "index.html"), kitchenHTML);
 
 	// Render reviews page
 	console.log("📄 Rendering reviews page with SSR...");

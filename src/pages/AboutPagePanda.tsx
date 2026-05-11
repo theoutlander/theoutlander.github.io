@@ -46,12 +46,8 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 				{/* Header */}
 				<NameHeader
 					showDownloadButton={true}
-					tags={[
-						"✨ AI",
-						"👥 Leadership",
-						"📦 Product",
-						"🛠 Developer Experience",
-					]}
+					showSubtitle={false}
+					showTagPills={false}
 				/>
 
 				{/* Grid */}
@@ -223,7 +219,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Preparing for full-time engineering leadership roles in AI and platform teams
+										Building new tools in AI and developer tooling
 									</span>
 								</li>
 								<li
@@ -252,7 +248,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Writing about AI, product, and technical leadership
+										Writing about what I learn from first principles
 									</span>
 								</li>
 								<li
@@ -281,7 +277,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 											color: "gray.600",
 										})}
 									>
-										Exploring how AI is changing software engineering teams
+										Cooking, baking, and experimenting in the kitchen
 									</span>
 								</li>
 							</ul>

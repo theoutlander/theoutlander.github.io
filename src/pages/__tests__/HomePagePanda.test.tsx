@@ -29,12 +29,14 @@ vi.mock("../../components/HeroSSR", () => ({
 
 vi.mock("../../components/CoreCompetencies", () => ({
 	default: () => (
-		<section data-testid="core-competencies">Core Competencies</section>
+		<section data-testid="core-competencies">What I Work On</section>
 	),
 }));
 
-vi.mock("../../components/StatsStrip", () => ({
-	default: () => <section data-testid="stats-strip">Stats Strip</section>,
+vi.mock("../../components/RecentWriting", () => ({
+	default: () => (
+		<section data-testid="recent-writing">Recent Writing</section>
+	),
 }));
 
 vi.mock("../../components/SkipLink", () => ({
@@ -51,6 +53,7 @@ vi.mock("../../components/SkipLink", () => ({
 describe("HomePagePanda", () => {
 	const mockPosts = [
 		{
+			id: "1",
 			slug: "test-post-1",
 			title: "Test Post 1",
 			excerpt: "Test excerpt 1",
@@ -59,8 +62,11 @@ describe("HomePagePanda", () => {
 			category: "Engineering",
 			tags: ["react", "javascript"],
 			url: "https://example.com/test-post-1",
+			contentMarkdown: "",
+			contentHtml: "",
 		},
 		{
+			id: "2",
 			slug: "test-post-2",
 			title: "Test Post 2",
 			excerpt: "Test excerpt 2",
@@ -69,6 +75,8 @@ describe("HomePagePanda", () => {
 			category: "AI",
 			tags: ["typescript", "testing"],
 			url: "https://example.com/test-post-2",
+			contentMarkdown: "",
+			contentHtml: "",
 		},
 	];
 
@@ -78,8 +86,8 @@ describe("HomePagePanda", () => {
 		expect(screen.getByTestId("skip-link")).toBeInTheDocument();
 		expect(screen.getByTestId("header")).toBeInTheDocument();
 		expect(screen.getByTestId("hero")).toBeInTheDocument();
+		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
 		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("stats-strip")).toBeInTheDocument();
 		expect(screen.getByTestId("footer")).toBeInTheDocument();
 	});
 
@@ -102,8 +110,8 @@ describe("HomePagePanda", () => {
 
 		expect(screen.getByTestId("header")).toBeInTheDocument();
 		expect(screen.getByTestId("hero")).toBeInTheDocument();
+		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
 		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("stats-strip")).toBeInTheDocument();
 		expect(screen.getByTestId("footer")).toBeInTheDocument();
 	});
 
@@ -113,8 +121,8 @@ describe("HomePagePanda", () => {
 
 		expect(screen.getByTestId("header")).toBeInTheDocument();
 		expect(screen.getByTestId("hero")).toBeInTheDocument();
+		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
 		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("stats-strip")).toBeInTheDocument();
 		expect(screen.getByTestId("footer")).toBeInTheDocument();
 	});
 });

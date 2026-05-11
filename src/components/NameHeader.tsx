@@ -1,5 +1,4 @@
 import React from "react";
-import { useEffect, useRef } from "react";
 import { css, cva } from "../../styled-system/css/index.mjs";
 import {
 	FaLinkedin,
@@ -76,6 +75,15 @@ const headerCard = css({
 	p: { base: 4, md: 6 },
 });
 
+/** Home hero: no card chrome, photo and text align to top on larger screens */
+const headerPlainOuter = css({
+	display: "flex",
+	flexDir: { base: "column", md: "row" },
+	alignItems: { base: "center", md: "flex-start" },
+	gap: { base: 6, md: 8 },
+	width: "100%",
+});
+
 const avatar = css({
 	w: { base: "160px", md: "120px" },
 	h: { base: "160px", md: "120px" },
@@ -90,6 +98,12 @@ const avatar = css({
 	marginInline: { base: "auto", md: "0" },
 	flexShrink: 0,
 	flexGrow: 0,
+});
+
+const avatarPlain = css({
+	borderWidth: "0",
+	borderColor: "transparent",
+	boxShadow: "none",
 });
 
 const titleBox = css({
@@ -222,222 +236,190 @@ const skills = [
 interface NameHeaderProps {
 	showDownloadButton?: boolean;
 	onDownload?: () => void;
+	showSubtitle?: boolean;
+	showTagPills?: boolean;
+	showSocialLinks?: boolean;
 	/** Optional list of tag labels to display instead of default skills */
 	tags?: string[];
+	/** No card border/background/shadow (e.g. home hero) */
+	plain?: boolean;
+	/** Rendered inside the text column (e.g. bio + CTAs on the home hero) */
+	footer?: React.ReactNode;
 }
 
 export default function NameHeader({
 	showDownloadButton = true,
 	onDownload,
+	showSubtitle = true,
+	showTagPills = true,
+	showSocialLinks = true,
 	tags,
+	plain = false,
+	footer,
 }: NameHeaderProps) {
-	const avatarRef = useRef<HTMLImageElement | null>(null);
-
-	useEffect(() => {
-		const img = avatarRef.current;
-		if (!img) return;
-		const logMeasure = (tag: string, hyp: string) => {
-			const rect = img.getBoundingClientRect();
-			const styles = window.getComputedStyle(img);
-			// #region agent log
-			fetch("http://127.0.0.1:7245/ingest/dffccd09-90d6-4aa6-8287-26b2180390d2", {
-				method: "POST",
-				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({
-					sessionId: "debug-session",
-					runId: "run1",
-					hypothesisId: hyp,
-					location: "NameHeader.tsx:~240",
-					message: tag,
-					data: {
-						clientWidth: rect.width,
-						clientHeight: rect.height,
-						styleWidth: styles.width,
-						styleHeight: styles.height,
-						naturalWidth: img.naturalWidth,
-						naturalHeight: img.naturalHeight,
-						className: img.className,
-					},
-					timestamp: Date.now(),
-				}),
-			}).catch(() => {});
-			// #endregion
-		};
-
-		logMeasure("avatar initial effect", "H1");
-		requestAnimationFrame(() => logMeasure("avatar rAF", "H1"));
-	}, []);
-
-	const handleAvatarLoad = () => {
-		const img = avatarRef.current;
-		if (!img) return;
-		const rect = img.getBoundingClientRect();
-		const styles = window.getComputedStyle(img);
-		// #region agent log
-		fetch("http://127.0.0.1:7245/ingest/dffccd09-90d6-4aa6-8287-26b2180390d2", {
-			method: "POST",
-			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({
-				sessionId: "debug-session",
-				runId: "run1",
-				hypothesisId: "H2",
-				location: "NameHeader.tsx:onLoad",
-				message: "avatar onLoad",
-				data: {
-					clientWidth: rect.width,
-					clientHeight: rect.height,
-					styleWidth: styles.width,
-					styleHeight: styles.height,
-					naturalWidth: img.naturalWidth,
-					naturalHeight: img.naturalHeight,
-					className: img.className,
-				},
-				timestamp: Date.now(),
-			}),
-		}).catch(() => {});
-		// #endregion
-	};
+	const outerClass = plain ? headerPlainOuter : [card, headerCard].join(" ");
+	const avatarClass = plain ? [avatar, avatarPlain].join(" ") : avatar;
+	const Wrapper: "div" | "section" = plain ? "div" : "section";
 
 	return (
-		<section className={[card, headerCard].join(" ")}>
+		<Wrapper className={outerClass}>
 			<img
-				ref={avatarRef}
 				src="/assets/images/profile/nick-karnik.jpeg"
 				alt="Nick Karnik"
-				className={avatar}
+				className={avatarClass}
 				loading="lazy"
-				onLoad={handleAvatarLoad}
 			/>
 			<div className={titleBox}>
 				<span className={nameCss}>Nick Karnik</span>
-				<span className={subtitleCss}>
-					Engineering Leader - AI & Product Strategy
-				</span>
-				<div className={badgeRow}>
-					{tags && tags.length > 0
-						? tags.map((label) => (
-								<span
-									key={label}
-									className={pill({ tone: inferToneFromLabel(label) })}
-								>
-									{label}
-								</span>
-						  ))
-						: skills.map((skill) => (
-								<span
-									key={skill.label}
-									className={pill({ tone: skill.tone })}
-								>
-									{skill.label}
-								</span>
-						  ))}
-				</div>
-				<div className={actionsRow}>
-					<div className={iconRow}>
-						<a
-							href="https://github.com/theoutlander"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's GitHub profile"
-							className={iconLinkContainer}
-						>
-							<div className={css(iconWrapper, getIconColorStyles("github"))}>
-								<FaGithub
-									size={ICON_SIZE}
-									color={iconColors.github.light}
-								/>
-							</div>
-						</a>
-						<a
-							href="https://www.linkedin.com/in/theoutlander"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's LinkedIn profile"
-							className={iconLinkContainer}
-						>
-							<div className={css(iconWrapper, getIconColorStyles("linkedin"))}>
-								<FaLinkedin
-									size={ICON_SIZE}
-									color={iconColors.linkedin.light}
-								/>
-							</div>
-						</a>
-						<a
-							href="https://youtube.com/@nick-karnik"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's YouTube channel"
-							className={iconLinkContainer}
-						>
-							<div className={css(iconWrapper, getIconColorStyles("youtube"))}>
-								<FaYoutube
-									size={ICON_SIZE}
-									color={iconColors.youtube.light}
-								/>
-							</div>
-						</a>
-						<a
-							href="https://x.com/theoutlander"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's X profile"
-							className={iconLinkContainer}
-						>
-							<div className={css(iconWrapper, getIconColorStyles("twitter"))}>
-								<FaTwitter
-									size={ICON_SIZE}
-									color={iconColors.twitter.light}
-								/>
-							</div>
-						</a>
-						<a
-							href="https://stackoverflow.com/users/460472/nick"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's Stack Overflow profile"
-							className={iconLinkContainer}
-						>
-							<div
-								className={css(iconWrapper, getIconColorStyles("stackoverflow"))}
-							>
-								<FaStackOverflow
-									size={ICON_SIZE}
-									color={iconColors.stackoverflow.light}
-								/>
-							</div>
-						</a>
-						<a
-							href="https://www.codementor.io/@theoutlander"
-							target="_blank"
-							rel="noopener"
-							aria-label="Visit Nick Karnik's Codementor profile"
-							className={iconLinkContainer}
-						>
-							<div className={css(iconWrapper, getIconColorStyles("codementor"))}>
-								<CodementorIcon
-									size={ICON_SIZE}
-									color={iconColors.codementor.light}
-								/>
-							</div>
-						</a>
+				{showSubtitle && (
+					<span className={subtitleCss}>
+						Engineering Leader - AI & Product Strategy
+					</span>
+				)}
+				{showTagPills && (
+					<div className={badgeRow}>
+						{tags && tags.length > 0
+							? tags.map((label) => (
+									<span
+										key={label}
+										className={pill({ tone: inferToneFromLabel(label) })}
+									>
+										{label}
+									</span>
+							  ))
+							: skills.map((skill) => (
+									<span
+										key={skill.label}
+										className={pill({ tone: skill.tone })}
+									>
+										{skill.label}
+									</span>
+							  ))}
 					</div>
-					{showDownloadButton && (
-						<div className={downloadRow}>
-							<a
-								href="/assets/documents/resume-nick-karnik.pdf"
-								target="_blank"
-								rel="noopener"
-								aria-label="Download Nick Karnik's resume (PDF)"
-								className={downloadButton}
-								download
-							>
-								<HiOutlineDocumentText size={ICON_SIZE} />
-								<span>Download Resume</span>
-							</a>
-						</div>
-					)}
-				</div>
+				)}
+				{(showSocialLinks || showDownloadButton) && (
+					<div className={actionsRow}>
+						{showSocialLinks && (
+							<div className={iconRow}>
+								<a
+									href="https://github.com/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's GitHub profile"
+									className={iconLinkContainer}
+								>
+									<div className={css(iconWrapper, getIconColorStyles("github"))}>
+										<FaGithub
+											size={ICON_SIZE}
+											color={iconColors.github.light}
+										/>
+									</div>
+								</a>
+								<a
+									href="https://www.linkedin.com/in/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's LinkedIn profile"
+									className={iconLinkContainer}
+								>
+									<div className={css(iconWrapper, getIconColorStyles("linkedin"))}>
+										<FaLinkedin
+											size={ICON_SIZE}
+											color={iconColors.linkedin.light}
+										/>
+									</div>
+								</a>
+								<a
+									href="https://youtube.com/@nick-karnik"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's YouTube channel"
+									className={iconLinkContainer}
+								>
+									<div className={css(iconWrapper, getIconColorStyles("youtube"))}>
+										<FaYoutube
+											size={ICON_SIZE}
+											color={iconColors.youtube.light}
+										/>
+									</div>
+								</a>
+								<a
+									href="https://x.com/theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's X profile"
+									className={iconLinkContainer}
+								>
+									<div className={css(iconWrapper, getIconColorStyles("twitter"))}>
+										<FaTwitter
+											size={ICON_SIZE}
+											color={iconColors.twitter.light}
+										/>
+									</div>
+								</a>
+								<a
+									href="https://stackoverflow.com/users/460472/nick"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's Stack Overflow profile"
+									className={iconLinkContainer}
+								>
+									<div
+										className={css(iconWrapper, getIconColorStyles("stackoverflow"))}
+									>
+										<FaStackOverflow
+											size={ICON_SIZE}
+											color={iconColors.stackoverflow.light}
+										/>
+									</div>
+								</a>
+								<a
+									href="https://www.codementor.io/@theoutlander"
+									target="_blank"
+									rel="noopener"
+									aria-label="Visit Nick Karnik's Codementor profile"
+									className={iconLinkContainer}
+								>
+									<div className={css(iconWrapper, getIconColorStyles("codementor"))}>
+										<CodementorIcon
+											size={ICON_SIZE}
+											color={iconColors.codementor.light}
+										/>
+									</div>
+								</a>
+							</div>
+						)}
+						{showDownloadButton && (
+							<div className={downloadRow}>
+								<a
+									href="/assets/documents/resume-nick-karnik.pdf"
+									target="_blank"
+									rel="noopener"
+									aria-label="Download Nick Karnik's resume (PDF)"
+									className={downloadButton}
+									download
+								>
+									<HiOutlineDocumentText size={ICON_SIZE} />
+									<span>Download Resume</span>
+								</a>
+							</div>
+						)}
+					</div>
+				)}
+				{footer != null ? (
+					<div
+						className={css({
+							width: "100%",
+							display: "flex",
+							flexDirection: "column",
+							gap: "4",
+							mt: plain ? "3" : "0",
+						})}
+					>
+						{footer}
+					</div>
+				) : null}
 			</div>
-		</section>
+		</Wrapper>
 	);
 }

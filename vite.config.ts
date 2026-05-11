@@ -4,11 +4,22 @@ import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import { redirectPlugin } from "./src/plugins/vite-redirect-plugin";
 import { blogPlugin } from "./src/plugins/vite-blog-plugin";
+import { mayaDevPlugin } from "./src/plugins/vite-maya-dev-plugin";
 import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
 	base: "/",
-	plugins: [react(), TanStackRouterVite(), redirectPlugin(), blogPlugin()],
+	plugins: [
+		react(),
+		TanStackRouterVite(),
+		redirectPlugin(),
+		blogPlugin(),
+		mayaDevPlugin(path.join(__dirname, "maya")),
+	],
 	server: {
 		host: true, // Listen on all network interfaces
 		port: 5173,

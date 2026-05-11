@@ -1,18 +1,55 @@
-import { css } from "../../styled-system/css/index.mjs";
-import { flex, hstack } from "../../styled-system/patterns/index.mjs";
-import { cva } from "../../styled-system/css/index.mjs";
+import { css, cva } from "../../styled-system/css/index.mjs";
 import { analytics } from "../lib/analytics";
+import NameHeader from "./NameHeader";
 
 export default function HeroSSR() {
+	const bioFooter = (
+		<>
+			<p
+				className={css({
+					fontSize: { base: "md", sm: "lg", md: "xl" },
+					fontWeight: "medium",
+					lineHeight: { base: "1.65", md: "1.6" },
+					letterSpacing: "normal",
+					color: { base: "gray.900", _dark: "dark.text" },
+					textAlign: { base: "center", md: "left" },
+					mb: { base: "4", md: "4" },
+					mt: { base: "1", md: "0" },
+					px: { base: "0", md: "0" },
+					maxW: { base: "100%", md: "42rem" },
+					mx: { base: "auto", md: "0" },
+				})}
+			>
+				Twenty-five years of building software across search engines, disease models, data platforms,
+				and AI tools. I cook seriously, make cocktails, travel when I can, and build games with my
+				three kids. Still figuring out what comes next and building it anyway.
+			</p>
+			<div
+				className={css({
+					display: "flex",
+					justifyContent: { base: "center", md: "flex-start" },
+				})}
+			>
+				<a
+					href="/blog"
+					className={chip({ variant: "cta" })}
+					onClick={() => analytics.ctaClick("Read the blog", "hero")}
+				>
+					<span>Read the blog</span>
+					<span aria-hidden="true">→</span>
+				</a>
+			</div>
+		</>
+	);
+
 	return (
 		<section
 			className={css({
-				bg: "gray.50",
-				py: "16",
-				mb: "8",
+				bg: "white",
+				_dark: { bg: "dark.surface" },
+				py: { base: "10", md: "14" },
 				display: "flex",
-				alignItems: "center",
-				minHeight: "60vh",
+				alignItems: "flex-start",
 			})}
 		>
 			<div
@@ -23,230 +60,14 @@ export default function HeroSSR() {
 					width: "100%",
 				})}
 			>
-				<div
-					className={css({
-						maxW: "960px",
-						mx: "auto",
-						border: "none",
-					})}
-				>
-					{/* Title */}
-					<h1
-						className={css({
-							fontSize: { base: "3xl", sm: "4xl", md: "5xl" },
-							fontWeight: "bold",
-							lineHeight: "1.05",
-							letterSpacing: "-0.02em",
-							color: { base: "gray.900", _dark: "dark.text" },
-							textAlign: "center",
-							mb: "2",
-							px: { base: "2", md: "0" },
-						})}
-					>
-						I build software. I write about what I learn.
-					</h1>
-
-					{/* Subtitle */}
-					<p
-						className={css({
-							fontSize: { base: "lg", sm: "xl", md: "2xl" },
-							color: "gray.600",
-							fontWeight: "semibold",
-							lineHeight: "1.4",
-							maxWidth: { base: "2xl", md: "4xl" },
-							textAlign: "center",
-							mx: "auto",
-							mt: "3",
-							mb: "6",
-							px: { base: "2", md: "0" },
-						})}
-					>
-						25 years across Google, Microsoft, and startups. Focused on AI, search, and developer tools.
-					</p>
-
-					{/* Checklist */}
-					<div
-						className={css({
-							display: "flex",
-							justifyContent: "center",
-							mb: { base: "5", md: "6" },
-						})}
-					>
-						<ul
-							className={css({
-								listStyle: "none",
-								pl: "0",
-								fontSize: { base: "16px", md: "18px" },
-								lineHeight: "1.6",
-								color: { base: "gray.700", _dark: "dark.textSecondary" },
-								textAlign: "left",
-								maxWidth: "2xl",
-							})}
-						>
-							<li
-								className={css({
-									mb: { base: "3", md: "4" },
-									display: "flex",
-									alignItems: "baseline",
-									gap: "3",
-								})}
-							>
-								<span
-									className={css({
-										color: "green.600",
-										flexShrink: 0,
-									})}
-								>
-									✅
-								</span>
-								<span>
-									Led AI and platform engineering teams at Google, Microsoft, and Salesforce
-								</span>
-							</li>
-							<li
-								className={css({
-									mb: { base: "3", md: "4" },
-									display: "flex",
-									alignItems: "baseline",
-									gap: "3",
-								})}
-							>
-								<span
-									className={css({
-										color: "green.600",
-										flexShrink: 0,
-									})}
-								>
-									✅
-								</span>
-								<span>
-									Built products adopted by millions of developers (Gemini Code Assist)
-								</span>
-							</li>
-							<li
-								className={css({
-									mb: { base: "3", md: "4" },
-									display: "flex",
-									alignItems: "baseline",
-									gap: "3",
-								})}
-							>
-								<span
-									className={css({
-										color: "green.600",
-										flexShrink: 0,
-									})}
-								>
-									✅
-								</span>
-								<span>Known for clarity, technical strategy, and high-performance team leadership</span>
-							</li>
-							<li
-								className={css({
-									mb: "0",
-									display: "flex",
-									alignItems: "baseline",
-									gap: "3",
-								})}
-							>
-								<span
-									className={css({
-										color: "green.600",
-										flexShrink: 0,
-									})}
-								>
-									✅
-								</span>
-								<span>Passionate about building products that matter, not just software</span>
-							</li>
-						</ul>
-					</div>
-
-					{/* Pill Row */}
-					<div
-						className={css({
-							mt: "6",
-							mb: { base: "5", md: "6" },
-							display: "flex",
-							flexWrap: "wrap",
-							gap: { base: "3", md: "4" },
-							justifyContent: "center",
-							alignItems: "center",
-						})}
-					>
-						<button
-							type="button"
-							className={chip({ variant: "ai" })}
-							aria-label="AI technology"
-						>
-							<span
-								aria-hidden="true"
-								className={css({ fontSize: "0.9em" })}
-							>
-								✨
-							</span>
-							<span>AI</span>
-						</button>
-						<button
-							type="button"
-							className={chip({ variant: "leadership" })}
-							aria-label="Leadership"
-						>
-							<span
-								aria-hidden="true"
-								className={css({ fontSize: "0.9em" })}
-							>
-								👥
-							</span>
-							<span>Leadership</span>
-						</button>
-						<button
-							type="button"
-							className={chip({ variant: "product" })}
-							aria-label="Product"
-						>
-							<span
-								aria-hidden="true"
-								className={css({ fontSize: "0.9em" })}
-							>
-								📦
-							</span>
-							<span>Product</span>
-						</button>
-						<button
-							type="button"
-							className={chip({ variant: "devex" })}
-							aria-label="Developer Experience"
-						>
-							<span
-								aria-hidden="true"
-								className={css({ fontSize: "0.9em" })}
-							>
-								🛠
-							</span>
-							<span>Developer Experience</span>
-						</button>
-					</div>
-
-					{/* CTA */}
-					<div
-						className={css({
-							mt: "6",
-							mb: "12",
-							display: "flex",
-							justifyContent: "center",
-						})}
-					>
-						<a
-							href="/blog"
-							className={chip({ variant: "cta" })}
-							onClick={() => analytics.ctaClick("Read the blog", "hero")}
-						>
-							<span>Read the blog</span>
-							<span aria-hidden="true">→</span>
-						</a>
-					</div>
-				</div>
+				<NameHeader
+					plain
+					footer={bioFooter}
+					showDownloadButton={false}
+					showSubtitle={false}
+					showTagPills={false}
+					showSocialLinks={false}
+				/>
 			</div>
 		</section>
 	);
@@ -282,50 +103,6 @@ const chip = cva({
 	},
 	variants: {
 		variant: {
-			ai: {
-					bg: { base: "blue.50", _dark: "dark.card" },
-					color: { base: "blue.700", _dark: "dark.textSecondary" },
-					borderColor: { base: "blue.200", _dark: "dark.border" },
-				_focusVisible: {
-						outlineColor: "blue.600",
-				},
-				_hover: {
-						bg: { base: "blue.100", _dark: "dark.surface" },
-				},
-			},
-				leadership: {
-					bg: { base: "orange.50", _dark: "orange.900/20" },
-					color: { base: "orange.700", _dark: "orange.400" },
-					borderColor: { base: "orange.200", _dark: "orange.700" },
-					_focusVisible: {
-						outlineColor: "orange.600",
-					},
-					_hover: {
-						bg: { base: "orange.100", _dark: "orange.800/30" },
-					},
-				},
-				product: {
-					bg: { base: "purple.50", _dark: "purple.900/20" },
-					color: { base: "purple.700", _dark: "purple.400" },
-					borderColor: { base: "purple.200", _dark: "purple.700" },
-					_focusVisible: {
-						outlineColor: "purple.600",
-					},
-					_hover: {
-						bg: { base: "purple.100", _dark: "purple.800/30" },
-					},
-				},
-				devex: {
-					bg: { base: "green.50", _dark: "green.900/20" },
-					color: { base: "green.700", _dark: "green.300" },
-					borderColor: { base: "green.200", _dark: "green.700" },
-					_focusVisible: {
-						outlineColor: "green.600",
-					},
-					_hover: {
-						bg: { base: "green.100", _dark: "green.800/30" },
-					},
-				},
 			cta: {
 				height: "44px",
 				px: "4",

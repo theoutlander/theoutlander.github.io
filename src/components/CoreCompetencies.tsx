@@ -2,19 +2,19 @@ import { css } from "../../styled-system/css/index.mjs";
 
 const items = [
 	{
-		title: "Engineering Leadership & Team Growth",
+		title: "AI and Developer Tools",
 		body:
-			"Leading high-performing teams, scaling orgs, mentoring engineers, and driving delivery through clarity and execution.",
+			"Built Gemini Code Assist at Google. Writing about what I learned building it.",
 	},
 	{
-		title: "AI & Platform Strategy",
+		title: "Search and Relevance",
 		body:
-			"Leading AI initiatives including Gemini Code Assist, bridging engineering, product, and research to deliver at scale.",
+			"Six years on Bing search at Microsoft. A patent. A lot of labeled data.",
 	},
 	{
-		title: "Product Execution & Delivery",
+		title: "Making Things",
 		body:
-			"Driving product vision, prioritization, and cross-functional execution to ship products used by millions.",
+			"Currently building new tools. Making games with my three kids. Always something cooking.",
 	},
 ];
 
@@ -22,10 +22,9 @@ export default function CoreCompetencies() {
 	return (
 		<section
 			className={css({
-				bg: "gray.50",
-				borderTop: "1px solid",
-				borderColor: "gray.100",
+				bg: "white",
 				py: "12",
+				_dark: { bg: "dark.surface" },
 			})}
 		>
 			<div className={css({ textAlign: "center", mb: "16", px: { base: "4", md: "6" } })}>
@@ -33,23 +32,13 @@ export default function CoreCompetencies() {
 					className={css({
 						fontWeight: "bold",
 						fontSize: { base: "2xl", sm: "3xl", md: "4xl" },
-						mb: "4",
-						color: "gray.900",
+						mb: "0",
+						color: { base: "gray.900", _dark: "dark.text" },
 						lineHeight: "1.2",
 					})}
 				>
-					Core Competencies
+					What I Work On
 				</h2>
-				<p
-					className={css({
-						fontSize: { base: "md", md: "lg" },
-						color: "gray.600",
-						fontWeight: "normal",
-						lineHeight: "1.6",
-					})}
-				>
-					Areas where I bring the most impact and experience.
-				</p>
 			</div>
 
 			<div
@@ -71,44 +60,41 @@ export default function CoreCompetencies() {
 						display: "flex",
 						flexDirection: "column",
 						flex: "1",
-						minHeight: "300px",
 						rounded: "xl",
 						borderWidth: "1px",
-						borderColor: "gray.200",
-						bg: "white",
-						p: "8",
+						borderColor: { base: "gray.200", _dark: "gray.700" },
+						bg: { base: "gray.50", _dark: "gray.900" },
+						pt: "5",
+						px: "8",
+						pb: "8",
 						shadow: "sm",
 						height: "100%",
 						gap: "3",
 						alignItems: "center",
-						justifyContent: "center",
+						justifyContent: "flex-start",
 					})}
 				>
-					
-
-						{/* Title */}
 					<h3
-							className={css({
+						className={css({
 							fontSize: { base: "lg", md: "xl" },
-								fontWeight: "bold",
+							fontWeight: "bold",
 							mb: "2",
 							textAlign: "center",
-								color: "gray.900",
+							color: { base: "gray.900", _dark: "dark.text" },
 							lineHeight: "1.25",
-							})}
-						>
-							{it.title}
-						</h3>
+						})}
+					>
+						{it.title}
+					</h3>
 
-						{/* Description */}
 					<p
-							className={css({
-								color: "gray.600",
+						className={css({
+							color: { base: "gray.600", _dark: "gray.400" },
 							mb: "0",
 							textAlign: "center",
-								lineHeight: "1.6",
-								fontSize: "md",
-							})}
+							lineHeight: "1.6",
+							fontSize: "md",
+						})}
 					>
 						{it.body}
 					</p>
