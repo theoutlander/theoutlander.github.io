@@ -43,7 +43,7 @@ export default function HeroSSR() {
 							px: { base: "2", md: "0" },
 						})}
 					>
-						Engineering Leader - AI & Product Strategy
+						I build software. I write about what I learn.
 					</h1>
 
 					{/* Subtitle */}
@@ -61,7 +61,7 @@ export default function HeroSSR() {
 							px: { base: "2", md: "0" },
 						})}
 					>
-						Build faster. Lead stronger. Scale smarter.
+						25 years across Google, Microsoft, and startups. Focused on AI, search, and developer tools.
 					</p>
 
 					{/* Checklist */}

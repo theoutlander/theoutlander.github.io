@@ -30,7 +30,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
 				<title>Nick Karnik | Engineering Leader & Software Engineer</title>
 				<meta
 					name="description"
-					content="Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools."
+					content="25 years building software at Google, Microsoft, and startups. Writing about AI, search, and developer tools from first principles."
 				/>
 				<link rel="canonical" href="https://nick.karnik.io" />
 			</Helmet>

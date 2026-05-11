@@ -1,7 +1,19 @@
-import { css } from "../../../styled-system/css/index.mjs";
+import { css, cx } from "../../../styled-system/css/index.mjs";
 // import { Helmet } from 'react-helmet-async';
 import type { Post } from "../../types/blog";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
+
+const listCardContent = css({
+	p: 4,
+	display: "flex",
+	flexDirection: "column",
+	flex: 1,
+});
+
+/** Separates cover from body; must be a static `css()` call (Panda does not emit spread conditionals). */
+const listCardContentAfterCover = css({
+	borderTop: "1px solid #e5e5e5",
+});
 
 export default function BlogList({
 	posts,
@@ -164,12 +176,10 @@ export default function BlogList({
 							) : null}
 
 							<div
-								className={css({
-									p: 4,
-									display: "flex",
-									flexDirection: "column",
-									flex: 1,
-								})}
+								className={cx(
+									listCardContent,
+									p.cover ? listCardContentAfterCover : ""
+								)}
 							>
 								<h2
 									className={css({

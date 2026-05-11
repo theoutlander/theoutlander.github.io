@@ -766,7 +766,7 @@ export async function renderAllStaticPagesSSR() {
 	];
 	const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Engineering Leader & Software Engineer",
-		"Engineering leader with 25+ years building software across Google, Microsoft, and startups. Helping teams ship reliable systems with clarity, speed, and modern tools.",
+		"25 years building software at Google, Microsoft, and startups. Writing about AI, search, and developer tools from first principles.",
 		homeResult.html,
 		cssHref,
 		homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link,

@@ -1,7 +1,13 @@
 // src/components/blog/BlogCard.tsx
-import { css } from "../../../styled-system/css/index.mjs";
+import { css, cx } from "../../../styled-system/css/index.mjs";
 import type { Post } from "../../types/blog";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
+
+const cardBody = css({ p: 4 });
+
+const cardBodyAfterCover = css({
+	borderTop: "1px solid #e5e5e5",
+});
 
 export default function BlogCard({ post }: { post: Post }) {
 	return (
@@ -43,7 +49,9 @@ export default function BlogCard({ post }: { post: Post }) {
 						})}
 					/>
 				) : null}
-				<div className={css({ p: 4 })}>
+				<div
+					className={cx(cardBody, post.cover ? cardBodyAfterCover : "")}
+				>
 					<h2
 						className={css({
 							color: "#000",

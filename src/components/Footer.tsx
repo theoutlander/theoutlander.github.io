@@ -159,17 +159,6 @@ export default function Footer() {
 								Nick<br />
 								Karnik
 							</div>
-							<div
-								className={css({
-									fontSize: { base: "1.75rem", md: "xx-large", lg: "medium" },
-									color: { base: "gray.600", _dark: "gray.300" },
-									lineHeight: "1.8",
-									marginBottom: { base: "2rem", md: "2rem" },
-									fontWeight: "500",
-								})}
-							>
-								Engineering Leader<br/>AI & Product Strategy
-							</div>
 						</div>
 
 						{/* <div className={linksBoxMobile}> */}
