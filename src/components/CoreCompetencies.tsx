@@ -19,7 +19,7 @@ const items = [
 	{
 		title: "Engineering Leadership",
 		body:
-			"Led teams across Google, Microsoft, Tableau, and T-Mobile. Hired, mentored, and scaled engineering organizations from zero to production.",
+			"Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations.",
 	},
 ];
 
@@ -74,6 +74,7 @@ export default function CoreCompetencies() {
 						pb: "4",
 						shadow: "sm",
 						height: "100%",
+						minHeight: "160px",
 						gap: "3",
 						alignItems: "center",
 						justifyContent: "flex-start",

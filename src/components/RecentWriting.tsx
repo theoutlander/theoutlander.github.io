@@ -1,5 +1,17 @@
-import { css } from "../../styled-system/css/index.mjs";
+import { css, cx } from "../../styled-system/css/index.mjs";
 import type { BlogPost } from "../types/blog";
+
+const listCardContent = css({
+	p: 4,
+	display: "flex",
+	flexDirection: "column",
+	flex: 1,
+});
+
+/** Separates cover from body; must be a static `css()` call (Panda does not emit spread conditionals). */
+const listCardContentAfterCover = css({
+	borderTop: "1px solid #e5e5e5",
+});
 
 function parsePostDate(date: string): number {
 	const t = Date.parse(date);
@@ -64,74 +76,116 @@ export default function RecentWriting({ posts }: { posts: BlogPost[] }) {
 						listStyle: "none",
 						m: 0,
 						p: 0,
-						display: "flex",
-						flexDirection: "column",
-						gap: { base: "6", md: "8" },
+						display: "grid",
+						gridTemplateColumns: { base: "1fr", md: "repeat(2, 1fr)" },
+						gap: 6,
+						alignItems: "stretch",
 					})}
 				>
 					{list.map((post) => (
-						<li key={post.slug}>
+						<li
+							key={post.slug}
+							className={css({
+								display: "flex",
+								minH: 0,
+							})}
+						>
 							<a
 								href={post.url}
 								className={css({
-									display: "block",
 									textDecoration: "none",
 									color: "inherit",
+									display: "flex",
+									height: "100%",
+									width: "100%",
 									_focusVisible: {
 										outline: "2px solid",
 										outlineColor: "brand.600",
 										outlineOffset: "4px",
-										borderRadius: "md",
+										borderRadius: "2xl",
 									},
 								})}
 							>
-								{post.cover ? (
-									<img
-										src={post.cover}
-										alt={post.title || "Blog post cover image"}
-										loading="lazy"
-										className={css({
-											display: "block",
-											objectFit: "cover",
-											maxH: "260px",
-											w: "100%",
-											mb: "3",
-										})}
-									/>
-								) : null}
-								<h3
+								<div
 									className={css({
-										fontSize: { base: "lg", md: "xl" },
-										fontWeight: "semibold",
-										color: { base: "brand.700", _dark: "brand.400" },
-										mb: "1",
-										lineHeight: "1.3",
-										_hover: { textDecoration: "underline" },
+										borderRadius: "2xl",
+										overflow: "hidden",
+										shadow: "sm",
+										bg: "white",
+										border: "1px solid",
+										borderColor: "#e5e5e5",
+										_hover: { shadow: "md", transform: "translateY(-2px)" },
+										transition: "all 120ms",
+										display: "flex",
+										flexDirection: "column",
+										width: "100%",
+										"@media (prefers-reduced-motion: reduce)": {
+											transition: "none",
+											_hover: {
+												transform: "none",
+											},
+										},
 									})}
 								>
-									{post.title}
-								</h3>
-								<time
-									dateTime={post.date}
-									className={css({
-										display: "block",
-										fontSize: "sm",
-										color: { base: "gray.500", _dark: "gray.400" },
-										mb: "2",
-									})}
-								>
-									{formatDisplayDate(post.date)}
-								</time>
-								<p
-									className={css({
-										fontSize: "md",
-										lineHeight: "1.6",
-										color: { base: "gray.600", _dark: "gray.300" },
-										m: 0,
-									})}
-								>
-									{excerptSnippet(post.excerpt)}
-								</p>
+									{post.cover ? (
+										<img
+											src={post.cover}
+											alt={post.title || "Blog post cover image"}
+											loading="lazy"
+											className={css({
+												display: "block",
+												h: "200px",
+												w: "100%",
+												objectFit: "cover",
+												flexShrink: 0,
+											})}
+										/>
+									) : null}
+
+									<div
+										className={cx(
+											listCardContent,
+											post.cover ? listCardContentAfterCover : ""
+										)}
+									>
+										<h3
+											className={css({
+												color: "#000",
+												fontWeight: "600",
+												fontSize: "lg",
+											})}
+										>
+											{post.title}
+										</h3>
+
+										<time
+											dateTime={post.date}
+											className={css({
+												display: "block",
+												fontSize: "sm",
+												color: "#666",
+												mt: 1,
+											})}
+										>
+											{formatDisplayDate(post.date)}
+										</time>
+
+										<p
+											className={css({
+												mt: 3,
+												color: "#000",
+												flex: 1,
+												display: "-webkit-box",
+												WebkitLineClamp: 3,
+												WebkitBoxOrient: "vertical",
+												overflow: "hidden",
+												m: 0,
+											})}
+										>
+											{excerptSnippet(post.excerpt)}
+										</p>
+									</div>
+								</div>
 							</a>
 						</li>
 					))}
