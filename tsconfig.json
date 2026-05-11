@@ -12,9 +12,6 @@
     "strict": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "paths": {
-      "*": ["./*"]
-    },
     "forceConsistentCasingInFileNames": true,
     "types": [
       "node",
