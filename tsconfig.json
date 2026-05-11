@@ -12,7 +12,9 @@
     "strict": true,
     "resolveJsonModule": true,
     "skipLibCheck": true,
-    "baseUrl": ".",
+    "paths": {
+      "*": ["./*"]
+    },
     "forceConsistentCasingInFileNames": true,
     "types": [
       "node",
