@@ -2143,10 +2143,6 @@
     padding-top: var(--spacing-2);
 }
 
-  .pt_12 {
-    padding-top: var(--spacing-12);
-}
-
   .max-h_240px {
     max-height: 240px;
 }
@@ -3229,8 +3225,8 @@
     .lg\:pt_4 {
       padding-top: var(--spacing-4);
 }
-    .lg\:pt_20 {
-      padding-top: var(--spacing-20);
+    .lg\:pt_8 {
+      padding-top: var(--spacing-8);
 }
     .lg\:top_5rem {
       top: 5rem;
