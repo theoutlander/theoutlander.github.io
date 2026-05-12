@@ -4,25 +4,34 @@ import { SectionTag } from "../components/design/SectionTag";
 
 const ROLES = [
   {
+    co: "PitchBook",
+    role: "Lead Software Engineer",
+    years: "Mar 2026 — Present",
+    loc: "Seattle, WA",
+    bullets: [
+      "Building data and search infrastructure for the financial intelligence platform.",
+    ],
+  },
+  {
     co: "Google",
-    role: "Engineering Lead, Gemini Code Assist",
-    years: "2024 — Present",
+    role: "Engineering Manager, Gemini Code Assist",
+    years: "May 2022 — Apr 2025",
     loc: "Mountain View, CA",
     bullets: [
-      "Lead the platform team behind an AI-powered developer surface used by engineers across Google.",
-      "Set technical direction for code-aware retrieval, model evaluation, and IDE integration.",
-      "Grew the team from 4 to 18 in twelve months; partnered closely with research, product, and DevRel.",
+      "Led engineering for AI coding assistant shipped to millions of developers across VS Code and IntelliJ.",
+      "Drove technical direction for code-aware retrieval, model evaluation, and IDE integration.",
+      "Scaled LLM completion acceptance and product adoption across the developer surface.",
     ],
   },
   {
     co: "Salesforce",
-    role: "Senior Engineering Manager, Platform",
-    years: "2022 — 2024",
+    role: "Senior Engineering Manager",
+    years: "Apr 2020 — Apr 2022",
     loc: "Bellevue, WA",
     bullets: [
-      "Owned the internal developer platform used by hundreds of product teams.",
-      "Reduced production incident rate by 62% over four quarters via a reliability and on-call program.",
-      "Hired and developed eight engineers, including three first-time managers now leading their own teams.",
+      "Continued connector platform leadership post-Tableau acquisition.",
+      "Delivered REST and native Salesforce connectors.",
+      "Managed large engineering teams and vendor partnerships.",
     ],
   },
   {
