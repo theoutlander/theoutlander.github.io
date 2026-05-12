@@ -43,10 +43,10 @@ export function BlogPagePanda({ posts, filterTag: initialFilter }: BlogPageProps
             right={`${posts.length} essays · since 2018`}
           />
           <h1 className="ds-h1" style={{ margin: "0 0 1rem", maxWidth: "20ch" }}>
-            Notes on building software<span style={{ color: "var(--accent)" }}>—</span>and the teams that ship it.
+            Writing about what I know, from someone who built it.
           </h1>
           <p className="ds-lede" style={{ maxWidth: "48ch", margin: "0 0 var(--gap-4)" }}>
-            Long-form essays, mostly. A new piece every other Tuesday. The archive is below; you can also filter by topic.
+            No schedule, no cadence. Just things worth writing down.
           </p>
           <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "var(--gap-2)" }}>
             {tags.map(t => (

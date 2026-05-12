@@ -76,14 +76,11 @@ export function ResumePagePanda() {
           />
           <div style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) auto", gap: "var(--gap-3)", alignItems: "end" }}>
             <div>
-              <h1 className="ds-display" style={{ margin: "0 0 0.5rem" }}>Nick Karnik</h1>
-              <p className="ds-lede" style={{ margin: 0, fontStyle: "normal" }}>
-                Engineering Leader · AI &amp; Product Strategy
-              </p>
+              <h1 className="ds-display" style={{ margin: 0 }}>Nick Karnik</h1>
             </div>
             <div style={{ textAlign: "right" }}>
               <div className="ds-mono" style={{ color: "var(--ink-2)" }}>nick@karnik.io</div>
-              <div className="ds-mono" style={{ color: "var(--ink-3)" }}>Bellevue · Available for advisory</div>
+              <div className="ds-mono" style={{ color: "var(--ink-3)" }}>Bellevue, WA</div>
             </div>
           </div>
         </section>

@@ -42,9 +42,9 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
                 />
               </div>
               <div style={{ marginTop: "1rem" }}>
-                <span className="ds-dateline">Currently · {new Date().toLocaleDateString("en-US", { month: "long", year: "numeric" })}</span>
+                <span className="ds-dateline">Currently · May 2026</span>
                 <p style={{ margin: "0.5rem 0 0", color: "var(--ink-2)", fontSize: "0.98rem" }}>
-                  Building new tools in AI and developer tooling. Writing about what I learn from first principles. Cooking, baking, and experimenting in the kitchen.
+                  Lead Software Engineer at PitchBook. Writing about engineering and what I'm learning. Cooking, baking, and experimenting in the kitchen.
                 </p>
               </div>
 
@@ -90,14 +90,14 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
               ) : (
                 <div className="ds-prose" style={{ maxWidth: "none" }}>
                   <p>
-                    I'm Nick Karnik. I lead engineering at Google, where my team builds Gemini Code Assist — an AI-powered developer surface used across the company. Before Google I spent two years at Salesforce running a platform team, and five at Microsoft as a principal engineer on Visual Studio.
+                    I'm Nick Karnik. Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Twenty-five years building software.
                   </p>
                   <p>
-                    This site is where I write down what I'm learning. The essays mostly cover engineering leadership, developer tooling, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.
+                    This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.
                   </p>
                   <h2>What I work on</h2>
                   <p>
-                    AI integration in developer tools. Team scale-up and reliability. Roadmaps, hiring, and the executive narrative that connects them. I'm available for limited advisory work through Plutonic Consulting.
+                    Developer tooling, data platforms, and software at scale. Advisory work runs through Plutonic Consulting — strategy, team review, and technical due diligence.
                   </p>
                   <h2>Outside of work</h2>
                   <p>

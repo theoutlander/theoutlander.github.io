@@ -60,7 +60,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
                 Nick<br />Karnik<span style={{ color: "var(--accent)", fontStyle: "italic", fontWeight: 400 }}>.</span>
               </h1>
               <p className="ds-lede" style={{ margin: "0 0 var(--gap-3)", maxWidth: "44ch" }}>
-                Engineering Lead on Gemini Code Assist at Google. Previously Salesforce, Microsoft. This site is where I write about engineering, leadership, and what I cook on weekends.
+                Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. This site is where I write about engineering, leadership, and what I cook on weekends.
               </p>
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "var(--gap-3)" }}>
                 <a href="/blog" className="ds-btn">Read the writing →</a>
