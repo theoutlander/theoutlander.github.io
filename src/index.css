@@ -1,5 +1,8 @@
 @layer reset, base, tokens, recipes, utilities;
 
+/* Design system tokens & base */
+@import './styles/design-system.css';
+
 /* Component styles */
 @import './styles/blog-components.css';
 

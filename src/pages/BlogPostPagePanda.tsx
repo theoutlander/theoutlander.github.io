@@ -1,311 +1,108 @@
 import React from "react";
-import { css } from "../../styled-system/css/index.mjs";
-import HeaderSSR from "../components/HeaderSSR";
-import Footer from "../components/Footer";
-import SkipLink from "../components/SkipLink";
-import BackToTop from "../components/ui/BackToTop";
-import ShareButtons from "../components/blog/ShareButtons";
-import BlogSidebar from "../components/blog/BlogSidebar";
-import { capitalizeFirstLetter } from "../utils/stringUtils";
+import { SectionTag } from "../components/design/SectionTag";
 import { Post } from "../types/blog";
 
 type BlogPostPageProps = {
-	post: Post;
-	posts: Post[];
+  post: Post;
+  posts: Post[];
 };
 
-export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
-	return (
-		<div
-			className={css({
-				bg: "white",
-				minH: "100vh",
-				width: "100%",
-				overflowX: "hidden",
-			})}
-		>
-			<SkipLink />
-			<HeaderSSR currentPage="blogs" />
-			<main
-				id="main-content"
-				className={css({
-					maxW: "5xl",
-					py: { base: 6, md: 10 },
-					mx: "auto",
-					px: { base: 4, md: 6 },
-					width: "100%",
-					display: "flex",
-					flexDirection: { base: "column", md: "row" },
-					gap: { base: 8, md: 12 },
-					alignItems: "flex-start",
-					justifyContent: { base: "stretch", md: "center" },
-				})}
-			>
-				{/* Desktop: article centered with equal margins. Mobile: article then sidebar below */}
-				<div
-					className={css({
-						display: "flex",
-						flexDirection: { base: "column", md: "row" },
-						gap: { base: 8, md: 12 },
-						flex: "1 1 0",
-						minW: 0,
-						width: "100%",
-						justifyContent: { base: "stretch", md: "center" },
-					})}
-				>
-				<article
-					className={css({
-						flex: { base: "1 1 0", md: "0 1 auto" },
-						maxW: "768px",
-						minW: 0,
-						mx: { base: 0, md: "auto" },
-					})}
-				>
-					<header className={css({ mb: 8 })}>
-						<h1
-							className={css({
-								fontSize: { base: "2xl", md: "2.5rem" },
-								fontWeight: "600",
-								mb: 2,
-								color: "#000",
-								lineHeight: 1.2,
-							})}
-						>
-							{post.title}
-						</h1>
-
-						{post.category && (
-							<p
-								className={css({
-									fontSize: "sm",
-									fontWeight: "600",
-									color: "brand.600",
-									textTransform: "uppercase",
-									letterSpacing: "wider",
-									mb: 3,
-								})}
-							>
-								{post.category}
-							</p>
-						)}
-
-						<div
-							className={css({
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "space-between",
-								flexWrap: "wrap",
-								gap: 3,
-								mb: 3,
-							})}
-						>
-							<div
-								className={css({
-									display: "flex",
-									alignItems: "center",
-									gap: 2,
-									fontSize: "14px",
-									color: "#666",
-								})}
-							>
-								<time>
-									{post.date
-										? new Date(post.date).toLocaleDateString("en-US", {
-												year: "numeric",
-												month: "long",
-												day: "numeric",
-										  })
-										: ""}
-								</time>
-								<span>│</span>
-								<span>
-									{estimateReadingTime(
-										post.contentHtml || post.html || post.excerpt || ""
-									)}{" "}
-									min read
-								</span>
-								{post.tags && post.tags.length > 0 && (
-									<>
-										<span>│</span>
-										<span>{post.tags[0]}</span>
-									</>
-								)}
-							</div>
-							<ShareButtons
-								title={post.title}
-								url={`/blog/${post.slug}`}
-								variant="compact"
-							/>
-						</div>
-
-						{post.cover && (
-							<img
-								src={post.cover}
-								alt={post.title || "Blog post cover image"}
-								loading="lazy"
-								className={css({
-									display: "block",
-									width: "100%",
-									maxW: { base: "100%", md: "min(100%, 560px)" },
-									height: "auto",
-									mb: 6,
-									mx: "auto",
-								})}
-							/>
-						)}
-					</header>
-
-
-					<div
-						className={`blog-post-content ${css({
-							fontSize: { base: "16px", md: "18px" },
-							lineHeight: 1.7,
-							color: "#000",
-							"& h2": {
-								fontSize: { base: "1.5rem", md: "1.75rem" },
-								fontWeight: "600",
-								mt: 8,
-								mb: 4,
-								color: "#000",
-							},
-							"& h3": {
-								fontSize: { base: "1.25rem", md: "1.5rem" },
-								fontWeight: "600",
-								mt: 6,
-								mb: 3,
-								color: "#000",
-							},
-							"& p": {
-								mb: 4,
-							},
-							"& ul, & ol": {
-								mb: 4,
-								pl: 6,
-							},
-							"& ol": {
-								listStyle: "decimal outside",
-								listStyleType: "decimal",
-							},
-							"& ul": {
-								listStyle: "disc outside",
-								listStyleType: "disc",
-							},
-							"& li": {
-								mb: 2,
-								display: "list-item",
-							},
-							"& blockquote": {
-								borderLeft: "3px solid",
-								borderColor: "#ccc",
-								pl: 4,
-								py: 2,
-								mb: 4,
-								fontStyle: "italic",
-								color: "#666",
-							},
-							"& code": {
-								bg: "#f5f5f5",
-								px: 2,
-								py: 1,
-								borderRadius: "3px",
-								fontSize: "0.9em",
-								fontFamily: "mono",
-							},
-							"& pre": {
-								bg: "#f5f5f5",
-								color: "#000",
-								p: { base: 3, md: 4 },
-								borderRadius: "3px",
-								overflow: "auto",
-								overflowX: "auto",
-								mb: 4,
-								maxWidth: "100%",
-							},
-							"& pre code": {
-								bg: "transparent",
-								color: "inherit",
-								px: 0,
-								py: 0,
-							},
-							"& a": {
-								color: "#000",
-								textDecoration: "underline",
-							},
-						})}`}
-					>
-						{post.contentHtml ? (
-							<div dangerouslySetInnerHTML={{ __html: post.contentHtml }} />
-						) : post.html ? (
-							<div dangerouslySetInnerHTML={{ __html: post.html }} />
-						) : (
-							<p>{post.excerpt}</p>
-						)}
-					</div>
-
-					{post.tags && post.tags.length > 0 && (
-						<div
-							className={css({
-								mt: 8,
-								pt: 6,
-								borderTop: "1px solid",
-								borderColor: "#e5e5e5",
-							})}
-						>
-							<div
-								className={css({
-									display: "flex",
-									gap: 2,
-									flexWrap: "wrap",
-								})}
-							>
-								{post.tags.map((tag) => (
-									<span
-										key={tag}
-										className={css({
-											display: "inline-block",
-											color: "#666",
-											fontSize: "13px",
-											fontWeight: "500",
-											bg: "#f5f5f5",
-											px: 3,
-											py: 1.5,
-											borderRadius: "9999px",
-											lineHeight: 1,
-										})}
-									>
-										{capitalizeFirstLetter(tag)}
-									</span>
-								))}
-							</div>
-						</div>
-					)}
-
-					<ShareButtons
-						title={post.title}
-						url={`/blog/${post.slug}`}
-					/>
-				</article>
-
-				<div
-					className={css({
-						display: { base: "block", md: "none" },
-						flexShrink: 0,
-						order: 1,
-					})}
-				>
-					<BlogSidebar posts={posts} />
-				</div>
-				</div>
-			</main>
-			<Footer />
-			<BackToTop />
-		</div>
-	);
+function estimateReadingTime(text: string) {
+  const cleanText = text.replace(/<[^>]*>/g, "");
+  const words = cleanText.trim().split(/\s+/).length;
+  return Math.max(1, Math.round(words / 200));
 }
 
-function estimateReadingTime(text: string) {
-	// Strip HTML tags if present
-	const cleanText = text.replace(/<[^>]*>/g, "");
-	const words = cleanText.trim().split(/\s+/).length;
-	return Math.max(1, Math.round(words / 200));
+function formatDate(dateStr: string) {
+  try {
+    return new Date(dateStr).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
+  } catch {
+    return dateStr;
+  }
+}
+
+export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
+  const content = (post as any).contentHtml || (post as any).html || "";
+  const readTime = estimateReadingTime(content || post.excerpt || "");
+  const currentIndex = posts.findIndex(p => p.id === post.id);
+  const prevPost = currentIndex < posts.length - 1 ? posts[currentIndex + 1] : null;
+  const nextPost = currentIndex > 0 ? posts[currentIndex - 1] : null;
+
+  return (
+    <div className="ds-page ds-page-fade" style={{ maxWidth: "70rem" }}>
+      <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
+        <a href="/blog" style={{ display: "inline-block", marginBottom: "var(--gap-3)", textDecoration: "none", borderBottom: "none" }}>
+          <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Back to writing</span>
+        </a>
+        <div style={{ borderTop: "2px solid var(--ink)", paddingTop: "1rem" }}>
+          <span className="ds-eyebrow">
+            {post.category ?? (post.tags?.[0] ?? "Essay")} · {formatDate(post.date)} · {readTime} min read
+          </span>
+        </div>
+        <h1 className="ds-h1" style={{ margin: "1rem 0 1rem", maxWidth: "22ch" }}>
+          {post.title}
+        </h1>
+        {post.excerpt && (
+          <p className="ds-lede" style={{ margin: 0, maxWidth: "44ch" }}>{post.excerpt}</p>
+        )}
+      </section>
+
+      {post.cover && (
+        <section style={{ padding: "var(--gap-3) 0" }}>
+          <img
+            src={post.cover}
+            alt={post.title}
+            style={{ width: "100%", maxHeight: "28rem", objectFit: "cover", display: "block" }}
+          />
+        </section>
+      )}
+
+      <section style={{ padding: "var(--gap-3) 0 var(--gap-5)" }}>
+        <div className="ds-with-margin">
+          <article
+            className="ds-prose blog-post-content"
+            style={{ maxWidth: "none" }}
+            dangerouslySetInnerHTML={{ __html: content || `<p>${post.excerpt}</p>` }}
+          />
+          {post.tags && post.tags.length > 0 && (
+            <aside className="ds-margin-note">
+              <span className="ds-small-caps" style={{ color: "var(--ink-2)" }}>Topics.</span>
+              <div style={{ marginTop: "0.75rem", display: "flex", flexWrap: "wrap", gap: "0.4rem" }}>
+                {post.tags.map(tag => (
+                  <span key={tag} className="ds-tag">{tag}</span>
+                ))}
+              </div>
+            </aside>
+          )}
+        </div>
+      </section>
+
+      {(prevPost || nextPost) && (
+        <section style={{ padding: "var(--gap-4) 0", borderTop: "1px solid var(--ink)" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "var(--gap-3)" }}>
+            {prevPost ? (
+              <div>
+                <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Previous</span>
+                <h3 className="ds-h3" style={{ margin: "0.5rem 0 0" }}>
+                  <a href={`/blog/${prevPost.slug}`} style={{ color: "inherit", textDecoration: "none", borderBottom: "none" }}>
+                    {prevPost.title}
+                  </a>
+                </h3>
+              </div>
+            ) : <div />}
+            {nextPost ? (
+              <div style={{ textAlign: "right" }}>
+                <span className="ds-mono" style={{ color: "var(--ink-3)" }}>Next →</span>
+                <h3 className="ds-h3" style={{ margin: "0.5rem 0 0" }}>
+                  <a href={`/blog/${nextPost.slug}`} style={{ color: "inherit", textDecoration: "none", borderBottom: "none" }}>
+                    {nextPost.title}
+                  </a>
+                </h3>
+              </div>
+            ) : <div />}
+          </div>
+        </section>
+      )}
+    </div>
+  );
 }

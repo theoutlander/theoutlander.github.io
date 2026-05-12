@@ -101,8 +101,22 @@ function buildInlineDataScript(id: string, data: unknown) {
 }
 
 // Recursively copy directory contents, skipping system files
-/** Blog prose components (tables, concept-box, list fixes) — must ship with SSR CSS too */
+/** Blog prose components and design system — must ship with SSR CSS too */
 function appendBlogComponentsCss(sourceCss: string): string {
+	// Append design system tokens
+	try {
+		const designCss = readFileSync(
+			join(process.cwd(), "src", "styles", "design-system.css"),
+			"utf8"
+		);
+		sourceCss = `${sourceCss}\n${designCss}`;
+	} catch (error) {
+		console.warn(
+			"⚠️  Could not read src/styles/design-system.css:",
+			error instanceof Error ? error.message : String(error)
+		);
+	}
+	// Append blog component styles
 	try {
 		const blogCss = readFileSync(
 			join(process.cwd(), "src", "styles", "blog-components.css"),
@@ -402,7 +416,7 @@ const generateBaseHTML = (
 		: "image/jpeg"; // default
 
 	return `<!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-aesthetic="engineering" data-theme="light" data-density="airy" data-typeface="editorial">
 	<head>
 		<meta charset="UTF-8" />
 		<meta
@@ -415,26 +429,12 @@ const generateBaseHTML = (
 		/>
 
 		<!-- Preload critical fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
-			rel="preconnect"
-			href="https://fonts.googleapis.com"
+			href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap"
+			rel="stylesheet"
 		/>
-		<link
-			rel="preconnect"
-			href="https://fonts.gstatic.com"
-			crossorigin
-		/>
-		<link
-			rel="preload"
-			href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-			as="style"
-			onload="this.onload=null;this.rel='stylesheet'"
-		/>
-		<noscript
-			><link
-				rel="stylesheet"
-				href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
-		/></noscript>
 
 		<!-- SEO Meta Tags -->
 		<title>${title}</title>
@@ -608,13 +608,112 @@ ${JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd, null, 2)}
 </html>`;
 };
 
-// SSR wrapper component
+// SSR-safe nav for static rendering (no router hooks)
+const SSRNav = () =>
+	React.createElement(
+		"nav",
+		{ className: "ds-site-nav", "aria-label": "Main navigation" },
+		React.createElement(
+			"a",
+			{ href: "/", className: "ds-brand-link", "aria-label": "Nick Karnik — home" },
+			React.createElement(
+				"span",
+				{
+					className: "ds-monogram",
+					style: { width: 28, height: 28, fontSize: 28 * 0.55 },
+					"aria-label": "nk monogram",
+				},
+				React.createElement("span", { style: { transform: "translateY(-1px)" } }, "nk"),
+				React.createElement("span", { className: "ds-corner-tick", style: { width: 4, height: 4 } })
+			),
+			React.createElement(
+				"span",
+				{ className: "ds-wordmark", style: { fontSize: 18 } },
+				"Nick Karnik"
+			)
+		),
+		React.createElement(
+			"div",
+			{ className: "ds-links" },
+			...[
+				{ href: "/blog", label: "Writing" },
+				{ href: "/about", label: "About" },
+				{ href: "/resume", label: "Résumé" },
+				{ href: "/reviews", label: "Reviews" },
+				{ href: "/kitchen", label: "The Kitchen" },
+			].map((l) => React.createElement("a", { key: l.href, href: l.href }, l.label))
+		)
+	);
+
+const SSRFooter = () =>
+	React.createElement(
+		"footer",
+		{ className: "ds-site-footer" },
+		React.createElement(
+			"div",
+			{ className: "ds-row" },
+			React.createElement(
+				"div",
+				null,
+				React.createElement("h4", null, "Elsewhere"),
+				React.createElement(
+					"ul",
+					null,
+					...[
+						["https://github.com/theoutlander", "GitHub"],
+						["https://www.linkedin.com/in/theoutlander", "LinkedIn"],
+						["https://x.com/theoutlander", "Twitter / X"],
+						["https://youtube.com/@nick-karnik", "YouTube"],
+						["https://stackoverflow.com/users/460472/nick", "Stack Overflow"],
+					].map(([href, label]) =>
+						React.createElement("li", { key: href }, React.createElement("a", { href, target: "_blank", rel: "noreferrer" }, label))
+					)
+				)
+			),
+			React.createElement(
+				"div",
+				null,
+				React.createElement("h4", null, "The Newsletter"),
+				React.createElement("p", { style: { fontSize: "0.95rem", color: "var(--ink-2)", margin: "0 0 0.75rem" } }, "A short letter, once a fortnight.")
+			),
+			React.createElement(
+				"div",
+				null,
+				React.createElement("h4", null, "Index"),
+				React.createElement(
+					"ul",
+					null,
+					...[
+						["/blog", "Writing"],
+						["/kitchen", "The Kitchen"],
+						["/resume", "Résumé"],
+						["/reviews", "Reviews"],
+					].map(([href, label]) =>
+						React.createElement("li", { key: href }, React.createElement("a", { href }, label))
+					)
+				)
+			)
+		),
+		React.createElement(
+			"div",
+			{ className: "ds-colophon" },
+			React.createElement("span", null, "© MMXXVI · Nick Karnik · All rights reserved"),
+			React.createElement("span", null, "Set in Newsreader & JetBrains Mono")
+		)
+	);
+
 // Render a page component to HTML string
 const renderPageToHTML = (
 	PageComponent: React.ComponentType<any>,
 	props: any
 ) => {
-	const element = React.createElement(PageComponent, props);
+	const element = React.createElement(
+		React.Fragment,
+		null,
+		React.createElement(SSRNav),
+		React.createElement("main", null, React.createElement(PageComponent, props)),
+		React.createElement(SSRFooter)
+	);
 	const html = renderToString(element);
 
 	return {
