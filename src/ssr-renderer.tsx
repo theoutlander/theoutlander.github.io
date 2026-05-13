@@ -14,6 +14,7 @@ import { execSync } from "node:child_process";
 import { capitalizeFirstLetter } from "./utils/stringUtils";
 import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
 import { CodementorReview } from "./types/codementor";
+import { ABOUT_HTML, META, PERSON } from "./data/person";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -866,13 +867,13 @@ export async function renderAllStaticPagesSSR() {
 		generateWebSiteJsonLd(),
 	];
 	const homeHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik",
-		"Nearly three decades building software across search, AI, and data. Engineer, builder, dad of three.",
+		META.home.title,
+		META.home.description,
 		homeResult.html,
 		cssHref,
 		homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link,
-		"https://nick.karnik.io",
-		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		PERSON.siteUrl,
+		`${PERSON.siteUrl}${PERSON.profileImage}`,
 		"website",
 		undefined,
 		jsBundle,
@@ -889,13 +890,13 @@ export async function renderAllStaticPagesSSR() {
 	const blogResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
 	const blogJsonLd = generateBlogJsonLd();
 	const blogHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Blog",
-		"Writing about AI, search, developer tools, and what I learn building software.",
+		META.blog.title,
+		META.blog.description,
 		blogResult.html,
 		cssHref,
 		blogResult.helmet.title + blogResult.helmet.meta + blogResult.helmet.link,
-		"https://nick.karnik.io/blog",
-		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		`${PERSON.siteUrl}/blog`,
+		`${PERSON.siteUrl}${PERSON.profileImage}`,
 		"website",
 		undefined,
 		jsBundle,
@@ -912,15 +913,15 @@ export async function renderAllStaticPagesSSR() {
 	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
 	const blogsJsonLd = generateBlogJsonLd();
 	const blogsHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Blog",
-		"Writing about AI, search, developer tools, and what I learn building software.",
+		META.blog.title,
+		META.blog.description,
 		blogsResult.html,
 		cssHref,
 		blogsResult.helmet.title +
 			blogsResult.helmet.meta +
 			blogsResult.helmet.link,
-		"https://nick.karnik.io/blogs",
-		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
+		`${PERSON.siteUrl}/blogs`,
+		`${PERSON.siteUrl}${PERSON.profileImage}`,
 		"website",
 		undefined,
 		jsBundle,
@@ -937,8 +938,8 @@ export async function renderAllStaticPagesSSR() {
 	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
 	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | About",
-		"Engineer, builder, dad of three. Nearly three decades building software across search, AI, and data.",
+		META.about.title,
+		META.about.description,
 		aboutResult.html,
 		cssHref,
 		aboutResult.helmet.title +

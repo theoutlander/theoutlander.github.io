@@ -3,13 +3,14 @@ import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { SecondaryMark } from "../components/design/Marks";
 import type { BlogPost } from "../types/blog";
+import { HERO_LEDE, META, PERSON } from "../data/person";
 
 interface HomePageProps {
   posts: BlogPost[];
 }
 
 const STATS = [
-  { n: "25+", l: "Years building software" },
+  { n: "27+", l: "Years building software" },
   { n: "10+", l: "Years leading engineers" },
   { n: "100+", l: "Engineers hired or grown" },
   { n: "3", l: "Products shipped at scale" },
@@ -36,9 +37,9 @@ export function HomePagePanda({ posts }: HomePageProps) {
   return (
     <>
       <Helmet>
-        <title>Nick Karnik</title>
-        <meta name="description" content="Nearly three decades building software across search, AI, and developer tools. Engineering leader, writer, cook, dad of three." />
-        <link rel="canonical" href="https://nick.karnik.io" />
+        <title>{META.home.title}</title>
+        <meta name="description" content={META.home.description} />
+        <link rel="canonical" href={PERSON.siteUrl} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">
@@ -61,7 +62,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
                 Nick<br />Karnik<span style={{ color: "var(--accent)", fontStyle: "italic", fontWeight: 400 }}>.</span>
               </h1>
               <p className="ds-lede" style={{ margin: "0 0 var(--gap-3)", maxWidth: "44ch" }}>
-                Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.
+                {HERO_LEDE}
               </p>
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "var(--gap-3)" }}>
                 <a href="/blog" className="ds-btn">Read the writing →</a>

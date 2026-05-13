@@ -1,4 +1,5 @@
 import React from "react";
+import { PERSON } from "../../data/person";
 
 export const Monogram = ({ size = 40, inverted = false }: { size?: number; inverted?: boolean }) => (
   <span
@@ -109,7 +110,7 @@ export const SecondaryMark = ({ size = 16 }: { size?: number }) => (
         flexShrink: 0,
       }}
     />
-    <span>NK · est. 1981</span>
+    <span>NK · est. {PERSON.estYear}</span>
   </span>
 );
 

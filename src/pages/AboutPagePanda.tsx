@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
+import { ABOUT_SHORT, META, PERSON } from "../data/person";
 
 type AboutData = {
   title: string;
@@ -16,8 +17,8 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
     <>
       <Helmet>
         <title>Nick Karnik | About</title>
-        <meta name="description" content="Engineering leader. Writer. Nearly three decades building software across search, AI, and data." />
-        <link rel="canonical" href="https://nick.karnik.io/about" />
+        <meta name="description" content={META.about.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/about`} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">
@@ -90,7 +91,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
               ) : (
                 <div className="ds-prose" style={{ maxWidth: "none" }}>
                   <p>
-                    I'm Nick Karnik. Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Nearly three decades building software.
+                    {ABOUT_SHORT}
                   </p>
                   <p>
                     This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.

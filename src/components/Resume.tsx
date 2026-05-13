@@ -7,6 +7,7 @@ import { FaDownload } from "react-icons/fa";
 import NameHeader from "./NameHeader";
 import ContactSection from "./ContactSection";
 import { capitalizeFirstLetter } from "../utils/stringUtils";
+import { SUMMARY } from "../data/resume";
 
 // ----- Color tokens for light/dark mode -----
 const surface = { light: "white", dark: "gray.900" };
@@ -484,13 +485,7 @@ export default function Resume() {
 						<h3 className={sectionHeader}>Summary</h3>
 						<div className={css({ p: { base: 4, md: 6 } })}>
 							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-								Nearly three decades building software across search, data, and AI.
-								At Microsoft I spent six years on Bing search building relevance
-								systems, data pipelines, and ML classifiers. At the Institute for
-								Disease Modeling I built epidemiological software featured in a
-								Bill Gates TED Talk. At Tableau I led the data connectivity
-								platform. At Google I led Gemini Code Assist from inception to
-								adoption by millions of developers.
+								{SUMMARY}
 							</p>
 						</div>
 					</article>

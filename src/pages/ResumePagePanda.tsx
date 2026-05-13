@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { CompanyLogo } from "../components/CompanyLogo";
+import { META, PERSON } from "../data/person";
 import {
   EDUCATION,
   PATENTS,
@@ -98,12 +99,9 @@ export function ResumePagePanda() {
   return (
     <>
       <Helmet>
-        <title>Nick Karnik | Résumé</title>
-        <meta
-          name="description"
-          content="Software engineer and engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau, Salesforce, and earlier startups."
-        />
-        <link rel="canonical" href="https://nick.karnik.io/resume" />
+        <title>{META.resume.title}</title>
+        <meta name="description" content={META.resume.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/resume`} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">
