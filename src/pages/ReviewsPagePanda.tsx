@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { CodementorReview } from "../types/codementor";
+import { META, PERSON } from "../data/person";
 
 interface ReviewsPageProps {
   reviews: CodementorReview[];
@@ -23,9 +24,9 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
   return (
     <>
       <Helmet>
-        <title>Nick Karnik | Reviews</title>
-        <meta name="description" content="Reviews from people I have mentored and worked with." />
-        <link rel="canonical" href="https://nick.karnik.io/reviews" />
+        <title>{META.reviews.title}</title>
+        <meta name="description" content={META.reviews.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/reviews`} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">

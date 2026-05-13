@@ -1,7 +1,7 @@
 import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
-import { ABOUT_SHORT, META, PERSON } from "../data/person";
+import { ABOUT_SHORT, ABOUT_SITE_DESCRIPTION, ABOUT_WORK_DESCRIPTION, ABOUT_OUTSIDE_WORK, ADVISORY_BLURB, CURRENTLY, META, PERSON } from "../data/person";
 
 type AboutData = {
   title: string;
@@ -43,9 +43,9 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
                 />
               </div>
               <div style={{ marginTop: "1rem" }}>
-                <span className="ds-dateline">Currently · May 2026</span>
+                <span className="ds-dateline">{CURRENTLY.label}</span>
                 <p style={{ margin: "0.5rem 0 0", color: "var(--ink-2)", fontSize: "0.98rem" }}>
-                  Lead Software Engineer at PitchBook. Writing about engineering and what I'm learning. Cooking, baking, and experimenting in the kitchen.
+                  {CURRENTLY.description}
                 </p>
               </div>
 
@@ -93,17 +93,11 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
                   <p>
                     {ABOUT_SHORT}
                   </p>
-                  <p>
-                    This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.
-                  </p>
+                  <p>{ABOUT_SITE_DESCRIPTION}</p>
                   <h2>What I work on</h2>
-                  <p>
-                    Developer tooling, data platforms, and software at scale. Advisory work runs through Plutonic Consulting — strategy, team review, and technical due diligence.
-                  </p>
+                  <p>{ABOUT_WORK_DESCRIPTION} {ADVISORY_BLURB}</p>
                   <h2>Outside of work</h2>
-                  <p>
-                    Cooking, mostly. I keep a versioned recipe log because I think the discipline of writing things down applies as well to dinner as it does to software.
-                  </p>
+                  <p>{ABOUT_OUTSIDE_WORK}</p>
                 </div>
               )}
             </div>

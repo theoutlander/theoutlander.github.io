@@ -8,6 +8,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { FaLinkedin, FaGithub, FaTwitter, FaStackOverflow } from "react-icons/fa";
 import { iconColors } from "../utils/iconColors";
+import { SOCIAL_LINKS } from "../data/person";
 import { CodementorIcon } from "./CodementorIcon";
 import { analytics } from "../lib/analytics";
 
@@ -279,10 +280,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "linkedin" })}
-					href="https://www.linkedin.com/in/theoutlander/"
+					href={SOCIAL_LINKS.linkedin}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => analytics.outboundClick("https://www.linkedin.com/in/theoutlander/", "LinkedIn")}
+					onClick={() => analytics.outboundClick(SOCIAL_LINKS.linkedin, "LinkedIn")}
 				>
 					<div className={iconContainer}>
 						<FaLinkedin
@@ -297,10 +298,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "github" })}
-					href="https://github.com/theoutlander"
+					href={SOCIAL_LINKS.github}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => analytics.outboundClick("https://github.com/theoutlander", "GitHub")}
+					onClick={() => analytics.outboundClick(SOCIAL_LINKS.github, "GitHub")}
 				>
 					<div className={iconContainer}>
 						<FaGithub
@@ -315,10 +316,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "twitter" })}
-					href="https://x.com/theoutlander"
+					href={SOCIAL_LINKS.twitter}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => analytics.outboundClick("https://x.com/theoutlander", "Twitter")}
+					onClick={() => analytics.outboundClick(SOCIAL_LINKS.twitter, "Twitter")}
 				>
 					<div className={iconContainer}>
 						<FaTwitter
@@ -333,10 +334,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "stackoverflow" })}
-					href="https://stackoverflow.com/users/460472/nick"
+					href={SOCIAL_LINKS.stackoverflow}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => analytics.outboundClick("https://stackoverflow.com/users/460472/nick", "Stack Overflow")}
+					onClick={() => analytics.outboundClick(SOCIAL_LINKS.stackoverflow, "Stack Overflow")}
 				>
 					<div className={iconContainer}>
 						<FaStackOverflow
@@ -351,10 +352,10 @@ export default function ContactSection({ className }: ContactSectionProps) {
 				</a>
 				<a
 					className={ghostBtn({ variant: "codementor" })}
-					href="https://www.codementor.io/@theoutlander"
+					href={SOCIAL_LINKS.codementor}
 					target="_blank"
 					rel="noopener noreferrer"
-					onClick={() => analytics.outboundClick("https://www.codementor.io/@theoutlander", "Codementor")}
+					onClick={() => analytics.outboundClick(SOCIAL_LINKS.codementor, "Codementor")}
 				>
 					<div className={iconContainer}>
 						<CodementorIcon

@@ -8,6 +8,7 @@ import {
 	FaStackOverflow,
 } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
+import { SOCIAL_LINKS } from "../data/person";
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { getIconColorStyles } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
@@ -211,7 +212,7 @@ export default function Footer() {
 								<span>Resume</span>
 							</a>
 							<a
-								href="https://stackoverflow.com/users/460472/nick"
+								href={SOCIAL_LINKS.stackoverflow}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}
@@ -227,7 +228,7 @@ export default function Footer() {
 								<span>Stack Overflow</span>
 							</a>
 							<a
-								href="https://www.codementor.io/@theoutlander"
+								href={SOCIAL_LINKS.codementor}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}
@@ -257,7 +258,7 @@ export default function Footer() {
 							})}
 						>
 							<a
-								href="https://github.com/theoutlander"
+								href={SOCIAL_LINKS.github}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}
@@ -270,7 +271,7 @@ export default function Footer() {
 								<span>GitHub</span>
 							</a>
 							<a
-								href="https://www.linkedin.com/in/theoutlander"
+								href={SOCIAL_LINKS.linkedin}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}
@@ -283,7 +284,7 @@ export default function Footer() {
 								<span>LinkedIn</span>
 							</a>
 							<a
-								href="https://x.com/theoutlander"
+								href={SOCIAL_LINKS.twitter}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}
@@ -296,7 +297,7 @@ export default function Footer() {
 								<span>Twitter</span>
 							</a>
 							<a
-								href="https://youtube.com/@nick-karnik"
+								href={SOCIAL_LINKS.youtube}
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}

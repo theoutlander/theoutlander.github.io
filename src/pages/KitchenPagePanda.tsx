@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
+import { META, PERSON } from "../data/person";
 
 const CATS = ["All", "Cooking", "Baking", "Cocktails"] as const;
 
@@ -10,9 +11,9 @@ export function KitchenPagePanda() {
   return (
     <>
       <Helmet>
-        <title>Nick Karnik | The Kitchen</title>
-        <meta name="description" content="Recipes for cooking, baking, and cocktails. Versioned, with notes on what changed between iterations." />
-        <link rel="canonical" href="https://nick.karnik.io/kitchen" />
+        <title>{META.kitchen.title}</title>
+        <meta name="description" content={META.kitchen.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/kitchen`} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">

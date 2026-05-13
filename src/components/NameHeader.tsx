@@ -10,6 +10,7 @@ import {
 import { HiOutlineDocumentText } from "react-icons/hi";
 import { getIconColorStyles, iconColors } from "../utils/iconColors";
 import { CodementorIcon } from "./CodementorIcon";
+import { SOCIAL_LINKS } from "../data/person";
 
 // Shared icon size constant - matches resume icon size
 const ICON_SIZE = 18;
@@ -308,7 +309,7 @@ export default function NameHeader({
 						{showSocialLinks && (
 							<div className={iconRow}>
 								<a
-									href="https://github.com/theoutlander"
+									href={SOCIAL_LINKS.github}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's GitHub profile"
@@ -322,7 +323,7 @@ export default function NameHeader({
 									</div>
 								</a>
 								<a
-									href="https://www.linkedin.com/in/theoutlander"
+									href={SOCIAL_LINKS.linkedin}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's LinkedIn profile"
@@ -336,7 +337,7 @@ export default function NameHeader({
 									</div>
 								</a>
 								<a
-									href="https://youtube.com/@nick-karnik"
+									href={SOCIAL_LINKS.youtube}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's YouTube channel"
@@ -350,7 +351,7 @@ export default function NameHeader({
 									</div>
 								</a>
 								<a
-									href="https://x.com/theoutlander"
+									href={SOCIAL_LINKS.twitter}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's X profile"
@@ -364,7 +365,7 @@ export default function NameHeader({
 									</div>
 								</a>
 								<a
-									href="https://stackoverflow.com/users/460472/nick"
+									href={SOCIAL_LINKS.stackoverflow}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's Stack Overflow profile"
@@ -380,7 +381,7 @@ export default function NameHeader({
 									</div>
 								</a>
 								<a
-									href="https://www.codementor.io/@theoutlander"
+									href={SOCIAL_LINKS.codementor}
 									target="_blank"
 									rel="noopener"
 									aria-label="Visit Nick Karnik's Codementor profile"

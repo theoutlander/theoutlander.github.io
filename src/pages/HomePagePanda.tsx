@@ -3,25 +3,11 @@ import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { SecondaryMark } from "../components/design/Marks";
 import type { BlogPost } from "../types/blog";
-import { HERO_LEDE, META, PERSON } from "../data/person";
+import { ADVISORY_BLURB, HERO_LEDE, META, PERSON, STATS, WORK_BLOCKS } from "../data/person";
 
 interface HomePageProps {
   posts: BlogPost[];
 }
-
-const STATS = [
-  { n: "27+", l: "Years building software" },
-  { n: "10+", l: "Years leading engineers" },
-  { n: "100+", l: "Engineers hired or grown" },
-  { n: "3", l: "Products shipped at scale" },
-];
-
-const WORK_BLOCKS = [
-  { t: "AI and Developer Tools", d: "Built Gemini Code Assist at Google. Writing about what I learned building it." },
-  { t: "Search and Relevance", d: "Six years on Bing search at Microsoft. A patent. A lot of labeled data." },
-  { t: "Making Things", d: "Currently building new tools. Making games with my three kids. Always something cooking." },
-  { t: "Engineering Leadership", d: "Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations." },
-];
 
 function formatDate(dateStr: string) {
   try {
@@ -174,7 +160,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
               ))}
             </div>
             <aside className="ds-margin-note">
-              Advisory work runs through Plutonic Consulting: strategy, team review, and technical due diligence. Limited slots each quarter.
+              {ADVISORY_BLURB}
             </aside>
           </div>
         </section>

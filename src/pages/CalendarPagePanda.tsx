@@ -1,6 +1,7 @@
 import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
+import { META, PERSON } from "../data/person";
 
 const CALENDAR_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true";
@@ -11,12 +12,9 @@ export function CalendarPagePanda() {
   return (
     <>
       <Helmet>
-        <title>Schedule time with Nick Karnik</title>
-        <meta
-          name="description"
-          content="Book time with Nick directly via Google Calendar appointments."
-        />
-        <link rel="canonical" href="https://nick.karnik.io/calendar" />
+        <title>{META.calendar.title}</title>
+        <meta name="description" content={META.calendar.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/calendar`} />
         <link rel="dns-prefetch" href="https://calendar.google.com" />
         <link rel="preconnect" href="https://calendar.google.com" />
         <link rel="dns-prefetch" href="https://accounts.google.com" />
