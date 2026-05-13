@@ -867,7 +867,7 @@ export async function renderAllStaticPagesSSR() {
 	];
 	const homeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik",
-		"Twenty-five years building software across search, AI, and data. Engineer, builder, dad of three.",
+		"Nearly three decades building software across search, AI, and data. Engineer, builder, dad of three.",
 		homeResult.html,
 		cssHref,
 		homeResult.helmet.title + homeResult.helmet.meta + homeResult.helmet.link,
@@ -938,7 +938,7 @@ export async function renderAllStaticPagesSSR() {
 	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | About",
-		"Engineer, builder, dad of three. Twenty-five years building software across search, AI, and data.",
+		"Engineer, builder, dad of three. Nearly three decades building software across search, AI, and data.",
 		aboutResult.html,
 		cssHref,
 		aboutResult.helmet.title +

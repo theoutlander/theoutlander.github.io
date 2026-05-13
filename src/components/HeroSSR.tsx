@@ -18,7 +18,7 @@ export default function HeroSSR() {
 				mx: { base: "auto", md: "0" },
 			})}
 		>
-			Twenty-five years of building software across search engines, disease models, data platforms, and
+			Nearly three decades of building software across search engines, disease models, data platforms, and
 			AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still
 			figuring out what comes next and building it anyway.
 		</p>

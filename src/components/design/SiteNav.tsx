@@ -1,5 +1,5 @@
 import React from "react";
-import { Monogram, Wordmark } from "./Marks";
+import { BrandMark, Wordmark } from "./Marks";
 
 const NAV_LINKS = [
   { href: "/blog", label: "Writing" },
@@ -26,7 +26,7 @@ export function SiteNav() {
   return (
     <nav className="ds-site-nav" aria-label="Main navigation">
       <a href="/" className="ds-brand-link" aria-label="Nick Karnik — home">
-        <Monogram size={28} />
+        <BrandMark size={28} shape="circle" />
         <Wordmark variant="primary" size={18} />
       </a>
       <div className="ds-links">

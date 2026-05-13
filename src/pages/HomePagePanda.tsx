@@ -16,9 +16,10 @@ const STATS = [
 ];
 
 const WORK_BLOCKS = [
-  { t: "Engineering Leadership", d: "Scaling teams. Hiring, performance, mentoring, the day-to-day craft of running a strong org." },
-  { t: "AI & Developer Platforms", d: "Shipping AI into developer tools. Eval, retrieval, model integration, IDE surfaces." },
-  { t: "Technical Strategy", d: "Roadmaps, architecture review, and the executive narrative around both." },
+  { t: "AI and Developer Tools", d: "Built Gemini Code Assist at Google. Writing about what I learned building it." },
+  { t: "Search and Relevance", d: "Six years on Bing search at Microsoft. A patent. A lot of labeled data." },
+  { t: "Making Things", d: "Currently building new tools. Making games with my three kids. Always something cooking." },
+  { t: "Engineering Leadership", d: "Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations." },
 ];
 
 function formatDate(dateStr: string) {
@@ -36,7 +37,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
     <>
       <Helmet>
         <title>Nick Karnik</title>
-        <meta name="description" content="Engineering leader. Writer. Occasional cook. Twenty-five years building software across AI, search, and developer tools." />
+        <meta name="description" content="Nearly three decades building software across search, AI, and developer tools. Engineering leader, writer, cook, dad of three." />
         <link rel="canonical" href="https://nick.karnik.io" />
       </Helmet>
 
@@ -60,7 +61,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
                 Nick<br />Karnik<span style={{ color: "var(--accent)", fontStyle: "italic", fontWeight: 400 }}>.</span>
               </h1>
               <p className="ds-lede" style={{ margin: "0 0 var(--gap-3)", maxWidth: "44ch" }}>
-                Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. This site is where I write about engineering, leadership, and what I cook on weekends.
+                Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.
               </p>
               <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginTop: "var(--gap-3)" }}>
                 <a href="/blog" className="ds-btn">Read the writing →</a>
@@ -160,9 +161,9 @@ export function HomePagePanda({ posts }: HomePageProps) {
 
         {/* Work */}
         <section style={{ padding: "var(--gap-4) 0 var(--gap-5)" }}>
-          <SectionTag num="02" label="Work" />
+          <SectionTag num="02" label="What I work on" />
           <div className="ds-with-margin">
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "var(--gap-3)" }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(2,1fr)", gap: "var(--gap-3)" }}>
               {WORK_BLOCKS.map((b, i) => (
                 <div key={i}>
                   <span className="ds-mono" style={{ color: "var(--accent)" }}>0{i + 1} —</span>

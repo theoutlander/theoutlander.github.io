@@ -11,6 +11,33 @@ export const Monogram = ({ size = 40, inverted = false }: { size?: number; inver
   </span>
 );
 
+export const BrandMark = ({
+  size = 28,
+  shape = "circle",
+}: {
+  size?: number;
+  shape?: "square" | "circle";
+}) => {
+  const shapeStyle: React.CSSProperties =
+    shape === "square"
+      ? { border: "1px solid var(--ink)", borderRadius: 0 }
+      : { borderRadius: "50%" };
+  return (
+    <img
+      src="/assets/images/profile/nick-karnik.jpeg"
+      alt=""
+      width={size}
+      height={size}
+      loading="eager"
+      style={{
+        display: "block",
+        objectFit: "cover",
+        ...shapeStyle,
+      }}
+    />
+  );
+};
+
 export const Wordmark = ({
   variant = "primary",
   size = 24,
@@ -82,7 +109,7 @@ export const SecondaryMark = ({ size = 16 }: { size?: number }) => (
         flexShrink: 0,
       }}
     />
-    <span>NK · est. 2000</span>
+    <span>NK · est. 1981</span>
   </span>
 );
 

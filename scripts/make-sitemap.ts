@@ -9,6 +9,9 @@ async function run() {
 		{ path: "/blog", priority: "0.9", changefreq: "weekly" },
 		{ path: "/about", priority: "0.8", changefreq: "monthly" },
 		{ path: "/resume", priority: "0.8", changefreq: "monthly" },
+		{ path: "/reviews", priority: "0.7", changefreq: "monthly" },
+		{ path: "/kitchen", priority: "0.5", changefreq: "monthly" },
+		{ path: "/calendar", priority: "0.5", changefreq: "yearly" },
 	];
 
 	let posts: BlogPostData[] = [];

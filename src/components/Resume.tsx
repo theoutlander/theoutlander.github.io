@@ -484,7 +484,7 @@ export default function Resume() {
 						<h3 className={sectionHeader}>Summary</h3>
 						<div className={css({ p: { base: 4, md: 6 } })}>
 							<p className={css({ color: "gray.700", lineHeight: "1.65" })}>
-								Twenty-five years building software across search, data, and AI.
+								Nearly three decades building software across search, data, and AI.
 								At Microsoft I spent six years on Bing search building relevance
 								systems, data pipelines, and ML classifiers. At the Institute for
 								Disease Modeling I built epidemiological software featured in a

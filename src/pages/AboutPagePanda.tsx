@@ -16,13 +16,13 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
     <>
       <Helmet>
         <title>Nick Karnik | About</title>
-        <meta name="description" content="Engineering leader. Writer. Twenty-five years building software across search, AI, and data." />
+        <meta name="description" content="Engineering leader. Writer. Nearly three decades building software across search, AI, and data." />
         <link rel="canonical" href="https://nick.karnik.io/about" />
       </Helmet>
 
       <div className="ds-page ds-page-fade">
         <section style={{ padding: "var(--gap-5) 0 var(--gap-4)" }}>
-          <SectionTag num="01" label="About" right="Bellevue, WA" />
+          <SectionTag num="01" label="About" right="Seattle, WA" />
           <div style={{
             display: "grid",
             gridTemplateColumns: "minmax(0,1fr) minmax(0,1.5fr)",
@@ -90,7 +90,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
               ) : (
                 <div className="ds-prose" style={{ maxWidth: "none" }}>
                   <p>
-                    I'm Nick Karnik. Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Twenty-five years building software.
+                    I'm Nick Karnik. Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Nearly three decades building software.
                   </p>
                   <p>
                     This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.

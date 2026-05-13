@@ -2,6 +2,7 @@ import { css } from "../../styled-system/css/index.mjs";
 import HeaderSSR from "../components/HeaderSSR";
 import Footer from "../components/Footer";
 import { ConceptBox } from "../components/ui";
+import { BrandMark, Wordmark } from "../components/design/Marks";
 
 export function DesignSystemPage() {
 	return (
@@ -46,6 +47,115 @@ export function DesignSystemPage() {
 					in <code>/src/styles/blog-components.css</code>, and they update everywhere —
 					markdown content, React components, and this guide.
 				</p>
+
+				{/* Header brand mark — A/B for Phase 5a */}
+				<section className={css({ mb: 12 })}>
+					<h2
+						className={css({
+							fontSize: { base: "xl", md: "2xl" },
+							fontWeight: "700",
+							mb: 2,
+							color: "#000",
+							mt: 2,
+							pb: 3,
+							borderBottomWidth: "2px",
+							borderColor: "gray.200",
+						})}
+					>
+						Header brand mark
+					</h2>
+					<p
+						className={css({
+							fontSize: "md",
+							color: "gray.700",
+							mb: 6,
+							lineHeight: 1.6,
+						})}
+					>
+						Profile JPEG + serif wordmark, rendered the way it appears in{" "}
+						<code>SiteNav</code>. Compare the two shape variants and pick a winner —
+						the losing one will be removed in a follow-up.
+					</p>
+
+					<div
+						className={css({
+							display: "grid",
+							gridTemplateColumns: { base: "1fr", md: "1fr 1fr" },
+							gap: 6,
+							mb: 4,
+						})}
+					>
+						<div>
+							<h4
+								className={css({
+									fontSize: "sm",
+									fontWeight: "700",
+									color: "#666",
+									textTransform: "uppercase",
+									letterSpacing: "wider",
+									mb: 3,
+								})}
+							>
+								Option B — Square 28 with border
+							</h4>
+							<div
+								style={{
+									display: "inline-flex",
+									alignItems: "center",
+									gap: "0.6rem",
+									padding: "0.75rem 1rem",
+									border: "1px solid #e0e0e0",
+									borderRadius: 4,
+									background: "white",
+								}}
+							>
+								<BrandMark size={28} shape="square" />
+								<Wordmark variant="primary" size={18} />
+							</div>
+						</div>
+
+						<div>
+							<h4
+								className={css({
+									fontSize: "sm",
+									fontWeight: "700",
+									color: "#666",
+									textTransform: "uppercase",
+									letterSpacing: "wider",
+									mb: 3,
+								})}
+							>
+								Option C — Circle 28
+							</h4>
+							<div
+								style={{
+									display: "inline-flex",
+									alignItems: "center",
+									gap: "0.6rem",
+									padding: "0.75rem 1rem",
+									border: "1px solid #e0e0e0",
+									borderRadius: 4,
+									background: "white",
+								}}
+							>
+								<BrandMark size={28} shape="circle" />
+								<Wordmark variant="primary" size={18} />
+							</div>
+						</div>
+					</div>
+
+					<p
+						className={css({
+							fontSize: "sm",
+							color: "gray.600",
+							lineHeight: 1.6,
+						})}
+					>
+						<code>SiteNav</code> currently uses the circle variant by default
+						(matches live). Once you pick, the other shape and the legacy{" "}
+						<code>Monogram</code> can be retired.
+					</p>
+				</section>
 
 				{/* Concept Box Section */}
 				<section className={css({ mb: 12 })}>
