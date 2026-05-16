@@ -1,12 +1,14 @@
 {
+  "averageRating": 5.0,
+  "reviewCount": 57,
   "reviews": [
     {
       "id": 1,
       "reviewer_name": "Bryan Hackett",
       "date": "August 2018",
       "rating": 5.0,
-      "review_text": "Excellent mentor. I learned more JS concepts from Nick in one session than from reading weeks of tutorials. Highly recommend him!",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "review_text": "Excellent mentor. I learned more JS concepts from Nick in one session than from reading weeks of tutorials.  Highly recommend him!",
+      "profile_image_url": "https://www.gravatar.com/avatar/c5eb3806f99b355be4969674402abfea?d=404&s=200"
     },
     {
       "id": 2,
@@ -29,7 +31,7 @@
       "reviewer_name": "Brandon Moore",
       "date": "August 2018",
       "rating": 5.0,
-      "review_text": "Very knowledgable about javascript and a range of algorithms and their practical applications. Super helpful!",
+      "review_text": "Very knowledgable about javascript and a range of algorithms and their practical applications.  Super helpful!",
       "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
     },
     {
@@ -61,7 +63,7 @@
       "reviewer_name": "leslie diane",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "Nick is A++. He can help with the code as well as the strategy. I highly recommend Nick. He is a rare find.",
+      "review_text": "Nick is A++.  He can help with the code as well as the strategy. I highly recommend Nick. He is a rare find.",
       "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/65jLyg6PRKGrNslRCwQi"
     },
     {
@@ -85,8 +87,8 @@
       "reviewer_name": "Robert Aguilera",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "Nick is very knowledgable about Javascript and it's ecosystem. He was able to quickly understand my questions and codebase, help me with my specific problems, and provided me with a complete solution. He also gave me tips on how to improve the quality of my app.",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "review_text": "Nick is very knowledgable about Javascript and it's ecosystem.  He was able to quickly understand my questions and codebase, help me with my specific problems, and provided me with a complete solution.  He also gave me tips on how to improve the quality of my app.",
+      "profile_image_url": "https://www.gravatar.com/avatar/b1f1701c26e4176a660c392294a8af6e?d=404&s=200"
     },
     {
       "id": 12,
@@ -102,14 +104,14 @@
       "date": "July 2018",
       "rating": 5.0,
       "review_text": "Nick's broad experience was great for helping me do some serverless/node sanity checking!",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "profile_image_url": "https://www.gravatar.com/avatar/ee960831257926ecb72811fecf0548de?d=404&s=200"
     },
     {
       "id": 14,
       "reviewer_name": "Sam",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "Nick was very good at breaking down and fixing the issue we were working on. Working with him, you can clearly see his knowledge and expertise of not only javascript but also higher-level CS concepts. I highly recommend his services.",
+      "review_text": "Nick was very good at breaking down and fixing the issue we were working on. Working with him, you can clearly see his knowledge and expertise of not only Javascript but also higher-level CS concepts. I highly recommend his services.",
       "profile_image_url": null
     },
     {
@@ -117,7 +119,7 @@
       "reviewer_name": "Keenn Dev",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "Amazing mentor!! Not only he helped me architecture my app and pick all the best technologies to use, but he also gave me a lot of tips on how to be efficient with my time and how to streamline the development a lot.",
+      "review_text": "Amazing mentor!! Not only he helped me architecture my app and pick all the best technologies to use, but he also gave me a lot of tips on how to be efficient with my time and how to streamline the development a lot.\n\nReally really recommend this mentor, you will learn a lot.",
       "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/08su2vljQBJ9swCyi28Q"
     },
     {
@@ -133,7 +135,7 @@
       "reviewer_name": "Salma Elshahawy",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "All my Issues were resolved. So happy that Nick was my mentor. This was my first time to use codementor and I loved it.",
+      "review_text": "All my Issues were resolved. So happy that Nick was my mentor. This was my first time to use codementor, and I loved it because of Nick. I highly recommend Nick.",
       "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/QeLQ1gITqmvjYx6HOF9P"
     },
     {
@@ -141,7 +143,7 @@
       "reviewer_name": "Salma Elshahawy",
       "date": "July 2018",
       "rating": 5.0,
-      "review_text": "I didn't have a good mentor like Nick. He is patient, teach you step by step. Use the debugging tool and get me step by step into the issue and finally I'm able to resolve the issue via the solution.",
+      "review_text": "I didn't have a good mentor like Nick. He is patient, teach you step by step. Use the debugging tools to teach you how to solve the issues. I highly recommend Nick.",
       "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/QeLQ1gITqmvjYx6HOF9P"
     },
     {
@@ -149,7 +151,7 @@
       "reviewer_name": "CapTec Partners",
       "date": "June 2018",
       "rating": 5.0,
-      "review_text": "Nick helped me solve my issue within minutes and was very patient doing so. Would be happy to work with Nick again",
+      "review_text": "Nick helped me solve my issue within minutes and was very patient doing so. Would be happy to work with again!",
       "profile_image_url": null
     },
     {
@@ -157,7 +159,7 @@
       "reviewer_name": "עפר יער",
       "date": "June 2018",
       "rating": 5.0,
-      "review_text": "Nick Is a Very nice guy. Too bad He could only solve a part of my problem.",
+      "review_text": "Nick Is a Very nice guy.\nToo bad He could only solve a part of my problem.",
       "profile_image_url": "https://lh5.googleusercontent.com/-PjYdQSRtURY/AAAAAAAAAAI/AAAAAAAAACc/eWFpmhpGbIA/photo.jpg"
     },
     {
@@ -165,7 +167,7 @@
       "reviewer_name": "A",
       "date": "June 2018",
       "rating": 5.0,
-      "review_text": "Helped me to solve the issue, despite of my very sceptical approach he was very technical and managed to establish the connection to a mongo db. He was extremely diligent and also took time to explain the steps he was taking so that I was able to also learn throughout the process. I would highly recommend Nick.",
+      "review_text": "Helped me to solve the issue, despite of my very sceptical approach he was very technical and managed to convince me that other things to what I initially though was a problem, and that actually led to a solution. Do recommend.",
       "profile_image_url": "https://pbs.twimg.com/profile_images/664310022814453760/s32r4Iz2.jpg"
     },
     {
@@ -173,7 +175,7 @@
       "reviewer_name": "Brett Artmann",
       "date": "June 2018",
       "rating": 5.0,
-      "review_text": "Nick did a great job of helping me untangle a web of problems in deploying my app to digital ocean using node/postgres. Very patient and helpful.",
+      "review_text": "Nick did a great job of helping me untangle a web of problems in deploying my app to digital ocean using nginx and clouflare as well as establishing the connection to a mongo db.  He was extremely diligent and also took time to explain the steps he was taking so that I was able to also learn throughout the process.  I would highly recommend Nick.",
       "profile_image_url": null
     },
     {
@@ -182,7 +184,7 @@
       "date": "June 2018",
       "rating": 5.0,
       "review_text": "Nick is very knowledgable and experienced with debugging. I had a bug and he systematically walked through all of the potential issues until he discovered the source of my problem.",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "profile_image_url": "https://www.gravatar.com/avatar/ac076e70be845dfbd774da7a8b6fd4bc?d=404&s=200"
     },
     {
       "id": 24,
@@ -205,7 +207,7 @@
       "reviewer_name": "Mario Azzopardi",
       "date": "April 2018",
       "rating": 5.0,
-      "review_text": "Very helpful.",
+      "review_text": "Very helpful. ",
       "profile_image_url": null
     },
     {
@@ -230,7 +232,7 @@
       "date": "April 2018",
       "rating": 5.0,
       "review_text": "Nick knows his stuff, very helpful.",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "profile_image_url": "https://www.gravatar.com/avatar/0e461a04d6eab8d24b1b0dca196f14d7?d=404&s=200"
     },
     {
       "id": 30,
@@ -242,10 +244,10 @@
     },
     {
       "id": 31,
-      "reviewer_name": "Tashia",
+      "reviewer_name": "Tashia ",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Nick is awesome! He's very knowledgeable, reliable, and fast. I needed help with my bootcamp project and Nick helped me with the problem I was having with my code.",
+      "review_text": "Nick is awesome! He's very knowledgeable, reliable, and fast. I needed help with my bootcamp project, writing code for D3 chart and debugging Flask API code. Nick came to the rescue. Not only did he deliver but he went above and beyond to explain why he was doing things in a certain way. It was a great way to get help with my project and supplement my learning. I will use Nick again in the future and recommend him to anyone!!!!",
       "profile_image_url": null
     },
     {
@@ -253,7 +255,7 @@
       "reviewer_name": "Removed User",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Took the time to instruct me on how to approach the problem. Some bugs on my end stopped us from diving deeper.",
+      "review_text": "Took the time to instruct me on how to approach the problem. Some bugs on my end stopped us from diving fully into the code. But he gave me some good direction on where to dive into this.",
       "profile_image_url": null
     },
     {
@@ -261,7 +263,7 @@
       "reviewer_name": "Peter Dushkin",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Clear thinker and communicator. Sound approach to my problem which turned out to be a silly error. Great guy to work with.",
+      "review_text": "Clear thinker and communicator. Sound approach to my problem which turned out to be a silly error. Good suggestions for further development. Overall great experience.",
       "profile_image_url": null
     },
     {
@@ -285,7 +287,7 @@
       "reviewer_name": "Ahmad John",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Can fix any problem, very determined and went into his own time so solve my problem, I highly recommend Nick.",
+      "review_text": "Can fix any problem, very determined and went into his own time so solve my problem, I highly recommend",
       "profile_image_url": null
     },
     {
@@ -301,7 +303,7 @@
       "reviewer_name": "Michael Montgomery",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Nick was great. He gave me exactly what I was looking for - expert advice in choosing the right tech stack and approach for my serverless project. He helped me get unstuck by advising on key concepts and specific tools. Before our call I was confused by all the tools and architectural approaches. I was fortunate to have Nick pick up exactly where I had left off. With my understanding of the tooling ecosystem from many hours of research, Nick brought necessary strategic guidance.",
+      "review_text": "Nick was great. He gave me exactly what I was looking for - expert advice in choosing the right tech stack and approach for my serverless project. \n\nHe helped me get unstuck by advising on key concepts and specific tools. Before our call I was confused by all the tools and architectural approaches. \n\nI was fortunate to have Nick pick up exactly where I had left off. With my understanding of the tooling ecosystem from many hours of research, Nick brought necessary strategic guidance. He had hands-on experience with all the tools I identified. By the end of our call I was able to boil it all down to a simple question so I could decide which tool and approach to use. Invaluable!",
       "profile_image_url": "https://lh3.googleusercontent.com/-XdUIqdMkCWA/AAAAAAAAAAI/AAAAAAAAAAA/4252rscbv5M/photo.jpg"
     },
     {
@@ -325,15 +327,15 @@
       "reviewer_name": "Jackson Holiday Wheeler",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Fantastic mentor, probably the best I've ever had! Explained everything so clearly and efficiently, solving my problem and educating me as to the root cause of it within minutes. Highly impressed. And to boot, he's pleasant company! He's on my shortlist now for sure.",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "review_text": "Fantastic mentor, probably the best I've ever had! Explained everything so clearly and efficiently, solving my problem and educating me as to the root cause of it within minutes. Highly impressed.\n\nAnd to boot, he's pleasant company! He's on my shortlist now for sure.",
+      "profile_image_url": "https://www.gravatar.com/avatar/a8a5219e77087fdb27cbf8796af436b6?d=404&s=200"
     },
     {
       "id": 42,
       "reviewer_name": "Nicholas Brac",
       "date": "March 2018",
       "rating": 5.0,
-      "review_text": "Genuinely nice guy with a passion for what he is doing. He knows his stuff very well! I had a great time learning.",
+      "review_text": "Genuinely nice guy with a passion for what he is doing.  He knows his stuff very well! I had a great time  talking to him, cleared up a lot of confusion I had, and I learned some real valuable tips & tricks.  Thank you!",
       "profile_image_url": null
     },
     {
@@ -365,7 +367,7 @@
       "reviewer_name": "Cara Tracewell",
       "date": "February 2018",
       "rating": 5.0,
-      "review_text": "Nick is great! He took the time to understand what I was trying to do using python before he accepted the job, and he completed the job and reviewed the code with me. Thanks for your help!",
+      "review_text": "Nick is great! He took the time to understand what I was trying to do using python before he accepted the job, and he completed the job and reviewed the code with me.  Thanks for your help!",
       "profile_image_url": "https://lh4.googleusercontent.com/-yv5NCkBQYc8/AAAAAAAAAAI/AAAAAAAAA6Y/8cfudGUtZbQ/photo.jpg"
     },
     {
@@ -374,7 +376,7 @@
       "date": "February 2018",
       "rating": 5.0,
       "review_text": "Nick did an awesome job helping me.",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "profile_image_url": "https://www.gravatar.com/avatar/dcf0a9c3066797f6e8121624e6472291?d=404&s=200"
     },
     {
       "id": 48,
@@ -382,7 +384,7 @@
       "date": "February 2018",
       "rating": 5.0,
       "review_text": "Did a great job of getting me started on my project",
-      "profile_image_url": "https://process.filestackapi.com/cache=expiry:max/resize=width:72/Kg4RHGrpSmehCIxVR0lg"
+      "profile_image_url": "https://www.gravatar.com/avatar/dcf0a9c3066797f6e8121624e6472291?d=404&s=200"
     },
     {
       "id": 49,

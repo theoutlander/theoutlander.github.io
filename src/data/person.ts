@@ -41,7 +41,7 @@ export const STATS = [
 	{ n: "27+", l: "Years building software" },
 	{ n: "10+", l: "Years leading engineers" },
 	{ n: "100+", l: "Engineers hired or grown" },
-	{ n: "3", l: "Products shipped at scale" },
+	{ n: "10+", l: "Products shipped" },
 ] as const;
 
 // Work blocks on the home page.
@@ -49,7 +49,7 @@ export const WORK_BLOCKS = [
 	{ t: "AI and Developer Tools", d: "Built Gemini Code Assist at Google. Writing about what I learned building it." },
 	{ t: "Search and Relevance", d: "Six years on Bing search at Microsoft. A patent. A lot of labeled data." },
 	{ t: "Making Things", d: "Currently building new tools. Making games with my three kids. Always something cooking." },
-	{ t: "Engineering Leadership", d: "Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations." },
+	{ t: "Engineering Leadership", d: "Led Gemini Code Assist at Google — three years, VS Code and IntelliJ. Senior EM at Tableau and Salesforce. Twice a startup CTO. Now leading a product team at PitchBook." },
 ] as const;
 
 // HTML content for the About page bio section.

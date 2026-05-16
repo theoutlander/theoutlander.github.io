@@ -103,7 +103,7 @@ export const ROLES: Role[] = [
 		dates: "Mar 2026 – Present",
 		current: true,
 		blurb:
-			"Building data and search infrastructure for financial intelligence platform used by investment professionals worldwide.",
+			"Leading a product team building data and search infrastructure for the financial intelligence platform used by investment professionals worldwide.",
 		tags: ["Data Infrastructure", "Search", "FinTech"],
 	},
 	{
@@ -132,7 +132,7 @@ export const ROLES: Role[] = [
 	},
 	{
 		co: "T-Mobile",
-		role: "Director Of Engineering",
+		role: "Director of Engineering (via Streamline Digital)",
 		dates: "Nov 2018 – Oct 2019",
 		blurb:
 			"Hired a diverse team of 25 engineers in six weeks; managed four product teams totaling 35+ engineers across T-Mobile Retail Mobility. Delivered custom desktop & mobile applications for the T-Mobile / Sprint merger. Architected and implemented a portable Test Automation Framework that runs in-app.",
