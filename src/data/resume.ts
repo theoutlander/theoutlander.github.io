@@ -1,5 +1,7 @@
-// Canonical résumé data sourced from the legacy `src/components/Resume.tsx`.
-// Kept as a small data-only module so `ResumePagePanda` stays presentation-only.
+// Canonical résumé data in `resume.json`; types and link helpers live here.
+// Kept as a small module so `ResumePagePanda` stays presentation-only.
+
+import resumeData from "./resume.json";
 
 export type Role = {
 	co: string;
@@ -37,35 +39,11 @@ export type Patent = {
 
 export type SkillGroups = Record<string, string[]>;
 
-// Company name → CompanyLogo key (kept identical to legacy mapping).
-const COMPANY_KEY_MAP: Record<string, string> = {
-	"Plutonic Consulting": "plutonic",
-	"PitchBook (Morningstar)": "pitchbook",
-	Google: "google",
-	Salesforce: "salesforce",
-	"T-Mobile": "tmobile",
-	"Fullstack Consulting": "fullstack",
-	"Treasure Technologies": "treasure",
-	Jobbatical: "jobbatical",
-	"Institute for Disease Modeling (Gates Foundation)": "idm",
-	Microsoft: "microsoft",
-	Tableau: "tableau",
-	"Tableau (Salesforce)": "tableau",
-	"Y Combinator": "ycombinator",
-	RoomToday: "roomtoday",
-	"COMPASS Technologies": "compass-technologies",
-	"Blue Hippo Funding": "bluehippo-funding",
-	"The Globalist": "theglobalist",
-	"Meds Publishing": "meds-publishing",
-	"University of Maryland": "umd",
-	"Videoly Platform": "videoly platform",
-	Videoly: "videoly platform",
-	"RoomToday Platform": "roomtoday platform",
-};
+const { companyKeyMap, companyUrlMap } = resumeData;
 
 export function getCompanyKey(companyName: string): string {
 	return (
-		COMPANY_KEY_MAP[companyName] ||
+		companyKeyMap[companyName as keyof typeof companyKeyMap] ||
 		companyName
 			.toLowerCase()
 			.replace(/\s+/g, "")
@@ -73,286 +51,21 @@ export function getCompanyKey(companyName: string): string {
 	);
 }
 
-const COMPANY_URL_MAP: Record<string, string> = {
-	"PitchBook (Morningstar)": "https://pitchbook.com",
-	Google: "https://www.google.com",
-	Salesforce: "https://www.salesforce.com",
-	"T-Mobile": "https://www.t-mobile.com",
-	"Institute for Disease Modeling (Gates Foundation)":
-		"https://www.idmod.org",
-	Microsoft: "https://www.microsoft.com",
-	Tableau: "https://www.tableau.com",
-	"Tableau (Salesforce)": "https://www.tableau.com",
-	"University of Maryland": "https://www.umd.edu",
-	Jobbatical: "https://www.jobbatical.com",
-	"Treasure Technologies": "https://www.treasurefi.com",
-	"The Globalist": "https://www.theglobalist.com",
-};
-
 export function getCompanyUrl(companyName: string): string | null {
-	return COMPANY_URL_MAP[companyName] || null;
+	return companyUrlMap[companyName as keyof typeof companyUrlMap] || null;
 }
 
-export const SUMMARY =
-	"Nearly three decades building software across search, data, and AI. At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. At the Institute for Disease Modeling I built epidemiological software featured in a Bill Gates TED Talk. At Tableau I led the data connectivity platform. At Google I led Gemini Code Assist from inception to adoption by millions of developers.";
+export const SUMMARY = resumeData.summary;
 
-export const ROLES: Role[] = [
-	{
-		co: "PitchBook (Morningstar)",
-		role: "Lead Software Engineer",
-		dates: "Mar 2026 – Present",
-		current: true,
-		blurb:
-			"Leading a product team building data and search infrastructure for the financial intelligence platform used by investment professionals worldwide.",
-		tags: ["Data Infrastructure", "Search", "FinTech"],
-	},
-	{
-		co: "Google",
-		role: "Engineering Manager (Gemini Code Assist)",
-		dates: "May 2022 – Apr 2025",
-		blurb:
-			"Led engineering for Gemini Code Assist, Google’s AI coding assistant for VS Code and IntelliJ. Drove technical leadership across engineering, product, research, and UX teams to scale AI-assisted development workflows. Delivered cross-cutting features that improved LLM completion acceptance and product adoption, while integrating model advancements and developer feedback into production systems.",
-		tags: ["Go", "TypeScript", "Node.js", "Kubernetes", "GCP", "LLM"],
-	},
-	{
-		co: "Salesforce",
-		role: "Senior Engineering Manager",
-		dates: "Apr 2020 – Apr 2022",
-		blurb:
-			"Continued leadership of connector platform following Tableau acquisition. Delivered REST and native Salesforce connectors; owned Web Data Connector platform. Managed large engineering teams across multiple areas and vendor partnerships; drove hiring, mentoring, and technical strategy. Expanded Connector SDK adoption across Salesforce ecosystem.",
-		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "Team Leadership"],
-	},
-	{
-		co: "Tableau",
-		role: "Senior Engineering Manager",
-		dates: "Oct 2019 – Apr 2020",
-		blurb:
-			"Led the Data Connectivity Platform, overseeing ODBC, JDBC, and Web Data Connectors. Drove the creation of Web Data Connectors 3 (TACO Toolkit), including the TACO CLI and the Connector SDK that became core standards across the Tableau ecosystem. Built a CI pipeline that allowed more than 100 partners to test and validate their connectors across the entire Tableau stack. Managed engineering teams across multiple areas, guided vendor partnerships, and shaped hiring, mentoring, and technical strategy.",
-		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "Team Leadership"],
-	},
-	{
-		co: "T-Mobile",
-		role: "Director of Engineering (via Streamline Digital)",
-		dates: "Nov 2018 – Oct 2019",
-		blurb:
-			"Hired a diverse team of 25 engineers in six weeks; managed four product teams totaling 35+ engineers across T-Mobile Retail Mobility. Delivered custom desktop & mobile applications for the T-Mobile / Sprint merger. Architected and implemented a portable Test Automation Framework that runs in-app.",
-		tags: [
-			"Team Leadership",
-			"Rapid Hiring",
-			"Mobile Development",
-			"Test Automation",
-		],
-	},
-	{
-		co: "Fullstack Consulting",
-		role: "Principal / Founder",
-		dates: "Mar 2018 – Nov 2018",
-		blurb:
-			"Consulted on MVPs and scale-up projects for clients including Hims/Hers, Sensei Ag (founded by Larry Ellison), and CopBot. Trained 100+ developers in React, Node, and GraphQL via Codementor, YouTube, and dev.to. Built and delivered mobile applications using React Native for early stage clients.",
-		tags: ["React Native", "GraphQL", "Training", "Consulting", "Mobile Apps"],
-	},
-	{
-		co: "Treasure Technologies",
-		role: "CTO",
-		dates: "Sep 2017 – Mar 2018",
-		blurb:
-			"Built a fin-tech analytics product integrating with banks via Plaid and custom APIs. Accepted into Nasdaq Entrepreneurial Program; led engineering and technical vision.",
-		tags: [
-			"FinTech",
-			"Plaid API",
-			"Banking Integration",
-			"Technical Leadership",
-		],
-	},
-	{
-		co: "Jobbatical",
-		role: "CTO",
-		dates: "Apr 2017 – Aug 2017",
-		blurb:
-			"Migrated monolith to microservices; rebuilt CI/CD, monitoring, and deployment pipelines. Led platform modernization and org scaling during growth phase.",
-		tags: ["Microservices", "CI/CD", "Platform Architecture", "DevOps"],
-	},
-	{
-		co: "Institute for Disease Modeling (Gates Foundation)",
-		role: "Senior Software Engineer",
-		dates: "Sep 2012 – Oct 2016",
-		blurb:
-			"Built simulation and visualization tools for malaria, HIV, TB, polio, and more. Developed software and spatial models featured in Bill Gates' TED Talk \"The next outbreak? We're not ready.\" Collaborated with organizations like WHO, ministries of health, NGOs, and universities.",
-		tags: [
-			"Data Visualization",
-			"Simulation",
-			"Global Health",
-			"Scientific Computing",
-		],
-	},
-	{
-		co: "Microsoft",
-		role: "Software Development Engineer",
-		dates: "Aug 2006 – Aug 2012",
-		blurb:
-			"Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee). Built JS memory profiling tools for Outlook Web Access; developed Naive Bayes sentiment classifiers for Bing Shopping. Co-inventor on US Patent 8,918,354: Intelligent intent detection from social network messages.",
-		tags: [
-			"Big Data",
-			"JavaScript",
-			"Machine Learning",
-			"Outlook Web Access",
-			"Bing",
-		],
-	},
-	{
-		co: "COMPASS Technologies",
-		role: "Lead Software Engineer",
-		dates: "Nov 2005 – Aug 2006",
-		blurb:
-			"Architected and developed next-generation Access Control Security System using C++ and C#. Optimized real-time alarm processing for distributed systems. Led team expansion and mentored junior developers in TCP/IP networking and security protocols.",
-		tags: ["C++", "C#", "TCP/IP", "Distributed Systems", "Team Leadership"],
-	},
-	{
-		co: "Blue Hippo Funding",
-		role: "Software Engineer",
-		dates: "Jul 2003 – Oct 2003",
-		blurb:
-			"Developed CRM system in VB.NET, C#, and ASP.NET using SQL 2000. Focused on UI ergonomics and data access design patterns. Built service to monitor orders and dynamically generate PDF files for warehouse printing. Integrated with Cisco Phone Switch for call tracking.",
-		tags: ["VB.NET", "C#", "ASP.NET", "SQL Server", "CRM Systems"],
-	},
-	{
-		co: "The Globalist",
-		role: "Software Engineer",
-		dates: "Jan 2002 – Jul 2003",
-		blurb:
-			"Developed CRM system in C# using SQL Server 2000. Gathered requirements from end users and designed ergonomic UI for business and contact data access. Integrated task and appointment scheduler with Microsoft Outlook. Built error reporting system with XML web service integration.",
-		tags: [
-			"C#",
-			"SQL Server",
-			"Outlook Integration",
-			"Crystal Reports",
-			"XML Web Services",
-		],
-	},
-	{
-		co: "Meds Publishing",
-		role: "Web Application Developer",
-		dates: "May 2000 – May 2001",
-		blurb:
-			"Converted VB 6 applications to ASP applications. Gained early experience in web development and application modernization. Worked on database design and user interface improvements for medical publishing platform.",
-		tags: ["VB 6", "ASP", "Web Development", "Application Migration"],
-	},
-	{
-		co: "University of Maryland",
-		role: "Web Developer",
-		dates: "Oct 1999 – May 2000",
-		blurb:
-			"Designed, implemented and tested a faculty expertise management tool in ASP using Access 2000. Maintained Engineering Research Center's website during undergraduate studies. Gained foundational experience in web technologies and database design.",
-		tags: ["ASP", "Access 2000", "Web Development", "Database Design"],
-	},
-];
+export const ROLES = resumeData.roles as Role[];
 
-export const PROJECTS: Project[] = [
-	{
-		name: "Gemini Code Assist",
-		company: "Google",
-		dates: "2022 – 2025",
-		description:
-			"Led technical direction and hands-on engineering for Google's AI coding assistant, integrated into VSCode and IntelliJ IDEs. Implemented a symbol table generator across multiple languages, increasing context for LLM, reducing tokens, and significantly improving code completion acceptance rates.",
-		tags: ["Go", "TypeScript", "Node.js", "Kubernetes", "GCP", "LLM"],
-		href: "https://codeassist.google/",
-	},
-	{
-		name: "TACO Toolkit & Connector SDK",
-		company: "Tableau (Salesforce)",
-		dates: "2019 – 2022",
-		description:
-			"Built the next generation connectivity platform called Web Data Connectors 3 (TACO Toolkit), a CI/CD pipeline enabling 100+ partners to test connectors across the Tableau stack. Created a Connector SDK that was widely adopted across the Tableau ecosystem, simplifying web data connector development.",
-		tags: ["TypeScript", "Node.js", "Chromium", "CI/CD", "SDK Development"],
-		href: "https://help.tableau.com/current/pro/desktop/en-us/examples_wdc_connector_sdk.htm",
-	},
-	{
-		name: "Disease Modeling Tools",
-		company: "Institute for Disease Modeling (Gates Foundation)",
-		dates: "2012 – 2016",
-		description:
-			"Developed advanced simulation and visualization tools for malaria, HIV, TB, and polio research. Created software and spatial models featured in Bill Gates' TED Talk \"The next outbreak? We're not ready.\" Collaborated with WHO, ministries of health, NGOs, and universities worldwide.",
-		tags: [
-			"Scientific Computing",
-			"Data Visualization",
-			"Global Health",
-			"Simulation",
-			"Research",
-		],
-		href: "https://www.idmod.org/tools/",
-	},
-	{
-		name: "Videoly Platform",
-		company: "Videoly",
-		dates: "2007 – 2009",
-		description:
-			"Co-founded video mail platform allowing users to send video messages via webcam or upload existing videos through email accounts. Reached final stages of YCombinator 2007 application process. Experimented with ad-based and paid revenue models for consumer space and B2B platform services.",
-		tags: [
-			"Ruby on Rails",
-			"Flex",
-			"Amazon EC2/S3",
-			"YCombinator",
-			"Video Streaming",
-		],
-	},
-	{
-		name: "RoomToday Platform",
-		company: "RoomToday",
-		dates: "2014 – 2016",
-		description:
-			"Co-founded and built a real-time, last-minute hotel booking platform. Raised $1.6M and led the acquisition by Simasindo and Northcliff Ventures. Developed mobile apps and real-time property management systems used by hotel partners across Asia and Europe.",
-		tags: ["React Native", "Real-time Systems", "Mobile Apps", "Startup"],
-	},
-];
+export const PROJECTS = resumeData.projects as Project[];
 
-export const EDUCATION: Education = {
-	institution: "University of Maryland",
-	institutionHref: "https://www.umd.edu",
-	logoKey: "umd",
-	degree: "B.S., Computer Science",
-	location: "University of Maryland, College Park",
-	notes: "Minor in Business",
-};
+export const EDUCATION = resumeData.education as Education;
 
-export const PATENTS: Patent[] = [
-	{
-		id: "US Patent 8,918,354",
-		title: "Intelligent intent detection from social network messages",
-		href: "https://patents.google.com/patent/US8918354B2/en",
-		status: "Granted 2014 · Active until 2032",
-	},
-];
+export const PATENTS = resumeData.patents as Patent[];
 
-export const SKILLS: SkillGroups = {
-	Languages: ["TypeScript", "JavaScript", "Python", "C#", "Go", "C++", "Java"],
-	"Web & Mobile": [
-		"NodeJS",
-		"Electron",
-		"Express",
-		"React",
-		"React Native",
-		"GraphQL",
-		"Playwright",
-		"VSCode Extensions",
-	],
-	"Databases & Cloud": [
-		"MongoDB",
-		"Docker",
-		"ElasticSearch",
-		"Neo4J",
-		"PostgreSQL",
-		"Redis",
-		"SQL Server",
-		"AWS",
-		"Google Cloud",
-	],
-	"AI & Leadership": [
-		"AI-Assisted Development",
-		"Large Language Models",
-		"Team Scaling",
-		"DX",
-	],
-};
+export const SKILLS = resumeData.skills as SkillGroups;
 
 // Apply the legacy in-blurb HTML substitutions for the TED Talk and patent
 // references. Returned strings are intended for `dangerouslySetInnerHTML`.
