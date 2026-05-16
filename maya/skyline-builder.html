@@ -111,6 +111,20 @@ html, body {
   color: rgba(240,230,255,0.5); white-space: nowrap; }
 .tb-action.warn .lbl { color: #ff7070; }
 .tb-action.warn { border-color: rgba(255,112,112,0.25); }
+
+/* Clear confirm tooltip */
+#clear-tip {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%);
+  background: #ff5252; color: #fff;
+  font-family: 'Fredoka One', cursive; font-size: 15px;
+  padding: 10px 22px; border-radius: 99px;
+  pointer-events: none; z-index: 500;
+  opacity: 0; transition: opacity 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+#clear-tip.show { opacity: 1; }
 </style>
 </head>
 <body>
@@ -121,6 +135,7 @@ html, body {
     <canvas id="game"></canvas>
   </div>
 </div>
+<div id="clear-tip">Really? Tap again to clear! 🗑️</div>
 <script>
 // ═══════════════════════════════════════════════════════════════
 //  CITY BUILDER  —  Maya's Game Lab
@@ -204,6 +219,7 @@ const TOOLS = [
   { id:'roofR',    em:'◥',  lbl:'Slope R'  },
   { id:'chimney',  em:'🏭', lbl:'Chimney'  },
   { id:'balcony',  em:'🔲', lbl:'Balcony'  },
+  null, // divider before special tools
   { id:'paint',    em:'🪣', lbl:'Fill'     },
   { id:'eraser',   em:'🧹', lbl:'Erase'    },
 ];
@@ -553,17 +569,18 @@ function floodFill(startR, startC, newColor) {
 }
 
 // ── Place / erase ──────────────────────────────────────────────
-function placeAt(r, c, noSnapshot) {
+function placeAt(r, c, noSnapshot, silent) {
   if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
   if (!noSnapshot) snapshot();
   if (activeTool === 'eraser') {
+    if (!grid[r][c]) return; // nothing to erase
     grid[r][c] = null;
-    soundForTool('eraser');
+    if (!silent) soundForTool('eraser');
   } else if (activeTool === 'paint') {
     if (grid[r][c]) floodFill(r, c, activeColor);
   } else {
     grid[r][c] = {type: activeTool, color: activeColor};
-    soundForTool(activeTool);
+    if (!silent) soundForTool(activeTool);
   }
   drawAll();
 }
@@ -600,7 +617,7 @@ function onPointerMove(e) {
   const [r, c] = getRC(e);
   if (lastRC && lastRC[0] === r && lastRC[1] === c) return;
   lastRC = [r, c];
-  placeAt(r, c, true); // no extra snapshot on drag
+  placeAt(r, c, true, true); // no extra snapshot or sound on drag
 }
 
 function onPointerUp(e) {
@@ -628,8 +645,11 @@ function buildToolbar() {
   const bar = document.getElementById('toolbar');
   bar.innerHTML = '';
 
-  // Block tool buttons
+  // Block tool buttons (null entries = dividers)
   TOOLS.forEach(t => {
+    if (t === null) {
+      const dv = document.createElement('div'); dv.className = 'tb-div'; bar.appendChild(dv); return;
+    }
     const btn = document.createElement('button');
     btn.className = 'tb-btn' + (t.id === activeTool ? ' active' : '');
     btn.dataset.tool = t.id;
@@ -677,25 +697,23 @@ function buildToolbar() {
   clearBtn.className = 'tb-action warn';
   clearBtn.id = 'clear-btn';
   clearBtn.innerHTML = '<span class="em">🗑️</span><span class="lbl">Clear</span>';
+  const clearTip = document.getElementById('clear-tip');
   clearBtn.addEventListener('pointerdown', ev => {
     ev.stopPropagation();
     if (clearConfirm) {
       clearTimeout(clearConfirmTimer);
       clearConfirm = false;
-      clearBtn.querySelector('.lbl').textContent = 'Clear';
-      clearBtn.style.borderColor = '';
+      clearTip.classList.remove('show');
       snapshot();
       grid = Array.from({length: ROWS}, () => Array(COLS).fill(null));
       drawAll();
       playTone(300, 'sine', 0.2, 0.06);
     } else {
       clearConfirm = true;
-      clearBtn.querySelector('.lbl').textContent = 'Sure?';
-      clearBtn.style.borderColor = '#ff5252';
+      clearTip.classList.add('show');
       clearConfirmTimer = setTimeout(() => {
         clearConfirm = false;
-        clearBtn.querySelector('.lbl').textContent = 'Clear';
-        clearBtn.style.borderColor = '';
+        clearTip.classList.remove('show');
       }, 2000);
       playTone(440, 'sine', 0.05, 0.04);
     }
