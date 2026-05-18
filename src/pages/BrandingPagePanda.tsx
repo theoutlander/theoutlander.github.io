@@ -73,16 +73,16 @@ export function BrandingPagePanda() {
 					<div className="ds-monogram-grid">
 						<div className="ds-brand-specimen ds-brand-specimen-sm">
 							<Monogram size={120} />
-						</motion.div>
+						</div>
 						<div className="ds-brand-specimen ds-brand-specimen-sm" style={{ background: "var(--ink)" }}>
 							<Monogram size={120} inverted />
-						</motion.div>
+						</div>
 						<div className="ds-brand-specimen ds-brand-specimen-sm">
 							<Monogram size={60} />
-						</motion.div>
+						</div>
 						<div className="ds-brand-specimen ds-brand-specimen-sm">
 							<TinyMark size={48} />
-						</motion.div>
+						</div>
 					</div>
 				</section>
 
@@ -119,16 +119,16 @@ export function BrandingPagePanda() {
 							<div className="ds-mono" style={{ color: "var(--accent)", fontSize: "0.72rem", letterSpacing: "0.14em" }}>
 								SERIF · NEWSREADER
 							</div>
-							<div style={{ fontFamily: "var(--serif)", fontSize: "3.5rem", letterSpacing: "-0.02em", lineHeight: 1, marginTop: "0.5rem" }}>Aa</motion.div>
+							<div style={{ fontFamily: "var(--serif)", fontSize: "3.5rem", letterSpacing: "-0.02em", lineHeight: 1, marginTop: "0.5rem" }}>Aa</div>
 							<div className="ds-mono" style={{ color: "var(--ink-3)", fontSize: "0.7rem", marginTop: "1rem" }}>Display · body · italics</div>
-						</motion.div>
+						</div>
 						<div className="ds-brand-specimen ds-brand-specimen-sm">
 							<div className="ds-mono" style={{ color: "var(--accent)", fontSize: "0.72rem", letterSpacing: "0.14em" }}>
 								MONO · JETBRAINS
 							</div>
-							<div style={{ fontFamily: "var(--mono)", fontSize: "3.5rem", letterSpacing: "-0.02em", lineHeight: 1, marginTop: "0.5rem" }}>Aa</motion.div>
+							<div style={{ fontFamily: "var(--mono)", fontSize: "3.5rem", letterSpacing: "-0.02em", lineHeight: 1, marginTop: "0.5rem" }}>Aa</div>
 							<div className="ds-mono" style={{ color: "var(--ink-3)", fontSize: "0.7rem", marginTop: "1rem" }}>Marginalia · datelines · labels</div>
-						</motion.div>
+						</div>
 					</div>
 				</section>
 			</div>

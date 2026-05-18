@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { SecondaryMark } from "../components/design/Marks";
-import { CURRENTLY, META, PERSON, STATS } from "../data/person";
+import { META, PERSON, STATS } from "../data/person";
 import { COPY } from "../data/site-copy";
 
 export function AboutPagePanda() {

@@ -16,6 +16,7 @@ import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
 import { CODEMENTOR_REVIEWS_INLINE_ID } from "./lib/codementor";
 import { CodementorReview } from "./types/codementor";
 import { getAboutPageData, META, PERSON } from "./data/person";
+import { COPY } from "./data/site-copy";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -26,7 +27,10 @@ import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
 import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
 import { CalendarPagePanda } from "./pages/CalendarPagePanda";
 import { KitchenPagePanda } from "./pages/KitchenPagePanda";
+import { RecipePagePanda } from "./pages/RecipePagePanda";
 import { ReviewsPagePanda } from "./pages/ReviewsPagePanda";
+import { BrandingPagePanda } from "./pages/BrandingPagePanda";
+import { RECIPES } from "./data/recipes";
 
 type Post = BlogPost;
 
@@ -188,12 +192,20 @@ const generateComprehensiveCSS = async (
 	}> = [
 		{ name: "home", component: HomePagePanda, props: { posts: blogData } },
 		{ name: "blog", component: BlogPagePanda, props: { posts: blogData } },
-		{ name: "about", component: AboutPagePanda, props: { aboutData } },
+		{ name: "about", component: AboutPagePanda, props: {} },
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
 		{ name: "kitchen", component: KitchenPagePanda, props: {} },
+		{ name: "design", component: BrandingPagePanda, props: {} },
 		{ name: "reviews", component: ReviewsPagePanda, props: { reviews: reviewsData } },
 	];
+	if (RECIPES[0]) {
+		pages.push({
+			name: `kitchen-${RECIPES[0].slug}`,
+			component: RecipePagePanda,
+			props: { recipe: RECIPES[0] },
+		});
+	}
 
 	// Add blog post pages
 	for (const post of blogData) {
@@ -935,7 +947,7 @@ export async function renderAllStaticPagesSSR() {
 	console.log("📄 Rendering about page with SSR...");
 	const aboutDir = join("dist", "about");
 	mkdirSync(aboutDir, { recursive: true });
-	const aboutResult = renderPageToHTML(AboutPagePanda, { aboutData });
+	const aboutResult = renderPageToHTML(AboutPagePanda, {});
 	const aboutJsonLd = generatePersonJsonLd("https://nick.karnik.io/about");
 	const aboutHTMLWithStyles = generateBaseHTML(
 		META.about.title,
@@ -1022,6 +1034,44 @@ export async function renderAllStaticPagesSSR() {
 	);
 	const kitchenHTML = removeInlineStyles(kitchenHTMLWithStyles);
 	writeFileSync(join(kitchenDir, "index.html"), kitchenHTML);
+
+	for (const recipe of RECIPES) {
+		const recipeDir = join(kitchenDir, recipe.slug);
+		mkdirSync(recipeDir, { recursive: true });
+		const recipeResult = renderPageToHTML(RecipePagePanda, { recipe });
+		const recipeHTMLWithStyles = generateBaseHTML(
+			`${recipe.title} | ${META.kitchen.title}`,
+			recipe.dek,
+			recipeResult.html,
+			cssHref,
+			recipeResult.helmet.title + recipeResult.helmet.meta + recipeResult.helmet.link,
+			`${PERSON.siteUrl}/kitchen/${recipe.slug}`,
+			`${PERSON.siteUrl}${PERSON.profileImage}`,
+			"article",
+			undefined,
+			jsBundle
+		);
+		writeFileSync(join(recipeDir, "index.html"), removeInlineStyles(recipeHTMLWithStyles));
+	}
+
+	// Render design / mark page
+	console.log("📄 Rendering design page with SSR...");
+	const designDir = join("dist", "design");
+	mkdirSync(designDir, { recursive: true });
+	const designResult = renderPageToHTML(BrandingPagePanda, {});
+	const designHTMLWithStyles = generateBaseHTML(
+		"Nick Karnik | Mark",
+		COPY.branding.lede,
+		designResult.html,
+		cssHref,
+		designResult.helmet.title + designResult.helmet.meta + designResult.helmet.link,
+		`${PERSON.siteUrl}/design`,
+		`${PERSON.siteUrl}${PERSON.profileImage}`,
+		"website",
+		undefined,
+		jsBundle
+	);
+	writeFileSync(join(designDir, "index.html"), removeInlineStyles(designHTMLWithStyles));
 
 	// Render reviews page
 	console.log("📄 Rendering reviews page with SSR...");
