@@ -312,235 +312,385 @@ function drawSky() {
   skyCtx.fillRect(0, gy, cw, CELL);
 }
 
-// ── Block drawing ──────────────────────────────────────────────
-// bw/bh = pixel width/height of the block (may span multiple cells)
-function drawBlock(ctx, type, color, x, y, bw, bh) {
-  const C = bw;   // width  (= CELL for single-cell blocks)
-  const H = bh;   // height (= CELL for single-cell blocks)
-  ctx.save();
-  ctx.translate(x, y);
+// ── Color helpers ──────────────────────────────────────────────
+function hexRgb(h) {
+  h = h.replace('#','');
+  return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+}
+function adjCol(hex, d) {
+  const [r,g,b] = hexRgb(hex);
+  const cl = v => Math.max(0, Math.min(255, Math.round(v+d)));
+  return '#'+[cl(r),cl(g),cl(b)].map(v=>v.toString(16).padStart(2,'0')).join('');
+}
 
-  switch(type) {
+// ── Brick-pattern helper ───────────────────────────────────────
+// Draws individual bricks with mortar, highlights, and shadows.
+function brickPattern(ctx, color, x, y, w, h, rowOffset) {
+  const M = 3, BH = 13, BW = 20;
+  ctx.fillStyle = adjCol(color, 60); // light mortar
+  ctx.fillRect(x, y, w, h);
+  let row = rowOffset || 0;
+  for (let ry = y; ry < y + h; ry += BH + M, row++) {
+    const off = (row % 2) * (BW * 0.55 + M * 0.5);
+    for (let bx = x - off; bx < x + w; bx += BW + M) {
+      const L = Math.max(bx, x), R = Math.min(bx + BW, x + w);
+      const T = Math.max(ry, y),  B = Math.min(ry + BH, y + h);
+      if (R <= L || B <= T) continue;
+      const bw2 = R - L, bh2 = B - T;
+      ctx.fillStyle = color;
+      ctx.fillRect(L, T, bw2, bh2);
+      // top + left highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.22)';
+      ctx.fillRect(L, T, bw2, Math.min(3, bh2));
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(L, T, Math.min(2, bw2), bh2);
+      // bottom + right shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.28)';
+      ctx.fillRect(L, Math.max(T, B - 3), bw2, Math.min(3, bh2));
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(Math.max(L, R - 2), T, Math.min(2, bw2), bh2);
+    }
+  }
+}
+
+// ── Roof-tile helper ───────────────────────────────────────────
+// Clips to the given triangle, then draws overlapping tile rows.
+function roofTiles(ctx, color, clipFn, x, y, w, h) {
+  ctx.save();
+  ctx.beginPath(); clipFn(ctx, x, y, w, h); ctx.clip();
+  const TH = 11, TW = 15;
+  const light = adjCol(color, 30), shadow = adjCol(color, -35);
+  for (let ty = h + TH; ty > -TH; ty -= TH * 0.72) {
+    const rowN = Math.round(ty / (TH * 0.72));
+    const off = (rowN % 2) * (TW / 2);
+    for (let tx = -TW + off; tx <= w + TW; tx += TW) {
+      const ax = x + tx, ay = y + ty;
+      ctx.fillStyle = light;
+      ctx.beginPath();
+      ctx.moveTo(ax, ay);
+      ctx.lineTo(ax + TW, ay);
+      ctx.lineTo(ax + TW - 2, ay - TH * 0.72);
+      ctx.lineTo(ax + 2,      ay - TH * 0.72);
+      ctx.closePath();
+      ctx.fill();
+      // shadow at bottom of each tile
+      ctx.fillStyle = shadow;
+      ctx.fillRect(ax, ay - 3, TW, 3);
+    }
+  }
+  // subtle ridge glow
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  clipFn(ctx, x, y, w, h);
+  ctx.fill();
+  ctx.restore();
+}
+
+// ── Block drawing ──────────────────────────────────────────────
+// bw/bh = pixel width/height (may span multiple cells for door/window/balcony)
+function drawBlock(ctx, type, color, x, y, bw, bh) {
+  const C = bw, H = bh;
+  ctx.save();
+
+  switch (type) {
+
     case 'brick': {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      ctx.strokeStyle = 'rgba(0,0,0,0.35)';
-      ctx.lineWidth = 0.8;
-      // horizontal mortar lines
-      for (let yy = 5; yy < C; yy += 5) {
-        ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(C, yy); ctx.stroke();
-      }
-      // vertical mortar lines alternating
-      const row = Math.round(y / C);
-      const offset = (row % 2 === 0) ? 0 : C / 2;
-      for (let xx = offset; xx < C + C/2; xx += C/2) {
-        // only draw in the band between horizontal lines
-        for (let band = 0; band < C; band += 5) {
-          ctx.beginPath(); ctx.moveTo(xx, band); ctx.lineTo(xx, band + 5); ctx.stroke();
-        }
-      }
-      // subtle highlight top
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      ctx.fillRect(0, 0, C, 2);
+      brickPattern(ctx, color, x, y, C, H, Math.round(y / CELL));
       break;
     }
+
     case 'stone': {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(1, 1, C-2, C-2);
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-      ctx.lineWidth = 0.6;
-      ctx.strokeRect(2.5, 2.5, C-5, C-5);
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      ctx.fillRect(0, 0, C, 2);
+      // dark mortar background
+      ctx.fillStyle = adjCol(color, -30);
+      ctx.fillRect(x, y, C, H);
+      // irregular stone blocks — fixed layout per cell
+      const M = 3;
+      const stones = [
+        {rx:0,    ry:0,    rw:C*0.54, rh:H*0.47},
+        {rx:C*0.57, ry:0,  rw:C*0.43, rh:H*0.47},
+        {rx:0,    ry:H*0.53, rw:C*0.34, rh:H*0.47},
+        {rx:C*0.37, ry:H*0.53, rw:C*0.38, rh:H*0.47},
+        {rx:C*0.78, ry:H*0.53, rw:C*0.22, rh:H*0.47},
+      ];
+      stones.forEach(s => {
+        const sx = x+s.rx+M/2, sy = y+s.ry+M/2, sw = s.rw-M, sh = s.rh-M;
+        if (sw < 1 || sh < 1) return;
+        ctx.fillStyle = color;
+        ctx.fillRect(sx, sy, sw, sh);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(sx, sy, sw, 2.5);
+        ctx.fillRect(sx, sy, 2, sh);
+        ctx.fillStyle = 'rgba(0,0,0,0.28)';
+        ctx.fillRect(sx, sy+sh-2.5, sw, 2.5);
+        ctx.fillRect(sx+sw-2, sy, 2, sh);
+      });
       break;
     }
+
     case 'concrete': {
       ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-      ctx.lineWidth = 0.8;
-      ctx.strokeRect(0.5, 0.5, C-1, C-1);
-      ctx.fillStyle = 'rgba(255,255,255,0.07)';
-      ctx.fillRect(0, 0, C, 1.5);
-      break;
-    }
-    case 'window': {
-      // dark frame
-      ctx.fillStyle = '#1a0f2e';
-      ctx.fillRect(0, 0, C, H);
-      // arch at top of the glass pane
-      const wp = 4, wr = (C - wp*2) / 2;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(wp, H - wp);
-      ctx.lineTo(wp, wp + wr);
-      ctx.arc(wp + wr, wp + wr, wr, Math.PI, 0);
-      ctx.lineTo(C - wp, H - wp);
-      ctx.closePath();
-      ctx.fill();
-      // horizontal divider between upper arch and lower pane
-      const midY = H * 0.45;
-      ctx.fillStyle = '#1a0f2e';
-      ctx.fillRect(wp, midY - 2, C - wp*2, 4);
-      // lower rectangular pane
-      ctx.fillStyle = color;
-      ctx.fillRect(wp, midY + 2, C - wp*2, H - midY - wp - 2);
-      // vertical divider
-      ctx.fillStyle = '#1a0f2e';
-      ctx.fillRect(C/2 - 2, midY + 2, 4, H - midY - wp - 2);
-      // shine
-      ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillRect(wp + 3, wp + 3, 5, 3);
-      ctx.fillRect(wp + 3, wp + 3, 2, 8);
-      break;
-    }
-    case 'door': {
-      const dp = 4;
-      const archR = (C - dp*2) / 2;
-      // door outline with rounded arch at top
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(0, H);
-      ctx.lineTo(0, dp + archR);
-      ctx.arc(dp + archR, dp + archR, archR, Math.PI, 0);
-      ctx.lineTo(C, H);
-      ctx.closePath();
-      ctx.fill();
-      // arch window panel
-      ctx.fillStyle = 'rgba(0,0,0,0.2)';
-      ctx.beginPath();
-      const aip = dp + 5;
-      const airInner = archR - 5;
-      ctx.moveTo(aip, H * 0.48);
-      ctx.lineTo(aip, aip + airInner);
-      ctx.arc(aip + airInner, aip + airInner, airInner, Math.PI, 0);
-      ctx.lineTo(C - aip, H * 0.48);
-      ctx.closePath();
-      ctx.fill();
-      // lower rectangular panel
-      const lpTop = H * 0.5;
-      ctx.fillStyle = 'rgba(0,0,0,0.18)';
-      ctx.fillRect(dp + 3, lpTop, C - (dp+3)*2, H - lpTop - dp);
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.lineWidth = 0.75;
-      ctx.strokeRect(dp + 3, lpTop, C - (dp+3)*2, H - lpTop - dp);
-      // gold knob
-      ctx.beginPath();
-      ctx.arc(C - dp - 5, H * 0.72, 3, 0, Math.PI*2);
-      ctx.fillStyle = '#ffe14d';
-      ctx.fill();
-      // step / threshold
-      ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(0, H - 3, C, 3);
-      // top highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.09)';
-      ctx.fillRect(0, 0, C, 2);
-      break;
-    }
-    case 'roofF': {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      ctx.strokeStyle = 'rgba(0,0,0,0.3)';
-      ctx.lineWidth = 0.7;
-      for (let yy = 3; yy < C; yy += 3) {
-        ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(C, yy); ctx.stroke();
-      }
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      ctx.fillRect(0, 0, C, 1.5);
-      break;
-    }
-    case 'roofP': {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(C/2, 0);
-      ctx.lineTo(C, C);
-      ctx.lineTo(0, C);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-      // highlight left slope
-      ctx.beginPath();
-      ctx.moveTo(C/2, 0); ctx.lineTo(0, C);
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(x, y, C, H);
+      // aggregate speckles
+      const pts = [
+        [0.18,0.14],[0.72,0.28],[0.44,0.62],[0.13,0.78],
+        [0.83,0.71],[0.57,0.19],[0.33,0.48],[0.66,0.55],
+        [0.25,0.35],[0.88,0.42],
+      ];
+      pts.forEach(([px,py], i) => {
+        ctx.fillStyle = `rgba(0,0,0,${0.07 + (i%3)*0.04})`;
+        ctx.beginPath();
+        ctx.arc(x + px*C, y + py*H, 1.5, 0, Math.PI*2);
+        ctx.fill();
+      });
+      // panel seam border
+      ctx.strokeStyle = 'rgba(0,0,0,0.13)';
       ctx.lineWidth = 1;
-      ctx.stroke();
-      break;
-    }
-    case 'roofL': {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(C, C);
-      ctx.lineTo(0, C);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(0, 0); ctx.lineTo(0, C);
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1; ctx.stroke();
-      break;
-    }
-    case 'roofR': {
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(C, 0);
-      ctx.lineTo(C, C);
-      ctx.lineTo(0, C);
-      ctx.closePath();
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.2)';
-      ctx.lineWidth = 0.8;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(C, 0); ctx.lineTo(C, C);
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1; ctx.stroke();
-      break;
-    }
-    case 'chimney': {
-      ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      // faint horizontal lines
-      ctx.strokeStyle = 'rgba(255,255,255,0.08)';
-      ctx.lineWidth = 0.6;
-      for (let yy = 4; yy < C-4; yy += 4) {
-        ctx.beginPath(); ctx.moveTo(0, yy); ctx.lineTo(C, yy); ctx.stroke();
-      }
-      // smoke hole at top
-      ctx.fillStyle = 'rgba(0,0,0,0.55)';
-      ctx.fillRect(C*0.25, 0, C*0.5, C*0.3);
-      ctx.fillStyle = 'rgba(180,180,200,0.15)';
-      ctx.fillRect(C*0.3, 0, C*0.4, C*0.25);
-      break;
-    }
-    case 'balcony': {
-      // floor slab
-      ctx.fillStyle = 'rgba(255,255,255,0.06)';
-      ctx.fillRect(0, H * 0.7, C, H * 0.3);
-      // top and bottom rails spanning full width
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 3;
-      ctx.beginPath(); ctx.moveTo(0, 3); ctx.lineTo(C, 3); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, H * 0.68); ctx.lineTo(C, H * 0.68); ctx.stroke();
-      // vertical balusters every 8px
-      ctx.lineWidth = 2;
-      for (let xx = 4; xx <= C - 4; xx += 8) {
-        ctx.beginPath(); ctx.moveTo(xx, 3); ctx.lineTo(xx, H * 0.68); ctx.stroke();
-      }
-      // floor edge highlight
+      ctx.strokeRect(x+0.5, y+0.5, C-1, H-1);
+      // top + left highlight
       ctx.fillStyle = 'rgba(255,255,255,0.12)';
-      ctx.fillRect(0, H * 0.7, C, 2);
+      ctx.fillRect(x, y, C, 2);
+      ctx.fillRect(x, y, 2, H);
+      break;
+    }
+
+    case 'window': {
+      const fp = 5;
+      // frame surround (same material as wall)
+      ctx.fillStyle = adjCol(color, -15);
+      ctx.fillRect(x, y, C, H);
+      // recessed shadow inside frame
+      ctx.fillStyle = 'rgba(0,0,0,0.35)';
+      ctx.fillRect(x+fp-1, y+fp-1, C-fp*2+2, H-fp*2+2);
+      // glass pane
+      const gx = x+fp, gy2 = y+fp, gw = C-fp*2, gh = H-fp*2;
+      ctx.fillStyle = '#8ec8e8';
+      ctx.fillRect(gx, gy2, gw, gh);
+      // sky gradient on glass
+      const glGrad = ctx.createLinearGradient(gx, gy2, gx, gy2+gh);
+      glGrad.addColorStop(0,   'rgba(180,225,255,0.5)');
+      glGrad.addColorStop(0.5, 'rgba(100,180,230,0.2)');
+      glGrad.addColorStop(1,   'rgba(30,80,120,0.35)');
+      ctx.fillStyle = glGrad;
+      ctx.fillRect(gx, gy2, gw, gh);
+      // mullions
+      const mColor = adjCol(color, -5);
+      ctx.fillStyle = mColor;
+      ctx.fillRect(gx + gw/2 - 1.5, gy2, 3, gh); // vertical
+      ctx.fillRect(gx, gy2 + gh*0.42, gw, 3);    // horizontal
+      // diagonal shine streak
+      ctx.save();
+      ctx.rect(gx, gy2, gw, gh); ctx.clip();
+      ctx.fillStyle = 'rgba(255,255,255,0.32)';
+      ctx.beginPath();
+      ctx.moveTo(gx+3, gy2+3);
+      ctx.lineTo(gx + gw*0.45, gy2+3);
+      ctx.lineTo(gx+3, gy2 + gh*0.38);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
+      // window sill ledge
+      ctx.fillStyle = adjCol(color, 25);
+      ctx.fillRect(x-3, y+H-fp, C+6, fp+2);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x-3, y+H-fp, C+6, 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(x-3, y+H+fp, C+6, 1.5);
+      break;
+    }
+
+    case 'door': {
+      const fp = 5;
+      const archR = (C - fp*2) / 2;
+      // surround (door frame using wall color)
+      ctx.fillStyle = adjCol(color, -20);
+      ctx.fillRect(x, y, C, H);
+      // door leaf (arched top)
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.moveTo(x+fp, y+H);
+      ctx.lineTo(x+fp, y+fp+archR);
+      ctx.arc(x+fp+archR, y+fp+archR, archR, Math.PI, 0);
+      ctx.lineTo(x+C-fp, y+H);
+      ctx.closePath();
+      ctx.fill();
+      // wood-grain lines
+      const wgTop = y + fp + archR*2 + 4;
+      for (let wy = wgTop; wy < y+H-fp; wy += 4) {
+        ctx.strokeStyle = (Math.round((wy-wgTop)/4) % 2 === 0)
+          ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.1)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(x+fp+2, wy); ctx.lineTo(x+C-fp-2, wy); ctx.stroke();
+      }
+      // arch glass panel
+      const aip = fp + 5, airR = archR - 6;
+      if (airR > 2) {
+        ctx.fillStyle = 'rgba(140,200,240,0.45)';
+        ctx.beginPath();
+        ctx.moveTo(x+aip, y+fp + archR);
+        ctx.arc(x+fp+archR, y+fp+archR, airR, Math.PI, 0);
+        ctx.lineTo(x+C-aip, y+fp+archR);
+        ctx.closePath();
+        ctx.fill();
+        // arch glass frame lines (spider web)
+        ctx.strokeStyle = adjCol(color, -10);
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(x+fp+archR, y+fp+archR);
+        ctx.lineTo(x+fp+archR, y+fp+archR-airR);
+        ctx.moveTo(x+fp+archR, y+fp+archR);
+        ctx.lineTo(x+aip, y+fp+archR);
+        ctx.moveTo(x+fp+archR, y+fp+archR);
+        ctx.lineTo(x+C-aip, y+fp+archR);
+        ctx.stroke();
+      }
+      // lower recessed panel
+      const lpTop = y + fp + archR*2 + 2;
+      const lpBot = y + H - fp - 2;
+      const lpH = lpBot - lpTop;
+      if (lpH > 4) {
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fillRect(x+fp+4, lpTop, C-fp*2-8, lpH);
+        ctx.strokeStyle = adjCol(color, -30);
+        ctx.lineWidth = 1;
+        ctx.strokeRect(x+fp+4, lpTop, C-fp*2-8, lpH);
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.fillRect(x+fp+4, lpTop, C-fp*2-8, 2);
+      }
+      // brass knob
+      const kx = x+C-fp-8, ky = y+H*0.65;
+      ctx.fillStyle = '#b8860b';
+      ctx.beginPath(); ctx.arc(kx, ky, 4.5, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ffe14d';
+      ctx.beginPath(); ctx.arc(kx, ky, 3, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.45)';
+      ctx.beginPath(); ctx.arc(kx-1, ky-1, 1.5, 0, Math.PI*2); ctx.fill();
+      // step
+      ctx.fillStyle = adjCol(color, 35);
+      ctx.fillRect(x-2, y+H-5, C+4, 5);
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(x-2, y+H-5, C+4, 1.5);
+      // frame highlights
+      ctx.fillStyle = 'rgba(255,255,255,0.1)';
+      ctx.fillRect(x, y, C, 2);
+      ctx.fillRect(x, y, 2, H);
+      break;
+    }
+
+    case 'roofF': {
+      // alternating tar-paper strips
+      const SH = 9;
+      for (let sy = 0; sy < H; sy += SH) {
+        const even = Math.floor(sy/SH) % 2 === 0;
+        ctx.fillStyle = even ? color : adjCol(color, -18);
+        ctx.fillRect(x, y+sy, C, Math.min(SH, H-sy));
+      }
+      // top edge and bottom drip
+      ctx.fillStyle = adjCol(color, -28);
+      ctx.fillRect(x, y, C, 2);
+      ctx.fillRect(x, y+H-2, C, 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.09)';
+      ctx.fillRect(x, y, C, 1.5);
+      break;
+    }
+
+    case 'roofP': {
+      roofTiles(ctx, color, (c, rx, ry, rw, rh) => {
+        c.moveTo(rx+rw/2, ry); c.lineTo(rx+rw, ry+rh); c.lineTo(rx, ry+rh);
+      }, x, y, C, H);
+      // ridge line
+      ctx.strokeStyle = adjCol(color, 50);
+      ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(x+C/2, y+1); ctx.lineTo(x+C/2, y+2); ctx.stroke();
+      break;
+    }
+
+    case 'roofL': {
+      roofTiles(ctx, color, (c, rx, ry, rw, rh) => {
+        c.moveTo(rx, ry); c.lineTo(rx+rw, ry+rh); c.lineTo(rx, ry+rh);
+      }, x, y, C, H);
+      break;
+    }
+
+    case 'roofR': {
+      roofTiles(ctx, color, (c, rx, ry, rw, rh) => {
+        c.moveTo(rx+rw, ry); c.lineTo(rx+rw, ry+rh); c.lineTo(rx, ry+rh);
+      }, x, y, C, H);
+      break;
+    }
+
+    case 'chimney': {
+      brickPattern(ctx, adjCol(color, -45), x, y, C, H, Math.round(y/CELL));
+      // smoke opening (deep recess)
+      const ow = C*0.5, oh = H*0.22, ox = x + (C-ow)/2;
+      ctx.fillStyle = 'rgba(0,0,0,0.75)';
+      ctx.fillRect(ox, y, ow, oh);
+      ctx.fillStyle = 'rgba(50,50,70,0.5)';
+      ctx.fillRect(ox+3, y, ow-6, oh*0.6);
+      // cap course
+      ctx.fillStyle = adjCol(color, -15);
+      ctx.fillRect(x, y, C, 4);
+      ctx.fillStyle = adjCol(color, 20);
+      ctx.fillRect(x, y, C, 1.5);
+      break;
+    }
+
+    case 'balcony': {
+      // concrete floor slab
+      const slabH = Math.round(H * 0.42);
+      const slabY = y + H - slabH;
+      ctx.fillStyle = adjCol(color, -8);
+      ctx.fillRect(x-4, slabY, C+8, slabH);
+      ctx.fillStyle = 'rgba(255,255,255,0.16)';
+      ctx.fillRect(x-4, slabY, C+8, 2);
+      ctx.fillStyle = 'rgba(0,0,0,0.22)';
+      ctx.fillRect(x-4, y+H-2, C+8, 2);
+      // under-slab shadow
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(x-4, slabY-3, C+8, 3);
+
+      const railTop = y + 4;
+      const railBot = slabY - 3;
+      const railH = railBot - railTop;
+      if (railH < 4) break;
+
+      // top rail bar (with 3D thickness)
+      ctx.fillStyle = adjCol(color, 15);
+      ctx.fillRect(x, railTop, C, 5);
+      ctx.fillStyle = adjCol(color, -15);
+      ctx.fillRect(x, railTop+5, C, 2);
+      ctx.fillStyle = 'rgba(255,255,255,0.25)';
+      ctx.fillRect(x, railTop, C, 1.5);
+
+      // bottom rail bar
+      ctx.fillStyle = adjCol(color, 10);
+      ctx.fillRect(x, railBot-4, C, 4);
+      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillRect(x, railBot-4, C, 1.5);
+
+      // end posts (thick, with highlight)
+      [x, x+C-6].forEach(px => {
+        ctx.fillStyle = color;
+        ctx.fillRect(px, railTop, 6, railH);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(px, railTop, 2, railH);
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fillRect(px+4, railTop, 2, railH);
+      });
+
+      // balusters
+      const balSpacing = 10;
+      for (let bx = x + 9; bx < x + C - 9; bx += balSpacing) {
+        ctx.fillStyle = adjCol(color, 12);
+        ctx.fillRect(bx - 2, railTop + 7, 4, railH - 11);
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        ctx.fillRect(bx - 2, railTop + 7, 1.5, railH - 11);
+      }
       break;
     }
   }
+
   ctx.restore();
 }
+
 
 // ── Draw entire game layer ─────────────────────────────────────
 function drawAll() {
