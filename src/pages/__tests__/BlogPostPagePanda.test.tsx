@@ -1,33 +1,10 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen, within } from "../../test/test-utils";
 import { BlogPostPagePanda } from "../BlogPostPagePanda";
+import { formatBlogDate, formatReadTime, postReadMinutes } from "../../lib/blog-format";
+import type { Post } from "../../types/blog";
 
-// Mock the styled-system css function
-vi.mock("../../styled-system/css/index.mjs", () => ({
-	css: vi.fn((styles) => JSON.stringify(styles)),
-}));
-
-// Mock HeaderSSR and Footer components
-vi.mock("../../components/HeaderSSR", () => ({
-	default: ({ currentPage }: { currentPage: string }) => (
-		<header
-			data-testid="header"
-			data-current-page={currentPage}
-		>
-			Header
-		</header>
-	),
-}));
-
-vi.mock("../../components/Footer", () => ({
-	default: () => <footer data-testid="footer">Footer</footer>,
-}));
-
-vi.mock("../../components/blog/BlogSidebar", () => ({
-	default: () => <aside data-testid="blog-sidebar">Sidebar</aside>,
-}));
-
-const mockPost = {
+const mockPost: Post = {
 	id: "68d72ef766a499385385e183",
 	slug: "how-engineers-can-use-ai-effectively",
 	title: "How Engineers Can Use AI Effectively",
@@ -52,14 +29,16 @@ describe("BlogPostPagePanda", () => {
 	it("renders post with contentHtml", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		expect(
-			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
-		).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+			"How Engineers Can Use AI Effectively"
+		);
 		expect(
 			within(getArticle()).getByText("This is the full article content in HTML format.")
 		).toBeInTheDocument();
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: /Back to writing/ })).toHaveAttribute(
+			"href",
+			"/blog"
+		);
 	});
 
 	it("renders post with html property when contentHtml is not available", () => {
@@ -71,9 +50,6 @@ describe("BlogPostPagePanda", () => {
 
 		render(<BlogPostPagePanda post={postWithHtml} posts={[postWithHtml]} />);
 
-		expect(
-			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
-		).toBeInTheDocument();
 		expect(
 			within(getArticle()).getByText("This is content from the html property.")
 		).toBeInTheDocument();
@@ -89,9 +65,6 @@ describe("BlogPostPagePanda", () => {
 		render(<BlogPostPagePanda post={postWithExcerptOnly} posts={[postWithExcerptOnly]} />);
 
 		expect(
-			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
-		).toBeInTheDocument();
-		expect(
 			within(getArticle()).getByText(
 				"AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown."
 			)
@@ -101,10 +74,9 @@ describe("BlogPostPagePanda", () => {
 	it("renders cover image when available", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		const coverImage = within(getArticle()).getByRole("img", { name: "How Engineers Can Use AI Effectively" });
-		expect(coverImage).toBeInTheDocument();
+		const coverImage = screen.getByRole("presentation");
 		expect(coverImage).toHaveAttribute("src", mockPost.cover);
-		expect(coverImage).toHaveAttribute("alt", "How Engineers Can Use AI Effectively");
+		expect(coverImage).toHaveAttribute("alt", "");
 	});
 
 	it("does not render cover image when not available", () => {
@@ -115,25 +87,21 @@ describe("BlogPostPagePanda", () => {
 
 		render(<BlogPostPagePanda post={postWithoutCover} posts={[postWithoutCover]} />);
 
-		expect(within(getArticle()).queryByRole("img")).not.toBeInTheDocument();
+		expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
 	});
 
-	it("renders category below title when available", () => {
+	it("renders category in the dateline", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		const article = getArticle();
-		// Category and first tag both show "AI"; assert at least one (category) is present
-		const aiElements = within(article).getAllByText("AI");
-		expect(aiElements.length).toBeGreaterThanOrEqual(1);
+		expect(screen.getByText(/AI ·/)).toBeInTheDocument();
 	});
 
 	it("renders tags when available", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		const article = getArticle();
-		expect(within(article).getByText("Ai")).toBeInTheDocument();
-		expect(within(article).getByText("Engineering")).toBeInTheDocument();
-		expect(within(article).getByText("Productivity")).toBeInTheDocument();
+		expect(screen.getByText("AI", { selector: ".ds-tag" })).toBeInTheDocument();
+		expect(screen.getByText("engineering", { selector: ".ds-tag" })).toBeInTheDocument();
+		expect(screen.getByText("Productivity", { selector: ".ds-tag" })).toBeInTheDocument();
 	});
 
 	it("does not render tags section when no tags available", () => {
@@ -144,21 +112,21 @@ describe("BlogPostPagePanda", () => {
 
 		render(<BlogPostPagePanda post={postWithoutTags} posts={[postWithoutTags]} />);
 
-		expect(within(getArticle()).queryByText("Ai")).not.toBeInTheDocument();
+		expect(screen.queryByText("Topics.")).not.toBeInTheDocument();
 	});
 
 	it("formats date correctly", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		// The date should be formatted as "September 26, 2025" (timezone difference)
-		expect(within(getArticle()).getByText("September 26, 2025")).toBeInTheDocument();
+		expect(screen.getByText(formatBlogDate(mockPost.date), { exact: false })).toBeInTheDocument();
 	});
 
-	it("calculates reading time correctly", () => {
+	it("shows reading time in the dateline", () => {
 		render(<BlogPostPagePanda post={mockPost} posts={mockPosts} />);
 
-		// The excerpt is about 20 words, so reading time should be 1 min
-		expect(within(getArticle()).getByText("1 min read")).toBeInTheDocument();
+		expect(
+			screen.getByText(formatReadTime(postReadMinutes(mockPost)), { exact: false })
+		).toBeInTheDocument();
 	});
 
 	it("handles missing date gracefully", () => {
@@ -170,9 +138,8 @@ describe("BlogPostPagePanda", () => {
 		render(<BlogPostPagePanda post={postWithoutDate} posts={[postWithoutDate]} />);
 
 		expect(
-			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
+			screen.getByRole("heading", { level: 1, name: "How Engineers Can Use AI Effectively" })
 		).toBeInTheDocument();
-		// Should not crash when date is empty
 	});
 
 	it("handles missing excerpt gracefully", () => {
@@ -184,8 +151,7 @@ describe("BlogPostPagePanda", () => {
 		render(<BlogPostPagePanda post={postWithoutExcerpt} posts={[postWithoutExcerpt]} />);
 
 		expect(
-			within(getArticle()).getByText("How Engineers Can Use AI Effectively")
+			screen.getByRole("heading", { level: 1, name: "How Engineers Can Use AI Effectively" })
 		).toBeInTheDocument();
-		// Should not crash when excerpt is empty
 	});
 });

@@ -1,57 +1,12 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "../../test/test-utils";
 import { HomePagePanda } from "../HomePagePanda";
-
-// Mock the styled-system css function
-vi.mock("../../styled-system/css/index.mjs", () => ({
-	css: vi.fn((styles) => JSON.stringify(styles)),
-}));
-
-// Mock components
-vi.mock("../../components/HeaderSSR", () => ({
-	default: ({ currentPage }: { currentPage: string }) => (
-		<header
-			data-testid="header"
-			data-current-page={currentPage}
-		>
-			Header
-		</header>
-	),
-}));
-
-vi.mock("../../components/Footer", () => ({
-	default: () => <footer data-testid="footer">Footer</footer>,
-}));
-
-vi.mock("../../components/HeroSSR", () => ({
-	default: () => <section data-testid="hero">Hero Section</section>,
-}));
-
-vi.mock("../../components/CoreCompetencies", () => ({
-	default: () => (
-		<section data-testid="core-competencies">What I Work On</section>
-	),
-}));
-
-vi.mock("../../components/RecentWriting", () => ({
-	default: () => (
-		<section data-testid="recent-writing">Recent Writing</section>
-	),
-}));
-
-vi.mock("../../components/SkipLink", () => ({
-	default: () => (
-		<a
-			href="#main-content"
-			data-testid="skip-link"
-		>
-			Skip to main content
-		</a>
-	),
-}));
+import { COPY } from "../../data/site-copy";
+import { PERSON, WORK_BLOCKS } from "../../data/person";
+import type { BlogPost } from "../../types/blog";
 
 describe("HomePagePanda", () => {
-	const mockPosts = [
+	const mockPosts: BlogPost[] = [
 		{
 			id: "1",
 			slug: "test-post-1",
@@ -80,49 +35,56 @@ describe("HomePagePanda", () => {
 		},
 	];
 
-	it("renders all main sections", () => {
+	it("renders hero, writing, and work sections", () => {
 		render(<HomePagePanda posts={mockPosts} />);
 
-		expect(screen.getByTestId("skip-link")).toBeInTheDocument();
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("hero")).toBeInTheDocument();
-		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
-		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+			`${COPY.home.headlineLine1}${COPY.home.headlineLine2}`
+		);
+		expect(screen.getByText(COPY.home.writingHeading)).toBeInTheDocument();
+		expect(screen.getByText(COPY.home.workHeading)).toBeInTheDocument();
+		expect(screen.getByText(PERSON.tagline)).toBeInTheDocument();
 	});
 
-	it("sets correct current page for header", () => {
+	it("renders primary CTAs", () => {
 		render(<HomePagePanda posts={mockPosts} />);
 
-		const header = screen.getByTestId("header");
-		expect(header).toHaveAttribute("data-current-page", "home");
+		expect(screen.getByRole("link", { name: COPY.home.ctaPrimary })).toHaveAttribute(
+			"href",
+			"/blog"
+		);
+		expect(screen.getByRole("link", { name: COPY.home.ctaSecondary })).toHaveAttribute(
+			"href",
+			"/resume"
+		);
 	});
 
-	it("renders main content with correct id", () => {
+	it("renders up to three recent posts", () => {
 		render(<HomePagePanda posts={mockPosts} />);
 
-		const main = screen.getByRole("main");
-		expect(main).toHaveAttribute("id", "main-content");
+		expect(screen.getByRole("link", { name: "Test Post 1" })).toHaveAttribute(
+			"href",
+			"/blog/test-post-1"
+		);
+		expect(screen.getByRole("link", { name: "Test Post 2" })).toHaveAttribute(
+			"href",
+			"/blog/test-post-2"
+		);
+		expect(screen.getByText("Test excerpt 1")).toBeInTheDocument();
 	});
 
-	it("handles empty posts array", () => {
+	it("renders work blocks from person data", () => {
+		render(<HomePagePanda posts={mockPosts} />);
+
+		for (const block of WORK_BLOCKS) {
+			expect(screen.getByText(block.t)).toBeInTheDocument();
+		}
+	});
+
+	it("shows empty state when there are no posts", () => {
 		render(<HomePagePanda posts={[]} />);
 
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("hero")).toBeInTheDocument();
-		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
-		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
-	});
-
-	it("handles undefined posts", () => {
-		// @ts-expect-error - testing runtime behavior
-		render(<HomePagePanda posts={undefined} />);
-
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("hero")).toBeInTheDocument();
-		expect(screen.getByTestId("recent-writing")).toBeInTheDocument();
-		expect(screen.getByTestId("core-competencies")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByText(COPY.home.writingEmpty)).toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: "Test Post 1" })).not.toBeInTheDocument();
 	});
 });

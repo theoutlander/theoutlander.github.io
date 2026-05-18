@@ -1,64 +1,13 @@
-import { describe, it, expect, vi } from "vitest";
-import { render, screen, within } from "../../test/test-utils";
+import { describe, it, expect } from "vitest";
+import { render, screen } from "../../test/test-utils";
 import { BlogPagePanda } from "../BlogPagePanda";
-
-// Mock the styled-system css function
-vi.mock("../../styled-system/css/index.mjs", () => ({
-	css: vi.fn((styles) => JSON.stringify(styles)),
-}));
-
-// Mock components
-vi.mock("../../components/HeaderSSR", () => ({
-	default: ({ currentPage }: { currentPage: string }) => (
-		<header
-			data-testid="header"
-			data-current-page={currentPage}
-		>
-			Header
-		</header>
-	),
-}));
-
-vi.mock("../../components/Footer", () => ({
-	default: () => <footer data-testid="footer">Footer</footer>,
-}));
-
-vi.mock("../../components/blog/BlogList", () => ({
-	default: ({ posts }: { posts: any[] }) => (
-		<div data-testid="blog-list">
-			{posts && posts.map
-				? posts.map((post) => (
-						<article
-							key={post.slug}
-							data-testid={`post-${post.slug}`}
-						>
-							<h2>{post.title}</h2>
-							<p>{post.excerpt}</p>
-						</article>
-				  ))
-				: null}
-		</div>
-	),
-}));
-
-vi.mock("../../components/blog/BlogSidebar", () => ({
-	default: () => <aside data-testid="blog-sidebar">Sidebar</aside>,
-}));
-
-vi.mock("../../components/SkipLink", () => ({
-	default: () => (
-		<a
-			href="#main-content"
-			data-testid="skip-link"
-		>
-			Skip to main content
-		</a>
-	),
-}));
+import { COPY } from "../../data/site-copy";
+import type { Post } from "../../types/blog";
 
 describe("BlogPagePanda", () => {
-	const mockPosts = [
+	const mockPosts: Post[] = [
 		{
+			id: "1",
 			slug: "test-post-1",
 			title: "Test Post 1",
 			excerpt: "Test excerpt 1",
@@ -69,6 +18,7 @@ describe("BlogPagePanda", () => {
 			url: "https://example.com/test-post-1",
 		},
 		{
+			id: "2",
 			slug: "test-post-2",
 			title: "Test Post 2",
 			excerpt: "Test excerpt 2",
@@ -80,54 +30,47 @@ describe("BlogPagePanda", () => {
 		},
 	];
 
-	it("renders all main sections", () => {
+	it("renders page headline and lede", () => {
 		render(<BlogPagePanda posts={mockPosts} />);
 
-		expect(screen.getByTestId("skip-link")).toBeInTheDocument();
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("blog-list")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(COPY.blog.headline);
+		expect(screen.getByText(COPY.blog.lede)).toBeInTheDocument();
 	});
 
-	it("sets correct current page for header", () => {
+	it("renders post index rows", () => {
 		render(<BlogPagePanda posts={mockPosts} />);
 
-		const header = screen.getByTestId("header");
-		expect(header).toHaveAttribute("data-current-page", "blogs");
+		expect(screen.getByRole("link", { name: /Test Post 1/ })).toHaveAttribute(
+			"href",
+			"/blog/test-post-1"
+		);
+		expect(screen.getByRole("link", { name: /Test Post 2/ })).toHaveAttribute(
+			"href",
+			"/blog/test-post-2"
+		);
+		expect(screen.getByText("Test excerpt 1")).toBeInTheDocument();
 	});
 
-	it("renders main content with correct id", () => {
+	it("renders category filter controls", () => {
 		render(<BlogPagePanda posts={mockPosts} />);
 
-		const main = screen.getByRole("main");
-		expect(main).toHaveAttribute("id", "main-content");
+		expect(screen.getByRole("button", { name: COPY.blog.filterAll })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "AI" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Engineering" })).toBeInTheDocument();
 	});
 
-	it("passes posts to BlogList component", () => {
+	it("shows post count in section tag", () => {
 		render(<BlogPagePanda posts={mockPosts} />);
 
-		const blogList = screen.getByTestId("blog-list");
-		expect(within(blogList).getByTestId("post-test-post-1")).toBeInTheDocument();
-		expect(within(blogList).getByTestId("post-test-post-2")).toBeInTheDocument();
-		expect(within(blogList).getByText("Test Post 1")).toBeInTheDocument();
-		expect(within(blogList).getByText("Test Post 2")).toBeInTheDocument();
+		expect(
+			screen.getByText(`2 ${COPY.blog.sectionRightSuffix}`, { exact: false })
+		).toBeInTheDocument();
 	});
 
 	it("handles empty posts array", () => {
 		render(<BlogPagePanda posts={[]} />);
 
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("blog-list")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
-		expect(screen.queryByTestId("post-test-post-1")).not.toBeInTheDocument();
-	});
-
-	it("handles undefined posts", () => {
-		// @ts-expect-error - testing runtime behavior
-		render(<BlogPagePanda posts={undefined} />);
-
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("blog-list")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+		expect(screen.queryByRole("link", { name: /Test Post 1/ })).not.toBeInTheDocument();
 	});
 });

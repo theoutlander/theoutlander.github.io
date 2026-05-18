@@ -1,85 +1,47 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { render, screen } from "../../test/test-utils";
 import { ResumePagePanda } from "../ResumePagePanda";
-
-// Mock the styled-system css function
-vi.mock("../../styled-system/css/index.mjs", () => ({
-	css: vi.fn((styles) => JSON.stringify(styles)),
-}));
-
-// Mock components
-vi.mock("../../components/HeaderSSR", () => ({
-	default: ({ currentPage }: { currentPage: string }) => (
-		<header
-			data-testid="header"
-			data-current-page={currentPage}
-		>
-			Header
-		</header>
-	),
-}));
-
-vi.mock("../../components/Footer", () => ({
-	default: () => <footer data-testid="footer">Footer</footer>,
-}));
-
-vi.mock("../../components/Resume", () => ({
-	default: () => <div data-testid="resume">Resume Content</div>,
-}));
-
-vi.mock("../../components/ResumePrintStyles", () => ({
-	default: () => <style data-testid="print-styles">/* Print styles */</style>,
-}));
-
-vi.mock("../../components/SkipLink", () => ({
-	default: () => (
-		<a
-			href="#main-content"
-			data-testid="skip-link"
-		>
-			Skip to main content
-		</a>
-	),
-}));
+import { COPY } from "../../data/site-copy";
+import { META, PERSON } from "../../data/person";
+import { ROLES, SUMMARY } from "../../data/resume";
 
 describe("ResumePagePanda", () => {
-	it("renders all main sections", () => {
+	it("renders page title and person name", () => {
 		render(<ResumePagePanda />);
 
-		expect(screen.getByTestId("print-styles")).toBeInTheDocument();
-		expect(screen.getByTestId("skip-link")).toBeInTheDocument();
-		expect(screen.getByTestId("header")).toBeInTheDocument();
-		expect(screen.getByTestId("resume")).toBeInTheDocument();
-		expect(screen.getByTestId("footer")).toBeInTheDocument();
+		expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(PERSON.name);
+		expect(document.title).toBe(META.resume.title);
 	});
 
-	it("sets correct current page for header", () => {
+	it("renders summary and experience sections", () => {
 		render(<ResumePagePanda />);
 
-		const header = screen.getByTestId("header");
-		expect(header).toHaveAttribute("data-current-page", "resume");
+		expect(screen.getByText(COPY.resume.sections.summary)).toBeInTheDocument();
+		expect(screen.getByText(COPY.resume.sections.experience)).toBeInTheDocument();
+		expect(screen.getByText(SUMMARY, { exact: false })).toBeInTheDocument();
 	});
 
-	it("renders main content with correct id", () => {
+	it("renders roles from resume data", () => {
 		render(<ResumePagePanda />);
 
-		const main = screen.getByRole("main");
-		expect(main).toHaveAttribute("id", "main-content");
+		expect(screen.getByText(ROLES[0].co)).toBeInTheDocument();
+		expect(screen.getAllByText(ROLES[0].role).length).toBeGreaterThan(0);
 	});
 
-	it("renders Resume component", () => {
+	it("renders PDF download link", () => {
 		render(<ResumePagePanda />);
 
-		expect(screen.getByTestId("resume")).toBeInTheDocument();
-		expect(screen.getByText("Resume Content")).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: COPY.resume.pdfLink })).toHaveAttribute(
+			"href",
+			COPY.resume.pdfHref
+		);
 	});
 
-	it("renders ResumePrintStyles component", () => {
+	it("renders education, patents, and skills sections", () => {
 		render(<ResumePagePanda />);
 
-		expect(screen.getByTestId("print-styles")).toBeInTheDocument();
-		// Style elements don't have visible text content
-		const styleElement = screen.getByTestId("print-styles");
-		expect(styleElement.tagName).toBe("STYLE");
+		expect(screen.getByText(COPY.resume.sections.education)).toBeInTheDocument();
+		expect(screen.getByText(COPY.resume.sections.patents)).toBeInTheDocument();
+		expect(screen.getByText(COPY.resume.sections.skills)).toBeInTheDocument();
 	});
 });
