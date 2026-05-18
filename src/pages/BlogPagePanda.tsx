@@ -72,7 +72,7 @@ export function BlogPagePanda({ posts, filterTag: initialFilter, filterCategory 
 
         <section>
           {filtered.map((p) => (
-            <a key={p.id} href={`/blog/${p.slug}`} className="ds-index-row">
+            <a key={p.id} href={`/blog/${p.slug}`} className="ds-index-row ds-plain">
               <span className="ds-num">No. {getPostNumber(posts, p.id)}</span>
               <span>
                 <span className="ds-title" style={{ display: "block" }}>{p.title}</span>
@@ -83,7 +83,7 @@ export function BlogPagePanda({ posts, filterTag: initialFilter, filterCategory 
                 <br />
                 {postCategoryLabel(p)}
               </span>
-              <span className="ds-meta ds-read-time">{formatReadTime(postReadMinutes(p), false)}</span>
+              <span className="ds-meta ds-read-time">{formatReadTime(postReadMinutes(p))}</span>
             </a>
           ))}
           <div className="ds-rule" />

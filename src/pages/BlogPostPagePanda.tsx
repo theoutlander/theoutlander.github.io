@@ -27,15 +27,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
   return (
     <div className="ds-page ds-page-fade" style={{ maxWidth: "70rem" }}>
       <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
-        <a
-          href="/blog"
-          style={{
-            display: "inline-block",
-            marginBottom: "var(--gap-3)",
-            textDecoration: "none",
-            borderBottom: "none",
-          }}
-        >
+        <a href="/blog" className="ds-plain" style={{ display: "inline-block", marginBottom: "var(--gap-3)" }}>
           <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Back to writing</span>
         </a>
         <div className="ds-rule-thick" style={{ paddingTop: "1rem" }}>
@@ -91,7 +83,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
               <div>
                 <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Previous</span>
                 <h3 className="ds-h3 ds-blog-nav-title">
-                  <a href={`/blog/${prevPost.slug}`}>{prevPost.title}</a>
+                  <a href={`/blog/${prevPost.slug}`} className="ds-plain">{prevPost.title}</a>
                 </h3>
               </div>
             ) : (
@@ -101,7 +93,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
               <div className="ds-blog-nav-next">
                 <span className="ds-mono" style={{ color: "var(--ink-3)" }}>Next →</span>
                 <h3 className="ds-h3 ds-blog-nav-title">
-                  <a href={`/blog/${nextPost.slug}`}>{nextPost.title}</a>
+                  <a href={`/blog/${nextPost.slug}`} className="ds-plain">{nextPost.title}</a>
                 </h3>
               </div>
             ) : (

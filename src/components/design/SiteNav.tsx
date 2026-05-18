@@ -26,8 +26,8 @@ export function SiteNav() {
   return (
     <nav className="ds-site-nav" aria-label="Main navigation">
       <a href="/" className="ds-brand-link" aria-label="Nick Karnik — home">
-        <BrandMark size={28} shape="circle" />
-        <Wordmark variant="primary" size={18} />
+        <BrandMark size={32} shape="circle" />
+        <Wordmark variant="primary" size={20} />
       </a>
       <div className="ds-links">
         {NAV_LINKS.map((l) => (

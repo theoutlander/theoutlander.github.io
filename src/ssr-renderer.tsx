@@ -618,19 +618,23 @@ const SSRNav = () =>
 		React.createElement(
 			"a",
 			{ href: "/", className: "ds-brand-link", "aria-label": "Nick Karnik — home" },
-			React.createElement(
-				"span",
-				{
-					className: "ds-monogram",
-					style: { width: 28, height: 28, fontSize: 28 * 0.55 },
-					"aria-label": "nk monogram",
+			React.createElement("img", {
+				src: "/assets/images/profile/nick-karnik.jpeg",
+				alt: "",
+				width: 32,
+				height: 32,
+				loading: "eager",
+				style: {
+					display: "block",
+					objectFit: "cover",
+					objectPosition: "center top",
+					borderRadius: "50%",
+					flexShrink: 0,
 				},
-				React.createElement("span", { style: { transform: "translateY(-1px)" } }, "nk"),
-				React.createElement("span", { className: "ds-corner-tick", style: { width: 4, height: 4 } })
-			),
+			}),
 			React.createElement(
 				"span",
-				{ className: "ds-wordmark", style: { fontSize: 18 } },
+				{ className: "ds-wordmark", style: { fontSize: 20 } },
 				"Nick Karnik"
 			)
 		),

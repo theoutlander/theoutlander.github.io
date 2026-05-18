@@ -33,6 +33,8 @@ export const BrandMark = ({
       style={{
         display: "block",
         objectFit: "cover",
+        objectPosition: "center top",
+        flexShrink: 0,
         ...shapeStyle,
       }}
     />
