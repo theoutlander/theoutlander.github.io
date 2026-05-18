@@ -1,9 +1,11 @@
 {
 	"nav": {
 		"writing": "Writing",
+		"kitchen": "The Kitchen",
 		"about": "About",
 		"resume": "Résumé",
-		"reviews": "Reviews"
+		"reviews": "Reviews",
+		"mark": "Mark"
 	},
 	"home": {
 		"eyebrowSection": "§ 00",
@@ -21,22 +23,23 @@
 	"blog": {
 		"sectionNum": "01",
 		"sectionLabel": "Writing",
-		"sectionRightSuffix": "essays · since 2018",
-		"headline": "Writing about what I know, from someone who built it.",
-		"lede": "No schedule, no cadence. Just things worth writing down.",
+		"sectionRightSuffix": "essays",
+		"headline": "Notes on AI, search, and building software.",
+		"lede": "Writing about what I learn building software. Filter by topic below.",
 		"filterAll": "All"
 	},
 	"about": {
 		"sectionNum": "01",
 		"sectionLabel": "About",
 		"headline": "About",
-		"featuredWorkLabel": "Featured Work",
-		"featuredWorkBody": "Geospatial visualization of epidemiological modeling, featured in this TED Talk by Bill Gates.",
-		"patentsLabel": "Patents",
-		"patentLink": "US 8,918,354 — Intelligent intent detection from social network messages",
-		"patentStatus": "Granted 2014 · Active until 2032",
+		"currently": "Currently · May 2026",
+		"currentlyNote": "Lead Software Engineer at PitchBook. Building data and search infrastructure for financial intelligence. Making games with my three kids. Always something cooking.",
+		"bio1": "Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Most recently building Gemini Code Assist at Google. Before that, six years on Bing search at Microsoft. Also led teams at Tableau and T-Mobile.",
+		"bio2": "This site is where I write about what I'm learning. The essays cover AI, search, and building software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen.",
 		"workHeading": "What I work on",
-		"outsideHeading": "Outside of work"
+		"workBody": "AI and developer tools. Search and relevance. Engineering leadership. Currently building new things, making games with my three kids.",
+		"outsideHeading": "Outside of work",
+		"outsideBody": "Serious about cooking, cocktails, and travel. Still figuring out what comes next and building it anyway."
 	},
 	"resume": {
 		"sectionNum": "01",
@@ -61,7 +64,17 @@
 		"headlineBefore": "What people say after ",
 		"headlineEmphasis": "we actually work together.",
 		"lede": "Reviews from mentoring sessions on Codementor. Unedited.",
-		"empty": "No reviews yet."
+		"empty": "No reviews yet.",
+		"colleaguesSectionNum": "02",
+		"colleaguesLabel": "From colleagues",
+		"colleaguesRight": "via LinkedIn",
+		"youtubeSectionNum": "03",
+		"youtubeLabel": "From YouTube",
+		"youtubeRight": "Comments",
+		"placeholderQuote": "Paste a recommendation here.",
+		"placeholderAuthor": "Name",
+		"placeholderRole": "Title, Company",
+		"placeholderYoutubeAuthor": "YouTube viewer"
 	},
 	"kitchen": {
 		"sectionNum": "01",
@@ -70,8 +83,17 @@
 		"headlinePrefix": "The ",
 		"headlineEmphasis": "Kitchen",
 		"lede": "A logbook of dinners, bread, and cocktails. Written like a software engineer would — measurements, ratios, and notes from each iteration.",
-		"comingSoon": "Coming soon.",
+		"backLink": "← Back to the kitchen",
 		"categories": ["All", "Cooking", "Baking", "Cocktails"]
+	},
+	"branding": {
+		"sectionNum": "01",
+		"sectionLabel": "Brand notes",
+		"sectionRight": "Identity system, v.1",
+		"headline": "A personal mark",
+		"headlineSuffix": "—",
+		"headlineEnd": "set in type, not drawn.",
+		"lede": "Three marks, two voices, one accent. The system is small on purpose. The voice should do most of the work."
 	},
 	"calendar": {
 		"sectionNum": "01",
@@ -84,14 +106,7 @@
 		"iframeTitle": "Schedule time with Nick Karnik"
 	},
 	"footer": {
-		"elsewhereHeading": "Elsewhere",
-		"newsletterHeading": "The Newsletter",
-		"newsletterLede": "A short letter, once a fortnight. On building teams, building software, and the occasional braise.",
-		"newsletterPlaceholder": "you@domain.com",
-		"newsletterCta": "Subscribe →",
-		"indexHeading": "Index",
-		"schedule": "Schedule",
 		"colophonRights": "© MMXXVI · Nick Karnik · All rights reserved",
-		"colophonType": "Set in Newsreader & JetBrains Mono"
+		"colophonType": "Set in Newsreader & JetBrains Mono · Printed on cream"
 	}
 }

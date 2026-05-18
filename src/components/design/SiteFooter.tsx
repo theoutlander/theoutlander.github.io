@@ -1,59 +1,60 @@
 import React from "react";
-import { FOOTER_INDEX_LINKS, COPY } from "../../data/site-copy";
-import { SOCIAL_LINKS } from "../../data/person";
+import { Wordmark } from "./Marks";
+import { COPY } from "../../data/site-copy";
+import { PERSON, SOCIAL_LINKS } from "../../data/person";
+
+const SOCIAL_LINKS_LIST = [
+	{ href: SOCIAL_LINKS.github, label: "GitHub" },
+	{ href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
+	{ href: SOCIAL_LINKS.twitter, label: "Twitter / X" },
+	{ href: SOCIAL_LINKS.youtube, label: "YouTube" },
+	{ href: SOCIAL_LINKS.stackoverflow, label: "Stack Overflow" },
+	{ href: SOCIAL_LINKS.codementor, label: "Codementor" },
+	{ href: "https://maya.karnik.io", label: "Maya's Game Lab" },
+] as const;
 
 export function SiteFooter() {
-  return (
-    <footer className="ds-site-footer">
-      <div className="ds-row">
-        <div>
-          <h4>{COPY.footer.elsewhereHeading}</h4>
-          <ul>
-            <li><a href={SOCIAL_LINKS.github} target="_blank" rel="noreferrer">GitHub</a></li>
-            <li><a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
-            <li><a href={SOCIAL_LINKS.twitter} target="_blank" rel="noreferrer">Twitter / X</a></li>
-            <li><a href={SOCIAL_LINKS.youtube} target="_blank" rel="noreferrer">YouTube</a></li>
-            <li><a href={SOCIAL_LINKS.stackoverflow} target="_blank" rel="noreferrer">Stack Overflow</a></li>
-            <li><a href={SOCIAL_LINKS.codementor} target="_blank" rel="noreferrer">Codementor</a></li>
-            <li><a href="https://maya.karnik.io" target="_blank" rel="noreferrer">Maya's Game Lab</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4>{COPY.footer.newsletterHeading}</h4>
-          <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", margin: "0 0 0.75rem", maxWidth: 320 }}>
-            {COPY.footer.newsletterLede}
-          </p>
-          <form
-            action="https://buttondown.com/api/emails/embed-subscribe/nickkarnik"
-            method="POST"
-            className="ds-newsletter-input"
-          >
-            <input
-              type="email"
-              name="email"
-              placeholder={COPY.footer.newsletterPlaceholder}
-              aria-label="Email address for newsletter"
-            />
-            <button className="ds-btn" type="submit" style={{ padding: "0.7em 1.1em" }}>
-              {COPY.footer.newsletterCta}
-            </button>
-          </form>
-        </div>
-        <div>
-          <h4>{COPY.footer.indexHeading}</h4>
-          <ul>
-            {FOOTER_INDEX_LINKS.map((l) => (
-              <li key={l.href}>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-      <div className="ds-colophon">
-        <span>{COPY.footer.colophonRights}</span>
-        <span>{COPY.footer.colophonType}</span>
-      </div>
-    </footer>
-  );
+	return (
+		<footer className="ds-site-footer">
+			<div className="ds-row ds-footer-row">
+				<div>
+					<Wordmark variant="stacked" size={42} />
+					<div style={{ marginTop: "1.25rem" }}>
+						<a
+							href={`mailto:${PERSON.email}`}
+							className="ds-plain"
+							style={{
+								fontFamily: "var(--mono)",
+								fontSize: "0.78rem",
+								color: "var(--ink-2)",
+								letterSpacing: "0.04em",
+							}}
+						>
+							{PERSON.email}
+						</a>
+					</div>
+					<div style={{ marginTop: "0.5rem" }}>
+						<span className="ds-mono" style={{ color: "var(--ink-3)", fontSize: "0.72rem" }}>
+							{PERSON.location}
+						</span>
+					</div>
+				</div>
+				<div>
+					<ul>
+						{SOCIAL_LINKS_LIST.map((l) => (
+							<li key={l.href}>
+								<a href={l.href} target="_blank" rel="noreferrer">
+									{l.label}
+								</a>
+							</li>
+						))}
+					</ul>
+				</div>
+			</div>
+			<div className="ds-colophon">
+				<span>{COPY.footer.colophonRights}</span>
+				<span>{COPY.footer.colophonType}</span>
+			</div>
+		</footer>
+	);
 }

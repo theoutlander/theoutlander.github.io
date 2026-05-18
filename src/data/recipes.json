@@ -1,0 +1,82 @@
+[
+	{
+		"id": "r1",
+		"slug": "short-rib-braise-cocoa-coffee",
+		"num": "01",
+		"title": "Short Rib Braise · Cocoa & Coffee",
+		"category": "Cooking",
+		"time": "4h 20m",
+		"dek": "A Sunday braise. Mostly oven, mostly forgiving.",
+		"serves": 4
+	},
+	{
+		"id": "r2",
+		"slug": "country-loaf-75-hydration",
+		"num": "02",
+		"title": "Country Loaf · 75% Hydration",
+		"category": "Baking",
+		"time": "36h",
+		"dek": "My weekly sourdough. Stable recipe, room for variations.",
+		"serves": 2
+	},
+	{
+		"id": "r3",
+		"slug": "negroni-sbagliato",
+		"num": "03",
+		"title": "Negroni Sbagliato",
+		"category": "Cocktails",
+		"time": "3m",
+		"dek": "Three ingredients. Built in the glass.",
+		"serves": 1
+	},
+	{
+		"id": "r4",
+		"slug": "brown-butter-chocolate-chip-cookies",
+		"num": "04",
+		"title": "Brown-Butter Chocolate Chip Cookies",
+		"category": "Baking",
+		"time": "1h 10m",
+		"dek": "Browned butter, flaky salt, overnight rest.",
+		"serves": 24
+	},
+	{
+		"id": "r5",
+		"slug": "mushroom-pho",
+		"num": "05",
+		"title": "Mushroom Pho",
+		"category": "Cooking",
+		"time": "2h 30m",
+		"dek": "Charred onion, dried shiitake, star anise. Vegetarian.",
+		"serves": 4
+	},
+	{
+		"id": "r6",
+		"slug": "house-old-fashioned",
+		"num": "06",
+		"title": "House Old-Fashioned",
+		"category": "Cocktails",
+		"time": "5m",
+		"dek": "Rye, demerara, Angostura, orange peel.",
+		"serves": 1
+	},
+	{
+		"id": "r7",
+		"slug": "olive-oil-citrus-cake",
+		"num": "07",
+		"title": "Olive Oil & Citrus Cake",
+		"category": "Baking",
+		"time": "1h 30m",
+		"dek": "One bowl. Keeps three days. Travels well.",
+		"serves": 8
+	},
+	{
+		"id": "r8",
+		"slug": "weeknight-dal",
+		"num": "08",
+		"title": "Weeknight Dal",
+		"category": "Cooking",
+		"time": "45m",
+		"dek": "Red lentils, tempered with mustard seed and curry leaves.",
+		"serves": 4
+	}
+]

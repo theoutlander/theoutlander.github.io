@@ -20,15 +20,15 @@
 	},
 	"currently": {
 		"label": "Currently · May 2026",
-		"description": "Lead Software Engineer at PitchBook. Writing about engineering and what I'm learning. Cooking, baking, and experimenting in the kitchen."
+		"description": "Lead Software Engineer at PitchBook. Building data and search infrastructure for financial intelligence. Making games with my three kids. Always something cooking."
 	},
 	"heroLede": "Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.",
-	"advisoryBlurb": "Advisory work runs through Plutonic Consulting — strategy, team review, and technical due diligence. Limited slots each quarter.",
+	"advisoryBlurb": "Advisory work runs through Plutonic Consulting: strategy, team review, and technical due diligence. Limited slots each quarter.",
 	"stats": [
-		{ "n": "27+", "l": "Years building software" },
-		{ "n": "10+", "l": "Years leading engineers" },
-		{ "n": "100+", "l": "Engineers hired or grown" },
-		{ "n": "10+", "l": "Products shipped" }
+		{ "n": "25+", "l": "Years in software" },
+		{ "n": "1M+", "l": "Developers reached" },
+		{ "n": "100+", "l": "Developers trained" },
+		{ "n": "1", "l": "US patent granted" }
 	],
 	"workBlocks": [
 		{
@@ -45,7 +45,7 @@
 		},
 		{
 			"t": "Engineering Leadership",
-			"d": "Led Gemini Code Assist at Google — three years, VS Code and IntelliJ. Senior EM at Tableau and Salesforce. Twice a startup CTO. Now leading a product team at PitchBook."
+			"d": "Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations."
 		}
 	],
 	"about": {

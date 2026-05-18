@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import type { BlogPost } from "../types/blog";
-import { ADVISORY_BLURB, HERO_LEDE, META, PERSON, STATS, WORK_BLOCKS } from "../data/person";
+import { ADVISORY_BLURB, HERO_LEDE, META, PERSON, WORK_BLOCKS } from "../data/person";
 import { COPY } from "../data/site-copy";
 import { formatBlogDate, postCategoryLabel, postReadMinutes } from "../lib/blog-format";
 

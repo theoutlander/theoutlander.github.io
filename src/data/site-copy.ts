@@ -12,12 +12,5 @@ export const NAV_LINKS = [
 	{ href: "/about", label: COPY.nav.about },
 	{ href: "/resume", label: COPY.nav.resume },
 	{ href: "/reviews", label: COPY.nav.reviews },
-] as const;
-
-export const FOOTER_INDEX_LINKS = [
-	{ href: "/blog", label: COPY.nav.writing },
-	{ href: "/resume", label: COPY.nav.resume },
-	{ href: "/reviews", label: COPY.nav.reviews },
-	{ href: "/about", label: COPY.nav.about },
-	{ href: "/calendar", label: COPY.footer.schedule },
+	{ href: "/design", label: COPY.nav.mark },
 ] as const;
