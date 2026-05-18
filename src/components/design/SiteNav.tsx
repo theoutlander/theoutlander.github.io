@@ -1,5 +1,5 @@
 import React from "react";
-import { BrandMark, Wordmark } from "./Marks";
+import { Wordmark } from "./Marks";
 import { NAV_LINKS } from "../../data/site-copy";
 import { PERSON } from "../../data/person";
 
@@ -18,7 +18,6 @@ export function SiteNav() {
 	return (
 		<nav className="ds-site-nav" aria-label="Main navigation">
 			<a href="/" className="ds-brand-link" aria-label={`${PERSON.name} — home`}>
-				<BrandMark size={32} shape="circle" />
 				<Wordmark variant="primary" size={20} />
 			</a>
 			<div className="ds-links">

@@ -63,17 +63,7 @@
 		"headlineBefore": "What people say after ",
 		"headlineEmphasis": "we actually work together.",
 		"lede": "Reviews from mentoring sessions on Codementor. Unedited.",
-		"empty": "No reviews yet.",
-		"colleaguesSectionNum": "02",
-		"colleaguesLabel": "From colleagues",
-		"colleaguesRight": "via LinkedIn",
-		"youtubeSectionNum": "03",
-		"youtubeLabel": "From YouTube",
-		"youtubeRight": "Comments",
-		"placeholderQuote": "Paste a recommendation here.",
-		"placeholderAuthor": "Name",
-		"placeholderRole": "Title, Company",
-		"placeholderYoutubeAuthor": "YouTube viewer"
+		"empty": "No reviews yet."
 	},
 	"kitchen": {
 		"sectionNum": "01",
