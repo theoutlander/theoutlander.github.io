@@ -37,18 +37,16 @@ export function HomePagePanda({ posts }: HomePageProps) {
             <span style={{ color: "var(--accent)", fontStyle: "italic", fontWeight: 400 }}>.</span>
           </h1>
           <div style={{ borderTop: "1px solid var(--rule)", margin: "var(--gap-3) 0" }} />
-          <div className="ds-hero-grid">
-            <p className="ds-lede" style={{ margin: 0 }}>
-              {HERO_LEDE}
-            </p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem", alignItems: "flex-start" }}>
-              <a href="/blog" className="ds-btn">
-                {COPY.home.ctaPrimary}
-              </a>
-              <a href="/resume" className="ds-btn ds-btn-ghost">
-                {COPY.home.ctaSecondary}
-              </a>
-            </div>
+          <p className="ds-lede" style={{ margin: "0 0 var(--gap-3)", maxWidth: "52ch" }}>
+            {HERO_LEDE}
+          </p>
+          <div className="ds-hero-actions">
+            <a href="/blog" className="ds-btn">
+              {COPY.home.ctaPrimary}
+            </a>
+            <a href="/resume" className="ds-btn ds-btn-ghost">
+              {COPY.home.ctaSecondary}
+            </a>
           </div>
         </section>
 

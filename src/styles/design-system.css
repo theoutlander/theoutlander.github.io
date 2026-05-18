@@ -275,11 +275,10 @@ a:hover {
   padding: 0 var(--gap-4);
 }
 
-.ds-hero-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: var(--gap-5);
-  align-items: end;
+.ds-hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
 }
 
 .ds-stats-strip {
@@ -345,7 +344,6 @@ a:hover {
 }
 
 @media (max-width: 880px) {
-  .ds-hero-grid,
   .ds-about-grid {
     grid-template-columns: 1fr;
   }
