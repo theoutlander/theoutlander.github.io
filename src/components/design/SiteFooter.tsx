@@ -6,7 +6,7 @@ import { PERSON, SOCIAL_LINKS } from "../../data/person";
 const SOCIAL_LINKS_LIST = [
 	{ href: SOCIAL_LINKS.github, label: "GitHub" },
 	{ href: SOCIAL_LINKS.linkedin, label: "LinkedIn" },
-	{ href: SOCIAL_LINKS.twitter, label: "Twitter / X" },
+	{ href: SOCIAL_LINKS.twitter, label: "Twitter" },
 	{ href: SOCIAL_LINKS.youtube, label: "YouTube" },
 	{ href: SOCIAL_LINKS.stackoverflow, label: "Stack Overflow" },
 	{ href: SOCIAL_LINKS.codementor, label: "Codementor" },

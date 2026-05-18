@@ -679,7 +679,7 @@ const SSRFooter = () =>
 					...[
 						["https://github.com/theoutlander", "GitHub"],
 						["https://www.linkedin.com/in/theoutlander", "LinkedIn"],
-						["https://x.com/theoutlander", "Twitter / X"],
+						["https://x.com/theoutlander", "Twitter"],
 						["https://youtube.com/@nick-karnik", "YouTube"],
 						["https://stackoverflow.com/users/460472/nick", "Stack Overflow"],
 					].map(([href, label]) =>
