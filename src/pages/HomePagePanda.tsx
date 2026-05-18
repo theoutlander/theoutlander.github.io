@@ -165,33 +165,6 @@ export function HomePagePanda({ posts }: HomePageProps) {
           </div>
         </section>
 
-        {/* Kitchen teaser */}
-        <section style={{ padding: "var(--gap-5) 0", borderTop: "2px solid var(--ink)" }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0,1fr) minmax(0,1.4fr)",
-            gap: "var(--gap-5)",
-            alignItems: "end",
-          }}>
-            <div
-              className="ds-img-slot"
-              style={{ aspectRatio: "5/4" }}
-              aria-label="The Kitchen"
-            />
-            <div>
-              <span className="ds-eyebrow">
-                <span className="ds-num">§ 03</span>The Kitchen
-              </span>
-              <h2 className="ds-h1" style={{ margin: "0.6rem 0 1rem", maxWidth: "14ch" }}>
-                The Kitchen.
-              </h2>
-              <p className="ds-lede" style={{ margin: "0 0 1.25rem", maxWidth: "44ch" }}>
-                Recipes for cooking, baking, and cocktails. Versioned, with notes on what changed between iterations.
-              </p>
-              <a href="/kitchen" className="ds-btn ds-btn-ghost">Browse recipes →</a>
-            </div>
-          </div>
-        </section>
       </div>
     </>
   );

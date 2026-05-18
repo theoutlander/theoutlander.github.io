@@ -3,6 +3,7 @@ import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { CodementorReview } from "../types/codementor";
 import { META, PERSON } from "../data/person";
+import { COPY } from "../data/site-copy";
 
 interface ReviewsPageProps {
   reviews: CodementorReview[];
@@ -21,6 +22,8 @@ function StarRating({ rating }: { rating: number }) {
 }
 
 export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
+  const reviewsCopy = COPY.reviews;
+
   return (
     <>
       <Helmet>
@@ -31,12 +34,12 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
 
       <div className="ds-page ds-page-fade">
         <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
-          <SectionTag num="01" label="Mentoring reviews" right="via Codementor" />
+          <SectionTag num={reviewsCopy.sectionNum} label={reviewsCopy.sectionLabel} right={reviewsCopy.sectionRight} />
           <h1 className="ds-h1" style={{ margin: "0 0 1rem", maxWidth: "20ch" }}>
-            What people say after <em>we actually work together.</em>
+            {reviewsCopy.headlineBefore}<em>{reviewsCopy.headlineEmphasis}</em>
           </h1>
           <p className="ds-lede" style={{ margin: 0, maxWidth: "46ch" }}>
-            Reviews from mentoring sessions on Codementor. Unedited.
+            {reviewsCopy.lede}
           </p>
         </section>
 
@@ -77,7 +80,7 @@ export function ReviewsPagePanda({ reviews }: ReviewsPageProps) {
           </section>
         ) : (
           <section style={{ padding: "var(--gap-4) 0 var(--gap-5)" }}>
-            <p style={{ color: "var(--ink-2)" }}>No reviews yet.</p>
+            <p style={{ color: "var(--ink-2)" }}>{reviewsCopy.empty}</p>
           </section>
         )}
       </div>

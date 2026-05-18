@@ -2,12 +2,14 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { META, PERSON } from "../data/person";
+import { COPY } from "../data/site-copy";
 
 const CALENDAR_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true";
 
 export function CalendarPagePanda() {
   const [loaded, setLoaded] = React.useState(false);
+  const calendar = COPY.calendar;
 
   return (
     <>
@@ -25,19 +27,19 @@ export function CalendarPagePanda() {
 
       <div className="ds-page ds-page-fade">
         <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
-          <SectionTag num="01" label="Schedule" right="via Google Calendar" />
+          <SectionTag num={calendar.sectionNum} label={calendar.sectionLabel} right={calendar.sectionRight} />
           <h1 className="ds-h1" style={{ margin: "0 0 1rem", maxWidth: "20ch" }}>
-            Schedule a call
+            {calendar.headline}
           </h1>
           <p className="ds-lede" style={{ margin: 0, maxWidth: "46ch" }}>
-            Pick a time that works for you. Prefer a new tab?{" "}
+            {calendar.ledePrefix}{" "}
             <a
               href={CALENDAR_URL}
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "var(--ink)", borderBottom: "1px solid var(--rule)", textDecoration: "none" }}
             >
-              Open in Google Calendar
+              {calendar.ledeLink}
             </a>
             .
           </p>
@@ -66,11 +68,11 @@ export function CalendarPagePanda() {
                   letterSpacing: "0.05em",
                 }}
               >
-                Loading calendar…
+                {calendar.loading}
               </div>
             )}
             <iframe
-              title="Schedule time with Nick Karnik"
+              title={calendar.iframeTitle}
               src={CALENDAR_URL}
               loading="lazy"
               style={{

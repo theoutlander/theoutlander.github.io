@@ -1,5 +1,5 @@
-// Personal identity and site copy live in `person.json`.
-// Import from here instead of hardcoding strings across pages and components.
+// Personal identity, bio, stats, and SEO meta live in `person.json`.
+// Nav labels, page headings, and footer copy live in `site-copy.json`.
 
 import personData from "./person.json";
 

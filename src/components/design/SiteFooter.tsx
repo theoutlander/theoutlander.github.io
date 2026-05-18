@@ -1,4 +1,5 @@
 import React from "react";
+import { FOOTER_INDEX_LINKS, COPY } from "../../data/site-copy";
 import { SOCIAL_LINKS } from "../../data/person";
 
 export function SiteFooter() {
@@ -6,7 +7,7 @@ export function SiteFooter() {
     <footer className="ds-site-footer">
       <div className="ds-row">
         <div>
-          <h4>Elsewhere</h4>
+          <h4>{COPY.footer.elsewhereHeading}</h4>
           <ul>
             <li><a href={SOCIAL_LINKS.github} target="_blank" rel="noreferrer">GitHub</a></li>
             <li><a href={SOCIAL_LINKS.linkedin} target="_blank" rel="noreferrer">LinkedIn</a></li>
@@ -18,9 +19,9 @@ export function SiteFooter() {
           </ul>
         </div>
         <div>
-          <h4>The Newsletter</h4>
+          <h4>{COPY.footer.newsletterHeading}</h4>
           <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", margin: "0 0 0.75rem", maxWidth: 320 }}>
-            A short letter, once a fortnight. On building teams, building software, and the occasional braise.
+            {COPY.footer.newsletterLede}
           </p>
           <form
             action="https://buttondown.com/api/emails/embed-subscribe/nickkarnik"
@@ -30,29 +31,28 @@ export function SiteFooter() {
             <input
               type="email"
               name="email"
-              placeholder="you@domain.com"
+              placeholder={COPY.footer.newsletterPlaceholder}
               aria-label="Email address for newsletter"
             />
             <button className="ds-btn" type="submit" style={{ padding: "0.7em 1.1em" }}>
-              Subscribe →
+              {COPY.footer.newsletterCta}
             </button>
           </form>
         </div>
         <div>
-          <h4>Index</h4>
+          <h4>{COPY.footer.indexHeading}</h4>
           <ul>
-            <li><a href="/blog">Writing</a></li>
-            <li><a href="/kitchen">The Kitchen</a></li>
-            <li><a href="/resume">Résumé</a></li>
-            <li><a href="/reviews">Reviews</a></li>
-            <li><a href="/about">About</a></li>
-            <li><a href="/calendar">Schedule</a></li>
+            {FOOTER_INDEX_LINKS.map((l) => (
+              <li key={l.href}>
+                <a href={l.href}>{l.label}</a>
+              </li>
+            ))}
           </ul>
         </div>
       </div>
       <div className="ds-colophon">
-        <span>© MMXXVI · Nick Karnik · All rights reserved</span>
-        <span>Set in Newsreader &amp; JetBrains Mono</span>
+        <span>{COPY.footer.colophonRights}</span>
+        <span>{COPY.footer.colophonType}</span>
       </div>
     </footer>
   );

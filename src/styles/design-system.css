@@ -439,6 +439,10 @@ a.ds-plain:hover,
 [data-aesthetic="engineering"] .ds-prose {
   font-family: "Source Serif 4", "Newsreader", Georgia, serif;
 }
+[data-aesthetic="engineering"][data-typeface="editorial"] .ds-prose,
+[data-aesthetic="engineering"][data-typeface="editorial"] .ds-prose p {
+  font-family: var(--serif);
+}
 .ds-prose h2 {
   font-size: 1.625rem;
   margin: 2.25em 0 0.5em;

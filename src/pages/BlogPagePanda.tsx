@@ -9,6 +9,8 @@ import {
   postCategoryLabel,
   postReadMinutes,
 } from "../lib/blog-format";
+import { COPY } from "../data/site-copy";
+import { META, PERSON } from "../data/person";
 
 type BlogPageProps = {
   posts: Post[];
@@ -17,16 +19,16 @@ type BlogPageProps = {
 };
 
 export function BlogPagePanda({ posts, filterTag: initialFilter, filterCategory }: BlogPageProps) {
-  const initial = initialFilter ?? filterCategory ?? "All";
+  const initial = initialFilter ?? filterCategory ?? COPY.blog.filterAll;
   const [filter, setFilter] = useState(initial);
 
   const categories = Array.from(
     new Set(posts.map((p) => postCategoryLabel(p)).filter(Boolean))
   ).sort();
-  const tags = ["All", ...categories];
+  const tags = [COPY.blog.filterAll, ...categories];
 
   const filtered =
-    filter === "All"
+    filter === COPY.blog.filterAll
       ? posts
       : posts.filter(
           (p) =>
@@ -38,23 +40,23 @@ export function BlogPagePanda({ posts, filterTag: initialFilter, filterCategory 
   return (
     <>
       <Helmet>
-        <title>Nick Karnik | Writing</title>
-        <meta name="description" content="Writing about AI, engineering leadership, developer tools, and what I learn building software." />
-        <link rel="canonical" href="https://nick.karnik.io/blog" />
+        <title>{META.blog.title}</title>
+        <meta name="description" content={META.blog.description} />
+        <link rel="canonical" href={`${PERSON.siteUrl}/blog`} />
       </Helmet>
 
       <div className="ds-page ds-page-fade">
         <section style={{ padding: "var(--gap-5) 0 var(--gap-4)" }}>
           <SectionTag
-            num="01"
-            label="Writing"
-            right={`${posts.length} essays · since 2018`}
+            num={COPY.blog.sectionNum}
+            label={COPY.blog.sectionLabel}
+            right={`${posts.length} ${COPY.blog.sectionRightSuffix}`}
           />
           <h1 className="ds-h1" style={{ margin: "0 0 1rem", maxWidth: "20ch" }}>
-            Writing about what I know, from someone who built it.
+            {COPY.blog.headline}
           </h1>
           <p className="ds-lede" style={{ maxWidth: "48ch", margin: "0 0 var(--gap-4)" }}>
-            No schedule, no cadence. Just things worth writing down.
+            {COPY.blog.lede}
           </p>
           <div className="ds-blog-filters">
             {tags.map((t) => (

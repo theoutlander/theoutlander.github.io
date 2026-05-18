@@ -646,7 +646,6 @@ const SSRNav = () =>
 				{ href: "/about", label: "About" },
 				{ href: "/resume", label: "Résumé" },
 				{ href: "/reviews", label: "Reviews" },
-				{ href: "/kitchen", label: "The Kitchen" },
 			].map((l) => React.createElement("a", { key: l.href, href: l.href }, l.label))
 		)
 	);
@@ -691,7 +690,6 @@ const SSRFooter = () =>
 					null,
 					...[
 						["/blog", "Writing"],
-						["/kitchen", "The Kitchen"],
 						["/resume", "Résumé"],
 						["/reviews", "Reviews"],
 					].map(([href, label]) =>

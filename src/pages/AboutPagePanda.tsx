@@ -2,6 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { ABOUT_SHORT, ABOUT_SITE_DESCRIPTION, ABOUT_WORK_DESCRIPTION, ABOUT_OUTSIDE_WORK, ADVISORY_BLURB, CURRENTLY, META, PERSON } from "../data/person";
+import { COPY } from "../data/site-copy";
 
 type AboutData = {
   title: string;
@@ -23,7 +24,7 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 
       <div className="ds-page ds-page-fade">
         <section style={{ padding: "var(--gap-5) 0 var(--gap-4)" }}>
-          <SectionTag num="01" label="About" right="Seattle, WA" />
+          <SectionTag num={COPY.about.sectionNum} label={COPY.about.sectionLabel} right={PERSON.location} />
           <div style={{
             display: "grid",
             gridTemplateColumns: "minmax(0,1fr) minmax(0,1.5fr)",
@@ -51,9 +52,9 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
 
               {/* Featured work */}
               <div style={{ marginTop: "var(--gap-4)", borderTop: "1px solid var(--rule)", paddingTop: "1rem" }}>
-                <span className="ds-dateline" style={{ display: "block", marginBottom: "0.75rem" }}>Featured Work</span>
+                <span className="ds-dateline" style={{ display: "block", marginBottom: "0.75rem" }}>{COPY.about.featuredWorkLabel}</span>
                 <p style={{ fontSize: "0.95rem", color: "var(--ink-2)", margin: "0 0 0.75rem" }}>
-                  Geospatial visualization of epidemiological modeling, featured in this TED Talk by Bill Gates.
+                  {COPY.about.featuredWorkBody}
                 </p>
                 <div style={{ position: "relative", aspectRatio: "16/9", background: "var(--paper-2)", border: "1px solid var(--rule)" }}>
                   <iframe
@@ -67,21 +68,21 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
               </div>
 
               <div style={{ marginTop: "var(--gap-3)", borderTop: "1px solid var(--rule)", paddingTop: "1rem" }}>
-                <span className="ds-dateline" style={{ display: "block", marginBottom: "0.75rem" }}>Patents</span>
+                <span className="ds-dateline" style={{ display: "block", marginBottom: "0.75rem" }}>{COPY.about.patentsLabel}</span>
                 <a
                   href="https://patents.google.com/patent/US8918354B2/en"
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{ fontSize: "0.95rem", color: "var(--ink)", display: "block", marginBottom: "0.25rem" }}
                 >
-                  US 8,918,354 — Intelligent intent detection from social network messages
+                  {COPY.about.patentLink}
                 </a>
-                <span className="ds-mono" style={{ color: "var(--ink-3)" }}>Granted 2014 · Active until 2032</span>
+                <span className="ds-mono" style={{ color: "var(--ink-3)" }}>{COPY.about.patentStatus}</span>
               </div>
             </div>
 
             <div>
-              <h1 className="ds-h1" style={{ margin: "0 0 1rem" }}>About</h1>
+              <h1 className="ds-h1" style={{ margin: "0 0 1rem" }}>{COPY.about.headline}</h1>
               {aboutData.html ? (
                 <div
                   className="ds-prose"
@@ -94,9 +95,9 @@ export function AboutPagePanda({ aboutData }: AboutPageProps) {
                     {ABOUT_SHORT}
                   </p>
                   <p>{ABOUT_SITE_DESCRIPTION}</p>
-                  <h2>What I work on</h2>
+                  <h2>{COPY.about.workHeading}</h2>
                   <p>{ABOUT_WORK_DESCRIPTION} {ADVISORY_BLURB}</p>
-                  <h2>Outside of work</h2>
+                  <h2>{COPY.about.outsideHeading}</h2>
                   <p>{ABOUT_OUTSIDE_WORK}</p>
                 </div>
               )}

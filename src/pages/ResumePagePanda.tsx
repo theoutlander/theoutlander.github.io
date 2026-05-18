@@ -1,8 +1,8 @@
 import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
-import { CompanyLogo } from "../components/CompanyLogo";
 import { META, PERSON } from "../data/person";
+import { COPY } from "../data/site-copy";
 import {
   EDUCATION,
   PATENTS,
@@ -10,8 +10,6 @@ import {
   ROLES,
   SKILLS,
   SUMMARY,
-  getCompanyKey,
-  getCompanyUrl,
   withInlineLinks,
   withProjectInlineLinks,
 } from "../data/resume";
@@ -45,43 +43,19 @@ const accentTickStyle: React.CSSProperties = {
   background: "var(--accent)",
 };
 
+const companyNameStyle: React.CSSProperties = {
+  fontFamily: "var(--serif)",
+  fontSize: "1.25rem",
+  letterSpacing: "-0.01em",
+  marginTop: "0.3rem",
+};
+
 const inlineLinkProseStyle: React.CSSProperties = {
   color: "var(--ink-2)",
   fontSize: "1.02rem",
   lineHeight: 1.65,
   margin: "0.5rem 0 0.75rem",
 };
-
-function CompanyHeader({ company }: { company: string }) {
-  const url = getCompanyUrl(company);
-  const key = getCompanyKey(company);
-  const logo = (
-    <CompanyLogo
-      company={key}
-      width={company === "University of Maryland" ? "160px" : "120px"}
-    />
-  );
-  if (!url) return <div style={{ marginBottom: "0.75rem" }}>{logo}</div>;
-  return (
-    <div style={{ marginBottom: "0.75rem" }}>
-      <a
-        href={url}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Visit ${company} website`}
-        style={{
-          display: "inline-block",
-          verticalAlign: "top",
-          lineHeight: 0,
-          textDecoration: "none",
-          border: 0,
-        }}
-      >
-        {logo}
-      </a>
-    </div>
-  );
-}
 
 function TagRow({ tags }: { tags: string[] }) {
   return (
@@ -96,6 +70,9 @@ function TagRow({ tags }: { tags: string[] }) {
 }
 
 export function ResumePagePanda() {
+  const resume = COPY.resume;
+  const sections = resume.sections;
+
   return (
     <>
       <Helmet>
@@ -106,17 +83,22 @@ export function ResumePagePanda() {
 
       <div className="ds-page ds-page-fade">
         {/* Header */}
-        <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
+        <section
+          style={{
+            padding: "var(--gap-5) 0 var(--gap-3)",
+            borderBottom: "1px solid var(--ink)",
+          }}
+        >
           <SectionTag
-            num="01"
-            label="Résumé"
+            num={resume.sectionNum}
+            label={resume.sectionLabel}
             right={
               <a
-                href="/assets/documents/resume-nick-karnik.pdf"
+                href={resume.pdfHref}
                 target="_blank"
-                rel="noopener"
+                rel="noopener noreferrer"
               >
-                Download PDF →
+                {resume.pdfLink}
               </a>
             }
           />
@@ -129,21 +111,32 @@ export function ResumePagePanda() {
             }}
           >
             <div>
-              <h1 className="ds-display" style={{ margin: 0 }}>
-                Nick Karnik
+              <h1 className="ds-display" style={{ margin: "0 0 0.5rem", letterSpacing: "-0.025em" }}>
+                {PERSON.name}
               </h1>
+              <p
+                className="ds-mono"
+                style={{
+                  margin: 0,
+                  color: "var(--ink-2)",
+                  fontSize: "0.85rem",
+                  letterSpacing: "0.04em",
+                }}
+              >
+                {resume.subtitle}
+              </p>
             </div>
             <div style={{ textAlign: "right" }}>
               <div className="ds-mono" style={{ color: "var(--ink-2)" }}>
                 <a
-                  href="mailto:nick@karnik.io"
+                  href={`mailto:${PERSON.email}`}
                   style={{ color: "inherit", textDecoration: "none", borderBottom: "1px solid var(--rule)" }}
                 >
-                  nick@karnik.io
+                  {PERSON.email}
                 </a>
               </div>
               <div className="ds-mono" style={{ color: "var(--ink-3)" }}>
-                Seattle, WA
+                {PERSON.location}
               </div>
             </div>
           </div>
@@ -157,7 +150,7 @@ export function ResumePagePanda() {
           }}
         >
           <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-2)" }}>
-            <span className="ds-num">§ 02</span>Summary
+            <span className="ds-num">§ 02</span>{sections.summary}
           </h2>
           <p
             className="ds-lede"
@@ -170,7 +163,7 @@ export function ResumePagePanda() {
         {/* Experience */}
         <section style={{ padding: "var(--gap-3) 0 var(--gap-5)" }}>
           <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-3)" }}>
-            <span className="ds-num">§ 03</span>Experience
+            <span className="ds-num">§ 03</span>{sections.experience}
           </h2>
           {ROLES.map((r, i) => (
             <div
@@ -186,21 +179,9 @@ export function ResumePagePanda() {
               <div>
                 <div className="ds-mono" style={datelineStyle}>
                   {r.dates}
-                  {r.current ? "  · Current" : ""}
+                  {r.current ? `  · ${resume.currentLabel}` : ""}
                 </div>
-                <div style={{ marginTop: "0.6rem" }}>
-                  <CompanyHeader company={r.co} />
-                </div>
-                <div
-                  style={{
-                    fontFamily: "var(--serif)",
-                    fontSize: "1.25rem",
-                    letterSpacing: "-0.01em",
-                    marginTop: "0.2rem",
-                  }}
-                >
-                  {r.co}
-                </div>
+                <div style={companyNameStyle}>{r.co}</div>
               </div>
               <div style={{ paddingLeft: "1.25rem", position: "relative" }}>
                 <span style={accentTickStyle} />
@@ -227,7 +208,7 @@ export function ResumePagePanda() {
           }}
         >
           <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-3)" }}>
-            <span className="ds-num">§ 04</span>Notable projects
+            <span className="ds-num">§ 04</span>{sections.projects}
           </h2>
           {PROJECTS.map((p, i) => (
             <div
@@ -244,15 +225,11 @@ export function ResumePagePanda() {
                 <div className="ds-mono" style={datelineStyle}>
                   {p.dates}
                 </div>
-                <div style={{ marginTop: "0.6rem" }}>
-                  <CompanyHeader company={p.company} />
-                </div>
                 <div
                   style={{
-                    fontFamily: "var(--serif)",
+                    ...companyNameStyle,
                     fontSize: "1.05rem",
                     color: "var(--ink-3)",
-                    marginTop: "0.2rem",
                   }}
                 >
                   {p.company}
@@ -298,23 +275,8 @@ export function ResumePagePanda() {
         >
           <div>
             <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-2)" }}>
-              <span className="ds-num">§ 05</span>Education
+              <span className="ds-num">§ 05</span>{sections.education}
             </h2>
-            <a
-              href={EDUCATION.institutionHref}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit ${EDUCATION.institution} website`}
-              style={{
-                display: "inline-block",
-                lineHeight: 0,
-                marginBottom: "0.75rem",
-                textDecoration: "none",
-                border: 0,
-              }}
-            >
-              <CompanyLogo company={EDUCATION.logoKey} width="160px" />
-            </a>
             <h3
               style={{
                 fontFamily: "var(--serif)",
@@ -323,7 +285,14 @@ export function ResumePagePanda() {
                 letterSpacing: "-0.005em",
               }}
             >
-              {EDUCATION.institution}
+              <a
+                href={EDUCATION.institutionHref}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "inherit", textDecoration: "none", borderBottom: "1px solid var(--rule)" }}
+              >
+                {EDUCATION.institution}
+              </a>
             </h3>
             <p style={{ margin: "0 0 0.25rem", color: "var(--ink-2)", fontSize: "0.95rem" }}>
               {EDUCATION.degree}
@@ -340,7 +309,7 @@ export function ResumePagePanda() {
 
           <div>
             <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-2)" }}>
-              <span className="ds-num">§ 06</span>Patents
+              <span className="ds-num">§ 06</span>{sections.patents}
             </h2>
             {PATENTS.map((p) => (
               <div key={p.id} style={{ marginBottom: "0.75rem" }}>
@@ -372,7 +341,7 @@ export function ResumePagePanda() {
 
           <div>
             <h2 className="ds-eyebrow" style={{ display: "block", marginBottom: "var(--gap-2)" }}>
-              <span className="ds-num">§ 07</span>Technical skills
+              <span className="ds-num">§ 07</span>{sections.skills}
             </h2>
             <div style={{ display: "flex", flexDirection: "column", gap: "0.9rem" }}>
               {Object.entries(SKILLS).map(([group, items]) => (

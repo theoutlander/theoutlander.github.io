@@ -1,0 +1,97 @@
+{
+	"nav": {
+		"writing": "Writing",
+		"about": "About",
+		"resume": "Résumé",
+		"reviews": "Reviews"
+	},
+	"home": {
+		"eyebrowSection": "§ 00",
+		"headlineLine1": "Nick",
+		"headlineLine2": "Karnik",
+		"ctaPrimary": "Read the writing →",
+		"ctaSecondary": "The Résumé",
+		"writingSectionNum": "01",
+		"writingHeading": "Recent writing",
+		"writingLink": "All essays →",
+		"writingEmpty": "No posts yet.",
+		"workSectionNum": "02",
+		"workHeading": "What I work on"
+	},
+	"blog": {
+		"sectionNum": "01",
+		"sectionLabel": "Writing",
+		"sectionRightSuffix": "essays · since 2018",
+		"headline": "Writing about what I know, from someone who built it.",
+		"lede": "No schedule, no cadence. Just things worth writing down.",
+		"filterAll": "All"
+	},
+	"about": {
+		"sectionNum": "01",
+		"sectionLabel": "About",
+		"headline": "About",
+		"featuredWorkLabel": "Featured Work",
+		"featuredWorkBody": "Geospatial visualization of epidemiological modeling, featured in this TED Talk by Bill Gates.",
+		"patentsLabel": "Patents",
+		"patentLink": "US 8,918,354 — Intelligent intent detection from social network messages",
+		"patentStatus": "Granted 2014 · Active until 2032",
+		"workHeading": "What I work on",
+		"outsideHeading": "Outside of work"
+	},
+	"resume": {
+		"sectionNum": "01",
+		"sectionLabel": "Résumé",
+		"pdfLink": "Download PDF →",
+		"pdfHref": "/assets/documents/resume-nick-karnik.pdf",
+		"subtitle": "Engineer · Builder · Dad of three",
+		"currentLabel": "Current",
+		"sections": {
+			"summary": "Summary",
+			"experience": "Experience",
+			"projects": "Notable projects",
+			"education": "Education",
+			"patents": "Patents",
+			"skills": "Technical skills"
+		}
+	},
+	"reviews": {
+		"sectionNum": "01",
+		"sectionLabel": "Mentoring reviews",
+		"sectionRight": "via Codementor",
+		"headlineBefore": "What people say after ",
+		"headlineEmphasis": "we actually work together.",
+		"lede": "Reviews from mentoring sessions on Codementor. Unedited.",
+		"empty": "No reviews yet."
+	},
+	"kitchen": {
+		"sectionNum": "01",
+		"sectionLabel": "The Kitchen",
+		"sectionRight": "A weekend logbook",
+		"headlinePrefix": "The ",
+		"headlineEmphasis": "Kitchen",
+		"lede": "A logbook of dinners, bread, and cocktails. Written like a software engineer would — measurements, ratios, and notes from each iteration.",
+		"comingSoon": "Coming soon.",
+		"categories": ["All", "Cooking", "Baking", "Cocktails"]
+	},
+	"calendar": {
+		"sectionNum": "01",
+		"sectionLabel": "Schedule",
+		"sectionRight": "via Google Calendar",
+		"headline": "Schedule a call",
+		"ledePrefix": "Pick a time that works for you. Prefer a new tab?",
+		"ledeLink": "Open in Google Calendar",
+		"loading": "Loading calendar…",
+		"iframeTitle": "Schedule time with Nick Karnik"
+	},
+	"footer": {
+		"elsewhereHeading": "Elsewhere",
+		"newsletterHeading": "The Newsletter",
+		"newsletterLede": "A short letter, once a fortnight. On building teams, building software, and the occasional braise.",
+		"newsletterPlaceholder": "you@domain.com",
+		"newsletterCta": "Subscribe →",
+		"indexHeading": "Index",
+		"schedule": "Schedule",
+		"colophonRights": "© MMXXVI · Nick Karnik · All rights reserved",
+		"colophonType": "Set in Newsreader & JetBrains Mono"
+	}
+}
