@@ -249,6 +249,17 @@ html, body {
   padding: 0 var(--gap-4);
 }
 
+/* Links without underline (nav, index rows, blog chrome) */
+a.ds-plain,
+.ds-plain {
+  text-decoration: none;
+  border-bottom: none;
+}
+a.ds-plain:hover,
+.ds-plain:hover {
+  border-bottom: none;
+}
+
 .ds-rule        { border-top: 1px solid var(--rule); }
 .ds-rule-thick  { border-top: 2px solid var(--ink); }
 .ds-rule-accent { border-top: 1px solid var(--accent); }
@@ -453,6 +464,110 @@ html, body {
   padding: 0.1em 0.35em;
   border-radius: 2px;
 }
+.ds-prose pre {
+  font-family: var(--mono);
+  font-size: 0.86em;
+  background: var(--paper-2);
+  border: 1px solid var(--rule);
+  padding: 1rem 1.1rem;
+  overflow-x: auto;
+  margin: 1.5em 0;
+  line-height: 1.7;
+}
+.ds-prose pre code {
+  background: none;
+  padding: 0;
+  border-radius: 0;
+}
+.ds-prose a {
+  color: inherit;
+  border-bottom-color: var(--rule);
+}
+.ds-prose a:hover {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.ds-prose ul,
+.ds-prose ol {
+  margin: 0 0 1.25em;
+  padding-left: 1.4em;
+}
+.ds-prose li { margin-bottom: 0.35em; }
+.ds-prose sup.fn {
+  font-family: var(--mono);
+  font-size: 0.6em;
+  color: var(--accent);
+  vertical-align: super;
+  padding: 0 0.1em;
+}
+.ds-prose img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 1.5em 0;
+}
+
+/* blog listing + article layout */
+.ds-blog-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: var(--gap-2);
+}
+.ds-index-dek {
+  color: var(--ink-2);
+  font-size: 0.95rem;
+  display: block;
+  margin-top: 0.35rem;
+}
+.ds-blog-cover {
+  border: 1px solid var(--rule);
+  overflow: hidden;
+  background: var(--paper-2);
+}
+.ds-blog-cover img {
+  width: 100%;
+  max-height: 28rem;
+  object-fit: cover;
+  display: block;
+}
+.ds-blog-topics {
+  margin-top: 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.ds-blog-topics .ds-tag {
+  cursor: default;
+}
+.ds-blog-topics .ds-tag:hover,
+.ds-blog-topics .ds-tag.active {
+  background: transparent;
+  color: var(--ink-2);
+  border-color: var(--rule);
+}
+.ds-blog-nav {
+  padding: var(--gap-4) 0;
+  border-top: 1px solid var(--ink);
+}
+.ds-blog-nav-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap-3);
+}
+.ds-blog-nav-next { text-align: right; }
+.ds-blog-nav-title {
+  margin: 0.5rem 0 0;
+  letter-spacing: -0.005em;
+}
+.ds-blog-nav-title a {
+  color: inherit;
+  text-decoration: none;
+  border-bottom: none;
+}
+.ds-blog-nav-title a:hover {
+  color: var(--accent);
+}
 
 /* index rows (blog/recipes) */
 .ds-index-row {
@@ -497,16 +612,24 @@ html, body {
    nav
    ========================================================================= */
 
+/* Sticky shell: full-width bar so content scrolls beneath */
+.ds-site-nav-bar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: color-mix(in oklch, var(--paper) 92%, transparent);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--rule);
+}
+
 .ds-site-nav {
   display: flex;
   align-items: center;
+  max-width: var(--col-page);
+  width: 100%;
+  margin: 0 auto;
   padding: var(--gap-3) var(--gap-4);
-  border-bottom: 1px solid var(--rule);
-  position: sticky;
-  top: 0;
-  background: color-mix(in oklch, var(--paper) 92%, transparent);
-  backdrop-filter: blur(8px);
-  z-index: 50;
 }
 .ds-site-nav .ds-brand-link {
   display: inline-flex;

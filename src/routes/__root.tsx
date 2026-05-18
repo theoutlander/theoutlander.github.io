@@ -5,7 +5,9 @@ import { SiteFooter } from '../components/design/SiteFooter';
 export const Route = createRootRoute({
   component: () => (
     <>
-      <SiteNav />
+      <header className="ds-site-nav-bar">
+        <SiteNav />
+      </header>
       <main>
         <Outlet />
       </main>

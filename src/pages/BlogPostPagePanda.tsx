@@ -38,12 +38,12 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
         >
           <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Back to writing</span>
         </a>
-        <motion className="ds-rule-thick" style={{ paddingTop: "1rem" }}>
+        <div className="ds-rule-thick" style={{ paddingTop: "1rem" }}>
           <span className="ds-eyebrow">
             <span className="ds-num">No. {getPostNumber(posts, post.id)}</span>
             {category} · {formatBlogDate(post.date)} · {formatReadTime(readTime)}
           </span>
-        </motion>
+        </div>
         <h1
           className="ds-h1"
           style={{ margin: "1rem 0 1rem", letterSpacing: "-0.02em", maxWidth: "22ch" }}
@@ -59,7 +59,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
         <section style={{ padding: "var(--gap-3) 0" }}>
           <div className="ds-blog-cover">
             <img src={post.cover} alt="" />
-          </motion>
+          </div>
         </section>
       )}
 
@@ -78,10 +78,10 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
                     {tag}
                   </span>
                 ))}
-              </motion>
+              </div>
             </aside>
           )}
-        </motion>
+        </div>
       </section>
 
       {(prevPost || nextPost) && (
@@ -93,7 +93,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
                 <h3 className="ds-h3 ds-blog-nav-title">
                   <a href={`/blog/${prevPost.slug}`}>{prevPost.title}</a>
                 </h3>
-              </motion>
+              </div>
             ) : (
               <div />
             )}
@@ -103,13 +103,13 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
                 <h3 className="ds-h3 ds-blog-nav-title">
                   <a href={`/blog/${nextPost.slug}`}>{nextPost.title}</a>
                 </h3>
-              </motion>
+              </div>
             ) : (
               <div />
             )}
-          </motion>
+          </div>
         </section>
       )}
-    </motion>
+    </div>
   );
 }

@@ -712,7 +712,7 @@ const renderPageToHTML = (
 	const element = React.createElement(
 		React.Fragment,
 		null,
-		React.createElement(SSRNav),
+		React.createElement("header", { className: "ds-site-nav-bar" }, React.createElement(SSRNav)),
 		React.createElement("main", null, React.createElement(PageComponent, props)),
 		React.createElement(SSRFooter)
 	);
