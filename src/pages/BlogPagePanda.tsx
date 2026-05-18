@@ -2,6 +2,13 @@ import React, { useState } from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { Post } from "../types/blog";
+import {
+  formatBlogDate,
+  formatReadTime,
+  getPostNumber,
+  postCategoryLabel,
+  postReadMinutes,
+} from "../lib/blog-format";
 
 type BlogPageProps = {
   posts: Post[];
@@ -9,23 +16,24 @@ type BlogPageProps = {
   filterCategory?: string;
 };
 
-function formatDate(dateStr: string) {
-  try {
-    return new Date(dateStr).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
-  } catch {
-    return dateStr;
-  }
-}
+export function BlogPagePanda({ posts, filterTag: initialFilter, filterCategory }: BlogPageProps) {
+  const initial = initialFilter ?? filterCategory ?? "All";
+  const [filter, setFilter] = useState(initial);
 
-export function BlogPagePanda({ posts, filterTag: initialFilter }: BlogPageProps) {
-  const [filter, setFilter] = useState(initialFilter ?? "All");
+  const categories = Array.from(
+    new Set(posts.map((p) => postCategoryLabel(p)).filter(Boolean))
+  ).sort();
+  const tags = ["All", ...categories];
 
-  const allTags = ["All", ...Array.from(new Set(posts.flatMap(p => p.tags ?? []).filter(Boolean)))];
-  const tags = allTags.length > 2 ? allTags : ["All", "Leadership", "AI", "Product", "Engineering", "Craft", "Hiring", "DX", "Kitchen"];
-
-  const filtered = filter === "All"
-    ? posts
-    : posts.filter(p => p.tags?.includes(filter) || p.category === filter);
+  const filtered =
+    filter === "All"
+      ? posts
+      : posts.filter(
+          (p) =>
+            p.category === filter ||
+            p.tags?.includes(filter) ||
+            postCategoryLabel(p) === filter
+        );
 
   return (
     <>
@@ -48,10 +56,11 @@ export function BlogPagePanda({ posts, filterTag: initialFilter }: BlogPageProps
           <p className="ds-lede" style={{ maxWidth: "48ch", margin: "0 0 var(--gap-4)" }}>
             No schedule, no cadence. Just things worth writing down.
           </p>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem", marginBottom: "var(--gap-2)" }}>
-            {tags.map(t => (
+          <div className="ds-blog-filters">
+            {tags.map((t) => (
               <button
                 key={t}
+                type="button"
                 onClick={() => setFilter(t)}
                 className={`ds-tag${filter === t ? " active" : ""}`}
               >
@@ -62,22 +71,22 @@ export function BlogPagePanda({ posts, filterTag: initialFilter }: BlogPageProps
         </section>
 
         <section>
-          {filtered.map((p, i) => (
-            <a
-              key={p.id}
-              href={`/blog/${p.slug}`}
-              className="ds-index-row"
-            >
-              <span className="ds-num">No. {String(i + 1).padStart(3, "0")}</span>
+          {filtered.map((p) => (
+            <a key={p.id} href={`/blog/${p.slug}`} className="ds-index-row">
+              <span className="ds-num">No. {getPostNumber(posts, p.id)}</span>
               <span>
                 <span className="ds-title" style={{ display: "block" }}>{p.title}</span>
-                <span style={{ color: "var(--ink-2)", fontSize: "0.95rem", display: "block", marginTop: "0.35rem" }}>{p.excerpt}</span>
+                <span className="ds-index-dek">{p.excerpt}</span>
               </span>
-              <span className="ds-meta">{formatDate(p.date)}<br />{p.category ?? (p.tags?.[0] ?? "")}</span>
-              <span className="ds-meta ds-read-time">—</span>
+              <span className="ds-meta">
+                {formatBlogDate(p.date)}
+                <br />
+                {postCategoryLabel(p)}
+              </span>
+              <span className="ds-meta ds-read-time">{formatReadTime(postReadMinutes(p), false)}</span>
             </a>
           ))}
-          <div style={{ borderTop: "1px solid var(--rule)" }} />
+          <div className="ds-rule" />
         </section>
       </div>
     </>
