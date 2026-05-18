@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Helmet } from "../components/seo/HelmetShim";
-import { Link } from "@tanstack/react-router";
 import { SectionTag } from "../components/design/SectionTag";
 import { COPY } from "../data/site-copy";
 import { RECIPES } from "../data/recipes";
@@ -56,10 +55,9 @@ export function KitchenPagePanda() {
 				<section style={{ padding: "var(--gap-3) 0 var(--gap-5)" }}>
 					<div className="ds-recipe-grid">
 						{list.map((r) => (
-							<Link
+							<a
 								key={r.id}
-								to="/kitchen/$slug"
-								params={{ slug: r.slug }}
+								href={`/kitchen/${r.slug}`}
 								className="ds-plain ds-recipe-card"
 							>
 								<div
@@ -77,7 +75,7 @@ export function KitchenPagePanda() {
 								</div>
 								<h3 className="ds-recipe-card-title">{r.title}</h3>
 								<p className="ds-recipe-card-dek">{r.dek}</p>
-							</Link>
+							</a>
 						))}
 					</div>
 				</section>

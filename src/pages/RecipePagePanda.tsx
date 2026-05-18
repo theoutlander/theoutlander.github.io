@@ -1,6 +1,5 @@
 import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
-import { Link } from "@tanstack/react-router";
 import type { Recipe } from "../data/recipes";
 import { COPY } from "../data/site-copy";
 import { META, PERSON } from "../data/person";
@@ -70,9 +69,9 @@ export function RecipePagePanda({ recipe }: RecipePageProps) {
 
 			<div className="ds-page ds-page-fade" style={{ maxWidth: "70rem" }}>
 				<section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
-					<Link to="/kitchen" className="ds-plain">
+					<a href="/kitchen" className="ds-plain">
 						<span className="ds-mono" style={{ color: "var(--ink-3)" }}>{kitchen.backLink}</span>
-					</Link>
+					</a>
 					<div style={{ borderTop: "2px solid var(--ink)", marginTop: "1rem", paddingTop: "1rem" }}>
 						<span className="ds-eyebrow">
 							<span className="ds-num">No. {recipe.num}</span>
