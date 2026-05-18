@@ -6,7 +6,9 @@
 		"siteUrl": "https://nick.karnik.io",
 		"estYear": 1981,
 		"tagline": "Engineering · Writing · Cooking",
-		"profileImage": "/assets/images/profile/nick-karnik.jpeg"
+		"profileImage": "/assets/images/profile/nick-karnik.jpeg",
+		"heroImage": "/assets/images/profile/nick-karnik-hero.jpg",
+		"aboutImage": "/assets/images/profile/nick-karnik-about.jpg"
 	},
 	"socialLinks": {
 		"github": "https://github.com/theoutlander",
