@@ -45,7 +45,7 @@ export function AboutPagePanda() {
 									<SecondaryMark size={13} />
 								</div>
 							</div>
-						</motion.div>
+						</div>
 
 						<div className="ds-prose" style={{ maxWidth: "none" }}>
 							<h1 className="ds-h1" style={{ margin: "0 0 1rem", letterSpacing: "-0.02em" }}>
@@ -57,8 +57,8 @@ export function AboutPagePanda() {
 							<p>{about.workBody}</p>
 							<h2>{about.outsideHeading}</h2>
 							<p>{about.outsideBody}</p>
-						</motion.div>
-					</motion.div>
+						</div>
+					</div>
 				</section>
 
 				<section className="ds-stats-strip" style={{ margin: "0 0 var(--gap-4)" }}>
@@ -66,10 +66,10 @@ export function AboutPagePanda() {
 						<div key={i} className="ds-stat" data-first={i === 0 || undefined}>
 							<span className="ds-stat-num">{s.n}</span>
 							<span className="ds-stat-label">{s.l}</span>
-						</motion.div>
+						</div>
 					))}
 				</section>
-			</motion.div>
+			</div>
 		</>
 	);
 }

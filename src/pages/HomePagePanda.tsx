@@ -50,16 +50,6 @@ export function HomePagePanda({ posts }: HomePageProps) {
           </div>
         </section>
 
-        {/* Stats strip */}
-        <section className="ds-stats-strip">
-          {STATS.map((s, i) => (
-            <div key={i} className="ds-stat" data-first={i === 0 || undefined}>
-              <span className="ds-stat-num">{s.n}</span>
-              <span className="ds-stat-label">{s.l}</span>
-            </div>
-          ))}
-        </section>
-
         {/* Recent writing */}
         <section style={{ padding: "var(--gap-5) 0" }}>
           <SectionTag
