@@ -2,7 +2,7 @@ import React from "react";
 import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import type { BlogPost } from "../types/blog";
-import { ADVISORY_BLURB, HERO_LEDE, META, PERSON, WORK_BLOCKS } from "../data/person";
+import { HERO_LEDE, META, PERSON, WORK_BLOCKS } from "../data/person";
 import { COPY } from "../data/site-copy";
 import { formatBlogDate, postCategoryLabel, postReadMinutes } from "../lib/blog-format";
 
@@ -87,21 +87,18 @@ export function HomePagePanda({ posts }: HomePageProps) {
         {/* Work */}
         <section style={{ padding: "var(--gap-4) 0 var(--gap-5)" }}>
           <SectionTag num={COPY.home.workSectionNum} label={COPY.home.workHeading} />
-          <div className="ds-with-margin">
-            <div className="ds-work-grid">
-              {WORK_BLOCKS.map((b, i) => (
-                <div key={i}>
-                  <span className="ds-mono" style={{ color: "var(--accent)" }}>
-                    0{i + 1} —
-                  </span>
-                  <h3 className="ds-h3" style={{ margin: "0.4rem 0 0.6rem", letterSpacing: "-0.005em" }}>
-                    {b.t}
-                  </h3>
-                  <p style={{ color: "var(--ink-2)", fontSize: "0.95rem", margin: 0 }}>{b.d}</p>
-                </div>
-              ))}
-            </div>
-            <aside className="ds-margin-note">{ADVISORY_BLURB}</aside>
+          <div className="ds-work-grid">
+            {WORK_BLOCKS.map((b, i) => (
+              <div key={i}>
+                <span className="ds-mono" style={{ color: "var(--accent)" }}>
+                  0{i + 1} —
+                </span>
+                <h3 className="ds-h3" style={{ margin: "0.4rem 0 0.6rem", letterSpacing: "-0.005em" }}>
+                  {b.t}
+                </h3>
+                <p style={{ color: "var(--ink-2)", fontSize: "0.95rem", margin: 0 }}>{b.d}</p>
+              </div>
+            ))}
           </div>
         </section>
       </div>

@@ -32,7 +32,7 @@ const getCompanyKey = (companyName: string): string => {
 		"Tableau (Salesforce)": "tableau",
 		"Y Combinator": "ycombinator",
 		RoomToday: "roomtoday",
-		"COMPASS Technologies": "compass-technologies",
+		"Compass Technologies": "compass-technologies",
 		"Blue Hippo Funding": "bluehippo-funding",
 		"The Globalist": "theglobalist",
 		"Meds Publishing": "meds-publishing",
@@ -326,7 +326,7 @@ const experience: Exp[] = [
 	},
 	{
 		role: "Lead Software Engineer",
-		company: "COMPASS Technologies",
+		company: "Compass Technologies",
 		dates: "Nov 2005 – Aug 2006",
 		blurb:
 			"Architected and developed next-generation Access Control Security System using C++ and C#. Optimized real-time alarm processing for distributed systems. Led team expansion and mentored junior developers in TCP/IP networking and security protocols.",

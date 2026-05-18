@@ -16,7 +16,6 @@ export const PERSON = personData.person;
 export const SOCIAL_LINKS = personData.socialLinks;
 export const CURRENTLY = personData.currently;
 export const HERO_LEDE = personData.heroLede;
-export const ADVISORY_BLURB = personData.advisoryBlurb;
 export const STATS = personData.stats;
 export const WORK_BLOCKS = personData.workBlocks;
 export const ABOUT_HTML = personData.about.html;
