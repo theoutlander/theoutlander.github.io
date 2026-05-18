@@ -196,8 +196,16 @@ function soundForTool(type) {
 }
 
 // ── Constants ─────────────────────────────────────────────────
-const CELL = 20;
+const CELL = 40;
 let COLS = 0, ROWS = 0;
+
+// Multi-cell block grid footprint (w cols × h rows)
+const BLOCK_SIZE = {
+  door:    {w: 1, h: 2},
+  window:  {w: 1, h: 2},
+  balcony: {w: 3, h: 1},
+};
+function blockDims(type) { return BLOCK_SIZE[type] || {w: 1, h: 1}; }
 
 // ── Paint colours (18 swatches) ───────────────────────────────
 const PALETTE = [
@@ -305,8 +313,10 @@ function drawSky() {
 }
 
 // ── Block drawing ──────────────────────────────────────────────
-function drawBlock(ctx, type, color, x, y, size) {
-  const C = size;
+// bw/bh = pixel width/height of the block (may span multiple cells)
+function drawBlock(ctx, type, color, x, y, bw, bh) {
+  const C = bw;   // width  (= CELL for single-cell blocks)
+  const H = bh;   // height (= CELL for single-cell blocks)
   ctx.save();
   ctx.translate(x, y);
 
@@ -358,44 +368,76 @@ function drawBlock(ctx, type, color, x, y, size) {
       break;
     }
     case 'window': {
-      // frame
+      // dark frame
       ctx.fillStyle = '#1a0f2e';
-      ctx.fillRect(0, 0, C, C);
-      // glass
+      ctx.fillRect(0, 0, C, H);
+      // arch at top of the glass pane
+      const wp = 4, wr = (C - wp*2) / 2;
       ctx.fillStyle = color;
-      ctx.fillRect(2, 2, C-4, C-4);
-      // cross dividers
-      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.lineWidth = 1.5;
-      ctx.beginPath(); ctx.moveTo(C/2, 2); ctx.lineTo(C/2, C-2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(2, C/2); ctx.lineTo(C-2, C/2); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(wp, H - wp);
+      ctx.lineTo(wp, wp + wr);
+      ctx.arc(wp + wr, wp + wr, wr, Math.PI, 0);
+      ctx.lineTo(C - wp, H - wp);
+      ctx.closePath();
+      ctx.fill();
+      // horizontal divider between upper arch and lower pane
+      const midY = H * 0.45;
+      ctx.fillStyle = '#1a0f2e';
+      ctx.fillRect(wp, midY - 2, C - wp*2, 4);
+      // lower rectangular pane
+      ctx.fillStyle = color;
+      ctx.fillRect(wp, midY + 2, C - wp*2, H - midY - wp - 2);
+      // vertical divider
+      ctx.fillStyle = '#1a0f2e';
+      ctx.fillRect(C/2 - 2, midY + 2, 4, H - midY - wp - 2);
       // shine
       ctx.fillStyle = 'rgba(255,255,255,0.35)';
-      ctx.fillRect(3, 3, 4, 3);
-      ctx.fillRect(3, 3, 2, 6);
+      ctx.fillRect(wp + 3, wp + 3, 5, 3);
+      ctx.fillRect(wp + 3, wp + 3, 2, 8);
       break;
     }
     case 'door': {
-      // door body
+      const dp = 4;
+      const archR = (C - dp*2) / 2;
+      // door outline with rounded arch at top
       ctx.fillStyle = color;
-      ctx.fillRect(0, 0, C, C);
-      // panels
-      ctx.fillStyle = 'rgba(0,0,0,0.22)';
-      ctx.fillRect(2, 2, C-4, C/2 - 3);
-      ctx.fillRect(2, C/2, C-4, C/2 - 2);
-      // panel borders
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)';
-      ctx.lineWidth = 0.5;
-      ctx.strokeRect(2, 2, C-4, C/2-3);
-      ctx.strokeRect(2, C/2, C-4, C/2-2);
+      ctx.beginPath();
+      ctx.moveTo(0, H);
+      ctx.lineTo(0, dp + archR);
+      ctx.arc(dp + archR, dp + archR, archR, Math.PI, 0);
+      ctx.lineTo(C, H);
+      ctx.closePath();
+      ctx.fill();
+      // arch window panel
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.beginPath();
+      const aip = dp + 5;
+      const airInner = archR - 5;
+      ctx.moveTo(aip, H * 0.48);
+      ctx.lineTo(aip, aip + airInner);
+      ctx.arc(aip + airInner, aip + airInner, airInner, Math.PI, 0);
+      ctx.lineTo(C - aip, H * 0.48);
+      ctx.closePath();
+      ctx.fill();
+      // lower rectangular panel
+      const lpTop = H * 0.5;
+      ctx.fillStyle = 'rgba(0,0,0,0.18)';
+      ctx.fillRect(dp + 3, lpTop, C - (dp+3)*2, H - lpTop - dp);
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 0.75;
+      ctx.strokeRect(dp + 3, lpTop, C - (dp+3)*2, H - lpTop - dp);
       // gold knob
       ctx.beginPath();
-      ctx.arc(C - 5, C * 0.62, 1.8, 0, Math.PI*2);
+      ctx.arc(C - dp - 5, H * 0.72, 3, 0, Math.PI*2);
       ctx.fillStyle = '#ffe14d';
       ctx.fill();
+      // step / threshold
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(0, H - 3, C, 3);
       // top highlight
-      ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      ctx.fillRect(0, 0, C, 1.5);
+      ctx.fillStyle = 'rgba(255,255,255,0.09)';
+      ctx.fillRect(0, 0, C, 2);
       break;
     }
     case 'roofF': {
@@ -478,19 +520,22 @@ function drawBlock(ctx, type, color, x, y, size) {
       break;
     }
     case 'balcony': {
-      // semi-transparent fill
-      ctx.fillStyle = 'rgba(255,255,255,0.07)';
-      ctx.fillRect(0, 0, C, C);
-      // top and bottom rails
+      // floor slab
+      ctx.fillStyle = 'rgba(255,255,255,0.06)';
+      ctx.fillRect(0, H * 0.7, C, H * 0.3);
+      // top and bottom rails spanning full width
       ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, 3); ctx.lineTo(C, 3); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, H * 0.68); ctx.lineTo(C, H * 0.68); ctx.stroke();
+      // vertical balusters every 8px
       ctx.lineWidth = 2;
-      ctx.beginPath(); ctx.moveTo(0, 1); ctx.lineTo(C, 1); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, C-1); ctx.lineTo(C, C-1); ctx.stroke();
-      // vertical posts every 4px
-      ctx.lineWidth = 1;
-      for (let xx = 2; xx < C; xx += 4) {
-        ctx.beginPath(); ctx.moveTo(xx, 1); ctx.lineTo(xx, C-1); ctx.stroke();
+      for (let xx = 4; xx <= C - 4; xx += 8) {
+        ctx.beginPath(); ctx.moveTo(xx, 3); ctx.lineTo(xx, H * 0.68); ctx.stroke();
       }
+      // floor edge highlight
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(0, H * 0.7, C, 2);
       break;
     }
   }
@@ -504,9 +549,9 @@ function drawAll() {
   for (let r = 0; r < ROWS; r++) {
     for (let c = 0; c < COLS; c++) {
       const cell = grid[r] && grid[r][c];
-      if (cell) {
-        drawBlock(gameCtx, cell.type, cell.color, c * CELL, r * CELL, CELL);
-      }
+      if (!cell || cell._ref) continue; // refs are drawn by their master
+      const {w, h} = blockDims(cell.type);
+      drawBlock(gameCtx, cell.type, cell.color, c * CELL, r * CELL, w * CELL, h * CELL);
     }
   }
 }
@@ -557,8 +602,12 @@ function floodFill(startR, startC, newColor) {
     if (visited.has(key)) continue;
     visited.add(key);
     const cell = grid[r] && grid[r][c];
-    if (!cell || cell.type !== targetType || cell.color !== targetColor) continue;
-    grid[r][c] = {type: cell.type, color: newColor};
+    if (!cell) continue;
+    // resolve ref to master so we match on the real type
+    const ctype = cell._ref ? (grid[cell._masterR][cell._masterC] || cell).type : cell.type;
+    const ccolor = cell.color;
+    if (ctype !== targetType || ccolor !== targetColor) continue;
+    grid[r][c] = {...cell, color: newColor};
     if (r > 0)        stack.push([r-1, c]);
     if (r < ROWS-1)   stack.push([r+1, c]);
     if (c > 0)        stack.push([r, c-1]);
@@ -568,18 +617,55 @@ function floodFill(startR, startC, newColor) {
   soundForTool('paint');
 }
 
+// ── Erase helpers ──────────────────────────────────────────────
+function eraseMasterAt(mr, mc) {
+  const master = grid[mr] && grid[mr][mc];
+  if (!master) return;
+  const {w, h} = blockDims(master.type);
+  for (let dr = 0; dr < h; dr++)
+    for (let dc = 0; dc < w; dc++)
+      if (grid[mr+dr]) grid[mr+dr][mc+dc] = null;
+}
+function eraseCell(r, c) {
+  const cell = grid[r] && grid[r][c];
+  if (!cell) return;
+  if (cell._ref) eraseMasterAt(cell._masterR, cell._masterC);
+  else eraseMasterAt(r, c);
+}
+
 // ── Place / erase ──────────────────────────────────────────────
 function placeAt(r, c, noSnapshot, silent) {
   if (r < 0 || r >= ROWS || c < 0 || c >= COLS) return;
   if (!noSnapshot) snapshot();
+
   if (activeTool === 'eraser') {
-    if (!grid[r][c]) return; // nothing to erase
-    grid[r][c] = null;
+    if (!grid[r][c]) return;
+    eraseCell(r, c);
     if (!silent) soundForTool('eraser');
   } else if (activeTool === 'paint') {
-    if (grid[r][c]) floodFill(r, c, activeColor);
+    // resolve ref → master before flood fill
+    const cell = grid[r][c];
+    if (cell) {
+      const [mr, mc] = cell._ref ? [cell._masterR, cell._masterC] : [r, c];
+      floodFill(mr, mc, activeColor);
+    }
   } else {
+    const {w, h} = blockDims(activeTool);
+    // bounds check for multi-cell blocks
+    if (r + h - 1 >= ROWS || c + w - 1 >= COLS) return;
+    // erase anything already occupying the footprint
+    for (let dr = 0; dr < h; dr++)
+      for (let dc = 0; dc < w; dc++)
+        eraseCell(r + dr, c + dc);
+    // write master cell
     grid[r][c] = {type: activeTool, color: activeColor};
+    // write ref cells for multi-cell blocks
+    for (let dr = 0; dr < h; dr++) {
+      for (let dc = 0; dc < w; dc++) {
+        if (dr === 0 && dc === 0) continue;
+        grid[r+dr][c+dc] = {type: activeTool, color: activeColor, _ref: true, _masterR: r, _masterC: c};
+      }
+    }
     if (!silent) soundForTool(activeTool);
   }
   drawAll();
@@ -604,7 +690,11 @@ function onPointerDown(e) {
   const [r, c] = getRC(e);
   lastRC = [r, c];
   if (activeTool === 'paint') {
-    if (grid[r] && grid[r][c]) floodFill(r, c, activeColor);
+    const cell = grid[r] && grid[r][c];
+    if (cell) {
+      const [mr, mc] = cell._ref ? [cell._masterR, cell._masterC] : [r, c];
+      floodFill(mr, mc, activeColor);
+    }
     return;
   }
   placeAt(r, c);
