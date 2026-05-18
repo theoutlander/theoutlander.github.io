@@ -1,6 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { DesignSystemPage } from "../pages/DesignSystemPage";
+import { BrandingPagePanda } from "../pages/BrandingPagePanda";
 
 export const Route = createFileRoute("/design")({
-	component: DesignSystemPage,
+	component: BrandingPage,
 });
+
+function BrandingPage() {
+	return <BrandingPagePanda />;
+}
