@@ -17,6 +17,7 @@ import { Route as CalendarRouteImport } from './routes/calendar'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as BlogIndexRouteImport } from './routes/blog/index'
+import { Route as KitchenSlugRouteImport } from './routes/kitchen/$slug'
 import { Route as BlogSlugRouteImport } from './routes/blog/$slug'
 
 const ReviewsRoute = ReviewsRouteImport.update({
@@ -59,6 +60,11 @@ const BlogIndexRoute = BlogIndexRouteImport.update({
   path: '/blog/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const KitchenSlugRoute = KitchenSlugRouteImport.update({
+  id: '/$slug',
+  path: '/$slug',
+  getParentRoute: () => KitchenRoute,
+} as any)
 const BlogSlugRoute = BlogSlugRouteImport.update({
   id: '/blog/$slug',
   path: '/blog/$slug',
@@ -70,10 +76,11 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
-  '/kitchen': typeof KitchenRoute
+  '/kitchen': typeof KitchenRouteWithChildren
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/kitchen/$slug': typeof KitchenSlugRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesByTo {
@@ -81,10 +88,11 @@ export interface FileRoutesByTo {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
-  '/kitchen': typeof KitchenRoute
+  '/kitchen': typeof KitchenRouteWithChildren
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/kitchen/$slug': typeof KitchenSlugRoute
   '/blog': typeof BlogIndexRoute
 }
 export interface FileRoutesById {
@@ -93,10 +101,11 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/calendar': typeof CalendarRoute
   '/design': typeof DesignRoute
-  '/kitchen': typeof KitchenRoute
+  '/kitchen': typeof KitchenRouteWithChildren
   '/resume': typeof ResumeRoute
   '/reviews': typeof ReviewsRoute
   '/blog/$slug': typeof BlogSlugRoute
+  '/kitchen/$slug': typeof KitchenSlugRoute
   '/blog/': typeof BlogIndexRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
+    | '/kitchen/$slug'
     | '/blog'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
+    | '/kitchen/$slug'
     | '/blog'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/resume'
     | '/reviews'
     | '/blog/$slug'
+    | '/kitchen/$slug'
     | '/blog/'
   fileRoutesById: FileRoutesById
 }
@@ -140,7 +152,7 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CalendarRoute: typeof CalendarRoute
   DesignRoute: typeof DesignRoute
-  KitchenRoute: typeof KitchenRoute
+  KitchenRoute: typeof KitchenRouteWithChildren
   ResumeRoute: typeof ResumeRoute
   ReviewsRoute: typeof ReviewsRoute
   BlogSlugRoute: typeof BlogSlugRoute
@@ -205,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BlogIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/kitchen/$slug': {
+      id: '/kitchen/$slug'
+      path: '/$slug'
+      fullPath: '/kitchen/$slug'
+      preLoaderRoute: typeof KitchenSlugRouteImport
+      parentRoute: typeof KitchenRoute
+    }
     '/blog/$slug': {
       id: '/blog/$slug'
       path: '/blog/$slug'
@@ -215,12 +234,23 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface KitchenRouteChildren {
+  KitchenSlugRoute: typeof KitchenSlugRoute
+}
+
+const KitchenRouteChildren: KitchenRouteChildren = {
+  KitchenSlugRoute: KitchenSlugRoute,
+}
+
+const KitchenRouteWithChildren =
+  KitchenRoute._addFileChildren(KitchenRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   CalendarRoute: CalendarRoute,
   DesignRoute: DesignRoute,
-  KitchenRoute: KitchenRoute,
+  KitchenRoute: KitchenRouteWithChildren,
   ResumeRoute: ResumeRoute,
   ReviewsRoute: ReviewsRoute,
   BlogSlugRoute: BlogSlugRoute,
