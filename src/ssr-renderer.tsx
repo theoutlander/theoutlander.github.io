@@ -13,8 +13,9 @@ import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
 import { capitalizeFirstLetter } from "./utils/stringUtils";
 import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
+import { CODEMENTOR_REVIEWS_INLINE_ID } from "./lib/codementor";
 import { CodementorReview } from "./types/codementor";
-import { ABOUT_HTML, META, PERSON } from "./data/person";
+import { getAboutPageData, META, PERSON } from "./data/person";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -769,10 +770,7 @@ export async function renderAllStaticPagesSSR() {
 	const blogData = await loadAllBlogPosts();
 	const inlineAllPostsScript = buildInlineDataScript("__ALL_POSTS__", blogData);
 
-	// Read the about page data
-	const aboutData = JSON.parse(
-		readFileSync("public/data/pages/about.json", "utf8")
-	) as AboutData;
+	const aboutData = getAboutPageData();
 
 	// Prepare CSS asset: copy or generate, then minify and fingerprint
 	console.log("📋 Preparing CSS asset…");
@@ -1040,6 +1038,10 @@ export async function renderAllStaticPagesSSR() {
 	
 	const reviewsResult = renderPageToHTML(ReviewsPagePanda, { reviews: reviewsData });
 	const reviewsJsonLd = generatePersonJsonLd("https://nick.karnik.io/reviews");
+	const inlineReviewsScript = buildInlineDataScript(
+		CODEMENTOR_REVIEWS_INLINE_ID,
+		reviewsData
+	);
 	const reviewsHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Reviews",
 		"Reviews from people I have worked with and mentored over the years.",
@@ -1053,7 +1055,8 @@ export async function renderAllStaticPagesSSR() {
 		"website",
 		undefined,
 		jsBundle,
-		reviewsJsonLd
+		reviewsJsonLd,
+		inlineReviewsScript
 	);
 	const reviewsHTML = removeInlineStyles(reviewsHTMLWithStyles);
 	writeFileSync(join(reviewsDir, "index.html"), reviewsHTML);

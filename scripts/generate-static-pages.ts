@@ -60,10 +60,9 @@ async function generateStaticPages() {
   const aboutDir = join('dist', 'about');
   mkdirSync(aboutDir, { recursive: true });
 
-  // Read the about page data
   const aboutData = JSON.parse(
-    readFileSync('public/data/pages/about.json', 'utf8')
-  );
+    readFileSync(join(process.cwd(), 'src', 'data', 'person.json'), 'utf8')
+  ).about;
 
   // Generate the HTML content for the about page
   const aboutHtml = baseHtml.replace(

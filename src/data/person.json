@@ -1,0 +1,87 @@
+{
+	"person": {
+		"name": "Nick Karnik",
+		"email": "nick@karnik.io",
+		"location": "Seattle, WA",
+		"siteUrl": "https://nick.karnik.io",
+		"estYear": 1981,
+		"tagline": "Engineering · Writing · Cooking",
+		"profileImage": "/assets/images/profile/nick-karnik.jpeg"
+	},
+	"socialLinks": {
+		"github": "https://github.com/theoutlander",
+		"linkedin": "https://linkedin.com/in/theoutlander",
+		"youtube": "https://youtube.com/@nick-karnik",
+		"codementor": "https://www.codementor.io/@theoutlander",
+		"twitter": "https://x.com/theoutlander",
+		"stackoverflow": "https://stackoverflow.com/users/460472/nick"
+	},
+	"currently": {
+		"label": "Currently · May 2026",
+		"description": "Lead Software Engineer at PitchBook. Writing about engineering and what I'm learning. Cooking, baking, and experimenting in the kitchen."
+	},
+	"heroLede": "Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.",
+	"advisoryBlurb": "Advisory work runs through Plutonic Consulting — strategy, team review, and technical due diligence. Limited slots each quarter.",
+	"stats": [
+		{ "n": "27+", "l": "Years building software" },
+		{ "n": "10+", "l": "Years leading engineers" },
+		{ "n": "100+", "l": "Engineers hired or grown" },
+		{ "n": "10+", "l": "Products shipped" }
+	],
+	"workBlocks": [
+		{
+			"t": "AI and Developer Tools",
+			"d": "Built Gemini Code Assist at Google. Writing about what I learned building it."
+		},
+		{
+			"t": "Search and Relevance",
+			"d": "Six years on Bing search at Microsoft. A patent. A lot of labeled data."
+		},
+		{
+			"t": "Making Things",
+			"d": "Currently building new tools. Making games with my three kids. Always something cooking."
+		},
+		{
+			"t": "Engineering Leadership",
+			"d": "Led Gemini Code Assist at Google — three years, VS Code and IntelliJ. Senior EM at Tableau and Salesforce. Twice a startup CTO. Now leading a product team at PitchBook."
+		}
+	],
+	"about": {
+		"title": "About",
+		"html": "\n\t<p>Nearly three decades of building software. Search engines, disease models, data platforms, AI tools. Not linear, not planned, all of it real.</p>\n\t<p>At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. I co-invented a patent on intent detection. At the Institute for Disease Modeling I built software that ended up in a Bill Gates TED Talk. At Tableau I led the data connectivity platform. At Google I led Gemini Code Assist from inception to millions of developers.</p>\n\t<p>I cook seriously, make cocktails, travel when I can, and build games with my three kids.</p>\n\t<p>Still figuring out what comes next and building it anyway.</p>\n"
+	},
+	"aboutShort": "I'm Nick Karnik. Lead Software Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Nearly three decades building software.",
+	"aboutSiteDescription": "This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.",
+	"aboutWorkDescription": "Developer tooling, data platforms, and software at scale.",
+	"aboutOutsideWork": "Cooking, mostly. I keep a versioned recipe log because I think the discipline of writing things down applies as well to dinner as it does to software.",
+	"meta": {
+		"home": {
+			"title": "Nick Karnik",
+			"description": "Nearly three decades building software across search, AI, and developer tools. Engineering leader, writer, cook, dad of three."
+		},
+		"about": {
+			"title": "Nick Karnik | About",
+			"description": "Engineering leader. Writer. Nearly three decades building software across search, AI, and data."
+		},
+		"resume": {
+			"title": "Nick Karnik | Résumé",
+			"description": "Software engineer and engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau, Salesforce, and earlier startups."
+		},
+		"blog": {
+			"title": "Nick Karnik | Blog",
+			"description": "Writing about AI, search, developer tools, and what I learn building software."
+		},
+		"kitchen": {
+			"title": "Nick Karnik | The Kitchen",
+			"description": "Recipes for cooking, baking, and cocktails. Versioned, with notes on what changed between iterations."
+		},
+		"calendar": {
+			"title": "Schedule time with Nick Karnik",
+			"description": "Book time with Nick directly via Google Calendar appointments."
+		},
+		"reviews": {
+			"title": "Nick Karnik | Reviews",
+			"description": "Reviews from people I have mentored and worked with."
+		}
+	}
+}
