@@ -4,8 +4,7 @@
 		"kitchen": "The Kitchen",
 		"about": "About",
 		"resume": "Résumé",
-		"reviews": "Reviews",
-		"mark": "Mark"
+		"reviews": "Reviews"
 	},
 	"home": {
 		"eyebrowSection": "§ 00",
@@ -85,15 +84,6 @@
 		"lede": "A logbook of dinners, bread, and cocktails. Written like a software engineer would — measurements, ratios, and notes from each iteration.",
 		"backLink": "← Back to the kitchen",
 		"categories": ["All", "Cooking", "Baking", "Cocktails"]
-	},
-	"branding": {
-		"sectionNum": "01",
-		"sectionLabel": "Brand notes",
-		"sectionRight": "Identity system, v.1",
-		"headline": "A personal mark",
-		"headlineSuffix": "—",
-		"headlineEnd": "set in type, not drawn.",
-		"lede": "Three marks, two voices, one accent. The system is small on purpose. The voice should do most of the work."
 	},
 	"calendar": {
 		"sectionNum": "01",

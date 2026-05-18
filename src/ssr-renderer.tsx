@@ -16,7 +16,6 @@ import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
 import { CODEMENTOR_REVIEWS_INLINE_ID } from "./lib/codementor";
 import { CodementorReview } from "./types/codementor";
 import { getAboutPageData, META, PERSON } from "./data/person";
-import { COPY } from "./data/site-copy";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -29,7 +28,6 @@ import { CalendarPagePanda } from "./pages/CalendarPagePanda";
 import { KitchenPagePanda } from "./pages/KitchenPagePanda";
 import { RecipePagePanda } from "./pages/RecipePagePanda";
 import { ReviewsPagePanda } from "./pages/ReviewsPagePanda";
-import { BrandingPagePanda } from "./pages/BrandingPagePanda";
 import { RECIPES } from "./data/recipes";
 
 type Post = BlogPost;
@@ -196,7 +194,6 @@ const generateComprehensiveCSS = async (
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
 		{ name: "kitchen", component: KitchenPagePanda, props: {} },
-		{ name: "design", component: BrandingPagePanda, props: {} },
 		{ name: "reviews", component: ReviewsPagePanda, props: { reviews: reviewsData } },
 	];
 	if (RECIPES[0]) {
@@ -1053,25 +1050,6 @@ export async function renderAllStaticPagesSSR() {
 		);
 		writeFileSync(join(recipeDir, "index.html"), removeInlineStyles(recipeHTMLWithStyles));
 	}
-
-	// Render design / mark page
-	console.log("📄 Rendering design page with SSR...");
-	const designDir = join("dist", "design");
-	mkdirSync(designDir, { recursive: true });
-	const designResult = renderPageToHTML(BrandingPagePanda, {});
-	const designHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Mark",
-		COPY.branding.lede,
-		designResult.html,
-		cssHref,
-		designResult.helmet.title + designResult.helmet.meta + designResult.helmet.link,
-		`${PERSON.siteUrl}/design`,
-		`${PERSON.siteUrl}${PERSON.profileImage}`,
-		"website",
-		undefined,
-		jsBundle
-	);
-	writeFileSync(join(designDir, "index.html"), removeInlineStyles(designHTMLWithStyles));
 
 	// Render reviews page
 	console.log("📄 Rendering reviews page with SSR...");
