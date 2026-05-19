@@ -202,10 +202,26 @@ let COLS = 0, ROWS = 0;
 // Multi-cell block grid footprint (w cols × h rows)
 const BLOCK_SIZE = {
   door:    {w: 1, h: 2},
-  window:  {w: 1, h: 2},
+  window:  {w: 2, h: 4},
+  door:    {w: 2, h: 4},
   balcony: {w: 3, h: 1},
 };
 function blockDims(type) { return BLOCK_SIZE[type] || {w: 1, h: 1}; }
+
+// ── Natural default colour per tool (auto-set on tool select) ──
+const TOOL_DEFAULTS = {
+  brick:    '#b5451b',
+  stone:    '#78909c',
+  concrete: '#cfd8dc',
+  window:   '#546e7a',
+  door:     '#37474f',
+  roofF:    '#455a64',
+  roofP:    '#455a64',
+  roofL:    '#455a64',
+  roofR:    '#455a64',
+  chimney:  '#263238',
+  balcony:  '#90a4ae',
+};
 
 // ── Paint colours (18 swatches) ───────────────────────────────
 const PALETTE = [
@@ -235,7 +251,7 @@ const TOOLS = [
 // ── State ─────────────────────────────────────────────────────
 let grid = [];
 let activeTool   = 'brick';
-let activeColor  = '#c0392b';
+let activeColor  = '#b5451b'; // brick default — matches TOOL_DEFAULTS.brick
 let history      = [];
 let isDrawing    = false;
 let lastRC       = null;
@@ -327,7 +343,8 @@ function adjCol(hex, d) {
 // Draws individual bricks with mortar, highlights, and shadows.
 function brickPattern(ctx, color, x, y, w, h, rowOffset) {
   const M = 3, BH = 13, BW = 20;
-  ctx.fillStyle = adjCol(color, 60); // light mortar
+  // mortar: always a neutral warm gray regardless of brick colour
+  ctx.fillStyle = '#c9c0b2';
   ctx.fillRect(x, y, w, h);
   let row = rowOffset || 0;
   for (let ry = y; ry < y + h; ry += BH + M, row++) {
@@ -453,125 +470,154 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
     }
 
     case 'window': {
-      const fp = 5;
-      // frame surround (same material as wall)
-      ctx.fillStyle = adjCol(color, -15);
+      // Modern floor-to-ceiling window: thin aluminium frame, large glass
+      const fr = 5; // frame thickness
+      // Outer frame (aluminium — derived from chosen colour)
+      const frameCol = color;
+      ctx.fillStyle = frameCol;
       ctx.fillRect(x, y, C, H);
-      // recessed shadow inside frame
-      ctx.fillStyle = 'rgba(0,0,0,0.35)';
-      ctx.fillRect(x+fp-1, y+fp-1, C-fp*2+2, H-fp*2+2);
-      // glass pane
-      const gx = x+fp, gy2 = y+fp, gw = C-fp*2, gh = H-fp*2;
-      ctx.fillStyle = '#8ec8e8';
-      ctx.fillRect(gx, gy2, gw, gh);
-      // sky gradient on glass
-      const glGrad = ctx.createLinearGradient(gx, gy2, gx, gy2+gh);
-      glGrad.addColorStop(0,   'rgba(180,225,255,0.5)');
-      glGrad.addColorStop(0.5, 'rgba(100,180,230,0.2)');
-      glGrad.addColorStop(1,   'rgba(30,80,120,0.35)');
-      ctx.fillStyle = glGrad;
-      ctx.fillRect(gx, gy2, gw, gh);
-      // mullions
-      const mColor = adjCol(color, -5);
-      ctx.fillStyle = mColor;
-      ctx.fillRect(gx + gw/2 - 1.5, gy2, 3, gh); // vertical
-      ctx.fillRect(gx, gy2 + gh*0.42, gw, 3);    // horizontal
-      // diagonal shine streak
+      // Inner shadow/reveal
+      ctx.fillStyle = 'rgba(0,0,0,0.4)';
+      ctx.fillRect(x+fr-1, y+fr-1, C-fr*2+2, H-fr*2+2);
+      // Glass area
+      const gx = x+fr, gy = y+fr, gw = C-fr*2, gh = H-fr*2;
+      // Base glass colour (night sky tint)
+      ctx.fillStyle = '#1a2d40';
+      ctx.fillRect(gx, gy, gw, gh);
+      // Interior light gradient (warm glow from inside)
+      const ig = ctx.createLinearGradient(gx, gy, gx+gw, gy+gh);
+      ig.addColorStop(0,   'rgba(255,230,160,0.18)');
+      ig.addColorStop(0.5, 'rgba(255,200,100,0.08)');
+      ig.addColorStop(1,   'rgba(0,0,0,0)');
+      ctx.fillStyle = ig;
+      ctx.fillRect(gx, gy, gw, gh);
+      // Horizontal transom bar at ~35% height (modern feature)
+      const tY = gy + gh*0.35;
+      ctx.fillStyle = frameCol;
+      ctx.fillRect(gx, tY, gw, fr);
+      // Slim vertical centre mullion
+      ctx.fillRect(gx + gw/2 - fr*0.5, gy, fr, gh);
+      // Glass reflections — two diagonal streaks
       ctx.save();
-      ctx.rect(gx, gy2, gw, gh); ctx.clip();
-      ctx.fillStyle = 'rgba(255,255,255,0.32)';
+      ctx.beginPath(); ctx.rect(gx, gy, gw/2, H-fr*2); ctx.clip();
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
       ctx.beginPath();
-      ctx.moveTo(gx+3, gy2+3);
-      ctx.lineTo(gx + gw*0.45, gy2+3);
-      ctx.lineTo(gx+3, gy2 + gh*0.38);
-      ctx.closePath();
-      ctx.fill();
+      ctx.moveTo(gx+4,        gy+4);
+      ctx.lineTo(gx+gw*0.38,  gy+4);
+      ctx.lineTo(gx+4,        gy+gh*0.28);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.07)';
+      ctx.beginPath();
+      ctx.moveTo(gx+gw*0.15,  gy+gh*0.05);
+      ctx.lineTo(gx+gw*0.42,  gy+gh*0.05);
+      ctx.lineTo(gx+gw*0.15,  gy+gh*0.32);
+      ctx.closePath(); ctx.fill();
       ctx.restore();
-      // window sill ledge
-      ctx.fillStyle = adjCol(color, 25);
-      ctx.fillRect(x-3, y+H-fp, C+6, fp+2);
-      ctx.fillStyle = 'rgba(255,255,255,0.18)';
-      ctx.fillRect(x-3, y+H-fp, C+6, 2);
-      ctx.fillStyle = 'rgba(0,0,0,0.2)';
-      ctx.fillRect(x-3, y+H+fp, C+6, 1.5);
+      // Frame highlight (top + left edges)
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x, y, C, 2);
+      ctx.fillRect(x, y, 2, H);
+      // Frame shadow (bottom + right edges)
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(x, y+H-2, C, 2);
+      ctx.fillRect(x+C-2, y, 2, H);
+      // Protruding sill ledge
+      ctx.fillStyle = adjCol(color, 20);
+      ctx.fillRect(x-4, y+H-fr-1, C+8, fr+3);
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.fillRect(x-4, y+H-fr-1, C+8, 1.5);
+      ctx.fillStyle = 'rgba(0,0,0,0.25)';
+      ctx.fillRect(x-4, y+H+1, C+8, 2);
       break;
     }
 
     case 'door': {
-      const fp = 5;
-      const archR = (C - fp*2) / 2;
-      // surround (door frame using wall color)
-      ctx.fillStyle = adjCol(color, -20);
+      // Modern double door: aluminium frame, glass upper panels, solid lower panels
+      const fr = 5;      // frame thickness
+      const mid = x + C/2; // centre divider x
+
+      // Outer surround / wall reveal
+      ctx.fillStyle = adjCol(color, -25);
       ctx.fillRect(x, y, C, H);
-      // door leaf (arched top)
+
+      // Draw each door leaf (left and right)
+      const leaves = [[x+fr, mid-1], [mid+1, x+C-fr]];
+      leaves.forEach(([lx, rx], side) => {
+        const lw = rx - lx;
+        // Door leaf background
+        ctx.fillStyle = color;
+        ctx.fillRect(lx, y+fr, lw, H-fr*2);
+
+        // Upper glass panel (top 42% of leaf)
+        const gpH = (H-fr*2) * 0.42;
+        ctx.fillStyle = '#152535';
+        ctx.fillRect(lx+4, y+fr+4, lw-8, gpH-4);
+        // Glass gradient (interior warm glow)
+        const gg = ctx.createLinearGradient(lx, y+fr, lx+lw, y+fr+gpH);
+        gg.addColorStop(0,   'rgba(255,220,150,0.15)');
+        gg.addColorStop(1,   'rgba(100,150,200,0.1)');
+        ctx.fillStyle = gg;
+        ctx.fillRect(lx+4, y+fr+4, lw-8, gpH-4);
+        // glass shine
+        ctx.fillStyle = 'rgba(255,255,255,0.12)';
+        ctx.beginPath();
+        ctx.moveTo(lx+6,      y+fr+6);
+        ctx.lineTo(lx+lw*0.5, y+fr+6);
+        ctx.lineTo(lx+6,      y+fr+gpH*0.45);
+        ctx.closePath(); ctx.fill();
+        // Glass frame border
+        ctx.strokeStyle = adjCol(color, -20);
+        ctx.lineWidth = 1.5;
+        ctx.strokeRect(lx+3, y+fr+3, lw-6, gpH-3);
+
+        // Horizontal transom bar
+        const tY = y + fr + gpH;
+        ctx.fillStyle = color;
+        ctx.fillRect(lx, tY, lw, fr);
+
+        // Lower solid panel
+        const lpY = tY + fr, lpH = H-fr*2 - gpH - fr*2;
+        ctx.fillStyle = adjCol(color, -8);
+        ctx.fillRect(lx+4, lpY, lw-8, lpH);
+        // panel inset shadow
+        ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(lx+4, lpY, lw-8, lpH);
+        ctx.fillStyle = 'rgba(255,255,255,0.06)';
+        ctx.fillRect(lx+4, lpY, lw-8, 2);
+
+        // Door handle (vertical bar, inset side)
+        const hx = side === 0 ? rx - 8 : lx + 5;
+        const hY = y + H * 0.6, hH = H * 0.14;
+        ctx.fillStyle = '#b0bec5'; // brushed aluminium
+        ctx.fillRect(hx, hY, 3, hH);
+        ctx.fillStyle = 'rgba(255,255,255,0.45)';
+        ctx.fillRect(hx, hY, 1, hH);
+        // handle base plates
+        ctx.fillStyle = '#78909c';
+        ctx.fillRect(hx-1, hY-3,     5, 4);
+        ctx.fillRect(hx-1, hY+hH-1,  5, 4);
+      });
+
+      // Centre frame divider
       ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.moveTo(x+fp, y+H);
-      ctx.lineTo(x+fp, y+fp+archR);
-      ctx.arc(x+fp+archR, y+fp+archR, archR, Math.PI, 0);
-      ctx.lineTo(x+C-fp, y+H);
-      ctx.closePath();
-      ctx.fill();
-      // wood-grain lines
-      const wgTop = y + fp + archR*2 + 4;
-      for (let wy = wgTop; wy < y+H-fp; wy += 4) {
-        ctx.strokeStyle = (Math.round((wy-wgTop)/4) % 2 === 0)
-          ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.1)';
-        ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(x+fp+2, wy); ctx.lineTo(x+C-fp-2, wy); ctx.stroke();
-      }
-      // arch glass panel
-      const aip = fp + 5, airR = archR - 6;
-      if (airR > 2) {
-        ctx.fillStyle = 'rgba(140,200,240,0.45)';
-        ctx.beginPath();
-        ctx.moveTo(x+aip, y+fp + archR);
-        ctx.arc(x+fp+archR, y+fp+archR, airR, Math.PI, 0);
-        ctx.lineTo(x+C-aip, y+fp+archR);
-        ctx.closePath();
-        ctx.fill();
-        // arch glass frame lines (spider web)
-        ctx.strokeStyle = adjCol(color, -10);
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(x+fp+archR, y+fp+archR);
-        ctx.lineTo(x+fp+archR, y+fp+archR-airR);
-        ctx.moveTo(x+fp+archR, y+fp+archR);
-        ctx.lineTo(x+aip, y+fp+archR);
-        ctx.moveTo(x+fp+archR, y+fp+archR);
-        ctx.lineTo(x+C-aip, y+fp+archR);
-        ctx.stroke();
-      }
-      // lower recessed panel
-      const lpTop = y + fp + archR*2 + 2;
-      const lpBot = y + H - fp - 2;
-      const lpH = lpBot - lpTop;
-      if (lpH > 4) {
-        ctx.fillStyle = 'rgba(0,0,0,0.18)';
-        ctx.fillRect(x+fp+4, lpTop, C-fp*2-8, lpH);
-        ctx.strokeStyle = adjCol(color, -30);
-        ctx.lineWidth = 1;
-        ctx.strokeRect(x+fp+4, lpTop, C-fp*2-8, lpH);
-        ctx.fillStyle = 'rgba(255,255,255,0.08)';
-        ctx.fillRect(x+fp+4, lpTop, C-fp*2-8, 2);
-      }
-      // brass knob
-      const kx = x+C-fp-8, ky = y+H*0.65;
-      ctx.fillStyle = '#b8860b';
-      ctx.beginPath(); ctx.arc(kx, ky, 4.5, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = '#ffe14d';
-      ctx.beginPath(); ctx.arc(kx, ky, 3, 0, Math.PI*2); ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.45)';
-      ctx.beginPath(); ctx.arc(kx-1, ky-1, 1.5, 0, Math.PI*2); ctx.fill();
-      // step
-      ctx.fillStyle = adjCol(color, 35);
-      ctx.fillRect(x-2, y+H-5, C+4, 5);
+      ctx.fillRect(mid-2, y+fr, 4, H-fr*2);
+
+      // Frame highlights + shadows
       ctx.fillStyle = 'rgba(255,255,255,0.15)';
-      ctx.fillRect(x-2, y+H-5, C+4, 1.5);
-      // frame highlights
-      ctx.fillStyle = 'rgba(255,255,255,0.1)';
       ctx.fillRect(x, y, C, 2);
       ctx.fillRect(x, y, 2, H);
+      ctx.fillStyle = 'rgba(0,0,0,0.3)';
+      ctx.fillRect(x, y+H-2, C, 2);
+      ctx.fillRect(x+C-2, y, 2, H);
+
+      // Concrete step
+      ctx.fillStyle = adjCol(color, 30);
+      ctx.fillRect(x-5, y+H-6, C+10, 6);
+      ctx.fillStyle = 'rgba(255,255,255,0.18)';
+      ctx.fillRect(x-5, y+H-6, C+10, 1.5);
+      ctx.fillStyle = 'rgba(0,0,0,0.2)';
+      ctx.fillRect(x-5, y+H, C+10, 2);
       break;
     }
 
@@ -897,6 +943,13 @@ function buildToolbar() {
     btn.addEventListener('pointerdown', ev => {
       ev.stopPropagation();
       activeTool = t.id;
+      // auto-set natural colour for this material
+      if (TOOL_DEFAULTS[t.id]) {
+        activeColor = TOOL_DEFAULTS[t.id];
+        document.querySelectorAll('.swatch').forEach(s => {
+          s.classList.toggle('active', s.dataset.col === activeColor);
+        });
+      }
       document.querySelectorAll('.tb-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const ctx = getAudio();
@@ -912,6 +965,7 @@ function buildToolbar() {
   PALETTE.forEach(col => {
     const sw = document.createElement('div');
     sw.className = 'swatch' + (col === activeColor ? ' active' : '');
+    sw.dataset.col = col;
     sw.style.background = col;
     sw.addEventListener('pointerdown', ev => {
       ev.stopPropagation();
