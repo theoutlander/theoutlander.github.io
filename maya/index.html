@@ -83,7 +83,7 @@ header{text-align:center;padding:48px 0 36px}
 .sl{flex:1;height:1px;background:var(--border)}
 
 /* Game of the week */
-#gotw{background:linear-gradient(135deg,rgba(255,225,77,.07),rgba(255,110,180,.07));border:1px solid rgba(255,225,77,.18);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none}
+#gotw{background:linear-gradient(135deg,rgba(255,225,77,.07),rgba(255,110,180,.07));border:1px solid rgba(255,225,77,.18);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 #gotw:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.4)}
 #gotw:active{transform:scale(.98)}
 .gotw-badge{background:var(--yellow);color:#0f0a1e;font-family:'Fredoka One',cursive;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0;align-self:flex-start}
@@ -91,7 +91,7 @@ header{text-align:center;padding:48px 0 36px}
 .gotw-info{flex:1;min-width:0}
 .gotw-title{font-family:'Fredoka One',cursive;font-size:20px;line-height:1.1;margin-bottom:3px}
 .gotw-desc{font-size:12px;color:var(--muted);line-height:1.5}
-.gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s}
+.gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s;touch-action:manipulation;min-height:44px}
 .gotw-btn:active{transform:scale(.94)}
 
 /* Games grid */
@@ -108,8 +108,8 @@ header{text-align:center;padding:48px 0 36px}
 .tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
 .ts{background:rgba(255,110,180,.1);color:var(--pink);border:1px solid rgba(255,110,180,.18)}
-.pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s;min-height:44px}
-.pb:hover,.pb:active{background:rgba(255,255,255,.15)}
+.pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
+.pb:active{background:rgba(255,255,255,.2);transform:scale(.97)}
 .gc.soon{opacity:.45;pointer-events:none}
 
 /* Doodle */
@@ -140,13 +140,47 @@ header{text-align:center;padding:48px 0 36px}
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Game modal */
-#gm{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;background:#000;box-sizing:border-box}
-#gm.open{display:flex}
-#mb{background:#0f0a1e;padding:8px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:50px}
-#mc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:14px;font-weight:900;padding:8px 16px;border-radius:99px;cursor:pointer;font-family:'Nunito',sans-serif;min-width:44px;min-height:44px}
-#mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text)}
-#gf{flex:1 1 auto;min-height:0;width:100%;border:none;background:#000}
+/* Game modal — slide up/down with CSS, no JS height hacks */
+#gm{
+  position:fixed;inset:0;z-index:200;
+  display:grid;grid-template-rows:auto 1fr;
+  background:#000;
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+  visibility:hidden;
+}
+#gm.open{transform:translateY(0);visibility:visible}
+#mb{
+  background:#0f0a1e;
+  padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
+  min-height:54px;
+}
+#mc{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  color:var(--text);font-size:14px;font-weight:900;
+  padding:8px 18px;border-radius:99px;cursor:pointer;
+  font-family:'Nunito',sans-serif;min-width:44px;min-height:44px;
+  touch-action:manipulation;
+  transition:background .1s;
+}
+#mc:active{background:rgba(255,255,255,.2)}
+#mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gf{width:100%;height:100%;border:none;background:#0f0a1e;display:block}
+/* Loading spinner inside the modal */
+#gm-load{
+  position:absolute;inset:54px 0 0;display:flex;align-items:center;justify-content:center;
+  background:#0f0a1e;z-index:2;transition:opacity .25s;pointer-events:none;
+}
+#gm-load.done{opacity:0}
+.spin{
+  width:44px;height:44px;border-radius:50%;
+  border:4px solid rgba(199,125,255,.15);border-top-color:var(--purple);
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -162,7 +196,7 @@ header{text-align:center;padding:48px 0 36px}
 
   <!-- GAME OF THE WEEK -->
   <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
-  <div id="gotw" onclick="gotwPlay()">
+  <div id="gotw">
     <span class="gotw-badge">✨ New!</span>
     <div class="gotw-em" id="ge">🏙️</div>
     <div class="gotw-info">
@@ -190,7 +224,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">Maya's Kitchen!</div>
         <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('mayas-kitchen.html','Maya\'s Kitchen! 🍳')">▶ Play Now</button>
+        <button class="pb" data-game="mayas-kitchen.html" data-title="Maya's Kitchen! 🍳">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -199,7 +233,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">City Builder!</div>
         <div class="gd">Place bricks, windows, doors and rooftops to build your own glittering city skyline!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('skyline-builder.html','City Builder! 🏙️')">▶ Play Now</button>
+        <button class="pb" data-game="skyline-builder.html" data-title="City Builder! 🏙️">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -208,7 +242,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">Castle Defenders!</div>
         <div class="gd">Chop wood by day, forge weapons at the forge, then fight off the zombie horde at night!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('castle-defenders.html','Castle Defenders! 🏰')">▶ Play Now</button>
+        <button class="pb" data-game="castle-defenders.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -217,7 +251,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">Piñata Piano!</div>
         <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('pinata-piano-v2.html','Piñata Piano! 🪅')">▶ Play Now</button>
+        <button class="pb" data-game="pinata-piano-v2.html" data-title="Piñata Piano! 🪅">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -226,7 +260,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">Dust Chasers</div>
         <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('dust-chasers.html','Dust Chasers 👻')">▶ Play Now</button>
+        <button class="pb" data-game="dust-chasers.html" data-title="Dust Chasers 👻">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -235,7 +269,7 @@ header{text-align:center;padding:48px 0 36px}
         <div class="gt">Spell It! 🌈</div>
         <div class="gd">Letters rain down — tap them in order to spell the word! Grade 1 to 5.</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('letter-tumble.html','Letter Tumble! 🌈')">▶ Play Now</button>
+        <button class="pb" data-game="letter-tumble.html" data-title="Spell It! 🌈">▶ Play Now</button>
       </div>
     </div>
     <div class="gc soon">
@@ -294,10 +328,11 @@ header{text-align:center;padding:48px 0 36px}
 <!-- Game modal -->
 <div id="gm">
   <div id="mb">
-    <button id="mc" onclick="closeGame()">✕ Back</button>
+    <button id="mc">← Back</button>
     <div id="mt"></div>
   </div>
   <iframe id="gf" allowfullscreen></iframe>
+  <div id="gm-load"><div class="spin"></div></div>
 </div>
 
 <div id="toast"></div>
@@ -404,8 +439,27 @@ document.getElementById('gtt').textContent=gw.title;
 document.getElementById('gdt').textContent=gw.desc;
 function gotwPlay(){openGame(gw.file,gw.title);}
 
+// Wire up all play buttons + gotw with pointerdown (no 300ms tap delay on iPad)
+document.getElementById('gotw').addEventListener('pointerdown',function(e){
+  if(e.target.closest('button')||e.pointerType==='mouse')return; // let button handle it; mouse uses click fine
+  gotwPlay();
+});
+document.querySelector('#gotw .gotw-btn').addEventListener('pointerdown',function(e){
+  e.stopPropagation(); gotwPlay();
+});
+document.querySelectorAll('.pb[data-game]').forEach(function(btn){
+  btn.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    openGame(btn.dataset.game, btn.dataset.title);
+  });
+});
+
 // ===== GAME MODAL =====
 const MAYA_PAGE_TITLE=document.title;
+const gm=document.getElementById('gm');
+const gf=document.getElementById('gf');
+const gmLoad=document.getElementById('gm-load');
+
 function mayaDirectoryPath(){
   let base=location.pathname;
   if(!base.endsWith('/')){
@@ -414,9 +468,7 @@ function mayaDirectoryPath(){
   }
   return base;
 }
-function resolveGameUrl(file){
-  return mayaDirectoryPath()+file;
-}
+function resolveGameUrl(file){ return mayaDirectoryPath()+file; }
 function pathnameGameFile(){
   const last=(location.pathname.split('/').filter(Boolean).pop())||'';
   if(!/\.html?$/i.test(last)||last.toLowerCase()==='index.html')return null;
@@ -426,60 +478,53 @@ function titleForGameFile(file){
   const row=GLIST.find(function(g){return g.file===file;});
   return row?row.title:file.replace(/\.html?$/i,'');
 }
-function syncGameModalIframe(){
-  const gm=document.getElementById('gm');
-  if(!gm.classList.contains('open'))return;
-  const gf=document.getElementById('gf');
-  const mb=document.getElementById('mb');
-  const avail=Math.max(220,window.innerHeight-mb.getBoundingClientRect().height);
-  gf.style.flex='none';
-  gf.style.height=avail+'px';
-}
-function closeGameCore(){
-  const gf=document.getElementById('gf');
-  document.getElementById('gm').classList.remove('open');
-  gf.src='';
-  gf.style.height='';
-  gf.style.flex='';
-  document.body.style.overflow='';
-  document.title=MAYA_PAGE_TITLE;
-}
 function openGameInModal(file,title){
-  const m=document.getElementById('gm');
-  const gf=document.getElementById('gf');
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
-  m.classList.add('open');
   document.body.style.overflow='hidden';
-  syncGameModalIframe();
+  // Show spinner, load iframe
+  gmLoad.classList.remove('done');
+  gf.onload=function(){ gmLoad.classList.add('done'); };
   gf.src=resolveGameUrl(file);
+  // Slide modal up
+  gm.style.visibility='hidden'; // keep in DOM, trigger reflow, then animate
+  requestAnimationFrame(function(){
+    gm.classList.add('open');
+  });
+}
+function closeGameCore(){
+  gm.classList.remove('open');
+  document.body.style.overflow='';
+  document.title=MAYA_PAGE_TITLE;
+  // Clean up iframe after slide-down finishes
+  gm.addEventListener('transitionend',function h(){
+    gm.removeEventListener('transitionend',h);
+    gf.src='';
+    gf.onload=null;
+    gmLoad.classList.remove('done');
+  },{once:true});
 }
 function openGame(file,title){
   openGameInModal(file,title);
   history.pushState({mayaIframe:true,file:file},'',resolveGameUrl(file));
 }
 function closeGame(){
-  if(history.state&&history.state.mayaIframe){
-    history.back();
-    return;
-  }
+  if(history.state&&history.state.mayaIframe){ history.back(); return; }
   closeGameCore();
   if(pathnameGameFile())history.replaceState(history.state,'',mayaDirectoryPath());
 }
 function onGameModalPopState(){
   const file=pathnameGameFile();
-  const gm=document.getElementById('gm');
-  if(!file){
-    if(gm.classList.contains('open'))closeGameCore();
-  }else if(!gm.classList.contains('open')){
-    openGameInModal(file,titleForGameFile(file));
-  }
+  if(!file){ if(gm.classList.contains('open'))closeGameCore(); }
+  else if(!gm.classList.contains('open')){ openGameInModal(file,titleForGameFile(file)); }
 }
 window.addEventListener('popstate',onGameModalPopState);
-window.addEventListener('resize',syncGameModalIframe,{passive:true});
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',syncGameModalIframe,{passive:true});
-}
+
+// Close button — pointerdown for instant iPad response
+document.getElementById('mc').addEventListener('pointerdown',function(e){
+  e.preventDefault();
+  closeGame();
+});
 
 // ===== DOODLE PAD =====
 const dc=document.getElementById('dc');
