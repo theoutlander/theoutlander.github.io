@@ -164,10 +164,10 @@ header{text-align:center;padding:48px 0 36px}
   <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
   <div id="gotw" onclick="gotwPlay()">
     <span class="gotw-badge">✨ New!</span>
-    <div class="gotw-em" id="ge">🪅</div>
+    <div class="gotw-em" id="ge">🏙️</div>
     <div class="gotw-info">
-      <div class="gotw-title" id="gtt">Piñata Piano!</div>
-      <div class="gotw-desc" id="gdt">Play songs on the piano to pop candy!</div>
+      <div class="gotw-title" id="gtt">City Builder!</div>
+      <div class="gotw-desc" id="gdt">Build a glittering city skyline brick by brick!</div>
     </div>
     <button class="gotw-btn">▶ Play!</button>
   </div>
@@ -378,8 +378,7 @@ const GLIST=[
   {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
 ];
 const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
-const wk=Math.floor(Date.now()/1000/60/60/24/7);
-const gw=GLIST[wk%GLIST.length];
+const gw=GLIST[0];
 document.getElementById('ge').textContent=gw.em;
 document.getElementById('gtt').textContent=gw.title;
 document.getElementById('gdt').textContent=gw.desc;
