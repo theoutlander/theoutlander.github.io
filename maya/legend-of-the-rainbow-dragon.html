@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Legend of the Rainbow Dragon 🐉</title>
+<script>
+(function(){
+  function loadGA(){
+    if (window.__gaLoaded) return;
+    window.__gaLoaded = true;
+    var s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
+    document.head.appendChild(s);
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = function(){ dataLayer.push(arguments); };
+    gtag('js', new Date());
+    gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
+  }
+  var consent = null;
+  try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
+  if (consent === 'granted') {
+    (window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
+  } else {
+    window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
+  }
+})();
+</script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0f0a1e;--card:#1e1440;--border:rgba(199,125,255,0.22);
+  --pink:#ff6eb4;--yellow:#ffe14d;--green:#5dffb0;--blue:#5bc8ff;
+  --purple:#c77dff;--orange:#ff9a3c;--text:#f0e6ff;--muted:rgba(240,230,255,0.42);
+  --term:#0a0618;--term-border:#3d2a6a;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:700;overflow:hidden}
+body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
+
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-bottom:2px solid var(--border);flex-shrink:0;gap:8px}
+.hdr-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--pink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.hdr-back{background:rgba(255,255,255,.08);border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Fredoka One',cursive;font-size:13px;color:var(--muted);cursor:pointer;touch-action:manipulation;min-height:44px;flex-shrink:0}
+
+.stats{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:rgba(30,20,64,.6);flex-shrink:0;border-bottom:1px solid var(--border)}
+.stat-chip{font-size:11px;font-weight:900;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--border);white-space:nowrap}
+.stat-chip b{font-family:'Fredoka One',cursive;color:var(--yellow);font-size:13px;margin-left:4px}
+.stat-chip.hp b{color:var(--green)}
+.stat-chip.turns b{color:var(--blue)}
+.stat-chip.charm b{color:var(--pink)}
+
+#main{flex:1;display:flex;flex-direction:column;min-height:0;padding:8px;gap:8px}
+.screen{flex:1;display:flex;flex-direction:column;min-height:0;gap:8px}
+.screen.hidden{display:none!important}
+
+.bbs-frame{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--term);border:2px solid var(--term-border);border-radius:10px;overflow:hidden}
+.bbs-bar{padding:6px 10px;font-family:'Fredoka One',cursive;font-size:11px;color:var(--purple);background:rgba(61,42,106,.5);border-bottom:1px solid var(--term-border);letter-spacing:.05em}
+#log{flex:1;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.55;color:var(--green);-webkit-overflow-scrolling:touch}
+#log .line{margin-bottom:4px}
+#log .line.hi{color:var(--yellow)}
+#log .line.bad{color:var(--pink)}
+#log .line.fun{color:var(--blue)}
+
+.actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.act-btn{font-family:'Fredoka One',cursive;font-size:16px;padding:14px 16px;border-radius:12px;border:none;cursor:pointer;min-height:48px;touch-action:manipulation;transition:transform .1s}
+.act-btn:active{transform:scale(.97)}
+.act-btn.primary{background:var(--yellow);color:#1a0a30;box-shadow:0 4px 0 #9a7a10}
+.act-btn.forest{background:linear-gradient(135deg,#1a4020,#0d2818);color:var(--green);border:2px solid var(--green)}
+.act-btn.shop{background:rgba(255,154,60,.15);color:var(--orange);border:2px solid var(--orange)}
+.act-btn.heal{background:rgba(93,255,176,.12);color:var(--green);border:2px solid var(--green)}
+.act-btn.inn{background:rgba(199,125,255,.15);color:var(--purple);border:2px solid var(--purple)}
+.act-btn.snack{background:rgba(255,110,180,.12);color:var(--pink);border:2px solid var(--pink)}
+.act-btn.dragon{background:linear-gradient(135deg,#4a1040,#2a0830);color:var(--pink);border:2px solid var(--pink)}
+.act-btn.bard{background:rgba(91,200,255,.12);color:var(--blue);border:2px solid var(--blue)}
+.act-btn.mail{background:rgba(255,225,77,.1);color:var(--yellow);border:2px solid var(--yellow)}
+.act-btn.stats{background:rgba(199,125,255,.12);color:var(--purple);border:2px solid var(--purple)}
+.act-btn.muted{background:rgba(255,255,255,.06);color:var(--muted);border:2px solid var(--border)}
+.act-btn.elite{border-color:var(--orange);color:var(--orange)}
+.act-btn:disabled{opacity:.45;pointer-events:none}
+.act-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.hub-title{font-family:'Fredoka One',cursive;font-size:1.35rem;text-align:center;color:var(--purple);padding:4px 0}
+.encounter{text-align:center;padding:12px;background:var(--card);border-radius:12px;border:2px solid var(--border)}
+.enc-emoji{font-size:3.5rem;line-height:1}
+.enc-name{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--yellow);margin-top:6px}
+.enc-stats{font-size:12px;color:var(--muted);margin-top:4px}
+
+.ov{position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:12px;text-align:center;background:rgba(15,10,30,.96)}
+.ov.hidden{display:none!important}
+.ov-title{font-family:'Fredoka One',cursive;font-size:clamp(28px,8vw,42px);line-height:1.1;background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ov-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:300px}
+.ov-big{font-size:56px}
+.avatar-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0}
+.av-btn{font-size:2rem;width:56px;height:56px;border-radius:12px;border:3px solid transparent;background:var(--card);cursor:pointer;touch-action:manipulation}
+.av-btn.sel{border-color:var(--yellow);box-shadow:0 0 12px rgba(255,225,77,.4)}
+.name-in{font-family:'Nunito',sans-serif;font-weight:900;font-size:16px;padding:12px 16px;border-radius:10px;border:2px solid var(--border);background:var(--card);color:var(--text);width:100%;max-width:260px;text-align:center}
+.name-in:focus{outline:none;border-color:var(--purple)}
+.shop-item{display:flex;align-items:center;justify-content:space-between;padding:12px;background:var(--card);border-radius:10px;border:2px solid var(--border);gap:8px}
+.shop-item.owned{border-color:var(--green);opacity:.7}
+.shop-item .si-name{font-family:'Fredoka One',cursive;color:var(--text)}
+.shop-item .si-meta{font-size:11px;color:var(--muted)}
+.riddle-opts{display:flex;flex-direction:column;gap:8px;width:100%;max-width:320px}
+.stat-sheet{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;-webkit-overflow-scrolling:touch}
+.stat-row{display:flex;justify-content:space-between;padding:10px 12px;background:var(--card);border-radius:10px;border:1px solid var(--border);font-size:13px}
+.stat-row span:last-child{font-family:'Fredoka One',cursive;color:var(--yellow)}
+.ach-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ach-card{padding:10px;background:var(--card);border-radius:10px;border:2px solid var(--border);text-align:center;font-size:11px;opacity:.45}
+.ach-card.unlocked{opacity:1;border-color:var(--green)}
+.ach-card .ach-em{font-size:1.8rem}
+.mail-item{padding:12px;background:var(--card);border-radius:10px;border:1px solid var(--border);text-align:left;font-size:13px;line-height:1.5}
+.mail-from{font-family:'Fredoka One',cursive;font-size:12px;color:var(--purple);margin-bottom:6px}
+.toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:200;background:var(--card);border:2px solid var(--green);border-radius:12px;padding:12px 18px;font-family:'Fredoka One',cursive;font-size:14px;color:var(--green);max-width:90%;text-align:center;animation:toastIn .35s ease}
+.toast.hidden{display:none}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.elite-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange);color:#1a0a30;margin-left:6px;vertical-align:middle}
+</style>
+</head>
+<body>
+
+<header class="hdr" id="top-hdr">
+  <button type="button" class="hdr-back hidden" id="back-btn">← Town</button>
+  <div class="hdr-title" id="hdr-title">Rainbow Dragon</div>
+</header>
+<div class="stats" id="stats-bar">
+  <span class="stat-chip hp">❤️ <b id="s-hp">10</b>/<b id="s-maxhp">10</b></span>
+  <span class="stat-chip">⚔️ <b id="s-lv">1</b></span>
+  <span class="stat-chip">🪙 <b id="s-gold">200</b></span>
+  <span class="stat-chip turns">⏳ <b id="s-turns">18</b></span>
+  <span class="stat-chip charm">✨ <b id="s-charm">5</b></span>
+</div>
+
+<main id="main">
+  <div class="screen" id="screen-hub">
+    <div class="hub-title" id="hub-greet">Welcome, Hero!</div>
+    <div class="bbs-frame">
+      <div class="bbs-bar">═══ YE OLDE BBS DOOR ═══</div>
+      <div id="log"></div>
+    </div>
+    <div class="actions" id="hub-actions"></div>
+  </div>
+
+  <div class="screen hidden" id="screen-forest">
+    <div class="encounter" id="encounter-box"></div>
+    <div class="bbs-frame" style="flex:0.6">
+      <div class="bbs-bar">FOREST COMBAT</div>
+      <div id="log-forest"></div>
+    </div>
+    <div class="actions act-row" id="forest-actions"></div>
+  </div>
+
+  <div class="screen hidden" id="screen-shop">
+    <div class="hub-title">⚔️ Weapon Shop</div>
+    <div class="actions" id="shop-list"></div>
+    <button type="button" class="act-btn muted" id="shop-back">← Back to Town</button>
+  </div>
+
+  <div class="screen hidden" id="screen-snack">
+    <div class="encounter" id="snack-box"></div>
+    <div class="actions" id="snack-actions"></div>
+  </div>
+
+  <div class="screen hidden" id="screen-stats">
+    <div class="hub-title">📜 Hero Stats</div>
+    <div class="stat-sheet" id="stat-sheet"></div>
+    <div class="hub-title" style="font-size:1rem;margin-top:4px">🏅 Achievements</div>
+    <div class="ach-grid" id="ach-grid"></div>
+    <button type="button" class="act-btn muted" id="stats-back">← Back to Town</button>
+  </div>
+
+  <div class="screen hidden" id="screen-mail">
+    <div class="hub-title">📬 Mailbox</div>
+    <div class="stat-sheet" id="mail-list"></div>
+    <button type="button" class="act-btn mail" id="mail-refresh">📨 Check for new mail (1 turn)</button>
+    <button type="button" class="act-btn muted" id="mail-back">← Back to Town</button>
+  </div>
+
+  <div class="screen hidden" id="screen-bard">
+    <div class="encounter" id="bard-box"></div>
+    <div class="actions" id="bard-actions"></div>
+  </div>
+
+  <div class="screen hidden" id="screen-dragon">
+    <div class="encounter">
+      <div class="enc-emoji">🌈🐉</div>
+      <div class="enc-name">Rainbow Dragon</div>
+      <div class="enc-stats" id="dragon-hp-text">HP: 500 / 500</div>
+    </div>
+    <div class="bbs-frame" style="flex:0.5">
+      <div class="bbs-bar">DRAGON LAIR</div>
+      <div id="log-dragon"></div>
+    </div>
+    <div class="actions">
+      <button type="button" class="act-btn dragon" id="dragon-attack">⚔️ Attack Dragon (1 turn)</button>
+      <button type="button" class="act-btn muted" id="dragon-back">← Back to Town</button>
+    </div>
+  </div>
+</main>
+
+<div class="ov" id="ov-title">
+  <div class="ov-big">🐉🌈</div>
+  <div class="ov-title">Legend of the Rainbow Dragon</div>
+  <div class="ov-sub">A BBS-style adventure for Maya's Game Lab.<br>Daily turns · forest fights · beat the dragon!</div>
+  <button type="button" class="act-btn primary" id="btn-continue" style="max-width:280px;width:100%">Continue Adventure</button>
+  <button type="button" class="act-btn muted" id="btn-new" style="max-width:280px;width:100%">New Hero</button>
+</div>
+
+<div class="ov hidden" id="ov-create">
+  <div class="ov-title" style="font-size:1.6rem">Create Hero</div>
+  <input type="text" class="name-in" id="hero-name" maxlength="12" placeholder="Hero name" autocomplete="off">
+  <div class="ov-sub">Pick your avatar</div>
+  <div class="avatar-grid" id="avatar-grid"></div>
+  <button type="button" class="act-btn primary" id="btn-start" style="max-width:280px;width:100%">Enter the Realm! ⚔️</button>
+  <button type="button" class="act-btn muted" id="btn-create-cancel">Cancel</button>
+</div>
+
+<div class="ov hidden" id="ov-victory">
+  <div class="ov-big">🏆</div>
+  <div class="ov-title">Dragon Defeated!</div>
+  <div class="ov-sub" id="victory-msg">You saved the realm!</div>
+  <button type="button" class="act-btn primary" id="btn-victory-ok">Awesome! 🎉</button>
+</div>
+
+<div id="ach-toast" class="toast hidden"></div>
+
+<div class="ov hidden" id="ov-no-turns">
+  <div class="ov-big">🌙</div>
+  <div class="ov-title">Day Complete!</div>
+  <div class="ov-sub">You're out of turns. Come back tomorrow for 18 more adventures!</div>
+  <button type="button" class="act-btn primary" id="btn-day-ok">OK</button>
+</div>
+
+<script>
+const SAVE_KEY = 'lord_rainbow_dragon_v1';
+const MAX_TURNS = 18;
+const AVATARS = ['🧙‍♀️', '🧝‍♀️', '🦸‍♀️', '🦸', '🐱', '🦄', '🐉', '👸'];
+const BOSS_UNLOCK_LEVEL = 12;
+const BOSS_MAX_HP = 500;
+const BOSS_NG_HP = 750;
+
+const WEAPONS = [
+  { id: 'stick', name: 'Stick', str: 0, cost: 0, minLv: 1 },
+  { id: 'wood', name: 'Wooden Sword', str: 5, cost: 150, minLv: 2 },
+  { id: 'silver', name: 'Silver Blade', str: 12, cost: 400, minLv: 5 },
+  { id: 'rainbow', name: 'Rainbow Saber', str: 20, cost: 900, minLv: 10 },
+  { id: 'star', name: 'Starlight Dagger', str: 28, cost: 1500, minLv: 15 },
+];
+
+const ARMOR = [
+  { id: 'none', name: 'Plain Clothes', def: 0, cost: 0, minLv: 1 },
+  { id: 'leather', name: 'Leather Vest', def: 3, cost: 120, minLv: 3 },
+  { id: 'chain', name: 'Chain Mail', def: 7, cost: 350, minLv: 6 },
+  { id: 'rainbow', name: 'Rainbow Shield', def: 12, cost: 800, minLv: 10 },
+];
+
+const MONSTERS = [
+  { name: 'Silly Slime', emoji: '🟢', hp: 4, atk: 2, def: 0, xp: 12, gold: 8, tier: 1 },
+  { name: 'Giggle Goblin', emoji: '👺', hp: 6, atk: 3, def: 1, xp: 18, gold: 12, tier: 1 },
+  { name: 'Bouncy Bat', emoji: '🦇', hp: 5, atk: 4, def: 0, xp: 15, gold: 10, tier: 1 },
+  { name: 'Puddle Pixie', emoji: '💧', hp: 5, atk: 3, def: 0, xp: 14, gold: 11, tier: 1 },
+  { name: 'Moss Troll', emoji: '🧌', hp: 10, atk: 5, def: 2, xp: 28, gold: 20, tier: 2 },
+  { name: 'Grumpy Bear', emoji: '🐻', hp: 12, atk: 6, def: 3, xp: 35, gold: 25, tier: 2 },
+  { name: 'Spark Wizard', emoji: '🧙', hp: 8, atk: 8, def: 1, xp: 32, gold: 22, tier: 2 },
+  { name: 'Candy Crab', emoji: '🦀', hp: 9, atk: 5, def: 2, xp: 26, gold: 18, tier: 2 },
+  { name: 'Stone Golem', emoji: '🗿', hp: 18, atk: 7, def: 5, xp: 50, gold: 35, tier: 3 },
+  { name: 'Shadow Wolf', emoji: '🐺', hp: 14, atk: 9, def: 3, xp: 45, gold: 30, tier: 3 },
+  { name: 'Crystal Sprite', emoji: '✨', hp: 10, atk: 10, def: 2, xp: 42, gold: 28, tier: 3 },
+  { name: 'Giant Snail', emoji: '🐌', hp: 16, atk: 6, def: 6, xp: 40, gold: 32, tier: 3 },
+  { name: 'Dragon Pup', emoji: '🐲', hp: 22, atk: 11, def: 4, xp: 65, gold: 45, tier: 4 },
+  { name: 'Thunder Knight', emoji: '⚡', hp: 20, atk: 12, def: 6, xp: 70, gold: 50, tier: 4 },
+  { name: 'Phantom Jester', emoji: '🃏', hp: 15, atk: 13, def: 2, xp: 55, gold: 40, tier: 4 },
+  { name: 'Lava Lizard', emoji: '🦎', hp: 24, atk: 14, def: 5, xp: 80, gold: 55, tier: 5 },
+  { name: 'Moon Serpent', emoji: '🐍', hp: 20, atk: 15, def: 4, xp: 75, gold: 52, tier: 5 },
+];
+
+const ELITE_NAMES = ['Elite', 'Super', 'Mega', 'Ultra'];
+
+const FOREST_FUNNY = [
+  { text: 'A unicorn shares a cupcake. +10 gold!', gold: 10 },
+  { text: 'You help a frog DJ his pond party. +3 Charm!', charm: 3 },
+  { text: 'Found coins behind a mushroom. +15 gold!', gold: 15 },
+  { text: 'A cloud high-fives you. Feel awesome! +5 HP.', hp: 5 },
+  { text: 'A squirrel trades acorns for +20 gold!', gold: 20 },
+  { text: 'Rainbow butterflies boost your mood. +2 Charm!', charm: 2 },
+  { text: 'You nap in a hammock. +8 HP.', hp: 8 },
+  { text: 'Treasure map leads to +25 gold!', gold: 25 },
+];
+
+const FOREST_TREASURE = [
+  { text: '📦 Treasure chest! +40 gold!', gold: 40 },
+  { text: '📦 Chest had a healing potion! +10 HP.', hp: 10 },
+  { text: '📦 Sparkly gems! +30 gold and +2 Charm!', gold: 30, charm: 2 },
+];
+
+const SNACK_JOKES = [
+  'Why did the dragon eat a lightbulb? He wanted a light snack!',
+  'What do you call a bear with no teeth? A gummy bear!',
+  'Why don\'t eggs tell jokes? They\'d crack each other up!',
+  'What do elves learn in school? The elf-abet!',
+  'Why did the hero bring a ladder? To reach the next level!',
+];
+
+const SNACK_RIDDLES = [
+  { q: 'I have keys but no locks. What am I?', opts: ['A piano', 'A dragon', 'A sword'], ans: 0 },
+  { q: 'The more you take, the more you leave behind. What?', opts: ['Footsteps', 'Gold', 'Rainbows'], ans: 0 },
+  { q: 'What has a head and a tail but no body?', opts: ['A coin', 'A ghost', 'A muffin'], ans: 0 },
+  { q: 'I fly without wings. I cry without eyes. What am I?', opts: ['A cloud', 'A sword', 'A goblin'], ans: 0 },
+  { q: 'What gets wetter the more it dries?', opts: ['A towel', 'A dragon', 'The forest'], ans: 0 },
+];
+
+const BUDDIES = [
+  { name: 'Finn the Fox', emoji: '🦊' },
+  { name: 'Luna Owl', emoji: '🦉' },
+  { name: 'Bubbles Otter', emoji: '🦦' },
+  { name: 'Zap Robot', emoji: '🤖' },
+];
+
+const BARD_SONGS = [
+  { title: 'Ballad of the Brave', text: 'Your STR swells with courage!', str: 2 },
+  { title: 'Lullaby of Leaves', text: 'You feel cozy. +8 HP!', hp: 8 },
+  { title: 'Coin Jingle Rag', text: 'Gold jingles into your pouch!', gold: 25 },
+  { title: 'Charm Waltz', text: 'Everyone likes you more! +4 Charm.', charm: 4 },
+  { title: 'Shield Shimmy', text: 'Your DEF dances higher!', def: 2 },
+];
+
+const NPC_MAIL = [
+  { from: 'Town Elder 🧓', text: 'Brave one, the Rainbow Dragon snores glitter. Stock up at the shop!' },
+  { from: 'Healer Greenleaf 🌿', text: 'Remember: rest at the inn when HP is low. I charge less than knockout!' },
+  { from: 'Snack Bar Betty 🧁', text: 'Try the riddles — I hide extra gold in the right answers!' },
+  { from: 'Forest Ranger 🌲', text: 'Elite monsters have orange names. Extra tough, extra loot!' },
+  { from: 'Bard Stringsong 🎵', text: 'Visit my stage once a day for a free buff. No turn wasted twice!' },
+  { from: 'Dad (SysOp) 💕', text: 'Maya — proud of you! Use your turns wisely and have fun.' },
+];
+
+const ACHIEVEMENTS = [
+  { id: 'first_fight', em: '⚔️', name: 'First Victory', desc: 'Win a forest fight' },
+  { id: 'lv5', em: '⭐', name: 'Growing Strong', desc: 'Reach level 5' },
+  { id: 'lv10', em: '🌟', name: 'Realm Champion', desc: 'Reach level 10' },
+  { id: 'rich', em: '🪙', name: 'Treasure Hoarder', desc: 'Hold 500 gold' },
+  { id: 'charming', em: '✨', name: 'Super Charming', desc: 'Reach 15 Charm' },
+  { id: 'buddy', em: '🐾', name: 'Best Friends', desc: 'Recruit an Adventure Buddy' },
+  { id: 'dragon', em: '🐉', name: 'Dragon Slayer', desc: 'Defeat the Rainbow Dragon' },
+  { id: 'ng', em: '👑', name: 'Legend Retold', desc: 'Beat New Game+ dragon' },
+  { id: 'kills50', em: '💀', name: 'Monster Hunter', desc: 'Defeat 50 monsters' },
+];
+
+let audioCtx = null;
+function playTone(freq, dur, type) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = audioCtx.createOscillator();
+    const g = audioCtx.createGain();
+    o.type = type || 'square';
+    o.frequency.value = freq;
+    g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur);
+    o.connect(g);
+    g.connect(audioCtx.destination);
+    o.start();
+    o.stop(audioCtx.currentTime + dur);
+  } catch (e) {}
+}
+function sfx(kind) {
+  if (kind === 'hit') playTone(180, 0.08);
+  else if (kind === 'win') { playTone(523, 0.1); setTimeout(function(){ playTone(659, 0.12); }, 90); }
+  else if (kind === 'level') { playTone(440, 0.1); setTimeout(function(){ playTone(554, 0.1); setTimeout(function(){ playTone(659, 0.15); }, 80); }, 80); }
+  else if (kind === 'shop') playTone(880, 0.06);
+  else if (kind === 'bad') playTone(120, 0.15, 'sawtooth');
+  else if (kind === 'bard') { playTone(392, 0.12); setTimeout(function(){ playTone(494, 0.12); }, 100); }
+}
+
+let state = freshState();
+let pendingMonster = null;
+let pendingSnack = null;
+let selectedAvatar = AVATARS[0];
+let currentScreen = 'hub';
+
+function freshState() {
+  return {
+    name: '',
+    avatar: AVATARS[0],
+    level: 1,
+    xp: 0,
+    hp: 10,
+    maxHp: 10,
+    str: 10,
+    def: 5,
+    charm: 5,
+    gold: 200,
+    weaponId: 'stick',
+    armorId: 'none',
+    turnsLeft: MAX_TURNS,
+    turnDay: todayKey(),
+    dragonHp: BOSS_MAX_HP,
+    dragonDefeated: false,
+    newGamePlus: 0,
+    log: ['Welcome to the realm! Choose a destination.'],
+    created: false,
+    kills: 0,
+    achievements: [],
+    bardDay: '',
+    buddy: null,
+    mail: [],
+    mailRead: 0,
+  };
+}
+
+function migrateState() {
+  if (!state.achievements) state.achievements = [];
+  if (!state.mail) state.mail = [];
+  if (state.kills == null) state.kills = 0;
+  if (!state.armorId) state.armorId = 'none';
+  if (state.newGamePlus == null) state.newGamePlus = 0;
+  if (state.bardDay == null) state.bardDay = '';
+  if (state.mailRead == null) state.mailRead = 0;
+}
+
+function armorDef() {
+  const a = ARMOR.find(function(x) { return x.id === state.armorId; });
+  return a ? a.def : 0;
+}
+
+function totalDef() {
+  return state.def + armorDef();
+}
+
+function fleeChance() {
+  return Math.min(0.9, 0.65 + state.charm * 0.01);
+}
+
+function charmGoldBonus() {
+  return Math.floor(state.charm / 3);
+}
+
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function xpForLevel(lv) {
+  if (lv <= 1) return 0;
+  return 50 + (lv - 2) * 40;
+}
+
+function weaponStr() {
+  const w = WEAPONS.find(function(x) { return x.id === state.weaponId; });
+  return w ? w.str : 0;
+}
+
+function weaponName() {
+  const w = WEAPONS.find(function(x) { return x.id === state.weaponId; });
+  return w ? w.name : 'Stick';
+}
+
+function playerDamage(monsterDef) {
+  return Math.max(1, Math.floor(state.str + weaponStr() - monsterDef * 0.5));
+}
+
+function monsterDamage(monsterAtk) {
+  return Math.max(1, Math.floor(monsterAtk - totalDef() * 0.4));
+}
+
+function unlockAchievement(id) {
+  if (state.achievements.indexOf(id) >= 0) return;
+  const ach = ACHIEVEMENTS.find(function(a) { return a.id === id; });
+  if (!ach) return;
+  state.achievements.push(id);
+  addLog('🏅 Achievement: ' + ach.name + '!', 'hi');
+  const toast = document.getElementById('ach-toast');
+  toast.textContent = ach.em + ' ' + ach.name + ' unlocked!';
+  toast.classList.remove('hidden');
+  setTimeout(function() { toast.classList.add('hidden'); }, 2800);
+  sfx('win');
+}
+
+function checkAchievements() {
+  if (state.kills >= 1) unlockAchievement('first_fight');
+  if (state.level >= 5) unlockAchievement('lv5');
+  if (state.level >= 10) unlockAchievement('lv10');
+  if (state.gold >= 500) unlockAchievement('rich');
+  if (state.charm >= 15) unlockAchievement('charming');
+  if (state.buddy) unlockAchievement('buddy');
+  if (state.dragonDefeated && state.newGamePlus === 0) unlockAchievement('dragon');
+  if (state.dragonDefeated && state.newGamePlus >= 1) unlockAchievement('ng');
+  if (state.kills >= 50) unlockAchievement('kills50');
+}
+
+function refreshDay() {
+  const t = todayKey();
+  if (state.turnDay !== t) {
+    state.turnDay = t;
+    state.turnsLeft = MAX_TURNS;
+    state.bardDay = '';
+    addLog('☀️ A new day! You have ' + MAX_TURNS + ' turns.', 'hi');
+    if (state.mail.length < 8) {
+      const letter = NPC_MAIL[Math.floor(Math.random() * NPC_MAIL.length)];
+      state.mail.push({ from: letter.from, text: letter.text, day: t });
+    }
+    saveGame();
+  }
+}
+
+function useTurn() {
+  refreshDay();
+  if (state.turnsLeft <= 0) {
+    showNoTurns();
+    return false;
+  }
+  state.turnsLeft--;
+  updateHud();
+  if (state.turnsLeft === 0) addLog('🌙 That was your last turn today!', 'hi');
+  saveGame();
+  return true;
+}
+
+function addLog(msg, cls) {
+  state.log.push({ msg: msg, cls: cls || '' });
+  if (state.log.length > 80) state.log = state.log.slice(-80);
+  renderLog(document.getElementById('log'), state.log);
+}
+
+function addForestLog(msg, cls) {
+  const el = document.getElementById('log-forest');
+  const line = document.createElement('div');
+  line.className = 'line' + (cls ? ' ' + cls : '');
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function addDragonLog(msg, cls) {
+  const el = document.getElementById('log-dragon');
+  const line = document.createElement('div');
+  line.className = 'line' + (cls ? ' ' + cls : '');
+  line.textContent = msg;
+  el.appendChild(line);
+  el.scrollTop = el.scrollHeight;
+}
+
+function renderLog(container, entries) {
+  if (!container) return;
+  container.innerHTML = '';
+  entries.forEach(function(e) {
+    const line = document.createElement('div');
+    line.className = 'line' + (e.cls ? ' ' + e.cls : '');
+    line.textContent = e.msg;
+    container.appendChild(line);
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function updateHud() {
+  document.getElementById('s-hp').textContent = state.hp;
+  document.getElementById('s-maxhp').textContent = state.maxHp;
+  document.getElementById('s-lv').textContent = state.level;
+  document.getElementById('s-gold').textContent = state.gold;
+  document.getElementById('s-turns').textContent = state.turnsLeft;
+  document.getElementById('s-charm').textContent = state.charm;
+  const title = state.dragonDefeated && state.newGamePlus >= 1 ? ' 👑' : (state.dragonDefeated ? ' 🏆' : '');
+  document.getElementById('hub-greet').textContent = state.avatar + ' ' + (state.name || 'Hero') + title;
+}
+
+function saveGame() {
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify(state));
+  } catch (e) {}
+}
+
+function loadGame() {
+  try {
+    const raw = localStorage.getItem(SAVE_KEY);
+    if (!raw) return false;
+    const saved = JSON.parse(raw);
+    if (!saved || !saved.created) return false;
+    state = Object.assign(freshState(), saved);
+    migrateState();
+    refreshDay();
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function checkLevelUp() {
+  let needed = xpForLevel(state.level + 1);
+  while (state.xp >= needed && state.level < 50) {
+    state.xp -= needed;
+    state.level++;
+    state.maxHp += 2;
+    state.str += 1;
+    state.def += 1;
+    state.hp = state.maxHp;
+    addLog('⭐ LEVEL UP! Now level ' + state.level + '!', 'hi');
+    sfx('level');
+    needed = xpForLevel(state.level + 1);
+  }
+  checkAchievements();
+}
+
+function knockout() {
+  const lost = Math.floor(state.gold * 0.25);
+  state.gold = Math.max(0, state.gold - lost);
+  state.hp = state.maxHp;
+  addLog('💫 Knocked out! You wake at the inn. Lost ' + lost + ' gold.', 'bad');
+  showScreen('hub');
+  buildHubActions();
+  updateHud();
+  saveGame();
+}
+
+function pickMonster(tough) {
+  const tier = Math.min(4, Math.max(1, Math.floor((state.level - 1) / 3) + 1 + (tough ? 1 : 0)));
+  const pool = MONSTERS.filter(function(m) { return m.tier <= tier; });
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+function scaleMonster(m, elite) {
+  const scale = 1 + (state.level - 1) * 0.08;
+  const em = elite ? 1.4 : 1;
+  const prefix = elite ? ELITE_NAMES[Math.floor(Math.random() * ELITE_NAMES.length)] + ' ' : '';
+  return {
+    name: prefix + m.name,
+    emoji: m.emoji,
+    hp: Math.ceil(m.hp * scale * em),
+    maxHp: Math.ceil(m.hp * scale * em),
+    atk: Math.ceil(m.atk * scale * (elite ? 1.15 : 1)),
+    def: m.def + (elite ? 2 : 0),
+    xp: Math.ceil(m.xp * scale * (elite ? 1.5 : 1)),
+    gold: Math.ceil(m.gold * scale * (elite ? 1.5 : 1)),
+    elite: !!elite,
+  };
+}
+
+function showScreen(name) {
+  currentScreen = name;
+  document.getElementById('screen-hub').classList.toggle('hidden', name !== 'hub');
+  document.getElementById('screen-forest').classList.toggle('hidden', name !== 'forest');
+  document.getElementById('screen-shop').classList.toggle('hidden', name !== 'shop');
+  document.getElementById('screen-snack').classList.toggle('hidden', name !== 'snack');
+  document.getElementById('screen-dragon').classList.toggle('hidden', name !== 'dragon');
+  document.getElementById('screen-stats').classList.toggle('hidden', name !== 'stats');
+  document.getElementById('screen-mail').classList.toggle('hidden', name !== 'mail');
+  document.getElementById('screen-bard').classList.toggle('hidden', name !== 'bard');
+  document.getElementById('back-btn').classList.toggle('hidden', name === 'hub');
+  const titles = { hub: 'Town Square', forest: 'Dark Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: "Bard's Stage" };
+  document.getElementById('hdr-title').textContent = titles[name] || 'Rainbow Dragon';
+}
+
+function buildHubActions() {
+  const box = document.getElementById('hub-actions');
+  box.innerHTML = '';
+  const noTurns = state.turnsLeft <= 0;
+
+  function btn(label, cls, fn, disabled) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'act-btn ' + cls;
+    b.textContent = label;
+    if (disabled) b.disabled = true;
+    b.addEventListener('click', function(e) {
+      e.preventDefault();
+      fn();
+    });
+    return b;
+  }
+
+  box.appendChild(btn('🌲 Explore Forest (1 turn)', 'forest', goForest, noTurns));
+  box.appendChild(btn('⚔️ Weapon Shop (1 turn)', 'shop', goShop, noTurns));
+  const row = document.createElement('div');
+  row.className = 'act-row';
+  row.appendChild(btn('💚 Healer', 'heal', goHealer, noTurns));
+  row.appendChild(btn('🏠 Inn — Rest', 'inn', goInn, noTurns));
+  box.appendChild(row);
+  box.appendChild(btn('🧁 Snack Bar (1 turn)', 'snack', goSnack, noTurns));
+  const bardDone = state.bardDay === todayKey();
+  box.appendChild(btn(bardDone ? '🎵 Bard (done today)' : '🎵 Bard\'s Stage (1 turn)', 'bard', goBard, noTurns || bardDone));
+  const row2 = document.createElement('div');
+  row2.className = 'act-row';
+  row2.appendChild(btn('📬 Mailbox', 'mail', goMail, false));
+  row2.appendChild(btn('📜 Hero Stats', 'stats', goStats, false));
+  box.appendChild(row2);
+  if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) {
+    const label = state.newGamePlus >= 1 ? '🌈🐉 Dragon (NG+)!' : '🌈🐉 Rainbow Dragon!';
+    box.appendChild(btn(label, 'dragon', goDragon, noTurns));
+  }
+  if (state.dragonDefeated && state.newGamePlus === 0) {
+    box.appendChild(btn('👑 New Game+ — Dragon returns!', 'dragon', startNewGamePlus, noTurns));
+  }
+  box.appendChild(btn('🌙 End Day (rest)', 'muted', endDay, false));
+}
+
+function goForest() {
+  if (!useTurn()) return;
+  const roll = Math.random();
+  if (roll < 0.08) {
+    const ev = FOREST_TREASURE[Math.floor(Math.random() * FOREST_TREASURE.length)];
+    if (ev.gold) state.gold += ev.gold;
+    if (ev.charm) state.charm += ev.charm;
+    if (ev.hp) state.hp = Math.min(state.maxHp, state.hp + ev.hp);
+    addLog(ev.text, 'hi');
+    sfx('win');
+    updateHud();
+    checkAchievements();
+    saveGame();
+    return;
+  }
+  if (roll < 0.18) {
+    const ev = FOREST_FUNNY[Math.floor(Math.random() * FOREST_FUNNY.length)];
+    if (ev.gold) state.gold += ev.gold;
+    if (ev.charm) state.charm += ev.charm;
+    if (ev.hp) state.hp = Math.min(state.maxHp, state.hp + ev.hp);
+    addLog(ev.text, 'fun');
+    updateHud();
+    checkAchievements();
+    saveGame();
+    return;
+  }
+  const tough = roll > 0.75;
+  const elite = roll > 0.92;
+  pendingMonster = scaleMonster(pickMonster(tough), elite);
+  document.getElementById('log-forest').innerHTML = '';
+  const eliteTag = pendingMonster.elite ? '<span class="elite-tag">ELITE</span>' : '';
+  document.getElementById('encounter-box').innerHTML =
+    '<div class="enc-emoji">' + pendingMonster.emoji + '</div>' +
+    '<div class="enc-name">' + pendingMonster.name + eliteTag + '</div>' +
+    '<div class="enc-stats">HP ' + pendingMonster.hp + ' · ATK ' + pendingMonster.atk + '</div>';
+  const fa = document.getElementById('forest-actions');
+  fa.innerHTML = '';
+  const fight = document.createElement('button');
+  fight.type = 'button';
+  fight.className = 'act-btn primary';
+  fight.textContent = '⚔️ Fight!';
+  fight.addEventListener('click', doFight);
+  const flee = document.createElement('button');
+  flee.type = 'button';
+  flee.className = 'act-btn muted';
+  flee.textContent = '🏃 Flee';
+  flee.addEventListener('click', doFlee);
+  fa.appendChild(fight);
+  fa.appendChild(flee);
+  showScreen('forest');
+}
+
+function doFlee() {
+  if (Math.random() < fleeChance()) {
+    addForestLog('You escaped into the bushes!', 'fun');
+    addLog('🏃 Fled from ' + pendingMonster.name + '.', '');
+    pendingMonster = null;
+    showScreen('hub');
+    saveGame();
+    return;
+  }
+  addForestLog('Failed to flee! The monster blocks you!', 'bad');
+  doFight();
+}
+
+function doFight() {
+  const m = pendingMonster;
+  if (!m) return;
+  document.getElementById('forest-actions').innerHTML = '';
+  let mhp = m.hp;
+  let round = 0;
+  while (mhp > 0 && state.hp > 0) {
+    let pd = playerDamage(m.def);
+    if (state.buddy && round % 3 === 2) {
+      pd += 2;
+      addForestLog(state.buddy.emoji + ' ' + state.buddy.name + ' helps! +2 dmg', 'fun');
+    }
+    mhp -= pd;
+    addForestLog('You hit for ' + pd + '! (' + Math.max(0, mhp) + ' HP left)', '');
+    sfx('hit');
+    if (mhp <= 0) break;
+    const md = monsterDamage(m.atk);
+    state.hp -= md;
+    addForestLog(m.name + ' hits you for ' + md + '!', 'bad');
+    updateHud();
+    round++;
+  }
+  if (state.hp <= 0) {
+    addForestLog('You got knocked out...', 'bad');
+    pendingMonster = null;
+    showScreen('hub');
+    knockout();
+    return;
+  }
+  const bonus = charmGoldBonus();
+  state.gold += m.gold + bonus;
+  state.xp += m.xp;
+  state.kills++;
+  addForestLog('Victory! +' + m.xp + ' XP, +' + (m.gold + bonus) + ' gold', 'hi');
+  addLog('⚔️ Defeated ' + m.name + '! +' + m.xp + ' XP', 'hi');
+  if (bonus > 0) addLog('✨ Charm bonus: +' + bonus + ' gold', 'fun');
+  sfx('win');
+  checkLevelUp();
+  checkAchievements();
+  pendingMonster = null;
+  showScreen('hub');
+  buildHubActions();
+  updateHud();
+  saveGame();
+}
+
+function goShop() {
+  if (!useTurn()) return;
+  addLog('🛒 Visited the weapon shop.', '');
+  renderShop();
+  showScreen('shop');
+}
+
+function renderShop() {
+  const list = document.getElementById('shop-list');
+  list.innerHTML = '';
+  const h = document.createElement('div');
+  h.className = 'hub-title';
+  h.style.fontSize = '1rem';
+  h.textContent = '⚔️ Weapons';
+  list.appendChild(h);
+  WEAPONS.forEach(function(w) {
+    if (w.cost === 0) return;
+    const owned = state.weaponId === w.id;
+    const canBuy = state.level >= w.minLv && state.gold >= w.cost && !owned;
+    const div = document.createElement('div');
+    div.className = 'shop-item' + (owned ? ' owned' : '');
+    div.innerHTML =
+      '<div><div class="si-name">' + w.name + '</div>' +
+      '<div class="si-meta">+' + w.str + ' STR · ' + w.cost + ' gold · Lv ' + w.minLv + '</div></div>';
+    if (!owned) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'act-btn shop';
+      b.textContent = canBuy ? 'Buy' : (state.level < w.minLv ? 'Need Lv' + w.minLv : 'Too poor');
+      b.disabled = !canBuy;
+      b.addEventListener('click', function() {
+        state.gold -= w.cost;
+        state.weaponId = w.id;
+        addLog('⚔️ Bought ' + w.name + '!', 'hi');
+        sfx('shop');
+        renderShop();
+        updateHud();
+        saveGame();
+      });
+      div.appendChild(b);
+    } else {
+      const span = document.createElement('span');
+      span.style.color = 'var(--green)';
+      span.textContent = '✓ Equipped';
+      div.appendChild(span);
+    }
+    list.appendChild(div);
+  });
+  const h2 = document.createElement('div');
+  h2.className = 'hub-title';
+  h2.style.fontSize = '1rem';
+  h2.style.marginTop = '8px';
+  h2.textContent = '🛡️ Armor';
+  list.appendChild(h2);
+  ARMOR.forEach(function(a) {
+    if (a.cost === 0) return;
+    const owned = state.armorId === a.id;
+    const canBuy = state.level >= a.minLv && state.gold >= a.cost && !owned;
+    const div = document.createElement('div');
+    div.className = 'shop-item' + (owned ? ' owned' : '');
+    div.innerHTML =
+      '<div><div class="si-name">' + a.name + '</div>' +
+      '<div class="si-meta">+' + a.def + ' DEF · ' + a.cost + ' gold · Lv ' + a.minLv + '</div></div>';
+    if (!owned) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'act-btn heal';
+      b.textContent = canBuy ? 'Buy' : (state.level < a.minLv ? 'Need Lv' + a.minLv : 'Too poor');
+      b.disabled = !canBuy;
+      b.addEventListener('click', function() {
+        state.gold -= a.cost;
+        state.armorId = a.id;
+        addLog('🛡️ Bought ' + a.name + '!', 'hi');
+        sfx('shop');
+        renderShop();
+        updateHud();
+        saveGame();
+      });
+      div.appendChild(b);
+    } else {
+      const span = document.createElement('span');
+      span.style.color = 'var(--green)';
+      span.textContent = '✓ Wearing';
+      div.appendChild(span);
+    }
+    list.appendChild(div);
+  });
+  const cur = document.createElement('div');
+  cur.className = 'shop-item';
+  cur.innerHTML = '<div><div class="si-name">Equipped</div><div class="si-meta">' + weaponName() + ' (+' + weaponStr() + ' STR) · ' +
+    (ARMOR.find(function(a){return a.id===state.armorId;})||{name:'Plain'}).name + ' (+' + armorDef() + ' DEF)</div></div>';
+  list.appendChild(cur);
+}
+
+function goHealer() {
+  if (!useTurn()) return;
+  const cost = 20 + state.level * 5;
+  if (state.gold < cost) {
+    addLog('💚 Healer: not enough gold (' + cost + ' needed).', 'bad');
+    return;
+  }
+  if (state.hp >= state.maxHp) {
+    addLog('💚 Healer: you already feel great!', 'fun');
+    return;
+  }
+  state.gold -= cost;
+  state.hp = state.maxHp;
+  addLog('💚 Healer restored you for ' + cost + ' gold.', 'hi');
+  updateHud();
+  saveGame();
+}
+
+function goInn() {
+  if (!useTurn()) return;
+  state.hp = state.maxHp;
+  addLog('🏠 Rested at the inn. HP full!', 'hi');
+  updateHud();
+  saveGame();
+}
+
+function goSnack() {
+  if (!useTurn()) return;
+  const roll = Math.random();
+  pendingSnack = { type: roll < 0.35 ? 'riddle' : roll < 0.7 ? 'joke' : roll < 0.85 ? 'ally' : 'muffin' };
+  const box = document.getElementById('snack-box');
+  const actions = document.getElementById('snack-actions');
+  actions.innerHTML = '';
+
+  if (pendingSnack.type === 'joke') {
+    const j = SNACK_JOKES[Math.floor(Math.random() * SNACK_JOKES.length)];
+    box.innerHTML = '<div class="enc-emoji">😂</div><div class="enc-name">Snack Bar Joke</div><div class="enc-stats" style="font-size:13px;color:var(--text)">' + j + '</div>';
+    state.charm += 1;
+    addLog('🧁 Snack Bar: laughed at a joke. +1 Charm', 'fun');
+    const ok = document.createElement('button');
+    ok.type = 'button';
+    ok.className = 'act-btn primary';
+    ok.textContent = 'Ha ha! Back to town';
+    ok.addEventListener('click', finishSnack);
+    actions.appendChild(ok);
+  } else if (pendingSnack.type === 'riddle') {
+    const r = SNACK_RIDDLES[Math.floor(Math.random() * SNACK_RIDDLES.length)];
+    pendingSnack.riddle = r;
+    box.innerHTML = '<div class="enc-emoji">🤔</div><div class="enc-name">Riddle Time!</div><div class="enc-stats" style="font-size:13px;color:var(--text)">' + r.q + '</div>';
+    const opts = document.createElement('div');
+    opts.className = 'riddle-opts';
+    r.opts.forEach(function(opt, i) {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'act-btn snack';
+      b.textContent = opt;
+      b.addEventListener('click', function() {
+        if (i === r.ans) {
+          state.gold += 15;
+          addLog('🧁 Riddle solved! +15 gold', 'hi');
+        } else {
+          addLog('🧁 Wrong answer, but nice try!', '');
+        }
+        finishSnack();
+      });
+      opts.appendChild(b);
+    });
+    actions.appendChild(opts);
+  } else if (pendingSnack.type === 'ally') {
+    if (!state.buddy) {
+      const bud = BUDDIES[Math.floor(Math.random() * BUDDIES.length)];
+      state.buddy = { name: bud.name, emoji: bud.emoji };
+      box.innerHTML = '<div class="enc-emoji">' + bud.emoji + '</div><div class="enc-name">Adventure Buddy!</div><div class="enc-stats">' + bud.name + ' joins you! Helps in fights.</div>';
+      addLog('🐾 ' + bud.name + ' is now your Adventure Buddy!', 'hi');
+      checkAchievements();
+    } else {
+      box.innerHTML = '<div class="enc-emoji">' + state.buddy.emoji + '</div><div class="enc-name">' + state.buddy.name + '</div><div class="enc-stats">Your buddy shares battle tips. +5 XP!</div>';
+      state.xp += 5;
+      checkLevelUp();
+      addLog('🧁 Hung out with ' + state.buddy.name + '! +5 XP', 'hi');
+    }
+    const ok = document.createElement('button');
+    ok.type = 'button';
+    ok.className = 'act-btn primary';
+    ok.textContent = 'High five! 🐾';
+    ok.addEventListener('click', finishSnack);
+    actions.appendChild(ok);
+  } else {
+    box.innerHTML = '<div class="enc-emoji">🧁</div><div class="enc-name">Magic Muffin</div><div class="enc-stats">Warm and sparkly. +3 HP!</div>';
+    state.hp = Math.min(state.maxHp, state.hp + 3);
+    addLog('🧁 Ate a magic muffin. +3 HP', 'hi');
+    const ok = document.createElement('button');
+    ok.type = 'button';
+    ok.className = 'act-btn primary';
+    ok.textContent = 'Yum! Back to town';
+    ok.addEventListener('click', finishSnack);
+    actions.appendChild(ok);
+  }
+  showScreen('snack');
+  updateHud();
+  saveGame();
+}
+
+function finishSnack() {
+  pendingSnack = null;
+  showScreen('hub');
+  buildHubActions();
+}
+
+function bossMaxHp() {
+  return state.newGamePlus >= 1 ? BOSS_NG_HP : BOSS_MAX_HP;
+}
+
+function goDragon() {
+  if (state.dragonDefeated) return;
+  document.getElementById('log-dragon').innerHTML = '';
+  const max = bossMaxHp();
+  document.getElementById('dragon-hp-text').textContent = 'HP: ' + state.dragonHp + ' / ' + max;
+  addDragonLog(state.newGamePlus >= 1 ? 'The dragon returned stronger!' : 'The Rainbow Dragon roars in glitter!', 'hi');
+  showScreen('dragon');
+}
+
+function startNewGamePlus() {
+  if (!useTurn()) return;
+  state.newGamePlus = 1;
+  state.dragonDefeated = false;
+  state.dragonHp = BOSS_NG_HP;
+  addLog('👑 NEW GAME+! The Rainbow Dragon returns with ' + BOSS_NG_HP + ' HP!', 'hi');
+  saveGame();
+  buildHubActions();
+  goDragon();
+}
+
+function dragonAttack() {
+  if (!useTurn()) return;
+  if (state.dragonDefeated) return;
+  const dmg = Math.max(5, Math.floor((state.str + weaponStr()) * 1.5));
+  state.dragonHp = Math.max(0, state.dragonHp - dmg);
+  addDragonLog('You strike for ' + dmg + ' damage!', 'hi');
+  const max = bossMaxHp();
+  document.getElementById('dragon-hp-text').textContent = 'HP: ' + state.dragonHp + ' / ' + max;
+  sfx('hit');
+
+  if (state.dragonHp <= 0) {
+    state.dragonDefeated = true;
+    addDragonLog('The Rainbow Dragon surrenders with a sparkly sneeze!', 'hi');
+    const ng = state.newGamePlus >= 1;
+    addLog(ng ? '🏆 LEGEND! You beat New Game+!' : '🏆 YOU DEFEATED THE RAINBOW DRAGON!', 'hi');
+    sfx('win');
+    checkAchievements();
+    saveGame();
+    document.getElementById('victory-msg').textContent = state.name + ' the mighty ' + state.avatar + (ng ? ' is a true legend!' : ' saved the realm!');
+    document.getElementById('ov-victory').classList.remove('hidden');
+    buildHubActions();
+    return;
+  }
+
+  const counter = Math.max(3, Math.floor(8 + state.level * 0.5));
+  state.hp -= counter;
+  addDragonLog('Dragon tail-swipe! You take ' + counter + ' damage.', 'bad');
+  updateHud();
+  if (state.hp <= 0) {
+    addDragonLog('Knocked out! Dragged to the inn...', 'bad');
+    showScreen('hub');
+    knockout();
+  }
+  saveGame();
+}
+
+function endDay() {
+  state.turnsLeft = 0;
+  state.turnDay = todayKey();
+  state.hp = state.maxHp;
+  addLog('🌙 You ended the day and slept soundly.', 'hi');
+  updateHud();
+  saveGame();
+  showNoTurns();
+}
+
+function showNoTurns() {
+  document.getElementById('ov-no-turns').classList.remove('hidden');
+}
+
+function startGame() {
+  document.getElementById('ov-title').classList.add('hidden');
+  document.getElementById('ov-create').classList.add('hidden');
+  refreshDay();
+  renderLog(document.getElementById('log'), state.log);
+  updateHud();
+  buildHubActions();
+  showScreen('hub');
+}
+
+function showCreate() {
+  document.getElementById('ov-title').classList.add('hidden');
+  document.getElementById('ov-create').classList.remove('hidden');
+  document.getElementById('hero-name').value = '';
+  selectedAvatar = AVATARS[0];
+  renderAvatars();
+}
+
+function renderAvatars() {
+  const g = document.getElementById('avatar-grid');
+  g.innerHTML = '';
+  AVATARS.forEach(function(em) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'av-btn' + (em === selectedAvatar ? ' sel' : '');
+    b.textContent = em;
+    b.addEventListener('click', function() {
+      selectedAvatar = em;
+      renderAvatars();
+    });
+    g.appendChild(b);
+  });
+}
+
+function createHero() {
+  const name = (document.getElementById('hero-name').value || '').trim().slice(0, 12);
+  if (!name) {
+    document.getElementById('hero-name').focus();
+    return;
+  }
+  state = freshState();
+  state.name = name;
+  state.avatar = selectedAvatar;
+  state.created = true;
+  state.log = [
+    '══════════════════════════',
+    ' LEGEND OF THE RAINBOW DRAGON',
+    '══════════════════════════',
+    'Welcome, ' + name + '! ' + selectedAvatar,
+    'You have ' + MAX_TURNS + ' turns today.',
+    'Visit the forest, shop, or Snack Bar!',
+  ];
+  saveGame();
+  startGame();
+}
+
+function init() {
+  renderAvatars();
+  if (loadGame()) {
+    document.getElementById('ov-title').classList.remove('hidden');
+    document.getElementById('btn-continue').style.display = 'block';
+  } else {
+    document.getElementById('btn-continue').style.display = 'none';
+  }
+}
+
+document.getElementById('btn-continue').addEventListener('click', startGame);
+document.getElementById('btn-new').addEventListener('click', showCreate);
+document.getElementById('btn-start').addEventListener('click', createHero);
+document.getElementById('btn-create-cancel').addEventListener('click', function() {
+  document.getElementById('ov-create').classList.add('hidden');
+  document.getElementById('ov-title').classList.remove('hidden');
+});
+document.getElementById('back-btn').addEventListener('click', function() {
+  showScreen('hub');
+  buildHubActions();
+});
+document.getElementById('shop-back').addEventListener('click', function() {
+  showScreen('hub');
+  buildHubActions();
+});
+document.getElementById('dragon-back').addEventListener('click', function() {
+  showScreen('hub');
+  buildHubActions();
+});
+document.getElementById('dragon-attack').addEventListener('click', dragonAttack);
+document.getElementById('btn-victory-ok').addEventListener('click', function() {
+  document.getElementById('ov-victory').classList.add('hidden');
+  showScreen('hub');
+  buildHubActions();
+});
+document.getElementById('btn-day-ok').addEventListener('click', function() {
+  document.getElementById('ov-no-turns').classList.add('hidden');
+});
+
+window.render_game_to_text = function() {
+  return JSON.stringify({
+    name: state.name,
+    level: state.level,
+    hp: state.hp,
+    maxHp: state.maxHp,
+    str: state.str,
+    def: state.def,
+    gold: state.gold,
+    xp: state.xp,
+    turnsLeft: state.turnsLeft,
+    turnDay: state.turnDay,
+    weaponId: state.weaponId,
+    dragonHp: state.dragonHp,
+    dragonDefeated: state.dragonDefeated,
+    screen: currentScreen,
+    created: state.created,
+  });
+};
+
+window.advanceTime = function() {};
+
+init();
+</script>
+</body>
+</html>

@@ -52,7 +52,7 @@ They load from CDN and work by just opening in a browser or deploying to GitHub 
   - **In production:** `castle-defenders.html`
 - **Plain HTML/CSS/Canvas** — everything else
   - DOM for layouts; canvas when a small draw loop is enough
-  - **In production:** `pinata-piano-v2.html`, `dust-chasers.html`, `letter-tumble.html`, `pipe-flow.html`, `mayas-kitchen.html`, `skyline-builder.html`
+  - **In production:** `pinata-piano-v2.html`, `dust-chasers.html`, `letter-tumble.html`, `pipe-flow.html`, `mayas-kitchen.html`, `skyline-builder.html`, `legend-of-the-rainbow-dragon.html`
 - **Babylon.js** — future 3D only (not required for 2D)
   - CDN: `https://cdn.babylonjs.com/babylon.js`
 
@@ -180,6 +180,12 @@ Cook-and-sell tycoon: customer orders, recipe unlocks, shop upgrades. **Plain HT
 
 ### 7. City Builder (`skyline-builder.html`)
 Skyline building toy. **Plain HTML/canvas**.
+
+### 8. Legend of the Rainbow Dragon (`legend-of-the-rainbow-dragon.html`)
+BBS-style daily-turn RPG (LORD homage). Forest, shop, healer, inn, Snack Bar, Rainbow Dragon boss. **Plain HTML** (DOM UI).
+
+### 9. Star Squads! (`star-squads.html`) — **Phaser 4**
+Netrek-inspired team space battle: Federation vs Klingons, planet capture, bot enemies. See `docs/star-squads.md`.
 
 ---
 

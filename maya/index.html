@@ -164,10 +164,10 @@ header{text-align:center;padding:48px 0 36px}
   <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
   <div id="gotw" onclick="gotwPlay()">
     <span class="gotw-badge">✨ New!</span>
-    <div class="gotw-em" id="ge">🏙️</div>
+    <div class="gotw-em" id="ge">🚀</div>
     <div class="gotw-info">
-      <div class="gotw-title" id="gtt">City Builder!</div>
-      <div class="gotw-desc" id="gdt">Build a glittering city skyline brick by brick!</div>
+      <div class="gotw-title" id="gtt">Star Squads!</div>
+      <div class="gotw-desc" id="gdt">Team space battle — capture planets or blast the enemy squad!</div>
     </div>
     <button class="gotw-btn">▶ Play!</button>
   </div>
@@ -175,6 +175,24 @@ header{text-align:center;padding:48px 0 36px}
   <!-- ALL GAMES -->
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
+    <div class="gc">
+      <div class="ga" style="background:linear-gradient(135deg,#0a1628,#1a2848)">🚀</div>
+      <div class="gb">
+        <div class="gt">Star Squads!</div>
+        <div class="gd">Pick Federation or Klingons! Fly, shoot, and capture all the planets!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" onclick="openGame('star-squads.html','Star Squads! 🚀')">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga" style="background:linear-gradient(135deg,#2a0840,#4a1060)">🐉</div>
+      <div class="gb">
+        <div class="gt">Legend of the Rainbow Dragon!</div>
+        <div class="gd">BBS-style daily turns! Fight in the forest, visit the Snack Bar, and defeat the Rainbow Dragon!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" onclick="openGame('legend-of-the-rainbow-dragon.html','Legend of the Rainbow Dragon! 🐉')">▶ Play Now</button>
+      </div>
+    </div>
     <div class="gc">
       <div class="ga" style="background:linear-gradient(135deg,#0a2840,#0d4020)">💧</div>
       <div class="gb">
@@ -389,6 +407,8 @@ setTimeout(()=>{
 
 // ===== GAME OF THE WEEK =====
 const GLIST=[
+  {em:'🚀',title:'Star Squads!',desc:'Team space battle — capture planets or blast the enemy squad!',file:'star-squads.html'},
+  {em:'🐉',title:'Legend of the Rainbow Dragon!',desc:'Daily turns, forest fights, and a sparkly dragon boss!',file:'legend-of-the-rainbow-dragon.html'},
   {em:'💧',title:'Pipe Flow!',desc:'Spin pipes to connect the hose to the garden field!',file:'pipe-flow.html'},
   {em:'🍳',title:"Maya's Kitchen!",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'mayas-kitchen.html'},
   {em:'🏙️',title:'City Builder!',desc:'Build a glittering city skyline brick by brick!',file:'skyline-builder.html'},
