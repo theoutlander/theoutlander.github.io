@@ -508,6 +508,7 @@ function saveGame() {
   localStorage.setItem('mayas-kitchen-v1', JSON.stringify({
     coins: state.coins,
     inventory: state.inventory,
+    pendingDish: state.screen === 'result' ? state.selectedId : null,
   }));
 }
 
@@ -517,6 +518,10 @@ function loadGame() {
     if (saved) {
       if (typeof saved.coins === 'number') state.coins = saved.coins;
       if (saved.inventory) state.inventory = saved.inventory;
+      if (saved.pendingDish) {
+        state.selectedId = saved.pendingDish;
+        state.screen = 'result';
+      }
     }
   } catch (e) {}
 }
@@ -573,12 +578,12 @@ function cookIt() {
   Object.entries(recipe.needs).forEach(([id, qty]) => {
     state.inventory[id] = (state.inventory[id] || 0) - qty;
   });
-  saveGame();
   state.isCooking = true;
   render();
   setTimeout(() => {
     state.isCooking = false;
     state.screen = 'result';
+    saveGame();
     render();
   }, 1800);
 }
