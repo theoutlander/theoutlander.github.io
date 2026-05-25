@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>City Builder 🏙️</title>
 
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <!-- Google Analytics -->
 <script>
 	(function(){
@@ -112,6 +113,25 @@ html, body {
 .tb-action.warn .lbl { color: #ff7070; }
 .tb-action.warn { border-color: rgba(255,112,112,0.25); }
 
+/* Toast notification */
+#toast {
+  position: fixed; bottom: 30px; left: 50%;
+  transform: translateX(-50%);
+  background: #1e1440; color: #f0e6ff;
+  font-family: 'Fredoka One', cursive; font-size: 16px;
+  padding: 12px 26px; border-radius: 99px;
+  pointer-events: none; z-index: 600;
+  opacity: 0; transition: opacity 0.25s;
+  white-space: nowrap;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.6);
+  border: 2px solid rgba(255,255,255,0.1);
+}
+#toast.show { opacity: 1; }
+
+/* Send-to-Dad action button special colour */
+.tb-action.send { border-color: rgba(93,255,176,0.3); }
+.tb-action.send .lbl { color: #5dffb0; }
+
 /* Clear confirm tooltip */
 #clear-tip {
   position: fixed; bottom: 90px; left: 50%;
@@ -136,6 +156,7 @@ html, body {
   </div>
 </div>
 <div id="clear-tip">Really? Tap again to clear! 🗑️</div>
+<div id="toast"></div>
 <script>
 // ═══════════════════════════════════════════════════════════════
 //  CITY BUILDER  —  Maya's Game Lab
@@ -192,6 +213,81 @@ function soundForTool(type) {
     case 'paint':    playRising(300, 600, 0.15, 0.07); break;
     case 'eraser':   playTone(200, 'sine',     0.06, 0.05); break;
     default:         playTone(300, 'triangle', 0.07, 0.07);
+  }
+}
+
+// ── EmailJS ───────────────────────────────────────────────────
+const EJS_KEY = 'aobGgwT--7krdk9Qv';
+const EJS_SVC = 'service_08wvsfl';
+const EJS_TPL = 'template_b7g9ipp';
+(function(){ if (window.emailjs) emailjs.init(EJS_KEY); else window.addEventListener('load', function(){ if (window.emailjs) emailjs.init(EJS_KEY); }); })();
+
+// ── Toast ─────────────────────────────────────────────────────
+let toastTimer = null;
+function showToast(msg, duration) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  if (toastTimer) clearTimeout(toastTimer);
+  if (duration > 0) toastTimer = setTimeout(() => el.classList.remove('show'), duration);
+}
+
+// ── Merge sky + game into one canvas ──────────────────────────
+function mergeCanvas() {
+  const tmp = document.createElement('canvas');
+  tmp.width = gameCanvas.width; tmp.height = gameCanvas.height;
+  const ctx = tmp.getContext('2d');
+  ctx.drawImage(skyCanvas, 0, 0);
+  ctx.drawImage(gameCanvas, 0, 0);
+  return tmp;
+}
+
+// ── Save image as PNG download ────────────────────────────────
+function saveImage() {
+  mergeCanvas().toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = 'my-city.png';
+    document.body.appendChild(a); a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }, 'image/png');
+  playRising(300, 600, 0.2, 0.06);
+}
+
+// ── Send city to Dad via EmailJS (bytebin upload + fallback) ──
+async function sendToDad() {
+  if (!window.emailjs) { showToast('📵 Not ready yet, try again!', 3000); return; }
+  const dataURL = mergeCanvas().toDataURL('image/jpeg', 0.88);
+  showToast('📤 Sending to Dad…', 0);
+
+  let imageUrl = null;
+  try {
+    const b64 = dataURL.split(',')[1];
+    const bin = atob(b64);
+    const buf = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+    const res = await fetch('https://bytebin.lucko.me/post', {
+      method: 'POST', headers: {'Content-Type': 'image/jpeg'}, body: buf
+    });
+    if (res.ok) { const j = await res.json(); imageUrl = `https://bytebin.lucko.me/${j.key}`; }
+  } catch(e) {}
+
+  const img = imageUrl
+    ? `<img src="${imageUrl}" style="max-width:100%;border-radius:12px;">`
+    : `<img src="${dataURL}" style="max-width:100%;border-radius:12px;">`;
+  const html = `<p style="font-size:18px">🏙️ Maya built a city skyline! Check it out!</p>${img}`;
+
+  try {
+    await emailjs.send(EJS_SVC, EJS_TPL, {
+      message: 'Maya built a city skyline! 🏙️',
+      html_content: html,
+      html_message: html,
+    });
+    showToast('📬 Sent to Dad! 🎉', 4000);
+    playRising(400, 900, 0.35, 0.08);
+  } catch(e) {
+    showToast('😬 Oops! Check your connection.', 3000);
   }
 }
 
@@ -1013,6 +1109,24 @@ function buildToolbar() {
     }
   });
   bar.appendChild(clearBtn);
+
+  // Divider
+  const div3 = document.createElement('div'); div3.className = 'tb-div'; bar.appendChild(div3);
+
+  // Save button
+  const saveBtn = document.createElement('button');
+  saveBtn.className = 'tb-action';
+  saveBtn.innerHTML = '<span class="em">💾</span><span class="lbl">Save</span>';
+  saveBtn.addEventListener('pointerdown', ev => { ev.stopPropagation(); saveImage(); });
+  bar.appendChild(saveBtn);
+
+  // Send to Dad button
+  const sendBtn = document.createElement('button');
+  sendBtn.className = 'tb-action send';
+  sendBtn.style.minWidth = '68px'; sendBtn.style.width = '68px';
+  sendBtn.innerHTML = '<span class="em">📬</span><span class="lbl">Send Dad</span>';
+  sendBtn.addEventListener('pointerdown', ev => { ev.stopPropagation(); sendToDad(); });
+  bar.appendChild(sendBtn);
 }
 
 // ── Init ───────────────────────────────────────────────────────
