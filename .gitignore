@@ -8,6 +8,7 @@ styled-system-studio
 coverage/
 .astro/
 dist/
+gh-pages/
 .DS_Store
 public/assets/.DS_Store
 src/.DS_Store
