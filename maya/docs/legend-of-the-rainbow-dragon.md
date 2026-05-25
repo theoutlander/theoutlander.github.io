@@ -2,7 +2,7 @@
 
 **File:** `maya/legend-of-the-rainbow-dragon.html`
 **Framework:** Plain HTML/CSS/JS (DOM)
-**Status:** Phase 1 shipped (solo); Phase 2 API designed, not implemented
+**Status:** Phase 1+ shipped (solo, expanded content); Phase 2 API designed, not implemented
 **Inspired by:** BBS door game LORD (fan homage, not official)
 
 ---
@@ -42,14 +42,16 @@ A kid-safe daily-turn fantasy RPG. Spend turns in town and the forest, level up,
 ## Locations
 
 ### Town hub
-Forest, Weapon Shop, Healer, Inn, Snack Bar, Rainbow Dragon (level 12+), End Day.
+Forest, Weapon Shop (weapons + armor), Healer, Inn, Snack Bar, **Bard's Stage** (once/day buff), **Mailbox**, **Hero Stats** (achievements), Rainbow Dragon (level 12+), **New Game+** after first dragon kill, End Day.
 
 ### Forest
-- 70% common mob (by level tier)
-- 20% tough mob (+2 level tier)
-- 10% funny event (no combat, +gold or +charm)
-- Fight: auto-resolve rounds until win, flee, or knockout
-- Flee: 65% success; fail = forced fight
+- ~62% combat (common/tough/elite)
+- 8% treasure chest
+- 10% funny event (no combat)
+- **Elite** monsters (orange tag): tougher, better loot
+- **Adventure Buddy** helps every 3rd combat round (+2 dmg)
+- **Charm:** better flee chance; +1 gold per 3 Charm on victory
+- Flee: 65% + 1% per Charm (max 90%); fail = forced fight
 
 ### Weapon shop
 | Item | STR | Cost | Min level |
@@ -58,6 +60,14 @@ Forest, Weapon Shop, Healer, Inn, Snack Bar, Rainbow Dragon (level 12+), End Day
 | Wooden Sword | 5 | 150 | 2 |
 | Silver Blade | 12 | 400 | 5 |
 | Rainbow Saber | 20 | 900 | 10 |
+| Starlight Dagger | 28 | 1500 | 15 |
+
+### Armor shop
+| Item | DEF | Cost | Min level |
+|------|-----|------|-----------|
+| Leather Vest | 3 | 120 | 3 |
+| Chain Mail | 7 | 350 | 6 |
+| Rainbow Shield | 12 | 800 | 10 |
 
 ### Healer
 Full heal for `20 + level * 5` gold.
@@ -66,13 +76,23 @@ Full heal for `20 + level * 5` gold.
 Restore HP to MaxHP. If turns = 0, also rolls day (same as End Day).
 
 ### Snack Bar
-Random: joke (+1 charm), riddle (correct +15 gold), NPC ally (+5 XP), muffin (+3 HP).
+Random: joke (+1 charm), riddle (39 kid-friendly riddles, correct +15 gold), recruit **Adventure Buddy** (permanent combat help), muffin (+3 HP).
+
+### Bard's Stage
+Once per day: random song buff (STR, HP, gold, Charm, or DEF).
+
+### Mailbox
+Free to read; new letter each day; spend 1 turn to request extra mail.
+
+### Achievements (local)
+First Victory, level 5/10, 500 gold, 15 Charm, buddy, dragon, NG+, 50 kills.
 
 ### Rainbow Dragon (boss)
 - Unlock at **level 12**
 - 500 HP solo pool (saved on hero as `dragonHp`)
 - Each attack turn: hero damage based on STR+weapon; dragon counter-attacks
-- Win: victory flag, hall of fame log entry
+- Win: victory flag; **New Game+** respawns dragon at 750 HP
+- Web Audio tones for fight, win, level-up, shop, bard
 
 ---
 

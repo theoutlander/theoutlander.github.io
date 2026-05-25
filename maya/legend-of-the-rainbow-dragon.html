@@ -42,6 +42,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 .hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-bottom:2px solid var(--border);flex-shrink:0;gap:8px}
 .hdr-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--pink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
 .hdr-back{background:rgba(255,255,255,.08);border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Fredoka One',cursive;font-size:13px;color:var(--muted);cursor:pointer;touch-action:manipulation;min-height:44px;flex-shrink:0}
+.hdr-back.hidden{display:none}
 
 .stats{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:rgba(30,20,64,.6);flex-shrink:0;border-bottom:1px solid var(--border)}
 .stat-chip{font-size:11px;font-weight:900;padding:4px 10px;border-radius:99px;background:rgba(255,255,255,.06);border:1px solid var(--border);white-space:nowrap}
@@ -54,10 +55,16 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 .screen{flex:1;display:flex;flex-direction:column;min-height:0;gap:8px}
 .screen.hidden{display:none!important}
 
-.bbs-frame{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--term);border:2px solid var(--term-border);border-radius:10px;overflow:hidden}
+.bbs-frame{display:flex;flex-direction:column;background:var(--term);border:2px solid var(--term-border);border-radius:10px;overflow:hidden}
+.bbs-frame.hub-log{flex:0 1 auto;max-height:min(220px,32vh);min-height:0}
+.bbs-frame.combat-log{flex:0 0 auto;max-height:min(200px,30vh);min-height:88px}
 .bbs-bar{padding:6px 10px;font-family:'Fredoka One',cursive;font-size:11px;color:var(--purple);background:rgba(61,42,106,.5);border-bottom:1px solid var(--term-border);letter-spacing:.05em}
-#log{flex:1;overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.55;color:var(--green);-webkit-overflow-scrolling:touch}
-#log .line{margin-bottom:4px}
+#log,#log-forest,#log-dragon{overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.55;color:var(--green);-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+#log .line,#log-forest .line,#log-dragon .line{margin-bottom:4px}
+#log-forest .line.hi,#log-dragon .line.hi{color:var(--yellow)}
+#log-forest .line.bad,#log-dragon .line.bad{color:var(--pink)}
+#log-forest .line.fun,#log-dragon .line.fun{color:var(--blue)}
+.log-hint{color:var(--muted);font-size:12px;font-style:italic;padding:8px 12px 4px}
 #log .line.hi{color:var(--yellow)}
 #log .line.bad{color:var(--pink)}
 #log .line.fun{color:var(--blue)}
@@ -133,8 +140,8 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 <main id="main">
   <div class="screen" id="screen-hub">
     <div class="hub-title" id="hub-greet">Welcome, Hero!</div>
-    <div class="bbs-frame">
-      <div class="bbs-bar">═══ YE OLDE BBS DOOR ═══</div>
+    <div class="bbs-frame hub-log">
+      <div class="bbs-bar">✨ SPARKLE BBS 3000 ✨</div>
       <div id="log"></div>
     </div>
     <div class="actions" id="hub-actions"></div>
@@ -142,8 +149,8 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 
   <div class="screen hidden" id="screen-forest">
     <div class="encounter" id="encounter-box"></div>
-    <div class="bbs-frame" style="flex:0.6">
-      <div class="bbs-bar">FOREST COMBAT</div>
+    <div class="bbs-frame combat-log">
+      <div class="bbs-bar">🌲 FOREST FIGHT FEED</div>
       <div id="log-forest"></div>
     </div>
     <div class="actions act-row" id="forest-actions"></div>
@@ -186,8 +193,8 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
       <div class="enc-name">Rainbow Dragon</div>
       <div class="enc-stats" id="dragon-hp-text">HP: 500 / 500</div>
     </div>
-    <div class="bbs-frame" style="flex:0.5">
-      <div class="bbs-bar">DRAGON LAIR</div>
+    <div class="bbs-frame combat-log">
+      <div class="bbs-bar">🐉 DRAGON BATTLE LOG</div>
       <div id="log-dragon"></div>
     </div>
     <div class="actions">
@@ -200,7 +207,7 @@ body{display:flex;flex-direction:column;max-width:480px;margin:0 auto}
 <div class="ov" id="ov-title">
   <div class="ov-big">🐉🌈</div>
   <div class="ov-title">Legend of the Rainbow Dragon</div>
-  <div class="ov-sub">A BBS-style adventure for Maya's Game Lab.<br>Daily turns · forest fights · beat the dragon!</div>
+  <div class="ov-sub">Dial up adventure on Sparkle BBS 3000!<br>Daily turns · forest fights · beat the dragon!</div>
   <button type="button" class="act-btn primary" id="btn-continue" style="max-width:280px;width:100%">Continue Adventure</button>
   <button type="button" class="act-btn muted" id="btn-new" style="max-width:280px;width:100%">New Hero</button>
 </div>
@@ -275,6 +282,16 @@ const MONSTERS = [
 
 const ELITE_NAMES = ['Elite', 'Super', 'Mega', 'Ultra'];
 
+const FOREST_INTROS = [
+  'You push through twisted trees...',
+  'A chilly wind rattles the leaves.',
+  'Your boots squish in mossy mud.',
+  'Fireflies blink between the trunks.',
+  'You hear a twig snap nearby!',
+  'The path narrows. Something watches you.',
+  'A squirrel drops an acorn on your head. Then —',
+];
+
 const FOREST_FUNNY = [
   { text: 'A unicorn shares a cupcake. +10 gold!', gold: 10 },
   { text: 'You help a frog DJ his pond party. +3 Charm!', charm: 3 },
@@ -306,6 +323,40 @@ const SNACK_RIDDLES = [
   { q: 'What has a head and a tail but no body?', opts: ['A coin', 'A ghost', 'A muffin'], ans: 0 },
   { q: 'I fly without wings. I cry without eyes. What am I?', opts: ['A cloud', 'A sword', 'A goblin'], ans: 0 },
   { q: 'What gets wetter the more it dries?', opts: ['A towel', 'A dragon', 'The forest'], ans: 0 },
+  { q: 'What has hands but cannot clap?', opts: ['A troll', 'A clock', 'A pancake'], ans: 1 },
+  { q: 'What goes up but never comes down?', opts: ['A kite', 'Your age', 'Smoke'], ans: 1 },
+  { q: 'I am full of holes but I still hold water. What am I?', opts: ['A dragon', 'A sponge', 'A helmet'], ans: 1 },
+  { q: 'What has a face and two hands but no arms or legs?', opts: ['A mirror', 'A clock', 'A tree'], ans: 1 },
+  { q: 'What can you catch but not throw?', opts: ['A ball', 'A cold', 'A rainbow'], ans: 1 },
+  { q: 'What has words but never speaks?', opts: ['A parrot', 'A book', 'A river'], ans: 1 },
+  { q: 'What building has the most stories?', opts: ['A castle', 'A library', 'A tent'], ans: 1 },
+  { q: 'What has a neck but no head?', opts: ['A knight', 'A bottle', 'A cloud'], ans: 1 },
+  { q: 'What is always in front of you but cannot be seen?', opts: ['The wind', 'The future', 'Your shadow'], ans: 1 },
+  { q: 'What has one eye but cannot see?', opts: ['A cyclops', 'A potato', 'A star'], ans: 1 },
+  { q: 'What can travel around the world while staying in a corner?', opts: ['A bird', 'A stamp', 'A map'], ans: 1 },
+  { q: 'What has teeth but cannot bite?', opts: ['A shark', 'A comb', 'A sword'], ans: 1 },
+  { q: 'What kind of band never plays music?', opts: ['A rock band', 'A rubber band', 'A marching band'], ans: 1 },
+  { q: 'What has a thumb and four fingers but is not alive?', opts: ['A goblin', 'A glove', 'A flower'], ans: 1 },
+  { q: 'What gets bigger the more you take away from it?', opts: ['A balloon', 'A hole', 'A cookie'], ans: 1 },
+  { q: 'What has a ring but no finger?', opts: ['A tree', 'A phone', 'A bell'], ans: 1 },
+  { q: 'What comes down but never goes up?', opts: ['A hero', 'Rain', 'Smoke'], ans: 1 },
+  { q: 'What has legs but cannot walk?', opts: ['A spider', 'A table', 'A robot'], ans: 1 },
+  { q: 'What can you break without touching it?', opts: ['A rock', 'A promise', 'A sword'], ans: 1 },
+  { q: 'What is so fragile that saying its name breaks it?', opts: ['Glass', 'Silence', 'Ice'], ans: 1 },
+  { q: 'What month has 28 days?', opts: ['Only February', 'All of them', 'Only June'], ans: 1 },
+  { q: 'What has a bottom at the top?', opts: ['A mountain', 'Your legs', 'A hat'], ans: 1 },
+  { q: 'What invention lets you look right through a wall?', opts: ['A spell', 'A window', 'A telescope'], ans: 1 },
+  { q: 'What has lots of hearts but no other organs?', opts: ['A dragon', 'A deck of cards', 'A garden'], ans: 1 },
+  { q: 'What goes tick-tock but is not a clock?', opts: ['A bomb in cartoons', 'A metronome', 'Your heart'], ans: 2 },
+  { q: 'I am tall when I am young and short when I am old. What am I?', opts: ['A hero', 'A tree', 'A candle'], ans: 2 },
+  { q: 'What has stripes and goes roar but is not a tiger?', opts: ['A zebra', 'A dragon', 'Thunder'], ans: 2 },
+  { q: 'What room has no doors or windows?', opts: ['A bedroom', 'A cave', 'A mushroom'], ans: 2 },
+  { q: 'What can run but never walks?', opts: ['A knight', 'A clock', 'Water'], ans: 2 },
+  { q: 'What is black when clean and white when dirty?', opts: ['A cloud', 'Snow', 'A chalkboard'], ans: 2 },
+  { q: 'What has a horn but does not honk?', opts: ['A car', 'A unicorn', 'A rhino'], ans: 2 },
+  { q: 'What falls in winter but never gets hurt?', opts: ['A hero', 'Snow', 'A leaf'], ans: 1 },
+  { q: 'What can fill a room but takes up no space?', opts: ['Furniture', 'Light', 'A dragon'], ans: 1 },
+  { q: 'What has a bark but is not a dog?', opts: ['A wolf', 'A tree', 'A drum'], ans: 1 },
 ];
 
 const BUDDIES = [
@@ -520,11 +571,36 @@ function addLog(msg, cls) {
 
 function addForestLog(msg, cls) {
   const el = document.getElementById('log-forest');
+  if (!el) return;
   const line = document.createElement('div');
   line.className = 'line' + (cls ? ' ' + cls : '');
   line.textContent = msg;
   el.appendChild(line);
   el.scrollTop = el.scrollHeight;
+}
+
+function seedForestEncounter(m) {
+  const el = document.getElementById('log-forest');
+  el.innerHTML = '';
+  const intro = FOREST_INTROS[Math.floor(Math.random() * FOREST_INTROS.length)];
+  addForestLog(intro, 'fun');
+  addForestLog(m.emoji + ' ' + m.name + ' blocks your path!', 'hi');
+  if (m.elite) addForestLog('⚠️ ELITE monster — extra tough, extra loot!', 'bad');
+  addForestLog('HP ' + m.hp + ' · ATK ' + m.atk + ' — Fight or Flee?', '');
+}
+
+function showForestContinue(label) {
+  const fa = document.getElementById('forest-actions');
+  fa.innerHTML = '';
+  const b = document.createElement('button');
+  b.type = 'button';
+  b.className = 'act-btn primary';
+  b.textContent = label || '🏠 Continue to Town';
+  b.addEventListener('click', function() {
+    goToHub();
+    saveGame();
+  });
+  fa.appendChild(b);
 }
 
 function addDragonLog(msg, cls) {
@@ -545,6 +621,12 @@ function renderLog(container, entries) {
     line.textContent = e.msg;
     container.appendChild(line);
   });
+  if (!entries.length) {
+    const hint = document.createElement('div');
+    hint.className = 'log-hint';
+    hint.textContent = 'Your adventure log appears here. Try the forest!';
+    container.appendChild(hint);
+  }
   container.scrollTop = container.scrollHeight;
 }
 
@@ -601,14 +683,13 @@ function knockout() {
   state.gold = Math.max(0, state.gold - lost);
   state.hp = state.maxHp;
   addLog('💫 Knocked out! You wake at the inn. Lost ' + lost + ' gold.', 'bad');
-  showScreen('hub');
-  buildHubActions();
+  goToHub();
   updateHud();
   saveGame();
 }
 
 function pickMonster(tough) {
-  const tier = Math.min(4, Math.max(1, Math.floor((state.level - 1) / 3) + 1 + (tough ? 1 : 0)));
+  const tier = Math.min(5, Math.max(1, Math.floor((state.level - 1) / 3) + 1 + (tough ? 1 : 0)));
   const pool = MONSTERS.filter(function(m) { return m.tier <= tier; });
   return pool[Math.floor(Math.random() * pool.length)];
 }
@@ -630,6 +711,30 @@ function scaleMonster(m, elite) {
   };
 }
 
+function inMayaPortal() {
+  if (window.parent === window) return false;
+  try {
+    return !!window.parent.document.getElementById('gf');
+  } catch (e) {
+    return true;
+  }
+}
+
+function notifyPortalScreen(name) {
+  if (!inMayaPortal()) return;
+  try {
+    window.parent.postMessage({ type: 'maya:screen', screen: name }, '*');
+  } catch (e) {}
+}
+
+function goToHub() {
+  document.getElementById('ov-no-turns').classList.add('hidden');
+  pendingMonster = null;
+  pendingSnack = null;
+  showScreen('hub');
+  buildHubActions();
+}
+
 function showScreen(name) {
   currentScreen = name;
   document.getElementById('screen-hub').classList.toggle('hidden', name !== 'hub');
@@ -640,9 +745,12 @@ function showScreen(name) {
   document.getElementById('screen-stats').classList.toggle('hidden', name !== 'stats');
   document.getElementById('screen-mail').classList.toggle('hidden', name !== 'mail');
   document.getElementById('screen-bard').classList.toggle('hidden', name !== 'bard');
-  document.getElementById('back-btn').classList.toggle('hidden', name === 'hub');
+  if (!inMayaPortal()) {
+    document.getElementById('back-btn').classList.toggle('hidden', name === 'hub');
+  }
   const titles = { hub: 'Town Square', forest: 'Dark Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: "Bard's Stage" };
   document.getElementById('hdr-title').textContent = titles[name] || 'Rainbow Dragon';
+  notifyPortalScreen(name);
 }
 
 function buildHubActions() {
@@ -717,7 +825,7 @@ function goForest() {
   const tough = roll > 0.75;
   const elite = roll > 0.92;
   pendingMonster = scaleMonster(pickMonster(tough), elite);
-  document.getElementById('log-forest').innerHTML = '';
+  seedForestEncounter(pendingMonster);
   const eliteTag = pendingMonster.elite ? '<span class="elite-tag">ELITE</span>' : '';
   document.getElementById('encounter-box').innerHTML =
     '<div class="enc-emoji">' + pendingMonster.emoji + '</div>' +
@@ -745,7 +853,7 @@ function doFlee() {
     addForestLog('You escaped into the bushes!', 'fun');
     addLog('🏃 Fled from ' + pendingMonster.name + '.', '');
     pendingMonster = null;
-    showScreen('hub');
+    showForestContinue('🏃 Sneak back to Town');
     saveGame();
     return;
   }
@@ -778,7 +886,6 @@ function doFight() {
   if (state.hp <= 0) {
     addForestLog('You got knocked out...', 'bad');
     pendingMonster = null;
-    showScreen('hub');
     knockout();
     return;
   }
@@ -793,9 +900,10 @@ function doFight() {
   checkLevelUp();
   checkAchievements();
   pendingMonster = null;
-  showScreen('hub');
-  buildHubActions();
+  addForestLog('─────────────────', '');
+  addForestLog('✨ Victory! Tap below to return.', 'hi');
   updateHud();
+  showForestContinue();
   saveGame();
 }
 
@@ -998,8 +1106,7 @@ function goSnack() {
 
 function finishSnack() {
   pendingSnack = null;
-  showScreen('hub');
-  buildHubActions();
+  goToHub();
 }
 
 function bossMaxHp() {
@@ -1008,15 +1115,15 @@ function bossMaxHp() {
 
 function goDragon() {
   if (state.dragonDefeated) return;
-  document.getElementById('log-dragon').innerHTML = '';
   const max = bossMaxHp();
+  document.getElementById('log-dragon').innerHTML = '';
   document.getElementById('dragon-hp-text').textContent = 'HP: ' + state.dragonHp + ' / ' + max;
   addDragonLog(state.newGamePlus >= 1 ? 'The dragon returned stronger!' : 'The Rainbow Dragon roars in glitter!', 'hi');
+  addDragonLog('Each attack costs 1 turn. Chip away its HP!', '');
   showScreen('dragon');
 }
 
 function startNewGamePlus() {
-  if (!useTurn()) return;
   state.newGamePlus = 1;
   state.dragonDefeated = false;
   state.dragonHp = BOSS_NG_HP;
@@ -1056,7 +1163,6 @@ function dragonAttack() {
   updateHud();
   if (state.hp <= 0) {
     addDragonLog('Knocked out! Dragged to the inn...', 'bad');
-    showScreen('hub');
     knockout();
   }
   saveGame();
@@ -1074,6 +1180,106 @@ function endDay() {
 
 function showNoTurns() {
   document.getElementById('ov-no-turns').classList.remove('hidden');
+}
+
+function goStats() {
+  const sheet = document.getElementById('stat-sheet');
+  sheet.innerHTML = '';
+  const rows = [
+    ['Hero', state.avatar + ' ' + state.name],
+    ['Level', state.level],
+    ['XP', state.xp],
+    ['HP', state.hp + ' / ' + state.maxHp],
+    ['STR', state.str + ' (+' + weaponStr() + ' weapon)'],
+    ['DEF', totalDef() + ' (base ' + state.def + ', armor +' + armorDef() + ')'],
+    ['Charm', state.charm + ' (flee & gold bonus)'],
+    ['Gold', state.gold],
+    ['Weapon', weaponName()],
+    ['Armor', (ARMOR.find(function(a){return a.id===state.armorId;})||{}).name],
+    ['Monsters defeated', state.kills],
+    ['Buddy', state.buddy ? state.buddy.emoji + ' ' + state.buddy.name : 'None yet'],
+    ['Dragon', state.dragonDefeated ? (state.newGamePlus >= 1 ? 'NG+ beaten!' : 'Defeated!') : (state.dragonHp + ' HP left')],
+  ];
+  rows.forEach(function(r) {
+    const d = document.createElement('div');
+    d.className = 'stat-row';
+    d.innerHTML = '<span>' + r[0] + '</span><span>' + r[1] + '</span>';
+    sheet.appendChild(d);
+  });
+  const grid = document.getElementById('ach-grid');
+  grid.innerHTML = '';
+  ACHIEVEMENTS.forEach(function(a) {
+    const c = document.createElement('div');
+    const on = state.achievements.indexOf(a.id) >= 0;
+    c.className = 'ach-card' + (on ? ' unlocked' : '');
+    c.innerHTML = '<div class="ach-em">' + a.em + '</div><div>' + a.name + '</div><div style="color:var(--muted);margin-top:4px">' + a.desc + '</div>';
+    grid.appendChild(c);
+  });
+  showScreen('stats');
+}
+
+function goMail() {
+  renderMail();
+  showScreen('mail');
+}
+
+function renderMail() {
+  const list = document.getElementById('mail-list');
+  list.innerHTML = '';
+  if (!state.mail.length) {
+    list.innerHTML = '<div class="mail-item">No mail yet. Check back tomorrow!</div>';
+    return;
+  }
+  state.mail.slice().reverse().forEach(function(m) {
+    const d = document.createElement('div');
+    d.className = 'mail-item';
+    d.innerHTML = '<div class="mail-from">' + m.from + '</div>' + m.text;
+    list.appendChild(d);
+  });
+}
+
+function mailRefresh() {
+  if (!useTurn()) return;
+  const letter = NPC_MAIL[Math.floor(Math.random() * NPC_MAIL.length)];
+  state.mail.push({ from: letter.from, text: letter.text, day: todayKey() });
+  addLog('📬 New mail from ' + letter.from, 'fun');
+  renderMail();
+  saveGame();
+}
+
+function goBard() {
+  if (state.bardDay === todayKey()) {
+    addLog('🎵 You already heard the bard today!', 'fun');
+    return;
+  }
+  if (!useTurn()) return;
+  state.bardDay = todayKey();
+  const song = BARD_SONGS[Math.floor(Math.random() * BARD_SONGS.length)];
+  const box = document.getElementById('bard-box');
+  box.innerHTML = '<div class="enc-emoji">🎵</div><div class="enc-name">' + song.title + '</div><div class="enc-stats">' + song.text + '</div>';
+  if (song.str) state.str += song.str;
+  if (song.hp) state.hp = Math.min(state.maxHp, state.hp + song.hp);
+  if (song.gold) state.gold += song.gold;
+  if (song.charm) state.charm += song.charm;
+  if (song.def) state.def += song.def;
+  addLog('🎵 Bard sang: ' + song.title, 'hi');
+  sfx('bard');
+  const actions = document.getElementById('bard-actions');
+  actions.innerHTML = '';
+  const ok = document.createElement('button');
+  ok.type = 'button';
+  ok.className = 'act-btn primary';
+  ok.textContent = 'Encore! Back to town';
+  ok.addEventListener('click', function() {
+    goToHub();
+    updateHud();
+    checkAchievements();
+    saveGame();
+  });
+  actions.appendChild(ok);
+  showScreen('bard');
+  updateHud();
+  saveGame();
 }
 
 function startGame() {
@@ -1126,13 +1332,20 @@ function createHero() {
     '══════════════════════════',
     'Welcome, ' + name + '! ' + selectedAvatar,
     'You have ' + MAX_TURNS + ' turns today.',
-    'Visit the forest, shop, or Snack Bar!',
+    'Forest · Shop · Snack Bar · Bard · Mail!',
   ];
+  state.mail.push({ from: NPC_MAIL[0].from, text: NPC_MAIL[0].text, day: todayKey() });
   saveGame();
   startGame();
 }
 
 function init() {
+  if (inMayaPortal()) {
+    document.getElementById('back-btn').classList.add('hidden');
+  }
+  window.addEventListener('message', function(ev) {
+    if (ev.data === 'maya:nav-back') goToHub();
+  });
   renderAvatars();
   if (loadGame()) {
     document.getElementById('ov-title').classList.remove('hidden');
@@ -1142,6 +1355,16 @@ function init() {
   }
 }
 
+window.mayaGameCanGoBack = function() {
+  if (!document.getElementById('ov-no-turns').classList.contains('hidden')) return true;
+  if (!state.created) return false;
+  if (currentScreen === 'hub') return false;
+  if (!document.getElementById('ov-title').classList.contains('hidden')) return false;
+  if (!document.getElementById('ov-create').classList.contains('hidden')) return false;
+  if (!document.getElementById('ov-victory').classList.contains('hidden')) return false;
+  return true;
+};
+
 document.getElementById('btn-continue').addEventListener('click', startGame);
 document.getElementById('btn-new').addEventListener('click', showCreate);
 document.getElementById('btn-start').addEventListener('click', createHero);
@@ -1149,23 +1372,16 @@ document.getElementById('btn-create-cancel').addEventListener('click', function(
   document.getElementById('ov-create').classList.add('hidden');
   document.getElementById('ov-title').classList.remove('hidden');
 });
-document.getElementById('back-btn').addEventListener('click', function() {
-  showScreen('hub');
-  buildHubActions();
-});
-document.getElementById('shop-back').addEventListener('click', function() {
-  showScreen('hub');
-  buildHubActions();
-});
-document.getElementById('dragon-back').addEventListener('click', function() {
-  showScreen('hub');
-  buildHubActions();
-});
+document.getElementById('back-btn').addEventListener('click', goToHub);
+document.getElementById('shop-back').addEventListener('click', goToHub);
+document.getElementById('dragon-back').addEventListener('click', goToHub);
+document.getElementById('stats-back').addEventListener('click', goToHub);
+document.getElementById('mail-back').addEventListener('click', goToHub);
+document.getElementById('mail-refresh').addEventListener('click', mailRefresh);
 document.getElementById('dragon-attack').addEventListener('click', dragonAttack);
 document.getElementById('btn-victory-ok').addEventListener('click', function() {
   document.getElementById('ov-victory').classList.add('hidden');
-  showScreen('hub');
-  buildHubActions();
+  goToHub();
 });
 document.getElementById('btn-day-ok').addEventListener('click', function() {
   document.getElementById('ov-no-turns').classList.add('hidden');
@@ -1179,13 +1395,20 @@ window.render_game_to_text = function() {
     maxHp: state.maxHp,
     str: state.str,
     def: state.def,
+    totalDef: totalDef(),
+    charm: state.charm,
     gold: state.gold,
     xp: state.xp,
+    kills: state.kills,
     turnsLeft: state.turnsLeft,
     turnDay: state.turnDay,
     weaponId: state.weaponId,
+    armorId: state.armorId,
     dragonHp: state.dragonHp,
     dragonDefeated: state.dragonDefeated,
+    newGamePlus: state.newGamePlus,
+    achievements: state.achievements,
+    buddy: state.buddy,
     screen: currentScreen,
     created: state.created,
   });

@@ -469,6 +469,7 @@ function openGameInModal(file,title){
   const gf=document.getElementById('gf');
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
+  updateModalBackLabel('hub');
   m.classList.add('open');
   document.body.style.overflow='hidden';
   syncGameModalIframe();
@@ -478,7 +479,26 @@ function openGame(file,title){
   openGameInModal(file,title);
   history.pushState({mayaIframe:true,file:file},'',resolveGameUrl(file));
 }
+function tryGameNavBack(){
+  const gf=document.getElementById('gf');
+  const gm=document.getElementById('gm');
+  if(!gm.classList.contains('open')||!gf||!gf.contentWindow)return false;
+  try{
+    const w=gf.contentWindow;
+    if(typeof w.mayaGameCanGoBack==='function'&&w.mayaGameCanGoBack()){
+      w.postMessage('maya:nav-back','*');
+      return true;
+    }
+  }catch(e){}
+  return false;
+}
+function updateModalBackLabel(screen){
+  const mc=document.getElementById('mc');
+  if(!mc)return;
+  mc.textContent=(screen&&screen!=='hub')?'← Town':'✕ Back';
+}
 function closeGame(){
+  if(tryGameNavBack())return;
   if(history.state&&history.state.mayaIframe){
     history.back();
     return;
@@ -486,6 +506,9 @@ function closeGame(){
   closeGameCore();
   if(pathnameGameFile())history.replaceState(history.state,'',mayaDirectoryPath());
 }
+window.addEventListener('message',function(ev){
+  if(ev.data&&ev.data.type==='maya:screen')updateModalBackLabel(ev.data.screen);
+});
 function onGameModalPopState(){
   const file=pathnameGameFile();
   const gm=document.getElementById('gm');

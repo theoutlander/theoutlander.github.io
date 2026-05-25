@@ -1,12 +1,17 @@
 # Pipe Flow — progress
 
-Original prompt: lets build a game about pipes where there's water to be redirected from the hose to the field
+Original prompt: pipes puzzle — water from hose to field.
 
 ## Done
-- Created `maya/pipe-flow.html` — 8-level pipe rotation puzzle
-- Registered in `maya/index.html` portal (GLIST + game card)
-- Added `maya/docs/pipe-flow.md` spec
+- `maya/pipe-flow.html` — 23 levels (mechanics, finale, secret), themes, combos, timer/wilt hint, sounds
+- Portal card + `maya/docs/pipe-flow.md`
+- `maya/scripts/verify-pipe-levels.mjs` (1–15), `verify-pipe-mechanics.mjs` (16–23)
 
-## TODO / suggestions
-- Star rating based on move count vs par
-- Level select screen after beating level 1
+## Deferred (no full persist yet)
+- Save progress / level select
+- Meta replay (stats, bests, completion)
+- Daily puzzle (date-seeded layout + played-today)
+- Documented in `docs/pipe-flow.md` under “Deferred”
+
+## Optional later (no backend)
+- Expand `localStorage` schema when ALLOWED — or session-only secret if we drop the one flag
