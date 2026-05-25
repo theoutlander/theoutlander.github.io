@@ -18,7 +18,7 @@ function minMoves(rows){
   const R=start.length,C=Math.max(...start.map(r=>r.length));
   function key(g){return g.map(r=>r.map(c=>c?c.type+c.rot:'').join('|')).join('/');}
   const q=[[start,0]],seen=new Set([key(start)]);
-  while(q.length){const [g,d]=q.shift(); if(d>12)continue;
+  while(q.length){const [g,d]=q.shift(); if(d>14)continue;
     for(let r=0;r<R;r++)for(let c=0;c<C;c++){
       const cell=g[r]?.[c]; if(!cell||cell.fixed)continue;
       for(let t=1;t<4;t++){const ng=clone(g); ng[r][c].rot=(cell.rot+t)%4; const k=key(ng); if(seen.has(k))continue; seen.add(k);
@@ -34,14 +34,14 @@ const LEVELS=[
   {name:'T Junction',par:2,rows:['S0 I1 T1 I0 G0']},
   {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
   {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
-  {name:'Fork in the Path',par:3,rows:['.  S0 I1 T3 I1 .','.  .  .  L2 G0']},
-  {name:'Plumber Puzzle',par:3,rows:['.  S0 I3 T2 .','.  .  I0 L0 G0']},
-  {name:'Snake Path',par:3,rows:['S0 I3 L2 I0 L3','.  .  L1 G0']},
-  {name:'Twisty Turn',par:3,rows:['S0 I2 L0 I1 L0','.  I0 L2 I1 G0']},
-  {name:'Greenhouse',par:4,rows:['.  S0 I1 T3 I1 .','.  .  I0 L2 I1 G0']},
-  {name:'Long Detour',par:4,rows:['S0 I3 L0 I2 L0','.  I0 L2 I3 G0']},
-  {name:'Pipe Maze',par:4,rows:['.  S0 I1 T3 I1 .','.  .  I0 L2 I1 G0']},
-  {name:'Master Plumber',par:4,rows:['S0 I3 L0 I2 L0','.  I0 L2 I3 G0']},
+  {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
+  {name:'Plumber Puzzle',par:3,rows:['.  .  S0 I3 T2 I0 .','.  .  .  .  I0 L0 G0','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Snake Path',par:3,rows:['.  S0 I3 L2 I0 L3 .','.  .  .  L1 G0 .','.  .  .  .  .  .','.  .  .  .  .  .']},
+  {name:'Twisty Turn',par:3,rows:['.  S0 I2 L0 I1 L0 .','.  .  I0 L2 I1 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Greenhouse',par:4,rows:['.  .  S0 I1 T3 I1 .','.  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Long Detour',par:4,rows:['.  .  S0 I3 L0 I2 L0 .','.  .  .  I0 L2 I3 G0 .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .']},
+  {name:'Pipe Maze',par:4,rows:['.  .  S0 I1 T3 I1 .  .','.  .  .  I0 L2 I1 G0 .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .']},
+  {name:'Master Plumber',par:4,rows:['.  .  .  S0 I3 L0 I2 L0 .','.  .  .  .  I0 L2 I3 G0 .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .']},
 ];
 
 let prev=0;
@@ -49,6 +49,7 @@ for(let i=0;i<LEVELS.length;i++){
   const lv=LEVELS[i];
   const m=minMoves(lv.rows);
   const ramp=m!==null&&m>=prev?'ok':'BAD';
-  console.log((i+1)+'.',lv.name,'par',lv.par,'min',m===null?'FAIL':m,ramp);
+  const parOk=m!==null&&m<=lv.par;
+  console.log((i+1)+'.',lv.name,'par',lv.par,'min',m===null?'FAIL':m,ramp,parOk?'ok':'over-par');
   if(m!==null)prev=Math.max(prev,m);
 }

@@ -121,7 +121,7 @@ function gridKey(g){
     .join('/');
 }
 
-function minMoves(rows,maxD=14){
+function minMoves(rows,maxD=16){
   const start=rows.map((r)=>r.trim().split(/\s+/).map(parseCell));
   if(computeFlow(start))return 0;
   const R=start.length;
@@ -169,9 +169,9 @@ const LEVELS=[
   {name:'Fix the Leaks',par:2,rows:['S0 B1 I0 B1 G0']},
   {name:'Valve Control',par:3,rows:['S0 I1 V0 I1 G0']},
   {name:'Rainbow Hose',par:2,rows:['Sb0 I1 Gb0','Sr0 I1 Gr0']},
-  {name:'Rush Hour',par:3,rows:['S0 I1 L0 .','.  I1 L3 G0']},
-  {name:'End of the World',par:4,rows:['S0 I1 T1 I1 G0','#  I0 B1 g0','.  V0 L1 .']},
-  {name:'Secret Garden',par:2,rows:['S0 I1 I0 G0','.  .  g0  .']},
+  {name:'Rush Hour',par:3,rows:['.  .  S0 I1 L0 I0 .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Big Backyard',par:4,rows:['.  .  .  S0 I1 I0 I0 L0 .','.  .  .  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
+  {name:'End of the World',par:5,rows:['.  .  .  S0 I1 T1 I1 I0 .  .','.  .  #  .  I0 B1 g0  .  .  .','.  .  .  .  V0 L1 I0 L2 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
 ];
 
 for(let i=0;i<LEVELS.length;i++){

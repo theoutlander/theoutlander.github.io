@@ -36,17 +36,28 @@ Connect garden hoses to thirsty fields! Tap pipe tiles to rotate them until wate
 | Colored | `Sb0`, `Gb0`, `Sr0`, `Gr0` | Blue/red hose and matching flowers only |
 
 ### Levels
-23 levels (21 main + finale + secret). **Par** is the minimum number of pipe rotations to solve; shown in the HUD as `Level N · Par P`.
+26 levels. **Par** is the minimum number of pipe rotations to solve. Large grids show **rows×cols** on the badge (e.g. `7×6`).
 
-| Tier | Levels | Par (min moves) | What’s new |
-|------|--------|-----------------|------------|
-| Tutorial | 1–2 | 1 | Straight pipes, one corner |
-| Easy | 3–6 | 2 | Longer paths, T-junction |
-| Medium | 7–11 | 3 | Forks, snakes, more pipes |
-| Hard | 12–15 | 4 | Wide grids, many corners |
-| Mechanics | 16–21 | 1–3 | Two gardens, rocks, leaks, valves, colors, timer |
-| Finale | 22 End of the World | 4 | All mechanics, apocalypse theme, 90s timer |
-| Secret | 🤫 Secret Garden | 2 | Unlock after beating the finale; tap menu title 5× |
+| Tier | Levels | Grid growth | What’s new |
+|------|--------|-------------|------------|
+| Tutorial | 1–3 | 3×2 – 4×2 | Basics |
+| Easy | 4–6 | 4×2 – 5×2 | T-junctions, corners |
+| Medium | 7–11 | 5×3 – 6×4 | Forks, snakes (wider boards) |
+| Hard | 12–15 | 6×4 – 8×6 | **Much larger** puzzles (padding + wider paths) |
+| Mechanics | 16–21 | 3×4 – 7×4 | Rocks, leaks, valves, colors |
+| Wide | 22 Big Backyard | **7×6** | Big open lawn before the finale |
+| Finale | 23 End of the World | **8×6** | All mechanics, 100s timer |
+| Build | 24–25 Longest / Shortest | **8×8** | Pick pipes from a kit; longest vs shortest route |
+| Secret | 🤫 Secret Garden | 3×2 | Tap menu title 5× after finale |
+
+Board **auto-scales**: bigger grids use slightly smaller cells (down to 32px on 8×8) so the whole field fits on iPad.
+
+### Build levels (longest & shortest)
+After **End of the World**, two **designer** challenges use the same **8×8** empty grid:
+- **Pipe palette** — tap ━ └ ┳ to choose, tap **+** grass to place, tap a pipe to rotate, 🗑 to remove and refund.
+- **Longest Hose** — water must reach the garden with **at least 16 pipes** in the connected route (snake the big field!).
+- **Shortest Hose** — same **8×8** layout, but **at most 7 pipes** (direct path).
+- HUD **🛤** meter tracks pipe count vs target. Teaches path length, planning, and tradeoffs.
 
 **Visual themes** shift by tier (dawn → meadow → garden → greenhouse → workshop → sunset; apocalypse/secret for bonus levels).
 
@@ -54,34 +65,28 @@ Connect garden hoses to thirsty fields! Tap pipe tiles to rotate them until wate
 
 **Wilting hint** — on timed levels, under 15s the status nudges you toward 💡 Hint and the hint button pulses.
 
-### Water physics & leaks
+### Water physics, buckets & Pour Back
 - Water **flows through the whole connected network** (animated pulses, droplets along pipes, path highlight).
-- **Leaks** spray from open ports into empty grass, off the edge, or through **cracked `B` pipes** (must spin to seal). Misaligned joints **drip** visually but do not block the win.
-- **Puddles** grow under serious leaks until you fix them.
-- **Overflow** — watered gardens spout extra droplets upward.
-- **Win rule:** all gardens watered **and** no blocking leaks (`soak` / `crack` / `edge`). Status shows leak count; “Seal N leaks to win!” when the path is right but pipes still spray.
+- **Garden buckets** 🌻 — each goal has a bucket that **fills up** when water arrives (HUD shows `full/total`).
+- **Leak catch buckets** — bad leaks spawn small **🪣 buckets** on the board that fill; **tap a bucket** to pour the water back toward the hose.
+- **Spill bucket** (HUD) — leakage fills one meter; turns orange when high. **Pour Back** button sends it back toward the hose (kid-friendly: don’t waste water).
+- **Closed loop rule:** blocking leaks are gaps, cracks, edge spills, and misaligned joints. Extra T-arms pointing at empty grass still spray but **do not block** winning.
+- Water sprays from any open end until you spin pipes to **close the loop**. Pour Back moves spilled water but **cannot win** until blocking leaks are fixed (`open ends = 0`).
+- **Puddles** at open ends; **overflow** droplets when gardens are full.
+- **Win rule:** gardens watered, **garden buckets full**, **closed loop** (zero open ends), plus route length on build levels.
 
 Each level is verified solvable (`verify-pipe-levels.mjs` for 1–15, `verify-pipe-mechanics.mjs` for 16–23). Win screen shows stars based on moves vs par.
 
-### Persistence today
-- **No save slot / campaign progress** — each visit starts at level 1 unless you use in-session play-through.
-- **Secret unlock** — the only stored flag: `localStorage.pipeflow_secret` after beating End of the World (so the 5× title tap works on return visits). Everything else is in-memory for the session.
+### Persistence today (`localStorage`)
+- **`pipeflow_save`** — `{ nextLevel, stars, maxBeaten }`: resume campaign, star totals on menu, **Continue · Level N** button.
+- **`pipeflow_secret`** — set after beating End of the World; 5× menu title tap opens Secret Garden.
+- Menu **Start from Level 1** clears campaign save (not the secret flag).
 
-### Deferred (needs persistence — design later, not now)
-Static hosting with no backend means these wait until we have an agreed store (localStorage schema, optional sync, or server):
-
-| Feature | Why it needs persist |
-|---------|----------------------|
-| **Save progress** | Resume level index, stars per level, finale/secret flags |
-| **Meta replay** | Best moves, total stars, completion %, “pipe master” stats |
-| **Daily puzzle** | One shared seed/layout per calendar day + “already played today” |
-
-Ideas sketched for when we add storage:
-- **Daily** — `YYYYMMDD` seed → pick level template + scramble rot; show streak / today’s par on menu.
-- **Meta** — aggregate stars, perfect-count, fastest timer clears; optional replay ghost (move list) on par levels.
-- **Save** — `{ level, stars: Record<level,1|2|3>, secret, dailyLast }` in `localStorage` or Maya progress hub if the portal gets a shared save API.
-
-Until then: level themes, combos, finale, and secret stay session-first; no daily board.
+### Deferred (later)
+| Feature | Notes |
+|---------|--------|
+| **Meta replay** | Best moves per level, completion %, replay ghosts |
+| **Daily puzzle** | Date-seeded layout + “played today” flag |
 
 ---
 

@@ -57,8 +57,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .waste-track{width:14px;height:28px;border-radius:4px;background:rgba(0,0,0,.25);border:1px solid rgba(91,200,255,.25);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
 #waste-fill{width:100%;height:0%;background:linear-gradient(180deg,#5bc8ff,#3a8fd4);border-radius:2px;transition:height .15s}
 #waste-pill.full #waste-fill{background:linear-gradient(180deg,#ff9a3c,#ff6eb4)}
-#siphon-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
-#siphon-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
+#pour-back-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
+#pour-back-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
+#route-pill{color:var(--purple)}
+#build-palette{display:none;flex-shrink:0;gap:6px;padding:0 2px 4px}
+#build-palette.show{display:flex}
+.pipe-pick{flex:1;font-family:'Fredoka One',cursive;font-size:13px;padding:10px 6px;border-radius:10px;border:2px solid var(--border);background:rgba(255,255,255,.06);color:var(--muted);cursor:pointer;min-height:44px}
+.pipe-pick.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(255,225,77,.12)}
+.pipe-pick .cnt{font-size:11px;opacity:.85}
 
 #board-wrap{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
 #game{width:100%;height:100%;display:block;touch-action:none}
@@ -76,7 +82,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 #combo-sub{font-size:11px;font-weight:900;color:var(--muted);letter-spacing:.06em;margin-top:4px}
 @keyframes combopop{0%{transform:scale(1.25)}100%{transform:scale(1)}}
 #menu-title{cursor:pointer;-webkit-tap-highlight-color:transparent}
-#menu-secret-hint{font-size:11px;color:var(--purple);font-weight:900;min-height:16px}
+#menu-progress-hint,#menu-secret-hint{font-size:11px;font-weight:900;min-height:16px}
+#menu-progress-hint{color:var(--yellow)}
+#menu-secret-hint{color:var(--purple)}
 
 .ov{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:50;padding:20px;gap:10px;text-align:center}
 .ov.hidden{display:none}
@@ -97,28 +105,37 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div id="hud">
     <div class="hpill">🔧 <span class="hval" id="moves">0</span></div>
     <div class="hpill" id="garden-pill">🌻 <span class="hval" id="garden-fill">0/1</span></div>
-    <div class="hpill" id="waste-pill" title="Leaked water — tap Siphon to recycle!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
+    <div class="hpill hidden" id="route-pill">🛤 <span class="hval" id="route-val">0</span></div>
+    <div class="hpill" id="waste-pill" title="Spilled water — tap Pour Back to send it to the hose!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
     <div class="hpill hidden" id="timer-pill">⏱ <span class="hval" id="timer-val">60</span></div>
     <div id="level-badge">Level 1</div>
     <div id="status-pill">Tap pipes to spin!</div>
   </div>
   <div id="mechanic-tip"></div>
+  <div id="build-palette">
+    <button type="button" class="pipe-pick sel" data-pipe="I">━ <span class="cnt" id="cnt-I">0</span></button>
+    <button type="button" class="pipe-pick" data-pipe="L">└ <span class="cnt" id="cnt-L">0</span></button>
+    <button type="button" class="pipe-pick" data-pipe="T">┳ <span class="cnt" id="cnt-T">0</span></button>
+    <button type="button" class="pipe-pick" data-pipe="erase">🗑</button>
+  </div>
   <div id="board-wrap">
     <canvas id="game"></canvas>
     <div id="combo-wrap"><div id="combo-text"></div><div id="combo-sub"></div></div>
   </div>
   <div id="toolbar">
     <button class="tool-btn" id="reset-btn">↺ Reset</button>
-    <button class="tool-btn" id="siphon-btn" title="Pour wasted water back toward the hose">🪣 Siphon</button>
+    <button class="tool-btn" id="pour-back-btn" title="Pour spilled water back toward the hose">🪣 Pour Back</button>
     <button class="tool-btn" id="hint-btn">💡 Hint</button>
   </div>
 </div>
 
 <div class="ov" id="menu-ov">
   <div class="big-title" id="menu-title">Pipe Flow!</div>
+  <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">💧 Send water to each <strong style="color:var(--green)">garden bucket</strong> 🌻<br>Leaks fill the <strong style="color:var(--blue)">waste bucket</strong> 🪣 — tap <strong style="color:var(--yellow)">Siphon</strong> to pour it back!<br>Spin pipes to <strong style="color:var(--yellow)">seal leaks</strong> for good.</div>
+  <div class="sub">💧 Connect every <strong style="color:var(--yellow)">pipe joint</strong> — no gaps or cracks!<br>Extra T-arms can point at the grass (that is OK).<br>Fill each <strong style="color:var(--green)">garden bucket</strong> 🌻 to win.<br>Spills? Tap <strong style="color:var(--blue)">Pour Back</strong> 🪣</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
+  <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
 </div>
 
 <div class="ov hidden" id="win-ov">
@@ -161,9 +178,22 @@ const WATER_COLORS={b:'#5bc8ff',r:'#ff6eb4',y:'#ffe14d'};
 const GOAL_EMOJI={b:['🌾','🌻'],r:['🌹','🌺'],y:['🌼','🌻'],null:['🌾','🌻']};
 const HOSE_EMOJI={b:'🚿',r:'🚿',y:'🚿',null:'🚿'};
 
-const MAIN_LAST_IDX=20;
-const FINALE_IDX=21;
-const SECRET_IDX=22;
+const MAIN_LAST_IDX=21;
+const FINALE_IDX=22;
+const LONGEST_IDX=23;
+const SHORTEST_IDX=24;
+const SECRET_IDX=25;
+const BUILD_TYPES=['I','L','T'];
+const BUILD_GRID=[
+  'S0 .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  .',
+  '.  .  .  .  .  .  .  G0',
+];
 
 const THEMES={
   dawn:{page:'#0a0618',grass:['#142018','#101a14'],frame:'#0d1a12',badge:'#5bc8ff',badgeText:'#08041a'},
@@ -193,21 +223,24 @@ const LEVELS=[
   {name:'T Junction',par:2,rows:['S0 I1 T1 I0 G0']},
   {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
   {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
-  {name:'Fork in the Path',par:3,rows:['.  S0 I1 T3 I1 .','.  .  .  L2 G0']},
-  {name:'Plumber Puzzle',par:3,rows:['.  S0 I3 T2 .','.  .  I0 L0 G0']},
-  {name:'Snake Path',par:3,rows:['S0 I3 L2 I0 L3','.  .  L1 G0']},
-  {name:'Twisty Turn',par:3,rows:['S0 I2 L0 I1 L0','.  I0 L2 I1 G0']},
-  {name:'Greenhouse',par:4,rows:['.  S0 I1 T3 I1 .','.  .  I0 L2 I1 G0']},
-  {name:'Long Detour',par:4,rows:['S0 I3 L0 I2 L0','.  I0 L2 I3 G0']},
-  {name:'Pipe Maze',par:4,rows:['.  S0 I1 T3 I1 .','.  .  I0 L2 I1 G0']},
-  {name:'Master Plumber',par:4,rows:['S0 I3 L0 I2 L0','.  I0 L2 I3 G0']},
+  {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
+  {name:'Plumber Puzzle',par:3,rows:['.  .  S0 I3 T2 I0 .','.  .  .  .  I0 L0 G0','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Snake Path',par:3,rows:['.  S0 I3 L2 I0 L3 .','.  .  .  L1 G0 .','.  .  .  .  .  .','.  .  .  .  .  .']},
+  {name:'Twisty Turn',par:3,rows:['.  S0 I2 L0 I1 L0 .','.  .  I0 L2 I1 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Greenhouse',par:4,rows:['.  .  S0 I1 T3 I1 .','.  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Long Detour',par:4,rows:['.  .  S0 I3 L0 I2 L0 .','.  .  .  I0 L2 I3 G0 .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .']},
+  {name:'Pipe Maze',par:4,rows:['.  .  S0 I1 T3 I1 .  .','.  .  .  I0 L2 I1 G0 .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .']},
+  {name:'Master Plumber',par:4,rows:['.  .  .  S0 I3 L0 I2 L0 .','.  .  .  .  I0 L2 I3 G0 .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .']},
   {name:'Two Gardens',par:2,tip:'🌾🌾 Hose + side garden both need water!',rows:['S0 I1 I0 G0','.  .  g0 .']},
   {name:'Rocky Path',par:2,tip:'🪨 Pipes cannot go through rocks!',rows:['S0 I1 L0','#  .  G1']},
-  {name:'Fix the Leaks',par:2,tip:'💦 Cracked pipes spray water — spin to seal every leak!',rows:['S0 B1 I0 B1 G0']},
+  {name:'Fix the Leaks',par:2,tip:'🔗 Close the loop — seal cracked pipes & every open end!',rows:['S0 B1 I0 B1 G0']},
   {name:'Valve Control',par:3,tip:'🚰 Tap valve twice: spin, then open!',rows:['S0 I1 V0 I1 G0']},
   {name:'Rainbow Hose',par:2,tip:'💙❤️ Match hose color to each flower!',rows:['Sb0 I1 Gb0','Sr0 I1 Gr0']},
-  {name:'Rush Hour',par:3,tip:'⏱ Beat the clock!',timer:75,rows:['S0 I1 L0 .','.  I1 L3 G0']},
-  {name:'End of the World',par:4,theme:'apocalypse',tip:'🌍 The last gardens on Earth — use everything you learned!',timer:90,rows:['S0 I1 T1 I1 G0','#  I0 B1 g0','.  V0 L1 .']},
+  {name:'Rush Hour',par:3,tip:'⏱ Beat the clock on a bigger field!',timer:90,rows:['.  .  S0 I1 L0 I0 .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Big Backyard',par:4,tip:'📐 7×6 wide field — more room to think!',rows:['.  .  .  S0 I1 I0 I0 L0 .','.  .  .  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
+  {name:'End of the World',par:5,theme:'apocalypse',tip:'🌍 Huge last stand — every trick you know!',timer:100,rows:['.  .  .  S0 I1 T1 I1 I0 .  .','.  .  #  .  I0 B1 g0  .  .  .','.  .  .  .  V0 L1 I0 L2 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
+  {name:'Longest Hose',par:14,build:true,theme:'greenhouse',routeMin:16,budget:{I:8,L:8,T:4},tip:'🛤 8×8 field — build the LONGEST working route!',rows:BUILD_GRID},
+  {name:'Shortest Hose',par:6,build:true,theme:'meadow',routeMax:7,budget:{I:6,L:6,T:3},tip:'⚡ Same big field — FEWEST pipes possible!',rows:BUILD_GRID},
   {name:'Secret Garden',par:2,theme:'secret',secret:true,tip:'🤫 You found the hidden level!',rows:['S0 I1 I0 G0','.  .  g0  .']},
 ];
 
@@ -221,13 +254,90 @@ let lastValveTap=0,lastValveCell=null;
 let timeLeft=0,timerId=null,levelTip='';
 let boardTheme=THEMES.dawn,prevWatered=0,comboHideTimer=null,menuTapCount=0,secretUnlocked=false;
 let wasteBucket=0,gardenBuckets=new Map(),leakBuckets=new Map(),siphonAnim=0,siphonStreams=[];
+let buildMode=false,routeMin=null,routeMax=null,buildInventory={I:0,L:0,T:0},selectedBuildPipe='I';
+const SAVE_KEY='pipeflow_save';
+let saveData={nextLevel:0,stars:{},maxBeaten:-1};
 try{secretUnlocked=localStorage.getItem('pipeflow_secret')==='1';}catch(e){}
+
+function loadSave(){
+  saveData={nextLevel:0,stars:{},maxBeaten:-1};
+  try{
+    const raw=localStorage.getItem(SAVE_KEY);
+    if(!raw)return;
+    const p=JSON.parse(raw);
+    if(typeof p.nextLevel==='number')saveData.nextLevel=Math.max(0,Math.min(p.nextLevel,SHORTEST_IDX));
+    if(p.stars&&typeof p.stars==='object')saveData.stars=p.stars;
+    if(typeof p.maxBeaten==='number')saveData.maxBeaten=p.maxBeaten;
+  }catch(e){}
+}
+
+function persistSave(){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(saveData));}catch(e){}
+}
+
+function starGrade(moves,par){
+  if(moves<=par)return 3;
+  if(moves<=par+1)return 2;
+  return 1;
+}
+
+function campaignNextIdx(idx){
+  if(idx===SECRET_IDX||idx===SHORTEST_IDX)return null;
+  if(idx===MAIN_LAST_IDX)return FINALE_IDX;
+  if(idx===FINALE_IDX)return LONGEST_IDX;
+  if(idx===LONGEST_IDX)return SHORTEST_IDX;
+  if(idx<SHORTEST_IDX)return idx+1;
+  return null;
+}
+
+function totalStars(){
+  let s=0;
+  for(const k in saveData.stars)if(saveData.stars.hasOwnProperty(k))s+=saveData.stars[k];
+  return s;
+}
+
+function recordWin(){
+  const k=String(levelIdx);
+  const g=starGrade(moves,levelPar);
+  if(!saveData.stars[k]||g>saveData.stars[k])saveData.stars[k]=g;
+  saveData.maxBeaten=Math.max(saveData.maxBeaten,levelIdx);
+  const nxt=campaignNextIdx(levelIdx);
+  if(nxt!=null)saveData.nextLevel=Math.max(saveData.nextLevel,nxt);
+  persistSave();
+  updateMenuProgress();
+}
+
+function updateMenuProgress(){
+  const prog=document.getElementById('menu-progress-hint');
+  const newBtn=document.getElementById('new-game-btn');
+  const startBtn=document.getElementById('start-btn');
+  if(saveData.maxBeaten>=0){
+    const playIdx=Math.min(saveData.nextLevel,SHORTEST_IDX);
+    startBtn.textContent='Continue · Level '+(playIdx+1)+' 🌱';
+    levelIdx=playIdx;
+    const ts=totalStars();
+    prog.textContent=ts?'⭐ '+ts+' stars earned':'';
+    if(newBtn)newBtn.classList.remove('hidden');
+  }else{
+    startBtn.textContent="Let's Go! 🌱";
+    levelIdx=0;
+    prog.textContent='';
+    if(newBtn)newBtn.classList.add('hidden');
+  }
+  updateMenuSecretHint();
+}
 
 function updateMenuSecretHint(){
   const el=document.getElementById('menu-secret-hint');
   if(secretUnlocked)el.textContent='🤫 Tap the title 5× for the secret level!';
-  else if(LEVELS[FINALE_IDX])el.textContent='';
   else el.textContent='';
+}
+
+function resetCampaignSave(){
+  saveData={nextLevel:0,stars:{},maxBeaten:-1};
+  persistSave();
+  levelIdx=0;
+  updateMenuProgress();
 }
 
 function applyTheme(idx,lv){
@@ -237,6 +347,14 @@ function applyTheme(idx,lv){
   const badge=document.getElementById('level-badge');
   badge.style.background=th.badge;
   badge.style.color=th.badgeText;
+}
+
+function showSiphonToast(){
+  document.getElementById('combo-text').textContent='POURED BACK!';
+  document.getElementById('combo-sub').textContent='♻️ Water went back to the hose!';
+  document.getElementById('combo-wrap').classList.add('show');
+  if(comboHideTimer)clearTimeout(comboHideTimer);
+  comboHideTimer=setTimeout(function(){document.getElementById('combo-wrap').classList.remove('show');},900);
 }
 
 function showComboReaction(kind,n){
@@ -267,6 +385,95 @@ function unlockSecret(){
   secretUnlocked=true;
   try{localStorage.setItem('pipeflow_secret','1');}catch(e){}
   updateMenuSecretHint();
+}
+
+function countRoutePipes(filledSet){
+  let n=0;
+  filledSet.forEach(function(k){
+    const p=k.split(',');
+    const cell=grid[+p[0]]&&grid[+p[0]][+p[1]];
+    if(cell&&cell.type!=='S'&&cell.type!=='G')n++;
+  });
+  return n;
+}
+
+function routeConstraintOk(len){
+  if(!buildMode)return true;
+  if(routeMin!=null&&len<routeMin)return false;
+  if(routeMax!=null&&len>routeMax)return false;
+  return true;
+}
+
+function updateRouteHud(len){
+  const pill=document.getElementById('route-pill');
+  const val=document.getElementById('route-val');
+  if(!buildMode){pill.classList.add('hidden');return;}
+  pill.classList.remove('hidden');
+  if(routeMin!=null)val.textContent=len+' / '+routeMin+'+';
+  else if(routeMax!=null)val.textContent=len+' / ≤'+routeMax;
+  else val.textContent=String(len);
+}
+
+function updateBuildPaletteHud(){
+  document.getElementById('cnt-I').textContent=String(buildInventory.I||0);
+  document.getElementById('cnt-L').textContent=String(buildInventory.L||0);
+  document.getElementById('cnt-T').textContent=String(buildInventory.T||0);
+  document.querySelectorAll('.pipe-pick').forEach(function(btn){
+    btn.classList.toggle('sel',btn.getAttribute('data-pipe')===selectedBuildPipe);
+  });
+}
+
+function setBuildPipe(type){
+  selectedBuildPipe=type;
+  updateBuildPaletteHud();
+}
+
+function placeBuildPipe(r,c,type){
+  if(!buildInventory[type]||buildInventory[type]<=0)return false;
+  grid[r][c]={type:type,rot:0,fixed:false,placed:true,color:null,sprinkler:false};
+  buildInventory[type]--;
+  updateBuildPaletteHud();
+  return true;
+}
+
+function removeBuildPipe(r,c){
+  const cell=grid[r]&&grid[r][c];
+  if(!cell||!cell.placed||BUILD_TYPES.indexOf(cell.type)<0)return false;
+  buildInventory[cell.type]=(buildInventory[cell.type]||0)+1;
+  grid[r][c]=null;
+  updateBuildPaletteHud();
+  return true;
+}
+
+function interactBuildCell(r,c){
+  const cell=grid[r]&&grid[r][c];
+  if(selectedBuildPipe==='erase'){
+    if(cell&&cell.placed)return removeBuildPipe(r,c);
+    return false;
+  }
+  if(!cell){
+    if(!placeBuildPipe(r,c,selectedBuildPipe)){
+      setStatus('No '+selectedBuildPipe+' pipes left!','idle');
+      return false;
+    }
+    playRotate();
+    moves++;
+    document.getElementById('moves').textContent=String(moves);
+    spinAnim={r:r,c:c,t:0};
+    updateFlow(true);
+    return true;
+  }
+  if(cell.placed){
+    const max=4;
+    cell.rot=(cell.rot+1)%max;
+    spinAnim={r:r,c:c,t:0};
+    moves++;
+    document.getElementById('moves').textContent=String(moves);
+    playRotate();
+    updateFlow(true);
+    return true;
+  }
+  return false;
 }
 
 function initGardenBuckets(){
@@ -318,7 +525,7 @@ function updateBucketHud(){
   document.getElementById('garden-fill').textContent=full+'/'+total;
   document.getElementById('waste-fill').style.height=Math.round(wasteBucket)+'%';
   const wp=document.getElementById('waste-pill');
-  const sb=document.getElementById('siphon-btn');
+  const sb=document.getElementById('pour-back-btn');
   if(wasteBucket>=55){
     wp.classList.add('full');
     sb.classList.add('ready');
@@ -364,12 +571,7 @@ function doSiphon(fromX,fromY,amount){
   spawnSiphonStream(sx,sy,pull);
   siphonAnim=1;
   playSiphon();
-  if(pull>20)showComboReaction('bloom',1);
-  document.getElementById('combo-text').textContent='RECYCLED!';
-  document.getElementById('combo-sub').textContent='♻️ Water back toward the hose!';
-  document.getElementById('combo-wrap').classList.add('show');
-  if(comboHideTimer)clearTimeout(comboHideTimer);
-  comboHideTimer=setTimeout(function(){document.getElementById('combo-wrap').classList.remove('show');},900);
+  if(pull>12)showSiphonToast();
   updateBucketHud();
   return true;
 }
@@ -423,7 +625,7 @@ function parseCell(code){
   let color=null,rotIdx=1;
   if(code.length>=3&&/[bry]/.test(code[1])){color=code[1];rotIdx=2;}
   const rot=+code[rotIdx];
-  const cell={type:type,rot:isNaN(rot)?0:rot,color:color,fixed:type==='S'||(type==='G'&&!sprinkler),sprinkler:sprinkler};
+  const cell={type:type,rot:isNaN(rot)?0:rot,color:color,fixed:type==='S'||(type==='G'&&!sprinkler),sprinkler:sprinkler,placed:false};
   if(type==='V')cell.open=false;
   if(type==='B')cell.touched=false;
   return cell;
@@ -433,7 +635,7 @@ function cloneGrid(g){
   return g.map(function(row){
     return row.map(function(c){
       if(!c)return null;
-      const n={type:c.type,rot:c.rot,color:c.color,fixed:c.fixed,sprinkler:c.sprinkler};
+      const n={type:c.type,rot:c.rot,color:c.color,fixed:c.fixed,sprinkler:c.sprinkler,placed:!!c.placed};
       if(c.open!==undefined)n.open=c.open;
       if(c.touched!==undefined)n.touched=c.touched;
       return n;
@@ -526,12 +728,26 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  const label=lv.secret?'🤫 Secret':('Level '+(idx+1));
-  document.getElementById('level-badge').textContent=label+' · Par '+levelPar;
+  if(!levelTip&&idx<3)levelTip='🔗 Close the loop — no open pipe ends! · 🌻 fill garden buckets';
+  buildMode=!!lv.build;
+  routeMin=lv.routeMin!=null?lv.routeMin:null;
+  routeMax=lv.routeMax!=null?lv.routeMax:null;
+  if(lv.budget){
+    buildInventory={I:lv.budget.I||0,L:lv.budget.L||0,T:lv.budget.T||0};
+  }else{
+    buildInventory={I:0,L:0,T:0};
+  }
+  selectedBuildPipe='I';
+  document.getElementById('build-palette').classList.toggle('show',buildMode);
+  updateBuildPaletteHud();
+  const label=lv.secret?'🤫 Secret':(buildMode?'🔧 Build':('Level '+(idx+1)));
+  const sizeTag=(rows>=6||cols>=6)?' · '+rows+'×'+cols:'';
+  const badgeExtra=buildMode?(routeMin!=null?' · '+routeMin+'+ pipes':routeMax!=null?' · ≤'+routeMax+' pipes':' · Par '+levelPar):(' · Par '+levelPar);
+  document.getElementById('level-badge').textContent=label+sizeTag+badgeExtra;
   document.getElementById('mechanic-tip').textContent=levelTip;
   applyTheme(idx,lv);
   document.getElementById('moves').textContent='0';
-  setStatus(levelTip||'Tap pipes to spin!','idle');
+  setStatus(levelTip||(buildMode?'Pick a pipe, tap + grass — close the loop!':'Tap pipes to spin — close the loop!'),'idle');
   updateFlow(false);
   resize();
   ensureAnimLoop();
@@ -637,7 +853,7 @@ function computeLeaks(filledSet){
         if(nr<0||nc<0||nr>=rows||nc>=cols)type='edge';
         else if(!nb)type='soak';
         else if(nb.type==='B'&&!nb.touched)type='crack';
-        else if(!(maskFor(nb)&OPP[d]))type='drip';
+        else if(!(maskFor(nb)&OPP[d]))type='gap';
         out.push({r:r,c:c,dir:d,type:type,color:col});
       }
 
@@ -646,13 +862,18 @@ function computeLeaks(filledSet){
   return out;
 }
 
+function leakBlocksWin(leak){
+  return leak.type==='gap'||leak.type==='crack'||leak.type==='edge'||leak.type==='jet';
+}
+
 function leakCountBad(leakList){
   let n=0;
-  for(let i=0;i<leakList.length;i++){
-    const t=leakList[i].type;
-    if(t==='soak'||t==='crack'||t==='edge'||t==='jet')n++;
-  }
+  for(let i=0;i<leakList.length;i++)if(leakBlocksWin(leakList[i]))n++;
   return n;
+}
+
+function isLoopClosed(filledSet){
+  return leakCountBad(computeLeaks(filledSet))===0;
 }
 
 function computeFlow(){
@@ -751,17 +972,17 @@ function updateFlow(triggerWin){
   flowPath=result.path;
   goalsLeft=result.goalsLeft;
   leaks=computeLeaks(filled);
-  const badLeaks=leakCountBad(leaks);
-  const badOnly=leaks.filter(function(L){
-    const t=L.type;
-    return t==='soak'||t==='crack'||t==='edge'||t==='jet';
-  });
-  updateLeakBuckets(badOnly);
+  const openEnds=leakCountBad(leaks);
+  const soakEnds=leaks.length-openEnds;
+  updateLeakBuckets(leaks.filter(leakBlocksWin));
   updateGardenBuckets();
   updateBucketHud();
   rebuildFlowParticles();
   const gTotal=countGoals();
   const bucketsReady=allGardenBucketsFull();
+  const routeLen=countRoutePipes(filled);
+  updateRouteHud(routeLen);
+  const routeOk=routeConstraintOk(routeLen);
   const wateredNow=gTotal-goalsLeft;
   if(wateredNow>prevWatered&&!won){
     const delta=wateredNow-prevWatered;
@@ -770,11 +991,16 @@ function updateFlow(triggerWin){
   }
   prevWatered=wateredNow;
 
-  if(wasteBucket>=92&&!won&&badLeaks>0){
-    setStatus('🪣 Waste bucket full — seal leaks or Siphon!','flow');
+  if(wasteBucket>=92&&!won&&openEnds>0){
+    setStatus('🪣 Bucket full! Fix the pipes or tap Pour Back!','flow');
   }
 
-  if(result.goalReached&&badLeaks===0&&bucketsReady){
+  if(won&&openEnds>0){
+    won=false;
+    document.getElementById('win-ov').classList.add('hidden');
+  }
+
+  if(result.goalReached&&openEnds===0&&bucketsReady&&routeOk){
     flowPhase=Math.max(flowPhase,0.05);
     if(triggerWin&&!won){
       won=true;
@@ -782,27 +1008,35 @@ function updateFlow(triggerWin){
       document.getElementById('hint-btn').classList.remove('hint-urgent');
       if(moves<=levelPar)showComboReaction('perfect');
       playWin();
-      setStatus('All gardens watered!','win');
+      setStatus('Loop closed — all gardens watered!','win');
       spawnCelebration();
       setTimeout(showWin,900);
     }else if(!won){
       setStatus('All gardens watered!','flow');
     }
-  }else if(result.goalReached&&badLeaks>0){
+  }else if(result.goalReached&&openEnds>0){
     flowPhase=Math.max(flowPhase,0.04);
-    setStatus('💦 Seal '+badLeaks+' leak'+(badLeaks>1?'s':'')+' — or catch & Siphon!','flow');
-  }else if(result.goalReached&&badLeaks===0&&!bucketsReady){
+    setStatus('🔗 Fix '+openEnds+' joint'+(openEnds>1?'s':'')+' — pipes must connect!','flow');
+  }else if(result.goalReached&&soakEnds>0&&openEnds===0){
+    flowPhase=Math.max(flowPhase,0.04);
+    setStatus('🌻 Almost! Spin extra pipe arms toward the grass (capped).','flow');
+  }else if(result.goalReached&&openEnds===0&&!bucketsReady){
     flowPhase=Math.max(flowPhase,0.04);
     setStatus('🌻 Garden buckets filling…','flow');
+  }else if(result.goalReached&&openEnds===0&&bucketsReady&&!routeOk){
+    flowPhase=Math.max(flowPhase,0.04);
+    if(routeMin!=null)setStatus('🛤 '+routeLen+'/'+routeMin+' pipes — make a longer path!','flow');
+    else if(routeMax!=null)setStatus('🛤 '+routeLen+' pipes — too long! Use fewer (≤'+routeMax+').','flow');
   }else if(!won){
     flowPhase=filled.size>1?Math.max(flowPhase,0.02):Math.max(0,flowPhase-0.04);
     let msg='Tap pipes to spin!';
     let gCount=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
-    if(badLeaks>0&&filled.size>1)msg='💦 Leaks fill buckets — spin pipes or tap 🪣 Siphon!';
+    if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' loose joint'+(openEnds>1?'s':'')+' — spin until pipes connect!';
+    else if(soakEnds>0&&filled.size>1)msg='↪️ Spin T-pipes so extra arms point into the grass';
     else if(gCount>1&&result.filled.size>1)msg='Watered '+(gCount-goalsLeft)+' / '+gCount+' gardens';
     else if(filled.size>1)msg='Water is flowing…';
-    setStatus(msg,filled.size>1||badLeaks>0?'flow':'idle');
+    setStatus(msg,filled.size>1||openEnds>0?'flow':'idle');
   }
 }
 
@@ -813,8 +1047,14 @@ function countGoals(){
 }
 
 function interactCell(r,c){
+  if(buildMode)return interactBuildCell(r,c);
   const cell=grid[r]&&grid[r][c];
-  if(!cell||cell.fixed||won||cell.type==='#')return false;
+  if(!cell||cell.fixed||cell.type==='#')return false;
+  if(won){
+    won=false;
+    document.getElementById('win-ov').classList.add('hidden');
+    mode='play';
+  }
   if(cell.type==='V'){
     const now=Date.now();
     if(lastValveCell&&lastValveCell.r===r&&lastValveCell.c===c&&now-lastValveTap<450){
@@ -849,6 +1089,24 @@ function resetLevel(){
 
 function showHint(){
   if(won)return;
+  if(buildMode){
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(grid[r]&&grid[r][c])continue;
+        if(selectedBuildPipe!=='erase'&&placeBuildPipe(r,c,selectedBuildPipe)){
+          moves++;
+          document.getElementById('moves').textContent=String(moves);
+          playHint();
+          updateFlow(true);
+          setStatus('Placed a pipe — keep building!','flow');
+          return;
+        }
+      }
+    }
+    setStatus('Pick straights or corners from the kit!','idle');
+    playHint();
+    return;
+  }
   const base=cloneGrid(grid);
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
@@ -862,7 +1120,8 @@ function showHint(){
         if(grid[r][c].type==='B')grid[r][c].touched=true;
         if(grid[r][c].type==='V'){grid[r][c].open=true;grid[r][c].touched=true;}
         const test=computeFlow();
-        if(test.goalReached&&leakCountBad(computeLeaks(test.filled))===0){
+        const tLen=countRoutePipes(test.filled);
+        if(test.goalReached&&leakCountBad(computeLeaks(test.filled))===0&&routeConstraintOk(tLen)){
           moves++;
           document.getElementById('moves').textContent=String(moves);
           spinAnim={r:r,c:c,t:0};
@@ -888,9 +1147,15 @@ function resize(){
   canvas.style.width=w+'px';
   canvas.style.height=h+'px';
   ctx.setTransform(dpr,0,0,dpr,0,0);
-  const pad=16;
+  const dim=Math.max(rows,cols);
+  const pad=dim>=8?10:dim>=6?12:16;
   cellSize=Math.floor(Math.min((w-pad*2)/cols,(h-pad*2)/rows));
-  cellSize=Math.max(44,Math.min(cellSize,96));
+  let minCell=44;
+  if(dim>=9)minCell=28;
+  else if(dim>=8)minCell=32;
+  else if(dim>=7)minCell=36;
+  else if(dim>=6)minCell=40;
+  cellSize=Math.max(minCell,Math.min(cellSize,96));
   const gw=cellSize*cols,gh=cellSize*rows;
   gridOffX=(w-gw)/2;
   gridOffY=(h-gh)/2;
@@ -907,6 +1172,14 @@ function ensureAnimLoop(){
   requestAnimationFrame(tick);
 }
 
+function tickWinCheck(){
+  if(won||mode!=='play')return;
+  if(goalsLeft>0||leakCountBad(leaks)>0)return;
+  if(!allGardenBucketsFull())return;
+  if(!routeConstraintOk(countRoutePipes(filled)))return;
+  updateFlow(true);
+}
+
 function tick(){
   if(mode!=='play'){animRunning=false;return;}
   animT+=0.016;
@@ -917,6 +1190,13 @@ function tick(){
   if(flowPath.length>1){
     const target=flowPath.length-1+0.5;
     if(flowPhase<target)flowPhase=Math.min(target,flowPhase+0.08);
+  }
+  if(!won&&filled.size>0){
+    leaks=computeLeaks(filled);
+    updateLeakBuckets(leaks.filter(leakBlocksWin));
+    updateGardenBuckets();
+    updateBucketHud();
+    tickWinCheck();
   }
   spawnFlowBubbles();
   spawnLeakParticles();
@@ -952,6 +1232,16 @@ function renderFrame(){
       }
       ctx.fillStyle=(r+c)%2===0?boardTheme.grass[0]:boardTheme.grass[1];
       ctx.fillRect(x,y,cellSize,cellSize);
+      if(buildMode&&!cell){
+        ctx.strokeStyle='rgba(255,225,77,.2)';
+        ctx.lineWidth=1;
+        ctx.strokeRect(x+cellSize*.22,y+cellSize*.22,cellSize*.56,cellSize*.56);
+        ctx.font=(cellSize*.22)+'px serif';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillStyle='rgba(255,225,77,.35)';
+        ctx.fillText('+',x+cellSize/2,y+cellSize/2);
+      }
       ctx.strokeStyle='rgba(255,255,255,.04)';
       ctx.strokeRect(x+.5,y+.5,cellSize-1,cellSize-1);
     }
@@ -967,6 +1257,8 @@ function renderFrame(){
     }
   }
   drawFlowParticles();
+  drawLeakBuckets();
+  drawSiphonStreams();
   drawDecorations();
   drawLeakParticles();
   drawBubbles();
@@ -1066,8 +1358,7 @@ function spawnLeakParticles(){
   if(mode!=='play')return;
   for(let i=0;i<leaks.length;i++){
     const L=leaks[i];
-    if(L.type==='drip'&&Math.random()>0.85)continue;
-    if(L.type!=='drip'&&Math.random()>0.55)continue;
+    if(Math.random()>0.5)continue;
     const xy=portXY(L.r,L.c,L.dir);
     const dk=dirKey(L.dir);
     const push=cellSize*.02;
@@ -1114,7 +1405,7 @@ function updateWaterPhysics(){
   }
   for(let i=0;i<leaks.length;i++){
     const L=leaks[i];
-    if(L.type==='drip'||L.type==='overflow')continue;
+    if(L.type==='overflow')continue;
     const key=L.r+','+L.c+','+L.dir;
     const xy=portXY(L.r,L.c,L.dir);
     const p=puddles.get(key)||{x:xy[0],y:xy[1],r:2,alpha:0};
@@ -1124,7 +1415,7 @@ function updateWaterPhysics(){
   }
   puddles.forEach(function(p,key){
     const still=leaks.some(function(L){
-      return L.r+','+L.c+','+L.dir===key&&(L.type==='soak'||L.type==='crack'||L.type==='edge'||L.type==='jet');
+      return L.r+','+L.c+','+L.dir===key;
     });
     if(!still){
       p.alpha-=0.03;
@@ -1171,14 +1462,84 @@ function drawLeakParticles(){
   }
   for(let i=0;i<leaks.length;i++){
     const L=leaks[i];
-    if(L.type!=='crack')continue;
     const xy=portXY(L.r,L.c,L.dir);
     const pulse=.5+.5*Math.sin(animT*12+i);
     ctx.globalAlpha=.25+.2*pulse;
-    ctx.fillStyle='#8ed4ff';
+    if(L.type==='gap'){
+      ctx.strokeStyle='#ff9a3c';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(xy[0],xy[1],cellSize*.11,0,Math.PI*2);
+      ctx.stroke();
+    }else{
+      ctx.fillStyle='#8ed4ff';
+      ctx.beginPath();
+      ctx.arc(xy[0],xy[1],cellSize*.12,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+}
+
+function drawBucketIcon(x,y,fill,scale,accent){
+  const w=cellSize*scale,h=cellSize*scale*1.2;
+  const top=w*.7,bot=w*.88;
+  const baseY=y+h*0.2;
+  ctx.fillStyle='#5c4e40';
+  ctx.strokeStyle='#8a7868';
+  ctx.lineWidth=1.5;
+  ctx.beginPath();
+  ctx.moveTo(x-top/2,baseY-h*0.45);
+  ctx.lineTo(x+top/2,baseY-h*0.45);
+  ctx.lineTo(x+bot/2,baseY+h*0.42);
+  ctx.lineTo(x-bot/2,baseY+h*0.42);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  const maxInner=h*0.72*fill;
+  if(maxInner>2){
+    ctx.fillStyle=accent||'rgba(91,200,255,.88)';
+    ctx.fillRect(x-w*0.28,baseY+h*0.4-maxInner,w*0.56,maxInner);
+    ctx.globalAlpha=.35+fill*0.35;
+    ctx.fillStyle='#fff';
+    ctx.fillRect(x-w*0.2,baseY+h*0.38-maxInner,w*0.12,maxInner*0.4);
+    ctx.globalAlpha=1;
+  }
+}
+
+function drawLeakBuckets(){
+  leakBuckets.forEach(function(fill,key){
+    if(fill<0.06)return;
+    const p=key.split(',');
+    const d=+p[2];
+    const xy=portXY(+p[0],+p[1],d);
+    const dk=dirKey(d);
+    const ox=DR[dk][1]*cellSize*0.28;
+    const oy=DR[dk][0]*cellSize*0.28;
+    drawBucketIcon(xy[0]+ox,xy[1]+oy,fill,0.2,'rgba(100,210,255,.9)');
+  });
+}
+
+function drawSiphonStreams(){
+  const dest=findSourceCenter();
+  for(let i=0;i<siphonStreams.length;i++){
+    const s=siphonStreams[i];
+    ctx.globalAlpha=.85*(1-s.t*0.5);
+    ctx.fillStyle='#b8ecff';
     ctx.beginPath();
-    ctx.arc(xy[0],xy[1],cellSize*.12,0,Math.PI*2);
+    ctx.arc(s.x,s.y,2.5+2*(1-s.t),0,Math.PI*2);
     ctx.fill();
+  }
+  if(siphonAnim>0.1){
+    ctx.globalAlpha=siphonAnim*0.5;
+    ctx.strokeStyle='#8ed4ff';
+    ctx.lineWidth=3;
+    ctx.setLineDash([6,6]);
+    ctx.lineDashOffset=-animT*40;
+    ctx.beginPath();
+    ctx.arc(dest[0],dest[1],cellSize*0.45,0,Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
     ctx.globalAlpha=1;
   }
 }
@@ -1261,6 +1622,8 @@ function drawDecorations(){
         ctx.fillText(em,cx,cy-cellSize*.08);
       }
       if(cell.type==='G'){
+        const gFill=gardenBuckets.get(k)||0;
+        drawBucketIcon(cx,cy+cellSize*0.28,gFill,0.26,cell.color==='r'?'rgba(255,140,200,.9)':cell.color==='y'?'rgba(255,230,120,.9)':'rgba(91,200,255,.9)');
         const emSet=GOAL_EMOJI[cell.color]||GOAL_EMOJI.b;
         if(goalWet){
           ctx.save();
@@ -1439,14 +1802,38 @@ function pointerToCell(clientX,clientY){
   return{r,c};
 }
 
-function onPointer(e){
+function onSiphonTap(){
   if(mode!=='play'||won)return;
+  if(wasteBucket<3){
+    setStatus('Nothing spilled yet — fix the pipes first!','idle');
+    playHint();
+    return;
+  }
+  doSiphon(null,null,38);
+  setStatus('♻️ Poured water back to the hose!','flow');
+}
+
+function onPointer(e){
+  if(mode!=='play')return;
   const now=Date.now();
   if(now-lastTap<180)return;
   lastTap=now;
+  const hit=hitLeakBucket(e.clientX,e.clientY);
+  if(hit&&hit.fill>0.08){
+    leakBuckets.set(hit.key,Math.max(0,hit.fill-0.5));
+    doSiphon(hit.x,hit.y,22);
+    setStatus('🪣 Poured out the catch bucket!','flow');
+    return;
+  }
   const pt=pointerToCell(e.clientX,e.clientY);
   if(!pt)return;
   const cell=grid[pt.r]&&grid[pt.r][pt.c];
+  if(buildMode){
+    if(cell&&cell.fixed)return;
+    if(cell&&cell.type==='#')return;
+    interactBuildCell(pt.r,pt.c);
+    return;
+  }
   if(!cell||cell.fixed||cell.type==='#')return;
   interactCell(pt.r,pt.c);
 }
@@ -1471,9 +1858,12 @@ function startGame(){
 }
 
 function showWin(){
+  recordWin();
   const lv=LEVELS[levelIdx];
   const isSecret=levelIdx===SECRET_IDX;
   const isFinale=levelIdx===FINALE_IDX;
+  const isLongest=levelIdx===LONGEST_IDX;
+  const isShortest=levelIdx===SHORTEST_IDX;
   const isLastMain=levelIdx===MAIN_LAST_IDX;
   if(isSecret){
     document.getElementById('win-emoji').textContent='✨';
@@ -1482,6 +1872,12 @@ function showWin(){
     document.getElementById('win-emoji').textContent='🌍';
     document.getElementById('win-title').textContent='The world is watered!';
     unlockSecret();
+  }else if(isLongest){
+    document.getElementById('win-emoji').textContent='🛤';
+    document.getElementById('win-title').textContent='Longest hose wins!';
+  }else if(isShortest){
+    document.getElementById('win-emoji').textContent='⚡';
+    document.getElementById('win-title').textContent='Shortest hose wins!';
   }else if(isLastMain){
     document.getElementById('win-emoji').textContent='⏱️';
     document.getElementById('win-title').textContent='Rush complete!';
@@ -1493,13 +1889,21 @@ function showWin(){
   if(moves<=levelPar)grade=' ⭐ Perfect!';
   else if(moves<=levelPar+1)grade=' ⭐⭐ Nice!';
   else grade=' ⭐ Good job!';
+  const routeLen=countRoutePipes(filled);
   let msg=(lv?lv.name:'')+' — '+moves+' moves (par '+levelPar+')'+grade;
   if(isSecret)msg='Nobody else knows this garden exists. You are a legend! 💧';
-  else if(isFinale)msg='You saved the last gardens on Earth! 🤫 Tap the menu title 5× for a secret level…';
+  else if(isFinale)msg='You saved the last gardens on Earth! Next: design your own hose path…';
+  else if(isLongest)msg='You used '+routeLen+' pipes (needed '+routeMin+'+). Next: can you do it with fewer?';
+  else if(isShortest)msg='Only '+routeLen+' pipes (max '+routeMax+')! You mastered both routes. 🤫 Tap menu title 5× for secret…';
   else if(isLastMain)msg='One more challenge awaits… End of the World! 🌍';
+  else if(buildMode)msg=routeLen+' pipes in your route · par '+levelPar+grade;
   document.getElementById('win-msg').textContent=msg;
-  if(isFinale||isSecret){
+  if(isSecret||isShortest){
     document.getElementById('next-btn').textContent='Menu 🏠';
+  }else if(isFinale){
+    document.getElementById('next-btn').textContent='Longest Hose 🛤';
+  }else if(isLongest){
+    document.getElementById('next-btn').textContent='Shortest Hose ⚡';
   }else if(isLastMain){
     document.getElementById('next-btn').textContent='End of the World 🌍';
   }else{
@@ -1510,13 +1914,17 @@ function showWin(){
 
 function nextLevel(){
   document.getElementById('win-ov').classList.add('hidden');
-  if(levelIdx===SECRET_IDX||levelIdx===FINALE_IDX){
+  if(levelIdx===SECRET_IDX||levelIdx===SHORTEST_IDX){
     showMenu();
     return;
   }
   if(levelIdx===MAIN_LAST_IDX)levelIdx=FINALE_IDX;
+  else if(levelIdx===FINALE_IDX)levelIdx=LONGEST_IDX;
+  else if(levelIdx===LONGEST_IDX)levelIdx=SHORTEST_IDX;
   else if(levelIdx<LEVELS.length-1)levelIdx++;
   else levelIdx=0;
+  saveData.nextLevel=levelIdx;
+  persistSave();
   loadLevel(levelIdx);
 }
 
@@ -1524,7 +1932,7 @@ function showMenu(){
   document.getElementById('win-ov').classList.add('hidden');
   document.getElementById('lose-ov').classList.add('hidden');
   document.getElementById('menu-ov').classList.remove('hidden');
-  updateMenuSecretHint();
+  updateMenuProgress();
   stopTimer();
   mode='menu';
   animRunning=false;
@@ -1554,6 +1962,7 @@ function playWin(){[523,659,784,988].forEach(function(f,i){setTimeout(function()
 function playValve(){tone(520,.08,'square',.1);}
 function playWilting(){tone(220,.25,'sawtooth',.12);}
 function playLeak(){tone(280+Math.random()*80,.05,'triangle',.08);}
+function playSiphon(){tone(180,.12,'sine',.14);setTimeout(function(){tone(240,.08,'sine',.1);},80);setTimeout(function(){tone(320,.06,'sine',.08);},160);}
 function playCombo(n){const base=520+n*80;[0,1,2].forEach(function(i){setTimeout(function(){tone(base+i*90,.09,'sine',.13);},i*70);});}
 
 window.render_game_to_text=function(){
@@ -1587,10 +1996,30 @@ window.advanceTime=function(ms){
 
 canvas=document.getElementById('game');
 ctx=canvas.getContext('2d');
-updateMenuSecretHint();
+loadSave();
+updateMenuProgress();
+document.querySelectorAll('.pipe-pick').forEach(function(btn){
+  btn.addEventListener('click',function(){
+    if(touchHandled)return;
+    setBuildPipe(btn.getAttribute('data-pipe'));
+    playHint();
+  });
+  btn.addEventListener('touchend',function(e){
+    e.preventDefault();
+    touchHandled=true;
+    setBuildPipe(btn.getAttribute('data-pipe'));
+    playHint();
+    setTimeout(function(){touchHandled=false;},400);
+  },{passive:false});
+});
 bindTap(document.getElementById('start-btn'),startGame);
+bindTap(document.getElementById('new-game-btn'),function(){
+  resetCampaignSave();
+  startGame();
+});
 bindTap(document.getElementById('menu-title'),onMenuTitleTap);
 bindTap(document.getElementById('reset-btn'),resetLevel);
+bindTap(document.getElementById('pour-back-btn'),onSiphonTap);
 bindTap(document.getElementById('hint-btn'),showHint);
 bindTap(document.getElementById('next-btn'),nextLevel);
 bindTap(document.getElementById('menu-btn'),showMenu);
