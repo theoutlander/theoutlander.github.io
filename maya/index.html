@@ -558,6 +558,9 @@ function closeGame(){
 }
 window.addEventListener('message',function(ev){
   if(ev.data&&ev.data.type==='maya:screen')updateModalBackLabel(ev.data.screen);
+  if(ev.data==='maya:leave-game'||(ev.data&&ev.data.type==='maya:leave-game')){
+    if(gm.classList.contains('open'))closeGame();
+  }
 });
 function onGameModalPopState(){
   const file=pathnameGameFile();

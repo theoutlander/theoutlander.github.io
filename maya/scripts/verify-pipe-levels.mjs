@@ -1,6 +1,6 @@
 const N=1,E=2,S=4,W=8,DR={N:[-1,0],E:[0,1],S:[1,0],W:[0,-1]},OPP={[N]:S,[E]:W,[S]:N,[W]:E},DIRS=[N,E,S,W];
-const MASKS={I:[E|W,N|S,E|W,N|S],L:[E|S,S|W,W|N,N|E],T:[E|S|W,S|W|N,W|N|E,N|E|S],S:[E,S,W,N],G:[W,N,E,S]};
-function parseRows(rows){return rows.map(r=>r.trim().split(/\s+/).map(s=>s==='.'?null:{type:s[0],rot:+s[1],fixed:s[0]==='S'||s[0]==='G'}));}
+const MASKS={I:[E|W,N|S,E|W,N|S],L:[E|S,S|W,W|N,N|E],T:[E|S|W,S|W|N,W|N|E,N|E|S],S:[E,S,W,N],G:[W,N,E,S],K:[N,E,S,W]};
+function parseRows(rows){return rows.map(r=>r.trim().split(/\s+/).map(s=>s==='.'?null:{type:s[0],rot:+s[1],fixed:s[0]==='S'||s[0]==='G'||s[0]==='K'}));}
 function mask(c){return MASKS[c.type][c.rot%4];}
 function flow(grid){
   const R=grid.length,C=Math.max(...grid.map(r=>r.length)),filled=new Set();let src;
@@ -31,7 +31,7 @@ const LEVELS=[
   {name:'Quick Turn',par:1,rows:['S0 I0 L2 .','.  .  L3 G0']},
   {name:'Down the Garden',par:2,rows:['S0 I1 L0 .','.  I2 L3 G0']},
   {name:'Long Hose',par:2,rows:['S0 I1 I0 L0','.  .  .  G1']},
-  {name:'T Junction',par:2,rows:['S0 I1 T1 I0 G0']},
+  {name:'T Junction',par:2,rows:['.  .  K2 .  .','S0 I0 T2 I0 G0']},
   {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
   {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
   {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},

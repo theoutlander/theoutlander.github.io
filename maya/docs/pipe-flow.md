@@ -65,13 +65,14 @@ After **End of the World**, two **designer** challenges use the same **8×8** em
 
 **Wilting hint** — on timed levels, under 15s the status nudges you toward 💡 Hint and the hint button pulses.
 
-### Water physics, buckets & Pour Back
+### Water physics, buckets & Use Again
 - Water **flows through the whole connected network** (animated pulses, droplets along pipes, path highlight).
 - **Garden buckets** 🌻 — each goal has a bucket that **fills up** when water arrives (HUD shows `full/total`).
-- **Leak catch buckets** — bad leaks spawn small **🪣 buckets** on the board that fill; **tap a bucket** to pour the water back toward the hose.
-- **Spill bucket** (HUD) — leakage fills one meter; turns orange when high. **Pour Back** button sends it back toward the hose (kid-friendly: don’t waste water).
-- **Closed loop rule:** blocking leaks are gaps, cracks, edge spills, and misaligned joints. Extra T-arms pointing at empty grass still spray but **do not block** winning.
-- Water sprays from any open end until you spin pipes to **close the loop**. Pour Back moves spilled water but **cannot win** until blocking leaks are fixed (`open ends = 0`).
+- **Leak catch buckets** — bad leaks spawn small **🪣 buckets** on the board that fill; **tap a bucket** to empty it toward the hose.
+- **Spill bucket** (HUD) — leakage fills one meter; turns orange when high. **Use Again** sends that water back to the hose.
+- **Closed loop rule:** every open port on a wet pipe must connect — gaps, cracks, edges, and open ends into grass all block winning. Hose and garden only connect on their used side.
+- Gardens only count as watered when the **full circuit** is sealed and **every pipe piece** on the board is connected.
+- Water sprays from any open end until you spin pipes to **close the loop**. Use Again reuses spilled water but **cannot win** until blocking leaks are fixed (`open ends = 0`).
 - **Puddles** at open ends; **overflow** droplets when gardens are full.
 - **Win rule:** gardens watered, **garden buckets full**, **closed loop** (zero open ends), plus route length on build levels.
 

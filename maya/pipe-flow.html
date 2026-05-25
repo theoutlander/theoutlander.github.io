@@ -42,7 +42,9 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 
 #root{display:flex;flex-direction:column;height:100%;padding:8px;gap:6px}
 
-#hud{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;gap:8px}
+#hud{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;gap:8px;flex-wrap:wrap}
+#games-btn{font-family:'Fredoka One',cursive;font-size:12px;padding:6px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--muted);cursor:pointer;flex-shrink:0;min-height:36px}
+#games-btn:active{transform:scale(.96)}
 .hpill{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--muted)}
 .hval{font-family:'Fredoka One',cursive;font-size:18px;line-height:1;color:var(--text)}
 #level-badge{font-family:'Fredoka One',cursive;font-size:13px;padding:5px 14px;border-radius:99px;color:#08041a;background:var(--blue);white-space:nowrap}
@@ -57,8 +59,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .waste-track{width:14px;height:28px;border-radius:4px;background:rgba(0,0,0,.25);border:1px solid rgba(91,200,255,.25);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
 #waste-fill{width:100%;height:0%;background:linear-gradient(180deg,#5bc8ff,#3a8fd4);border-radius:2px;transition:height .15s}
 #waste-pill.full #waste-fill{background:linear-gradient(180deg,#ff9a3c,#ff6eb4)}
-#pour-back-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
-#pour-back-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
+#use-again-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
+#use-again-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
 #route-pill{color:var(--purple)}
 #build-palette{display:none;flex-shrink:0;gap:6px;padding:0 2px 4px}
 #build-palette.show{display:flex}
@@ -103,10 +105,11 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 <body>
 <div id="root">
   <div id="hud">
+    <button type="button" id="games-btn" title="Back to Maya's Game Lab">← Games</button>
     <div class="hpill">🔧 <span class="hval" id="moves">0</span></div>
     <div class="hpill" id="garden-pill">🌻 <span class="hval" id="garden-fill">0/1</span></div>
     <div class="hpill hidden" id="route-pill">🛤 <span class="hval" id="route-val">0</span></div>
-    <div class="hpill" id="waste-pill" title="Spilled water — tap Pour Back to send it to the hose!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
+    <div class="hpill" id="waste-pill" title="Spilled water in the bucket — tap Use Again when it fills up!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
     <div class="hpill hidden" id="timer-pill">⏱ <span class="hval" id="timer-val">60</span></div>
     <div id="level-badge">Level 1</div>
     <div id="status-pill">Tap pipes to spin!</div>
@@ -124,7 +127,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   </div>
   <div id="toolbar">
     <button class="tool-btn" id="reset-btn">↺ Reset</button>
-    <button class="tool-btn" id="pour-back-btn" title="Pour spilled water back toward the hose">🪣 Pour Back</button>
+    <button class="tool-btn" id="use-again-btn" title="Send spilled water from the bucket back to the hose">🪣 Use Again</button>
     <button class="tool-btn" id="hint-btn">💡 Hint</button>
   </div>
 </div>
@@ -133,9 +136,10 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">💧 Connect every <strong style="color:var(--yellow)">pipe joint</strong> — no gaps or cracks!<br>Extra T-arms can point at the grass (that is OK).<br>Fill each <strong style="color:var(--green)">garden bucket</strong> 🌻 to win.<br>Spills? Tap <strong style="color:var(--blue)">Pour Back</strong> 🪣</div>
+  <div class="sub">💧 Build a <strong style="color:var(--yellow)">complete circuit</strong> — every pipe end must connect!<br><strong style="color:var(--yellow)">Drag pipes</strong> to move them · <strong style="color:var(--yellow)">tap</strong> to spin.<br>Gardens only get water when the loop is sealed 🌻</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
+  <button class="sec-btn" id="menu-games-btn">← All Games</button>
 </div>
 
 <div class="ov hidden" id="win-ov">
@@ -144,7 +148,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="sub" id="win-msg"></div>
   <div class="btn-row">
     <button class="big-btn" id="next-btn">Next Level ➡️</button>
-    <button class="sec-btn" id="menu-btn">Menu 🏠</button>
+    <button class="sec-btn" id="menu-btn">Level Menu 🏠</button>
+    <button class="sec-btn" id="win-games-btn">← All Games</button>
   </div>
 </div>
 
@@ -154,7 +159,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="sub" id="lose-msg">Spin faster next time!</div>
   <div class="btn-row">
     <button class="big-btn" id="retry-btn">Try Again 🔄</button>
-    <button class="sec-btn" id="lose-menu-btn">Menu 🏠</button>
+    <button class="sec-btn" id="lose-menu-btn">Level Menu 🏠</button>
+    <button class="sec-btn" id="lose-games-btn">← All Games</button>
   </div>
 </div>
 
@@ -171,8 +177,9 @@ const MASKS={
   X:[N|E|S|W],
   B:[E|W,N|S,E|W,N|S],
   V:[E|W,N|S,E|W,N|S],
-  S:[E,S,W,N],
+  S:[E,W,S,N],
   G:[W,N,E,S],
+  K:[N,E,S,W],
 };
 const WATER_COLORS={b:'#5bc8ff',r:'#ff6eb4',y:'#ffe14d'};
 const GOAL_EMOJI={b:['🌾','🌻'],r:['🌹','🌺'],y:['🌼','🌻'],null:['🌾','🌻']};
@@ -220,7 +227,7 @@ const LEVELS=[
   {name:'Quick Turn',par:1,rows:['S0 I0 L2 .','.  .  L3 G0']},
   {name:'Down the Garden',par:2,rows:['S0 I1 L0 .','.  I2 L3 G0']},
   {name:'Long Hose',par:2,rows:['S0 I1 I0 L0','.  .  .  G1']},
-  {name:'T Junction',par:2,rows:['S0 I1 T1 I0 G0']},
+  {name:'T Junction',par:2,tip:'↪️ T has 3 arms — connect every arm (cap counts too)!',rows:['.  .  K2 .  .','S0 I0 T2 I0 G0']},
   {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
   {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
   {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
@@ -247,9 +254,11 @@ const LEVELS=[
 let canvas,ctx,levelIdx=0,grid=[],initialGrid=[],moves=0,levelPar=1;
 let cellSize=0,gridOffX=0,gridOffY=0,rows=0,cols=0;
 let filled=new Set(),flowColors=new Map(),flowPath=[],flowDist=new Map(),goalsLeft=0;
-let won=false,animT=0,flowPhase=0;
+let won=false,winPending=false,winTimer=null,animT=0,flowPhase=0;
 let waterDrops=[],bubbles=[],leakDrips=[],flowParticles=[],leaks=[],puddles=new Map(),mode='menu',audioCtx=null;
 let lastTap=0,touchHandled=false,animRunning=false,spinAnim=null;
+let drag=null,activePointerId=null;
+const DRAG_THRESHOLD=10;
 let lastValveTap=0,lastValveCell=null;
 let timeLeft=0,timerId=null,levelTip='';
 let boardTheme=THEMES.dawn,prevWatered=0,comboHideTimer=null,menuTapCount=0,secretUnlocked=false;
@@ -304,23 +313,22 @@ function recordWin(){
   const nxt=campaignNextIdx(levelIdx);
   if(nxt!=null)saveData.nextLevel=Math.max(saveData.nextLevel,nxt);
   persistSave();
-  updateMenuProgress();
 }
 
-function updateMenuProgress(){
+function updateMenuProgress(setPlayIdx){
   const prog=document.getElementById('menu-progress-hint');
   const newBtn=document.getElementById('new-game-btn');
   const startBtn=document.getElementById('start-btn');
   if(saveData.maxBeaten>=0){
     const playIdx=Math.min(saveData.nextLevel,SHORTEST_IDX);
     startBtn.textContent='Continue · Level '+(playIdx+1)+' 🌱';
-    levelIdx=playIdx;
+    if(setPlayIdx)levelIdx=playIdx;
     const ts=totalStars();
     prog.textContent=ts?'⭐ '+ts+' stars earned':'';
     if(newBtn)newBtn.classList.remove('hidden');
   }else{
     startBtn.textContent="Let's Go! 🌱";
-    levelIdx=0;
+    if(setPlayIdx)levelIdx=0;
     prog.textContent='';
     if(newBtn)newBtn.classList.add('hidden');
   }
@@ -337,7 +345,7 @@ function resetCampaignSave(){
   saveData={nextLevel:0,stars:{},maxBeaten:-1};
   persistSave();
   levelIdx=0;
-  updateMenuProgress();
+  updateMenuProgress(true);
 }
 
 function applyTheme(idx,lv){
@@ -350,8 +358,8 @@ function applyTheme(idx,lv){
 }
 
 function showSiphonToast(){
-  document.getElementById('combo-text').textContent='POURED BACK!';
-  document.getElementById('combo-sub').textContent='♻️ Water went back to the hose!';
+  document.getElementById('combo-text').textContent='WATER SAVED!';
+  document.getElementById('combo-sub').textContent='♻️ Back to the hose!';
   document.getElementById('combo-wrap').classList.add('show');
   if(comboHideTimer)clearTimeout(comboHideTimer);
   comboHideTimer=setTimeout(function(){document.getElementById('combo-wrap').classList.remove('show');},900);
@@ -494,13 +502,39 @@ function updateGardenBuckets(){
     const cell=grid[r]&&grid[r][c];
     if(cell&&goalWateredAt(r,c,cell,filled,flowColors)){
       watered++;
-      const next=Math.min(1,fill+0.06);
+      const next=Math.min(1,fill+0.12);
       gardenBuckets.set(key,next);
     }else if(fill>0){
       gardenBuckets.set(key,Math.max(0,fill-0.008));
     }
   });
   return watered;
+}
+
+function gardensReadyForWin(){
+  return allGardenBucketsFull();
+}
+
+function countDryParts(filledSet){
+  let n=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(!cell||cell.type==='#')continue;
+      if(!filledSet.has(r+','+c))n++;
+    }
+  }
+  return n;
+}
+
+function allPartsConnected(filledSet){
+  return countDryParts(filledSet)===0;
+}
+
+function circuitComplete(filledSet){
+  if(!filledSet||!filledSet.size)return false;
+  if(computeLeaks(filledSet).length>0)return false;
+  return allPartsConnected(filledSet);
 }
 
 function updateLeakBuckets(badLeakList){
@@ -525,7 +559,7 @@ function updateBucketHud(){
   document.getElementById('garden-fill').textContent=full+'/'+total;
   document.getElementById('waste-fill').style.height=Math.round(wasteBucket)+'%';
   const wp=document.getElementById('waste-pill');
-  const sb=document.getElementById('pour-back-btn');
+  const sb=document.getElementById('use-again-btn');
   if(wasteBucket>=55){
     wp.classList.add('full');
     sb.classList.add('ready');
@@ -625,7 +659,7 @@ function parseCell(code){
   let color=null,rotIdx=1;
   if(code.length>=3&&/[bry]/.test(code[1])){color=code[1];rotIdx=2;}
   const rot=+code[rotIdx];
-  const cell={type:type,rot:isNaN(rot)?0:rot,color:color,fixed:type==='S'||(type==='G'&&!sprinkler),sprinkler:sprinkler,placed:false};
+  const cell={type:type,rot:isNaN(rot)?0:rot,color:color,fixed:type==='S'||(type==='G'&&!sprinkler)||type==='K',sprinkler:sprinkler,placed:false};
   if(type==='V')cell.open=false;
   if(type==='B')cell.touched=false;
   return cell;
@@ -643,7 +677,7 @@ function cloneGrid(g){
   });
 }
 
-function goalWateredAt(r,c,cell,filledSet,colorMap){
+function goalHasFlow(r,c,cell,filledSet,colorMap){
   const need=cell.color||'b';
   const k=r+','+c;
   if(filledSet.has(k)){
@@ -663,6 +697,11 @@ function goalWateredAt(r,c,cell,filledSet,colorMap){
     if(cols&&(cols.has(need)||(!cell.color&&cols.size>0)))return true;
   }
   return false;
+}
+
+function goalWateredAt(r,c,cell,filledSet,colorMap){
+  if(!circuitComplete(filledSet))return false;
+  return goalHasFlow(r,c,cell,filledSet,colorMap);
 }
 
 function stopTimer(){
@@ -710,6 +749,8 @@ function loadLevel(idx){
   cols=Math.max.apply(null,grid.map(function(r){return r.length;}));
   moves=0;
   won=false;
+  winPending=false;
+  if(winTimer){clearTimeout(winTimer);winTimer=null;}
   flowPhase=0;
   waterDrops=[];
   bubbles=[];
@@ -862,18 +903,14 @@ function computeLeaks(filledSet){
   return out;
 }
 
-function leakBlocksWin(leak){
-  return leak.type==='gap'||leak.type==='crack'||leak.type==='edge'||leak.type==='jet';
-}
+function leakBlocksWin(){return true;}
 
 function leakCountBad(leakList){
-  let n=0;
-  for(let i=0;i<leakList.length;i++)if(leakBlocksWin(leakList[i]))n++;
-  return n;
+  return leakList.length;
 }
 
 function isLoopClosed(filledSet){
-  return leakCountBad(computeLeaks(filledSet))===0;
+  return circuitComplete(filledSet);
 }
 
 function computeFlow(){
@@ -930,10 +967,13 @@ function computeFlow(){
     }
   }
   let watered=0;
-  goals.forEach(function(g){
-    const cell=grid[g.r][g.c];
-    if(goalWateredAt(g.r,g.c,cell,nextFilled,nextColors))watered++;
-  });
+  const circuitOk=circuitComplete(nextFilled);
+  if(circuitOk){
+    goals.forEach(function(g){
+      const cell=grid[g.r][g.c];
+      if(goalHasFlow(g.r,g.c,cell,nextFilled,nextColors))watered++;
+    });
+  }
   const goalReached=goals.length>0&&watered===goals.length;
   let path=[];
   if(goalReached&&goals.length===1){
@@ -972,14 +1012,15 @@ function updateFlow(triggerWin){
   flowPath=result.path;
   goalsLeft=result.goalsLeft;
   leaks=computeLeaks(filled);
-  const openEnds=leakCountBad(leaks);
-  const soakEnds=leaks.length-openEnds;
-  updateLeakBuckets(leaks.filter(leakBlocksWin));
+  const openEnds=leaks.length;
+  const circuitOk=circuitComplete(filled);
+  const dryParts=countDryParts(filled);
+  updateLeakBuckets(leaks);
   updateGardenBuckets();
   updateBucketHud();
   rebuildFlowParticles();
   const gTotal=countGoals();
-  const bucketsReady=allGardenBucketsFull();
+  const bucketsReady=gardensReadyForWin();
   const routeLen=countRoutePipes(filled);
   updateRouteHud(routeLen);
   const routeOk=routeConstraintOk(routeLen);
@@ -992,38 +1033,48 @@ function updateFlow(triggerWin){
   prevWatered=wateredNow;
 
   if(wasteBucket>=92&&!won&&openEnds>0){
-    setStatus('🪣 Bucket full! Fix the pipes or tap Pour Back!','flow');
+    setStatus('🪣 Bucket full! Fix the pipes or tap Use Again!','flow');
   }
 
-  if(won&&openEnds>0){
+  if(won&&(!circuitOk||openEnds>0)){
     won=false;
+    winPending=false;
+    if(winTimer){clearTimeout(winTimer);winTimer=null;}
     document.getElementById('win-ov').classList.add('hidden');
   }
 
-  if(result.goalReached&&openEnds===0&&bucketsReady&&routeOk){
+  if(result.goalReached&&circuitOk&&bucketsReady&&routeOk){
     flowPhase=Math.max(flowPhase,0.05);
-    if(triggerWin&&!won){
+    if(triggerWin&&!won&&!winPending){
       won=true;
+      winPending=true;
       stopTimer();
       document.getElementById('hint-btn').classList.remove('hint-urgent');
       if(moves<=levelPar)showComboReaction('perfect');
       playWin();
-      setStatus('Loop closed — all gardens watered!','win');
+      setStatus('Circuit complete — all gardens watered! 🌻','win');
       spawnCelebration();
-      setTimeout(showWin,900);
-    }else if(!won){
-      setStatus('All gardens watered!','flow');
+      if(winTimer)clearTimeout(winTimer);
+      winTimer=setTimeout(function(){
+        winTimer=null;
+        winPending=false;
+        showWin();
+      },700);
+    }else if(!won&&!winPending){
+      setStatus('Circuit sealed — gardens watering!','flow');
     }
+  }else if(!circuitOk&&filled.size>1){
+    flowPhase=Math.max(flowPhase,0.03);
+    if(openEnds>0)setStatus('🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!','flow');
+    else if(dryParts>0)setStatus('🔧 '+dryParts+' piece'+(dryParts>1?'s':'')+' not connected — use every pipe!','flow');
+    else setStatus('🔗 Connect every port — complete the circuit!','flow');
   }else if(result.goalReached&&openEnds>0){
     flowPhase=Math.max(flowPhase,0.04);
     setStatus('🔗 Fix '+openEnds+' joint'+(openEnds>1?'s':'')+' — pipes must connect!','flow');
-  }else if(result.goalReached&&soakEnds>0&&openEnds===0){
-    flowPhase=Math.max(flowPhase,0.04);
-    setStatus('🌻 Almost! Spin extra pipe arms toward the grass (capped).','flow');
   }else if(result.goalReached&&openEnds===0&&!bucketsReady){
     flowPhase=Math.max(flowPhase,0.04);
     setStatus('🌻 Garden buckets filling…','flow');
-  }else if(result.goalReached&&openEnds===0&&bucketsReady&&!routeOk){
+  }else if(result.goalReached&&circuitOk&&bucketsReady&&!routeOk){
     flowPhase=Math.max(flowPhase,0.04);
     if(routeMin!=null)setStatus('🛤 '+routeLen+'/'+routeMin+' pipes — make a longer path!','flow');
     else if(routeMax!=null)setStatus('🛤 '+routeLen+' pipes — too long! Use fewer (≤'+routeMax+').','flow');
@@ -1032,10 +1083,9 @@ function updateFlow(triggerWin){
     let msg='Tap pipes to spin!';
     let gCount=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
-    if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' loose joint'+(openEnds>1?'s':'')+' — spin until pipes connect!';
-    else if(soakEnds>0&&filled.size>1)msg='↪️ Spin T-pipes so extra arms point into the grass';
-    else if(gCount>1&&result.filled.size>1)msg='Watered '+(gCount-goalsLeft)+' / '+gCount+' gardens';
-    else if(filled.size>1)msg='Water is flowing…';
+    if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!';
+    else if(dryParts>0&&filled.size>1)msg='🔧 Connect every pipe piece on the board!';
+    else if(filled.size>1)msg='Water flowing — finish the circuit!';
     setStatus(msg,filled.size>1||openEnds>0?'flow':'idle');
   }
 }
@@ -1050,11 +1100,7 @@ function interactCell(r,c){
   if(buildMode)return interactBuildCell(r,c);
   const cell=grid[r]&&grid[r][c];
   if(!cell||cell.fixed||cell.type==='#')return false;
-  if(won){
-    won=false;
-    document.getElementById('win-ov').classList.add('hidden');
-    mode='play';
-  }
+  if(won||winPending)return false;
   if(cell.type==='V'){
     const now=Date.now();
     if(lastValveCell&&lastValveCell.r===r&&lastValveCell.c===c&&now-lastValveTap<450){
@@ -1121,7 +1167,7 @@ function showHint(){
         if(grid[r][c].type==='V'){grid[r][c].open=true;grid[r][c].touched=true;}
         const test=computeFlow();
         const tLen=countRoutePipes(test.filled);
-        if(test.goalReached&&leakCountBad(computeLeaks(test.filled))===0&&routeConstraintOk(tLen)){
+        if(test.goalReached&&circuitComplete(test.filled)&&routeConstraintOk(tLen)){
           moves++;
           document.getElementById('moves').textContent=String(moves);
           spinAnim={r:r,c:c,t:0};
@@ -1173,8 +1219,8 @@ function ensureAnimLoop(){
 }
 
 function tickWinCheck(){
-  if(won||mode!=='play')return;
-  if(goalsLeft>0||leakCountBad(leaks)>0)return;
+  if(won||winPending||mode!=='play')return;
+  if(goalsLeft>0||!circuitComplete(filled))return;
   if(!allGardenBucketsFull())return;
   if(!routeConstraintOk(countRoutePipes(filled)))return;
   updateFlow(true);
@@ -1193,7 +1239,7 @@ function tick(){
   }
   if(!won&&filled.size>0){
     leaks=computeLeaks(filled);
-    updateLeakBuckets(leaks.filter(leakBlocksWin));
+    updateLeakBuckets(leaks);
     updateGardenBuckets();
     updateBucketHud();
     tickWinCheck();
@@ -1661,12 +1707,18 @@ function drawPipe(r,c,cell){
   ctx.rotate(spin);
   ctx.translate(-cx,-cy);
 
-  if(cell.type==='S'||cell.type==='G'){
+  if(cell.type==='S'||cell.type==='G'||cell.type==='K'){
     if(hasWater){
       ctx.save();
       ctx.globalAlpha=.35+.15*Math.sin(animT*4+k.length);
       drawConnections(cx,cy,half,w,m,true,dist||0,cellColorsAt(r,c));
       ctx.restore();
+    }
+    if(cell.type==='K'){
+      ctx.font=(cellSize*.28)+'px serif';
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText('🪨',cx,cy);
     }
     ctx.restore();
     return;
@@ -1803,18 +1855,18 @@ function pointerToCell(clientX,clientY){
 }
 
 function onSiphonTap(){
-  if(mode!=='play'||won)return;
+  if(mode!=='play'||won||winPending)return;
   if(wasteBucket<3){
     setStatus('Nothing spilled yet — fix the pipes first!','idle');
     playHint();
     return;
   }
   doSiphon(null,null,38);
-  setStatus('♻️ Poured water back to the hose!','flow');
+  setStatus('♻️ Used the spilled water again!','flow');
 }
 
 function onPointer(e){
-  if(mode!=='play')return;
+  if(mode!=='play'||won||winPending)return;
   const now=Date.now();
   if(now-lastTap<180)return;
   lastTap=now;
@@ -1822,7 +1874,7 @@ function onPointer(e){
   if(hit&&hit.fill>0.08){
     leakBuckets.set(hit.key,Math.max(0,hit.fill-0.5));
     doSiphon(hit.x,hit.y,22);
-    setStatus('🪣 Poured out the catch bucket!','flow');
+    setStatus('🪣 Emptied the spill bucket!','flow');
     return;
   }
   const pt=pointerToCell(e.clientX,e.clientY);
@@ -1914,6 +1966,9 @@ function showWin(){
 
 function nextLevel(){
   document.getElementById('win-ov').classList.add('hidden');
+  won=false;
+  winPending=false;
+  if(winTimer){clearTimeout(winTimer);winTimer=null;}
   if(levelIdx===SECRET_IDX||levelIdx===SHORTEST_IDX){
     showMenu();
     return;
@@ -1928,15 +1983,42 @@ function nextLevel(){
   loadLevel(levelIdx);
 }
 
+function goToAllGames(){
+  stopTimer();
+  won=false;
+  winPending=false;
+  if(winTimer){clearTimeout(winTimer);winTimer=null;}
+  document.getElementById('win-ov').classList.add('hidden');
+  document.getElementById('lose-ov').classList.add('hidden');
+  document.getElementById('menu-ov').classList.add('hidden');
+  mode='menu';
+  animRunning=false;
+  try{
+    if(window.parent!==window){
+      window.parent.postMessage('maya:leave-game','*');
+      window.parent.history.back();
+      return;
+    }
+  }catch(e){}
+  window.location.href='index.html';
+}
+
 function showMenu(){
   document.getElementById('win-ov').classList.add('hidden');
   document.getElementById('lose-ov').classList.add('hidden');
   document.getElementById('menu-ov').classList.remove('hidden');
-  updateMenuProgress();
+  updateMenuProgress(true);
   stopTimer();
   mode='menu';
   animRunning=false;
 }
+
+window.mayaGameCanGoBack=function(){
+  if(mode==='play')return true;
+  if(!document.getElementById('win-ov').classList.contains('hidden'))return true;
+  if(!document.getElementById('lose-ov').classList.contains('hidden'))return true;
+  return false;
+};
 
 function onMenuTitleTap(){
   menuTapCount++;
@@ -1997,7 +2079,7 @@ window.advanceTime=function(ms){
 canvas=document.getElementById('game');
 ctx=canvas.getContext('2d');
 loadSave();
-updateMenuProgress();
+updateMenuProgress(true);
 document.querySelectorAll('.pipe-pick').forEach(function(btn){
   btn.addEventListener('click',function(){
     if(touchHandled)return;
@@ -2012,6 +2094,10 @@ document.querySelectorAll('.pipe-pick').forEach(function(btn){
     setTimeout(function(){touchHandled=false;},400);
   },{passive:false});
 });
+bindTap(document.getElementById('games-btn'),goToAllGames);
+bindTap(document.getElementById('menu-games-btn'),goToAllGames);
+bindTap(document.getElementById('win-games-btn'),goToAllGames);
+bindTap(document.getElementById('lose-games-btn'),goToAllGames);
 bindTap(document.getElementById('start-btn'),startGame);
 bindTap(document.getElementById('new-game-btn'),function(){
   resetCampaignSave();
@@ -2019,7 +2105,7 @@ bindTap(document.getElementById('new-game-btn'),function(){
 });
 bindTap(document.getElementById('menu-title'),onMenuTitleTap);
 bindTap(document.getElementById('reset-btn'),resetLevel);
-bindTap(document.getElementById('pour-back-btn'),onSiphonTap);
+bindTap(document.getElementById('use-again-btn'),onSiphonTap);
 bindTap(document.getElementById('hint-btn'),showHint);
 bindTap(document.getElementById('next-btn'),nextLevel);
 bindTap(document.getElementById('menu-btn'),showMenu);
@@ -2034,6 +2120,19 @@ canvas.addEventListener('touchend',function(e){
 canvas.addEventListener('click',function(e){
   if(touchHandled)return;
   onPointer(e);
+});
+window.addEventListener('message',function(ev){
+  if(ev.data==='maya:nav-back'){
+    if(mode==='play'){
+      document.getElementById('win-ov').classList.add('hidden');
+      document.getElementById('lose-ov').classList.add('hidden');
+      showMenu();
+    }else if(!document.getElementById('win-ov').classList.contains('hidden')){
+      showMenu();
+    }else if(!document.getElementById('lose-ov').classList.contains('hidden')){
+      showMenu();
+    }
+  }
 });
 window.addEventListener('resize',function(){if(mode==='play')resize();});
 </script>
