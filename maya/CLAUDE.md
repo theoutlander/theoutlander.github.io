@@ -26,15 +26,43 @@ Nick builds them here, and Maya plays them on her iPad. The site is her creative
 All games are **self-contained single HTML files** — no build step, no npm, no bundler.
 They load from CDN and work by just opening in a browser or deploying to GitHub Pages.
 
+### Framework choice (read this before starting a game)
+
+**Future games do NOT have to use Phaser.** Pick the stack by game type:
+
+| Use **Phaser 4** | Use **plain HTML/CSS/JS** (DOM and/or canvas) |
+|------------------|-----------------------------------------------|
+| Real-time action: movement, aiming, collision, many moving sprites | UI-heavy: shops, menus, modals, tycoon loops |
+| Continuous game loop with scenes (menu → play → game over) | Turn-based or tap puzzles (pipe connect, word spell) |
+| Side-scrollers, shooters, platformers, horde survival | Music/rhythm tap (piano keys) |
+| When physics/tweens/scene management would dominate the code | Educational / reading games |
+| | Short canvas effects only (confetti, one mini animation) |
+
+**Default for new ideas:** vanilla unless Nick or Maya explicitly want an arcade/action game — then Phaser.
+
+**Do not migrate a working vanilla game to Phaser** unless there is a concrete reason (bugs from hand-rolled loop, need for physics, major feature rewrite). Migration is costly; prefer polish in place.
+
 ### Frameworks in use
-- **Phaser 4.0.0** — for action/arcade games going forward
+- **Phaser 4.1.0** — action/arcade games
   - CDN: `https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js`
   - Use scenes: `preload()`, `create()`, `update()`
-  - Draw with graphics primitives — no external image files needed
-  - Arcade physics for collision
-- **Plain HTML/CSS/Canvas** — for simpler games (Piñata Piano, Spell It, Dust Chasers)
-- **Babylon.js** — planned for future 3D games
+  - Draw with graphics primitives + emoji text — no external image files needed
+  - Arcade physics when collision matters
+  - Audio: Web Audio API directly (simple tones), not Phaser audio
+  - **In production:** `castle-defenders.html`
+- **Plain HTML/CSS/Canvas** — everything else
+  - DOM for layouts; canvas when a small draw loop is enough
+  - **In production:** `pinata-piano-v2.html`, `dust-chasers.html`, `letter-tumble.html`, `pipe-flow.html`, `mayas-kitchen.html`, `skyline-builder.html`
+- **Babylon.js** — future 3D only (not required for 2D)
   - CDN: `https://cdn.babylonjs.com/babylon.js`
+
+### Phaser migration backlog (optional, not mandatory)
+
+| Game | Status | Notes |
+|------|--------|-------|
+| Castle Defenders | **Already Phaser 4** | Stabilize/polish only; do not rebuild unless broken |
+| Dust Chasers | Stay vanilla unless major rework | Canvas loop works; migrate only if adding heavy physics |
+| Piñata Piano, Spell It, Pipe Flow, Maya's Kitchen, City Builder | **Keep vanilla** | Wrong fit for Phaser (UI, puzzle, words, tycoon, creative builder) |
 
 ### Fonts (always load from Google Fonts)
 ```html
@@ -141,13 +169,22 @@ See: `docs/dust-chasers.md`
 ### 3. Spell It! (`letter-tumble.html`)
 See: `docs/spell-it.md`
 
-### 4. Castle Defenders (`castle-defenders.html`)
+### 4. Castle Defenders (`castle-defenders.html`) — **Phaser 4**
 See: `docs/castle-defenders.md`
+
+### 5. Pipe Flow! (`pipe-flow.html`)
+See: `docs/pipe-flow.md`
+
+### 6. Maya's Kitchen (`mayas-kitchen.html`)
+Cook-and-sell tycoon: customer orders, recipe unlocks, shop upgrades. **Plain HTML** (DOM UI).
+
+### 7. City Builder (`skyline-builder.html`)
+Skyline building toy. **Plain HTML/canvas**.
 
 ---
 
 ## Known Issues / Backlog
-- Castle Defenders needs rebuild in Phaser 4 (current version is plain HTML, buggy)
+- Castle Defenders (Phaser): polish bugs (e.g. forge flow), not a framework migration
 - Dust Chasers: shockwave could feel more impactful
 - Spell It: could use more word variety per grade
 - All games: need consistent audio volume levels
@@ -164,8 +201,9 @@ See: `docs/castle-defenders.md`
 ## Notes for Claude Code
 - Always check this file at session start
 - Check individual game docs before modifying a game
-- Keep all games as single HTML files unless explicitly told otherwise
+- **Framework:** follow the table in “Framework choice” — Phaser is not the default for every new game
+- Keep all games as single HTML files unless explicitly told otherwise (Phaser still = one `.html` + CDN script)
 - Test logic in your head before writing — these games have had many bugs from rushed patches
 - When fixing bugs, read the full relevant function first, don't patch blindly
-- iPad touch events always need both `click` and `touchend` handlers
+- iPad: prefer `pointerup` delegation or both `click` and `touchend`; Phaser games use Phaser input
 - Never use `localStorage` as the only save mechanism without a fallback

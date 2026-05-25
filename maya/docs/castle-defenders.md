@@ -1,8 +1,8 @@
 # Castle Defenders — Game Spec
 
 **File:** `maya/castle-defenders.html`
-**Framework:** Phaser 4.0.0 (target) — currently plain HTML (needs rebuild)
-**Status:** 🚧 In progress — needs Phaser 4 rebuild
+**Framework:** Phaser 4.1.0 (CDN)
+**Status:** Live in Phaser — polish and bugfixes only unless explicitly rebuilding
 
 ---
 
