@@ -498,36 +498,49 @@ function titleForGameFile(file){
   const row=GLIST.find(function(g){return g.file===file;});
   return row?row.title:file.replace(/\.html?$/i,'');
 }
+function gameIframeUrl(file){
+  var url=resolveGameUrl(file);
+  return url+(url.indexOf('?')>=0?'&':'?')+'v='+Date.now();
+}
 function openGameInModal(file,title){
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
   updateModalBackLabel('hub');
   document.body.style.overflow='hidden';
-  // Show spinner, load iframe
+  gm.style.visibility='';
   gmLoad.classList.remove('done');
   gf.onload=function(){ gmLoad.classList.add('done'); };
-  gf.src=resolveGameUrl(file);
-  // Slide modal up
-  gm.style.visibility='hidden'; // keep in DOM, trigger reflow, then animate
-  requestAnimationFrame(function(){
-    gm.classList.add('open');
-  });
+  gf.src=gameIframeUrl(file);
+  gm.classList.add('open');
 }
 function closeGameCore(){
   gm.classList.remove('open');
+  gm.style.visibility='';
   document.body.style.overflow='';
   document.title=MAYA_PAGE_TITLE;
-  // Clean up iframe after slide-down finishes
-  gm.addEventListener('transitionend',function h(){
+  gf.onload=null;
+  gmLoad.classList.remove('done');
+  function blankIframe(){
+    try{ gf.src='about:blank'; }catch(e){ gf.removeAttribute('src'); }
+  }
+  blankIframe();
+  gm.addEventListener('transitionend',function h(ev){
+    if(ev.target!==gm||ev.propertyName!=='transform')return;
     gm.removeEventListener('transitionend',h);
-    gf.src='';
-    gf.onload=null;
-    gmLoad.classList.remove('done');
+    blankIframe();
   },{once:true});
 }
 function openGame(file,title){
+  if(gm.classList.contains('open')){
+    closeGameCore();
+  }
   openGameInModal(file,title);
-  history.pushState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+  var url=resolveGameUrl(file);
+  if(history.state&&history.state.mayaIframe&&history.state.file===file){
+    history.replaceState({mayaIframe:true,file:file},'',url);
+  }else{
+    history.pushState({mayaIframe:true,file:file},'',url);
+  }
 }
 function tryGameNavBack(){
   const gf=document.getElementById('gf');
@@ -549,12 +562,13 @@ function updateModalBackLabel(screen){
 }
 function closeGame(){
   if(tryGameNavBack())return;
-  if(history.state&&history.state.mayaIframe){
-    history.back();
-    return;
-  }
+  var wasGame=history.state&&history.state.mayaIframe;
   closeGameCore();
-  if(pathnameGameFile())history.replaceState(history.state,'',mayaDirectoryPath());
+  if(wasGame){
+    history.back();
+  }else if(pathnameGameFile()){
+    history.replaceState(history.state,'',mayaDirectoryPath());
+  }
 }
 window.addEventListener('message',function(ev){
   if(ev.data&&ev.data.type==='maya:screen')updateModalBackLabel(ev.data.screen);
@@ -563,9 +577,15 @@ window.addEventListener('message',function(ev){
   }
 });
 function onGameModalPopState(){
-  const file=pathnameGameFile();
-  if(!file){ if(gm.classList.contains('open'))closeGameCore(); }
-  else if(!gm.classList.contains('open')){ openGameInModal(file,titleForGameFile(file)); }
+  var file=pathnameGameFile();
+  if(!file){
+    if(gm.classList.contains('open'))closeGameCore();
+  }else if(!gm.classList.contains('open')){
+    openGameInModal(file,titleForGameFile(file));
+    if(!history.state||!history.state.mayaIframe){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
+  }
 }
 window.addEventListener('popstate',onGameModalPopState);
 

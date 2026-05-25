@@ -76,6 +76,8 @@ After **End of the World**, two **designer** challenges use the same **8×8** em
 - **Puddles** at open ends; **overflow** droplets when gardens are full.
 - **Win rule:** gardens watered, **garden buckets full**, **closed loop** (zero open ends), plus route length on build levels.
 
+**Controls:** drag movable pipes to empty grass or swap with another pipe; tap to spin (valves: tap twice to open). Hose, flower, rocks, and caps stay put.
+
 Each level is verified solvable (`verify-pipe-levels.mjs` for 1–15, `verify-pipe-mechanics.mjs` for 16–23). Win screen shows stars based on moves vs par.
 
 ### Persistence today (`localStorage`)

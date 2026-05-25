@@ -444,6 +444,44 @@ function placeBuildPipe(r,c,type){
   return true;
 }
 
+function cloneCell(cell){
+  if(!cell)return null;
+  const n={type:cell.type,rot:cell.rot,color:cell.color,fixed:cell.fixed,sprinkler:cell.sprinkler,placed:!!cell.placed};
+  if(cell.open!==undefined)n.open=cell.open;
+  if(cell.touched!==undefined)n.touched=cell.touched;
+  return n;
+}
+
+function isMovable(cell){
+  if(!cell||cell.fixed||cell.type==='#')return false;
+  if(cell.type==='S'||cell.type==='K')return false;
+  if(cell.type==='G'&&!cell.sprinkler)return false;
+  return true;
+}
+
+function canDropAt(tr,tc,fr,fc){
+  if(tr===fr&&tc===fc)return false;
+  if(tr<0||tc<0||tr>=rows||tc>=cols)return false;
+  const target=grid[tr]&&grid[tr][tc];
+  if(target&&target.type==='#')return false;
+  if(target&&target.fixed)return false;
+  if(target&&(target.type==='S'||(target.type==='G'&&!target.sprinkler)||target.type==='K'))return false;
+  return true;
+}
+
+function transferPipe(fr,fc,tr,tc){
+  const from=grid[fr]&&grid[fr][fc];
+  if(!isMovable(from)||!canDropAt(tr,tc,fr,fc))return false;
+  const to=grid[tr][tc];
+  grid[tr][tc]=from;
+  grid[fr][fc]=to||null;
+  moves++;
+  document.getElementById('moves').textContent=String(moves);
+  playRotate();
+  updateFlow(true);
+  return true;
+}
+
 function removeBuildPipe(r,c){
   const cell=grid[r]&&grid[r][c];
   if(!cell||!cell.placed||BUILD_TYPES.indexOf(cell.type)<0)return false;
@@ -762,6 +800,7 @@ function loadLevel(idx){
   gardenBuckets=new Map();
   leakBuckets=new Map();
   siphonStreams=[];
+  clearDrag();
   initGardenBuckets();
   updateBucketHud();
   spinAnim=null;
@@ -769,7 +808,7 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  if(!levelTip&&idx<3)levelTip='🔗 Close the loop — no open pipe ends! · 🌻 fill garden buckets';
+  if(!levelTip&&idx<3)levelTip='🔗 Drag pipes to move · tap to spin · close the circuit!';
   buildMode=!!lv.build;
   routeMin=lv.routeMin!=null?lv.routeMin:null;
   routeMax=lv.routeMax!=null?lv.routeMax:null;
@@ -788,7 +827,7 @@ function loadLevel(idx){
   document.getElementById('mechanic-tip').textContent=levelTip;
   applyTheme(idx,lv);
   document.getElementById('moves').textContent='0';
-  setStatus(levelTip||(buildMode?'Pick a pipe, tap + grass — close the loop!':'Tap pipes to spin — close the loop!'),'idle');
+  setStatus(levelTip||(buildMode?'Drag placed pipes · pick a piece · tap grass to build':'Drag pipes to move · tap to spin!'),'idle');
   updateFlow(false);
   resize();
   ensureAnimLoop();
@@ -1080,7 +1119,7 @@ function updateFlow(triggerWin){
     else if(routeMax!=null)setStatus('🛤 '+routeLen+' pipes — too long! Use fewer (≤'+routeMax+').','flow');
   }else if(!won){
     flowPhase=filled.size>1?Math.max(flowPhase,0.02):Math.max(0,flowPhase-0.04);
-    let msg='Tap pipes to spin!';
+    let msg='Drag pipes to move · tap to spin!';
     let gCount=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
     if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!';
@@ -1296,12 +1335,15 @@ function renderFrame(){
   drawPuddles();
   drawNetworkFlow();
   drawFlowUnderlay();
+  if(drag&&drag.moved)drawDropHighlights();
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
+      if(drag&&drag.moved&&drag.r===r&&drag.c===c)continue;
       const cell=grid[r]&&grid[r][c];
       if(cell)drawPipe(r,c,cell);
     }
   }
+  if(drag&&drag.moved)drawDragGhost();
   drawFlowParticles();
   drawLeakBuckets();
   drawSiphonStreams();
@@ -1865,11 +1907,100 @@ function onSiphonTap(){
   setStatus('♻️ Used the spilled water again!','flow');
 }
 
-function onPointer(e){
+function clearDrag(){
+  drag=null;
+  activePointerId=null;
+  if(canvas)canvas.style.cursor=mode==='play'?'grab':'';
+}
+
+function drawDropHighlights(){
+  if(!drag||!drag.moved)return;
+  const hover=pointerToCell(drag.x,drag.y);
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(!canDropAt(r,c,drag.r,drag.c))continue;
+      const x=gridOffX+c*cellSize,y=gridOffY+r*cellSize;
+      ctx.fillStyle='rgba(255,225,77,.2)';
+      ctx.fillRect(x+5,y+5,cellSize-10,cellSize-10);
+    }
+  }
+  if(hover&&canDropAt(hover.r,hover.c,drag.r,drag.c)){
+    const x=gridOffX+hover.c*cellSize,y=gridOffY+hover.r*cellSize;
+    ctx.strokeStyle='rgba(255,225,77,.85)';
+    ctx.lineWidth=3;
+    ctx.strokeRect(x+4,y+4,cellSize-8,cellSize-8);
+  }
+}
+
+function drawDragGhost(){
+  if(!drag||!drag.moved||!drag.cell)return;
+  const cell=drag.cell;
+  const cx=drag.x,cy=drag.y;
+  const half=cellSize*.34;
+  const w=cellSize*.18;
+  const m=maskFor(cell);
+  ctx.save();
+  ctx.globalAlpha=.9;
+  ctx.fillStyle='rgba(255,225,77,.25)';
+  ctx.beginPath();
+  ctx.arc(cx,cy,cellSize*.4,0,Math.PI*2);
+  ctx.fill();
+  drawConnections(cx,cy,half,w,m,true,0,cell.color||'b');
+  ctx.restore();
+}
+
+function onCanvasPointerDown(e){
   if(mode!=='play'||won||winPending)return;
-  const now=Date.now();
-  if(now-lastTap<180)return;
-  lastTap=now;
+  if(e.button!==0)return;
+  const pt=pointerToCell(e.clientX,e.clientY);
+  drag=null;
+  if(pt){
+    const cell=grid[pt.r]&&grid[pt.r][pt.c];
+    const canDrag=cell&&isMovable(cell)&&(!buildMode||cell.placed);
+    if(canDrag){
+      drag={r:pt.r,c:pt.c,cell:cloneCell(cell),x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId};
+      activePointerId=e.pointerId;
+    }
+  }
+  if(!drag)drag={r:-1,c:-1,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId};
+  canvas.style.cursor='grabbing';
+  try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+}
+
+function onCanvasPointerMove(e){
+  if(!drag||drag.pointerId!==e.pointerId)return;
+  drag.x=e.clientX;
+  drag.y=e.clientY;
+  const dx=drag.x-drag.x0,dy=drag.y-drag.y0;
+  if(!drag.moved&&drag.cell&&dx*dx+dy*dy>DRAG_THRESHOLD*DRAG_THRESHOLD){
+    drag.moved=true;
+    ensureAnimLoop();
+  }
+}
+
+function onCanvasPointerUp(e){
+  if(!drag||drag.pointerId!==e.pointerId)return;
+  const wasDrag=drag.moved;
+  const fr=drag.r,fc=drag.c;
+  const hadCell=!!drag.cell;
+  const dropPt=pointerToCell(e.clientX,e.clientY);
+  const tapPt=pointerToCell(drag.x0,drag.y0);
+  clearDrag();
+  try{canvas.releasePointerCapture(e.pointerId);}catch(err){}
+  if(mode!=='play'||won||winPending)return;
+  canvas.style.cursor='grab';
+
+  if(wasDrag&&hadCell){
+    if(dropPt&&transferPipe(fr,fc,dropPt.r,dropPt.c)){
+      spinAnim={r:dropPt.r,c:dropPt.c,t:0};
+      setStatus('Pipe moved!','flow');
+    }else{
+      setStatus('Drop on grass or swap with another pipe','idle');
+      updateFlow(true);
+    }
+    return;
+  }
+
   const hit=hitLeakBucket(e.clientX,e.clientY);
   if(hit&&hit.fill>0.08){
     leakBuckets.set(hit.key,Math.max(0,hit.fill-0.5));
@@ -1877,7 +2008,8 @@ function onPointer(e){
     setStatus('🪣 Emptied the spill bucket!','flow');
     return;
   }
-  const pt=pointerToCell(e.clientX,e.clientY);
+
+  const pt=tapPt||dropPt;
   if(!pt)return;
   const cell=grid[pt.r]&&grid[pt.r][pt.c];
   if(buildMode){
@@ -1906,6 +2038,7 @@ function bindTap(el,fn){
 function startGame(){
   document.getElementById('menu-ov').classList.add('hidden');
   mode='play';
+  if(canvas)canvas.style.cursor='grab';
   loadLevel(levelIdx);
 }
 
@@ -2011,6 +2144,7 @@ function showMenu(){
   stopTimer();
   mode='menu';
   animRunning=false;
+  clearDrag();
 }
 
 window.mayaGameCanGoBack=function(){
@@ -2111,16 +2245,12 @@ bindTap(document.getElementById('next-btn'),nextLevel);
 bindTap(document.getElementById('menu-btn'),showMenu);
 bindTap(document.getElementById('retry-btn'),resetLevel);
 bindTap(document.getElementById('lose-menu-btn'),showMenu);
-canvas.addEventListener('touchend',function(e){
-  e.preventDefault();
-  touchHandled=true;
-  if(e.changedTouches[0])onPointer(e.changedTouches[0]);
-  setTimeout(function(){touchHandled=false;},400);
-},{passive:false});
-canvas.addEventListener('click',function(e){
-  if(touchHandled)return;
-  onPointer(e);
-});
+canvas.style.touchAction='none';
+canvas.style.cursor='grab';
+canvas.addEventListener('pointerdown',onCanvasPointerDown);
+canvas.addEventListener('pointermove',onCanvasPointerMove);
+canvas.addEventListener('pointerup',onCanvasPointerUp);
+canvas.addEventListener('pointercancel',onCanvasPointerUp);
 window.addEventListener('message',function(ev){
   if(ev.data==='maya:nav-back'){
     if(mode==='play'){
