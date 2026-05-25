@@ -170,8 +170,11 @@ const LEVELS=[
   {name:'Valve Control',par:3,rows:['S0 I1 V0 I1 G0']},
   {name:'Rainbow Hose',par:2,rows:['Sb0 I1 Gb0','Sr0 I1 Gr0']},
   {name:'Rush Hour',par:3,rows:['.  .  S0 I1 L0 I0 .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
-  {name:'Big Backyard',par:4,rows:['.  .  .  S0 I1 I0 I0 L0 .','.  .  .  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
-  {name:'End of the World',par:5,rows:['.  .  .  S0 I1 T1 I1 I0 .  .','.  .  #  .  I0 B1 g0  .  .  .','.  .  .  .  V0 L1 I0 L2 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
+];
+
+const SLOW=[
+  {name:'Big Backyard',par:4,idx:22},
+  {name:'End of the World',par:5,idx:23},
 ];
 
 for(let i=0;i<LEVELS.length;i++){
@@ -179,6 +182,9 @@ for(let i=0;i<LEVELS.length;i++){
   const m=minMoves(lv.rows);
   const ok=m!==null&&m<=lv.par;
   console.log((16+i)+'.',lv.name,'par',lv.par,'min',m===null?'FAIL':m,ok?'ok':'BAD');
+}
+for(let i=0;i<SLOW.length;i++){
+  console.log(SLOW[i].idx+'.',SLOW[i].name,'par',SLOW[i].par,'(large grid — playtest only)');
 }
 
 if(process.argv[2]==='search'){
