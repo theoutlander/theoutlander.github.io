@@ -52,6 +52,13 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 #timer-pill.urgent{color:#ff7070;animation:tpulse .6s ease-in-out infinite alternate}
 @keyframes tpulse{0%{opacity:1}100%{opacity:.55}}
 #mechanic-tip{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:.04em;text-align:center;padding:0 4px 2px;line-height:1.35}
+#garden-pill{color:var(--green)}
+#waste-pill{gap:4px;min-width:52px}
+.waste-track{width:14px;height:28px;border-radius:4px;background:rgba(0,0,0,.25);border:1px solid rgba(91,200,255,.25);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
+#waste-fill{width:100%;height:0%;background:linear-gradient(180deg,#5bc8ff,#3a8fd4);border-radius:2px;transition:height .15s}
+#waste-pill.full #waste-fill{background:linear-gradient(180deg,#ff9a3c,#ff6eb4)}
+#siphon-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
+#siphon-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
 
 #board-wrap{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
 #game{width:100%;height:100%;display:block;touch-action:none}
@@ -89,6 +96,8 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 <div id="root">
   <div id="hud">
     <div class="hpill">🔧 <span class="hval" id="moves">0</span></div>
+    <div class="hpill" id="garden-pill">🌻 <span class="hval" id="garden-fill">0/1</span></div>
+    <div class="hpill" id="waste-pill" title="Leaked water — tap Siphon to recycle!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
     <div class="hpill hidden" id="timer-pill">⏱ <span class="hval" id="timer-val">60</span></div>
     <div id="level-badge">Level 1</div>
     <div id="status-pill">Tap pipes to spin!</div>
@@ -100,6 +109,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   </div>
   <div id="toolbar">
     <button class="tool-btn" id="reset-btn">↺ Reset</button>
+    <button class="tool-btn" id="siphon-btn" title="Pour wasted water back toward the hose">🪣 Siphon</button>
     <button class="tool-btn" id="hint-btn">💡 Hint</button>
   </div>
 </div>
@@ -107,7 +117,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 <div class="ov" id="menu-ov">
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">💧 Connect the hose to every garden!<br>Tap pipes to <strong style="color:var(--yellow)">rotate</strong> them. Later levels add rocks, valves, colors &amp; more!</div>
+  <div class="sub">💧 Send water to each <strong style="color:var(--green)">garden bucket</strong> 🌻<br>Leaks fill the <strong style="color:var(--blue)">waste bucket</strong> 🪣 — tap <strong style="color:var(--yellow)">Siphon</strong> to pour it back!<br>Spin pipes to <strong style="color:var(--yellow)">seal leaks</strong> for good.</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
 </div>
 
@@ -193,7 +203,7 @@ const LEVELS=[
   {name:'Master Plumber',par:4,rows:['S0 I3 L0 I2 L0','.  I0 L2 I3 G0']},
   {name:'Two Gardens',par:2,tip:'🌾🌾 Hose + side garden both need water!',rows:['S0 I1 I0 G0','.  .  g0 .']},
   {name:'Rocky Path',par:2,tip:'🪨 Pipes cannot go through rocks!',rows:['S0 I1 L0','#  .  G1']},
-  {name:'Fix the Leaks',par:2,tip:'💦 Spin cracked pipes so water can pass!',rows:['S0 B1 I0 B1 G0']},
+  {name:'Fix the Leaks',par:2,tip:'💦 Cracked pipes spray water — spin to seal every leak!',rows:['S0 B1 I0 B1 G0']},
   {name:'Valve Control',par:3,tip:'🚰 Tap valve twice: spin, then open!',rows:['S0 I1 V0 I1 G0']},
   {name:'Rainbow Hose',par:2,tip:'💙❤️ Match hose color to each flower!',rows:['Sb0 I1 Gb0','Sr0 I1 Gr0']},
   {name:'Rush Hour',par:3,tip:'⏱ Beat the clock!',timer:75,rows:['S0 I1 L0 .','.  I1 L3 G0']},
@@ -210,6 +220,7 @@ let lastTap=0,touchHandled=false,animRunning=false,spinAnim=null;
 let lastValveTap=0,lastValveCell=null;
 let timeLeft=0,timerId=null,levelTip='';
 let boardTheme=THEMES.dawn,prevWatered=0,comboHideTimer=null,menuTapCount=0,secretUnlocked=false;
+let wasteBucket=0,gardenBuckets=new Map(),leakBuckets=new Map(),siphonAnim=0,siphonStreams=[];
 try{secretUnlocked=localStorage.getItem('pipeflow_secret')==='1';}catch(e){}
 
 function updateMenuSecretHint(){
@@ -256,6 +267,152 @@ function unlockSecret(){
   secretUnlocked=true;
   try{localStorage.setItem('pipeflow_secret','1');}catch(e){}
   updateMenuSecretHint();
+}
+
+function initGardenBuckets(){
+  gardenBuckets=new Map();
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(isGoal(cell))gardenBuckets.set(r+','+c,0);
+    }
+  }
+}
+
+function updateGardenBuckets(){
+  let watered=0;
+  gardenBuckets.forEach(function(fill,key){
+    const parts=key.split(',');
+    const r=+parts[0],c=+parts[1];
+    const cell=grid[r]&&grid[r][c];
+    if(cell&&goalWateredAt(r,c,cell,filled,flowColors)){
+      watered++;
+      const next=Math.min(1,fill+0.06);
+      gardenBuckets.set(key,next);
+    }else if(fill>0){
+      gardenBuckets.set(key,Math.max(0,fill-0.008));
+    }
+  });
+  return watered;
+}
+
+function updateLeakBuckets(badLeakList){
+  const active=new Set();
+  for(let i=0;i<badLeakList.length;i++){
+    const L=badLeakList[i];
+    const key=L.r+','+L.c+','+L.dir;
+    active.add(key);
+    const prev=leakBuckets.get(key)||0;
+    leakBuckets.set(key,Math.min(1,prev+0.04));
+    wasteBucket=Math.min(100,wasteBucket+0.35);
+  }
+  leakBuckets.forEach(function(fill,key){
+    if(!active.has(key))leakBuckets.set(key,Math.max(0,fill-0.02));
+  });
+}
+
+function updateBucketHud(){
+  const total=gardenBuckets.size;
+  let full=0;
+  gardenBuckets.forEach(function(f){if(f>=0.92)full++;});
+  document.getElementById('garden-fill').textContent=full+'/'+total;
+  document.getElementById('waste-fill').style.height=Math.round(wasteBucket)+'%';
+  const wp=document.getElementById('waste-pill');
+  const sb=document.getElementById('siphon-btn');
+  if(wasteBucket>=55){
+    wp.classList.add('full');
+    sb.classList.add('ready');
+  }else{
+    wp.classList.remove('full');
+    if(wasteBucket<8)sb.classList.remove('ready');
+  }
+}
+
+function allGardenBucketsFull(){
+  if(!gardenBuckets.size)return false;
+  let ok=true;
+  gardenBuckets.forEach(function(f){if(f<0.85)ok=false;});
+  return ok;
+}
+
+function findSourceCenter(){
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(isSource(grid[r]&&grid[r][c]))return cellCenter(r,c);
+    }
+  }
+  return[gridOffX+cellSize,gridOffY+cellSize];
+}
+
+function doSiphon(fromX,fromY,amount){
+  if(wasteBucket<2&&leakBuckets.size===0)return false;
+  let drained=0;
+  leakBuckets.forEach(function(fill,key){
+    if(fill>0.05){
+      const parts=key.split(',');
+      const L={r:+parts[0],c:+parts[1],dir:+parts[2]};
+      const xy=portXY(L.r,L.c,L.dir);
+      leakBuckets.set(key,Math.max(0,fill-0.5));
+      spawnSiphonStream(xy[0],xy[1],amount*0.3);
+      drained+=12;
+    }
+  });
+  const pull=Math.max(drained,amount);
+  wasteBucket=Math.max(0,wasteBucket-pull);
+  const sx=fromX!=null?fromX:gridOffX+cellSize*cols*0.5;
+  const sy=fromY!=null?fromY:gridOffY+cellSize*rows;
+  spawnSiphonStream(sx,sy,pull);
+  siphonAnim=1;
+  playSiphon();
+  if(pull>20)showComboReaction('bloom',1);
+  document.getElementById('combo-text').textContent='RECYCLED!';
+  document.getElementById('combo-sub').textContent='♻️ Water back toward the hose!';
+  document.getElementById('combo-wrap').classList.add('show');
+  if(comboHideTimer)clearTimeout(comboHideTimer);
+  comboHideTimer=setTimeout(function(){document.getElementById('combo-wrap').classList.remove('show');},900);
+  updateBucketHud();
+  return true;
+}
+
+function spawnSiphonStream(x,y,amt){
+  const dest=findSourceCenter();
+  const n=Math.min(14,4+Math.floor(amt/8));
+  for(let i=0;i<n;i++){
+    siphonStreams.push({
+      x:x+(Math.random()-.5)*10,
+      y:y+(Math.random()-.5)*6,
+      tx:dest[0],ty:dest[1],
+      t:0,
+      speed:.02+Math.random()*.02,
+    });
+  }
+}
+
+function hitLeakBucket(clientX,clientY){
+  const rad=cellSize*0.38;
+  let best=null,bestD=rad*rad;
+  leakBuckets.forEach(function(fill,key){
+    if(fill<0.08)return;
+    const parts=key.split(',');
+    const xy=portXY(+parts[0],+parts[1],+parts[2]);
+    const dx=clientX-xy[0],dy=clientY-xy[1];
+    const d=dx*dx+dy*dy;
+    if(d<bestD){bestD=d;best={key:key,x:xy[0],y:xy[1],fill:fill};}
+  });
+  return best;
+}
+
+function updateSiphonStreams(){
+  for(let i=siphonStreams.length-1;i>=0;i--){
+    const s=siphonStreams[i];
+    s.t+=s.speed;
+    if(s.t>=1)siphonStreams.splice(i,1);
+    else{
+      s.x+=(s.tx-s.x)*s.speed;
+      s.y+=(s.ty-s.y)*s.speed;
+    }
+  }
+  if(siphonAnim>0)siphonAnim=Math.max(0,siphonAnim-0.04);
 }
 
 function parseCell(code){
@@ -358,6 +515,12 @@ function loadLevel(idx){
   flowParticles=[];
   leaks=[];
   puddles=new Map();
+  wasteBucket=0;
+  gardenBuckets=new Map();
+  leakBuckets=new Map();
+  siphonStreams=[];
+  initGardenBuckets();
+  updateBucketHud();
   spinAnim=null;
   lastValveCell=null;
   lastValveTap=0;
@@ -419,11 +582,6 @@ function portXY(r,c,d){
   return[cx-half,cy];
 }
 
-function neighborAt(r,c,d){
-  const dk=dirKey(d);
-  return[r+DR[dk][0],c+DR[dk][1]];
-}
-
 function portSealed(r,c,d,filledSet){
   const m=maskFor(grid[r][c]);
   if(!(m&d))return true;
@@ -475,10 +633,11 @@ function computeLeaks(filledSet){
         if(portSealed(r,c,d,filledSet))continue;
         const nr=r+DR[dirKey(d)][0],nc=c+DR[dirKey(d)][1];
         const nb=grid[nr]&&grid[nr][nc];
-        let type='jet';
-        if(!nb)type='soak';
+        let type='soak';
+        if(nr<0||nc<0||nr>=rows||nc>=cols)type='edge';
+        else if(!nb)type='soak';
         else if(nb.type==='B'&&!nb.touched)type='crack';
-        else if(nr<0||nc<0||nr>=rows||nc>=cols)type='edge';
+        else if(!(maskFor(nb)&OPP[d]))type='drip';
         out.push({r:r,c:c,dir:d,type:type,color:col});
       }
 
@@ -489,7 +648,10 @@ function computeLeaks(filledSet){
 
 function leakCountBad(leakList){
   let n=0;
-  for(let i=0;i<leakList.length;i++)if(leakList[i].type!=='overflow')n++;
+  for(let i=0;i<leakList.length;i++){
+    const t=leakList[i].type;
+    if(t==='soak'||t==='crack'||t==='edge'||t==='jet')n++;
+  }
   return n;
 }
 
@@ -590,8 +752,16 @@ function updateFlow(triggerWin){
   goalsLeft=result.goalsLeft;
   leaks=computeLeaks(filled);
   const badLeaks=leakCountBad(leaks);
+  const badOnly=leaks.filter(function(L){
+    const t=L.type;
+    return t==='soak'||t==='crack'||t==='edge'||t==='jet';
+  });
+  updateLeakBuckets(badOnly);
+  updateGardenBuckets();
+  updateBucketHud();
   rebuildFlowParticles();
   const gTotal=countGoals();
+  const bucketsReady=allGardenBucketsFull();
   const wateredNow=gTotal-goalsLeft;
   if(wateredNow>prevWatered&&!won){
     const delta=wateredNow-prevWatered;
@@ -600,7 +770,11 @@ function updateFlow(triggerWin){
   }
   prevWatered=wateredNow;
 
-  if(result.goalReached&&badLeaks===0){
+  if(wasteBucket>=92&&!won&&badLeaks>0){
+    setStatus('🪣 Waste bucket full — seal leaks or Siphon!','flow');
+  }
+
+  if(result.goalReached&&badLeaks===0&&bucketsReady){
     flowPhase=Math.max(flowPhase,0.05);
     if(triggerWin&&!won){
       won=true;
@@ -616,13 +790,16 @@ function updateFlow(triggerWin){
     }
   }else if(result.goalReached&&badLeaks>0){
     flowPhase=Math.max(flowPhase,0.04);
-    setStatus('💦 Seal '+badLeaks+' leak'+(badLeaks>1?'s':'')+' to win!','flow');
+    setStatus('💦 Seal '+badLeaks+' leak'+(badLeaks>1?'s':'')+' — or catch & Siphon!','flow');
+  }else if(result.goalReached&&badLeaks===0&&!bucketsReady){
+    flowPhase=Math.max(flowPhase,0.04);
+    setStatus('🌻 Garden buckets filling…','flow');
   }else if(!won){
     flowPhase=filled.size>1?Math.max(flowPhase,0.02):Math.max(0,flowPhase-0.04);
     let msg='Tap pipes to spin!';
     let gCount=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
-    if(badLeaks>0&&filled.size>1)msg='💦 '+badLeaks+' leak'+(badLeaks>1?'s':'')+' — spin pipes to seal!';
+    if(badLeaks>0&&filled.size>1)msg='💦 Leaks fill buckets — spin pipes or tap 🪣 Siphon!';
     else if(gCount>1&&result.filled.size>1)msg='Watered '+(gCount-goalsLeft)+' / '+gCount+' gardens';
     else if(filled.size>1)msg='Water is flowing…';
     setStatus(msg,filled.size>1||badLeaks>0?'flow':'idle');
@@ -744,6 +921,7 @@ function tick(){
   spawnFlowBubbles();
   spawnLeakParticles();
   updateWaterPhysics();
+  updateSiphonStreams();
   updateAndDrawDrops();
   renderFrame();
   requestAnimationFrame(tick);
@@ -788,9 +966,221 @@ function renderFrame(){
       if(cell)drawPipe(r,c,cell);
     }
   }
+  drawFlowParticles();
   drawDecorations();
   drawLeakParticles();
   drawBubbles();
+}
+
+function rebuildFlowParticles(){
+  flowParticles.length=0;
+  const edgeSeen=new Set();
+  filled.forEach(function(k){
+    const parts=k.split(',');
+    const r=+parts[0],c=+parts[1];
+    const cell=grid[r]&&grid[r][c];
+    if(!cell)return;
+    const m=maskFor(cell);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(!(m&d))continue;
+      const nr=r+DR[dirKey(d)][0],nc=c+DR[dirKey(d)][1];
+      const nk=nr+','+nc;
+      if(!filled.has(nk))continue;
+      const ek=k+'|'+nk;
+      if(edgeSeen.has(ek))continue;
+      edgeSeen.add(ek);
+      const a=portXY(r,c,d);
+      const b=portXY(nr,nc,OPP[d]);
+      const dist=flowDist.get(k)||0;
+      flowParticles.push({
+        ax:a[0],ay:a[1],bx:b[0],by:b[1],
+        t:Math.random(),speed:.35+Math.random()*.25,
+        dist:dist,color:cellColorsAt(r,c),
+      });
+    }
+  });
+}
+
+function drawNetworkFlow(){
+  if(filled.size<2)return;
+  const edgeSeen=new Set();
+  filled.forEach(function(k){
+    const parts=k.split(',');
+    const r=+parts[0],c=+parts[1];
+    const m=maskFor(grid[r][c]);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(!(m&d))continue;
+      const nr=r+DR[dirKey(d)][0],nc=c+DR[dirKey(d)][1];
+      const nk=nr+','+nc;
+      if(!filled.has(nk))continue;
+      const ek=k+'|'+nk;
+      if(edgeSeen.has(ek))continue;
+      edgeSeen.add(ek);
+      const a=portXY(r,c,d);
+      const b=portXY(nr,nc,OPP[d]);
+      const dist=flowDist.get(k)||0;
+      if(flowPhase<dist+0.2)continue;
+      const cols=flowColors.get(k);
+      const hex=(cols&&cols.size===1)?(WATER_COLORS[[...cols][0]]||'#5bc8ff'):'#5bc8ff';
+      const rr=parseInt(hex.slice(1,3),16),gg=parseInt(hex.slice(3,5),16),bb=parseInt(hex.slice(5,7),16);
+      const pulse=.55+.45*Math.sin(animT*5-dist);
+      const wave=Math.sin(animT*8-dist)*cellSize*.04;
+      const mx=(a[0]+b[0])/2+wave;
+      const my=(a[1]+b[1])/2+wave;
+      const grad=ctx.createLinearGradient(a[0],a[1],b[0],b[1]);
+      grad.addColorStop(0,'rgba('+rr+','+gg+','+bb+','+(0.25*pulse)+')');
+      grad.addColorStop(.5,'rgba('+rr+','+gg+','+bb+','+(0.7*pulse)+')');
+      grad.addColorStop(1,'rgba('+rr+','+gg+','+bb+','+(0.25*pulse)+')');
+      ctx.strokeStyle=grad;
+      ctx.lineWidth=cellSize*.1;
+      ctx.lineCap='round';
+      ctx.beginPath();
+      ctx.moveTo(a[0],a[1]);
+      ctx.quadraticCurveTo(mx,my,b[0],b[1]);
+      ctx.stroke();
+    }
+  });
+}
+
+function drawFlowParticles(){
+  for(let i=0;i<flowParticles.length;i++){
+    const p=flowParticles[i];
+    if(flowPhase<p.dist+0.15)continue;
+    p.t+=p.speed*0.016;
+    if(p.t>1)p.t-=1;
+    const px=p.ax+(p.bx-p.ax)*p.t;
+    const py=p.ay+(p.by-p.ay)*p.t;
+    const wc=WATER_COLORS[p.color]||'#5bc8ff';
+    ctx.globalAlpha=.85;
+    ctx.fillStyle=wc;
+    ctx.beginPath();
+    ctx.arc(px,py,cellSize*.05,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+
+function spawnLeakParticles(){
+  if(mode!=='play')return;
+  for(let i=0;i<leaks.length;i++){
+    const L=leaks[i];
+    if(L.type==='drip'&&Math.random()>0.85)continue;
+    if(L.type!=='drip'&&Math.random()>0.55)continue;
+    const xy=portXY(L.r,L.c,L.dir);
+    const dk=dirKey(L.dir);
+    const push=cellSize*.02;
+    leakDrips.push({
+      x:xy[0],y:xy[1],
+      vx:DR[dk][1]*push+(Math.random()-.5)*1.2,
+      vy:DR[dk][0]*push+(Math.random()-.3)*.8,
+      life:1,
+      color:L.color||'b',
+      kind:L.type==='crack'?'crack':'drip',
+    });
+    if(L.type==='crack'&&Math.random()<0.15)playLeak();
+  }
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(!cell||cell.type!=='G'||!goalWateredAt(r,c,cell,filled,flowColors))continue;
+      if(Math.random()>0.92)continue;
+      const cx=gridOffX+c*cellSize+cellSize/2;
+      const cy=gridOffY+r*cellSize+cellSize/2;
+      leakDrips.push({
+        x:cx+(Math.random()-.5)*cellSize*.3,
+        y:cy-cellSize*.1,
+        vx:(Math.random()-.5)*1.5,
+        vy:-1.5-Math.random()*2,
+        life:1,
+        color:cell.color||'b',
+        kind:'overflow',
+      });
+    }
+  }
+  while(leakDrips.length>120)leakDrips.shift();
+}
+
+function updateWaterPhysics(){
+  for(let i=leakDrips.length-1;i>=0;i--){
+    const d=leakDrips[i];
+    d.x+=d.vx;
+    d.y+=d.vy;
+    d.vy+=d.kind==='overflow'?0.06:0.14;
+    d.vx*=.98;
+    d.life-=d.kind==='overflow'?0.018:0.028;
+    if(d.life<=0)leakDrips.splice(i,1);
+  }
+  for(let i=0;i<leaks.length;i++){
+    const L=leaks[i];
+    if(L.type==='drip'||L.type==='overflow')continue;
+    const key=L.r+','+L.c+','+L.dir;
+    const xy=portXY(L.r,L.c,L.dir);
+    const p=puddles.get(key)||{x:xy[0],y:xy[1],r:2,alpha:0};
+    p.r=Math.min(cellSize*.22,p.r+0.35);
+    p.alpha=Math.min(0.55,p.alpha+0.02);
+    puddles.set(key,p);
+  }
+  puddles.forEach(function(p,key){
+    const still=leaks.some(function(L){
+      return L.r+','+L.c+','+L.dir===key&&(L.type==='soak'||L.type==='crack'||L.type==='edge'||L.type==='jet');
+    });
+    if(!still){
+      p.alpha-=0.03;
+      p.r*=0.97;
+      if(p.alpha<=0)puddles.delete(key);
+    }
+  });
+}
+
+function drawPuddles(){
+  puddles.forEach(function(p){
+    ctx.globalAlpha=p.alpha;
+    ctx.fillStyle='#3a7ab8';
+    ctx.beginPath();
+    ctx.ellipse(p.x,p.y,p.r,p.r*.65,0,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
+  });
+}
+
+function drawLeakParticles(){
+  for(let i=0;i<leakDrips.length;i++){
+    const d=leakDrips[i];
+    const wc=WATER_COLORS[d.color]||'#5bc8ff';
+    ctx.globalAlpha=d.life*(d.kind==='overflow'?0.75:0.9);
+    if(d.kind==='overflow'){
+      ctx.fillStyle=wc;
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,3+d.life*2,0,Math.PI*2);
+      ctx.fill();
+    }else{
+      ctx.strokeStyle=wc;
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.moveTo(d.x,d.y);
+      ctx.lineTo(d.x-d.vx*3,d.y-d.vy*3);
+      ctx.stroke();
+      ctx.fillStyle='#e8f8ff';
+      ctx.beginPath();
+      ctx.arc(d.x,d.y,2.5,0,Math.PI*2);
+      ctx.fill();
+    }
+    ctx.globalAlpha=1;
+  }
+  for(let i=0;i<leaks.length;i++){
+    const L=leaks[i];
+    if(L.type!=='crack')continue;
+    const xy=portXY(L.r,L.c,L.dir);
+    const pulse=.5+.5*Math.sin(animT*12+i);
+    ctx.globalAlpha=.25+.2*pulse;
+    ctx.fillStyle='#8ed4ff';
+    ctx.beginPath();
+    ctx.arc(xy[0],xy[1],cellSize*.12,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
 }
 
 function drawFlowUnderlay(){
@@ -922,10 +1312,22 @@ function drawPipe(r,c,cell){
   if(cell.type==='B'&&!cell.touched){
     ctx.fillStyle='rgba(80,60,50,.25)';
     ctx.fillRect(cx-cellSize*.36,cy-cellSize*.36,cellSize*.72,cellSize*.72);
+    const spray=.4+.3*Math.sin(animT*10);
+    ctx.globalAlpha=spray;
+    ctx.fillStyle='rgba(120,200,255,.35)';
+    ctx.beginPath();
+    ctx.arc(cx,cy,cellSize*.2,0,Math.PI*2);
+    ctx.fill();
+    ctx.globalAlpha=1;
     ctx.font=(cellSize*.22)+'px serif';
     ctx.textAlign='center';
     ctx.textBaseline='middle';
     ctx.fillText('💦',cx,cy);
+  }else if(cell.type==='B'&&cell.touched&&hasWater){
+    ctx.font=(cellSize*.16)+'px serif';
+    ctx.textAlign='center';
+    ctx.textBaseline='middle';
+    ctx.fillText('🔧',cx,cy-cellSize*.32);
   }else{
     ctx.fillStyle='rgba(255,255,255,.06)';
     ctx.beginPath();
@@ -1151,6 +1553,7 @@ function playHint(){tone(660,.1,'sine',.14);setTimeout(function(){tone(880,.1,'s
 function playWin(){[523,659,784,988].forEach(function(f,i){setTimeout(function(){tone(f,.18,'sine',.2);},i*90);});}
 function playValve(){tone(520,.08,'square',.1);}
 function playWilting(){tone(220,.25,'sawtooth',.12);}
+function playLeak(){tone(280+Math.random()*80,.05,'triangle',.08);}
 function playCombo(n){const base=520+n*80;[0,1,2].forEach(function(i){setTimeout(function(){tone(base+i*90,.09,'sine',.13);},i*70);});}
 
 window.render_game_to_text=function(){

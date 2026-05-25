@@ -54,6 +54,13 @@ Connect garden hoses to thirsty fields! Tap pipe tiles to rotate them until wate
 
 **Wilting hint** — on timed levels, under 15s the status nudges you toward 💡 Hint and the hint button pulses.
 
+### Water physics & leaks
+- Water **flows through the whole connected network** (animated pulses, droplets along pipes, path highlight).
+- **Leaks** spray from open ports into empty grass, off the edge, or through **cracked `B` pipes** (must spin to seal). Misaligned joints **drip** visually but do not block the win.
+- **Puddles** grow under serious leaks until you fix them.
+- **Overflow** — watered gardens spout extra droplets upward.
+- **Win rule:** all gardens watered **and** no blocking leaks (`soak` / `crack` / `edge`). Status shows leak count; “Seal N leaks to win!” when the path is right but pipes still spray.
+
 Each level is verified solvable (`verify-pipe-levels.mjs` for 1–15, `verify-pipe-mechanics.mjs` for 16–23). Win screen shows stars based on moves vs par.
 
 ### Persistence today

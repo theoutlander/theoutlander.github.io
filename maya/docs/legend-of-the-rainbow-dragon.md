@@ -164,6 +164,8 @@ On level up: +2 MaxHP, +1 STR, +1 DEF, full heal.
 
 ## Controls
 
-- Large tap buttons (min 48px)
-- Scrollable BBS-style log
+- Large tap buttons (min 44–48px by device)
+- Scrollable BBS-style log; main area scrolls if buttons overflow
+- Responsive: iPhone (narrow + landscape), iPad (2-column town buttons), Mac (wider layout, hover, centered card at 1200px+)
+- Safe-area padding for notched iPhones
 - iPad-first; `touch-action: manipulation` on buttons
