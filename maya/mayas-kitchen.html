@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Maya's Kitchen 🍳</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --pink:   #ff6eb4;
+      --yellow: #ffe14d;
+      --green:  #5dffb0;
+      --blue:   #5bc8ff;
+      --purple: #c77dff;
+      --orange: #ff9a3c;
+      --bg:     #0f0a1e;
+      --card:   #1e1440;
+      --text:   #f0e6ff;
+      --muted:  rgba(240,230,255,0.4);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Nunito', sans-serif;
+      font-weight: 700;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      max-width: 480px;
+      margin: 0 auto;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 18px;
+      background: var(--card);
+      border-bottom: 2px solid rgba(199,125,255,0.2);
+      flex-shrink: 0;
+    }
+    .header-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: var(--pink);
+    }
+    .coins {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,225,77,0.12);
+      border: 2px solid var(--yellow);
+      border-radius: 20px;
+      padding: 5px 14px;
+      font-size: 1.05rem;
+      color: var(--yellow);
+      font-family: 'Fredoka One', cursive;
+      transition: transform 0.2s;
+    }
+    .coins.bump { animation: coinBump 0.3s ease-out; }
+    @keyframes coinBump {
+      0%,100% { transform: scale(1); }
+      50% { transform: scale(1.25); }
+    }
+
+    /* ── Main scroll area ── */
+    .screen {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 16px;
+      padding-bottom: 82px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen.no-nav { padding-bottom: 16px; }
+
+    /* ── Section title ── */
+    .section-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.9rem;
+      color: var(--purple);
+      margin-bottom: 10px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── Recipe scroll row ── */
+    .recipe-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      scrollbar-width: none;
+      margin-bottom: 22px;
+    }
+    .recipe-scroll::-webkit-scrollbar { display: none; }
+
+    .recipe-card {
+      flex-shrink: 0;
+      width: 88px;
+      background: var(--card);
+      border-radius: 14px;
+      padding: 10px 6px 8px;
+      text-align: center;
+      border: 2px solid rgba(240,230,255,0.07);
+      cursor: pointer;
+      transition: transform 0.12s;
+      position: relative;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .recipe-card:active { transform: scale(0.92); }
+    .recipe-card.can-make {
+      border-color: var(--green);
+      box-shadow: 0 0 10px rgba(93,255,176,0.18);
+    }
+    .recipe-card .food-emoji { font-size: 2.2rem; display: block; margin-bottom: 4px; }
+    .recipe-card .food-name { font-size: 0.67rem; color: var(--text); line-height: 1.2; display: block; }
+    .recipe-card .sell-tag {
+      position: absolute; top: 5px; right: 5px;
+      font-size: 0.58rem; color: var(--yellow);
+      background: rgba(255,225,77,0.1);
+      border-radius: 6px; padding: 1px 4px;
+    }
+    .ready-badge {
+      position: absolute; top: -7px; left: 50%;
+      transform: translateX(-50%);
+      background: var(--green); color: #0f0a1e;
+      font-size: 0.55rem; font-weight: 900;
+      border-radius: 8px; padding: 2px 7px;
+      white-space: nowrap;
+    }
+
+    /* ── Pantry grid ── */
+    .pantry-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    .pantry-item {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 10px 4px 8px;
+      text-align: center;
+    }
+    .pantry-item .pi-emoji { font-size: 1.6rem; }
+    .pantry-item .pi-count {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      color: var(--green);
+      display: block;
+    }
+    .pantry-item.empty .pi-count { color: var(--muted); }
+    .pantry-item .pi-name { font-size: 0.58rem; color: var(--muted); margin-top: 1px; display: block; }
+
+    /* ── Bottom nav ── */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 100%; max-width: 480px;
+      display: flex;
+      background: var(--card);
+      border-top: 2px solid rgba(199,125,255,0.2);
+      z-index: 100;
+    }
+    .nav-btn {
+      flex: 1; padding: 11px;
+      text-align: center; cursor: pointer;
+      font-family: 'Fredoka One', cursive;
+      font-size: 0.82rem; color: var(--muted);
+      border: none; background: none;
+      transition: color 0.15s;
+      touch-action: manipulation;
+    }
+    .nav-btn.active { color: var(--pink); }
+    .nav-btn .nav-icon { font-size: 1.3rem; display: block; }
+
+    /* ── Store ── */
+    .store-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .store-item {
+      background: var(--card);
+      border-radius: 14px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid rgba(240,230,255,0.06);
+      transition: transform 0.12s;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .store-item:active { transform: scale(0.91); }
+    .store-item.affordable { border-color: rgba(93,255,176,0.28); }
+    .store-item.cant-afford { opacity: 0.42; }
+    .store-item .si-emoji { font-size: 2rem; display: block; margin-bottom: 5px; }
+    .store-item .si-name { font-size: 0.7rem; margin-bottom: 5px; }
+    .store-item .si-price { color: var(--yellow); font-size: 0.82rem; }
+    .store-item .si-owned { font-size: 0.6rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── Recipe modal (bottom sheet) ── */
+    .modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(15,10,30,0.88);
+      z-index: 200;
+      display: flex; align-items: flex-end;
+    }
+    .modal {
+      background: var(--card);
+      border-radius: 24px 24px 0 0;
+      padding: 22px 18px 40px;
+      width: 100%; max-width: 480px;
+      margin: 0 auto;
+      animation: slideUp 0.22s ease-out;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(60px); opacity: 0; }
+      to   { transform: translateY(0);    opacity: 1; }
+    }
+    .modal-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 14px;
+    }
+    .modal-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.5rem; color: var(--pink);
+    }
+    .modal-close {
+      background: rgba(240,230,255,0.1); border: none;
+      color: var(--text); width: 34px; height: 34px;
+      border-radius: 50%; font-size: 1rem; cursor: pointer;
+      touch-action: manipulation;
+    }
+    .recipe-emoji-big { font-size: 3.5rem; text-align: center; display: block; margin-bottom: 14px; }
+    .ingredients-list { list-style: none; margin-bottom: 16px; }
+    .ingredients-list li {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 10px;
+      background: rgba(240,230,255,0.04);
+      border-radius: 10px; margin-bottom: 6px;
+      font-size: 0.86rem;
+    }
+    .ing-emoji { font-size: 1.3rem; flex-shrink: 0; }
+    .ing-status { margin-left: auto; font-size: 0.78rem; white-space: nowrap; }
+    .ing-status.have { color: var(--green); }
+    .ing-status.need { color: var(--pink); }
+    .sell-info { text-align: center; margin-bottom: 16px; color: var(--yellow); font-size: 0.9rem; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: block; width: 100%;
+      padding: 15px; border-radius: 14px; border: none;
+      font-family: 'Fredoka One', cursive; font-size: 1.1rem;
+      cursor: pointer; transition: transform 0.12s;
+      touch-action: manipulation;
+    }
+    .btn:active { transform: scale(0.96); }
+    .btn + .btn { margin-top: 10px; }
+    .btn-cook  { background: linear-gradient(135deg, var(--pink), var(--purple)); color: #fff; }
+    .btn-sell  { background: linear-gradient(135deg, var(--yellow), var(--orange)); color: #0f0a1e; }
+    .btn-store { background: linear-gradient(135deg, var(--blue), var(--green)); color: #0f0a1e; }
+    .btn-ghost { background: rgba(240,230,255,0.08); color: var(--muted); }
+    .btn-disabled { background: rgba(240,230,255,0.06); color: rgba(240,230,255,0.28); cursor: default; pointer-events: none; }
+
+    /* ── Cooking screen ── */
+    .cooking-area { text-align: center; padding-top: 6px; }
+    .cooking-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.35rem; color: var(--pink); margin-bottom: 5px;
+    }
+    .cooking-hint { color: var(--muted); font-size: 0.8rem; margin-bottom: 16px; }
+
+    .pan-wrap {
+      position: relative;
+      width: 130px; height: 130px;
+      margin: 0 auto 20px;
+    }
+    .pan-visual {
+      width: 130px; height: 130px;
+      background: #1a1258;
+      border-radius: 50%;
+      border: 4px solid #3020a0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3rem;
+    }
+    .pan-visual.sizzle { animation: sizzle 0.45s infinite; }
+    @keyframes sizzle {
+      0%,100% { transform: rotate(-4deg) scale(1); }
+      50%      { transform: rotate(4deg) scale(1.06); }
+    }
+    .steam {
+      position: absolute; top: -8px; left: 50%; transform: translateX(-50%);
+      display: flex; gap: 6px;
+    }
+    .steam span {
+      font-size: 1rem;
+      animation: rise 1.4s ease-in infinite;
+      opacity: 0;
+    }
+    .steam span:nth-child(2) { animation-delay: 0.5s; }
+    .steam span:nth-child(3) { animation-delay: 1s; }
+    @keyframes rise {
+      0%   { transform: translateY(0);   opacity: 0; }
+      30%  { opacity: 0.8; }
+      100% { transform: translateY(-24px); opacity: 0; }
+    }
+
+    .cooking-steps {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center; margin-bottom: 18px;
+    }
+    .cooking-step {
+      width: 70px; height: 70px;
+      background: var(--card);
+      border-radius: 14px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      cursor: pointer;
+      border: 2px solid rgba(240,230,255,0.08);
+      transition: transform 0.12s;
+      position: relative;
+      user-select: none;
+      touch-action: manipulation;
+    }
+    .cooking-step:active { transform: scale(0.88); }
+    .cooking-step.is-next {
+      border-color: var(--yellow);
+      animation: stepGlow 1.1s infinite;
+    }
+    @keyframes stepGlow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(255,225,77,0.45); }
+      50%      { box-shadow: 0 0 0 7px rgba(255,225,77,0); }
+    }
+    .cooking-step.is-done {
+      opacity: 0.32;
+      border-color: var(--green);
+    }
+    .cooking-step.is-done::after {
+      content: '✓';
+      position: absolute; top: -7px; right: -7px;
+      background: var(--green); color: #0f0a1e;
+      width: 18px; height: 18px; border-radius: 50%;
+      font-size: 0.65rem;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cs-emoji { font-size: 1.8rem; }
+    .cs-name { font-size: 0.57rem; color: var(--muted); margin-top: 3px; }
+
+    /* ── Result screen ── */
+    .result-area { text-align: center; padding: 24px 0 8px; }
+    .result-emoji {
+      font-size: 5.5rem; display: block; margin-bottom: 12px;
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes popIn {
+      from { transform: scale(0) rotate(-15deg); opacity: 0; }
+      to   { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .result-title { font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--green); margin-bottom: 6px; }
+    .result-earn  { color: var(--yellow); font-size: 1rem; margin-bottom: 22px; }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed; bottom: 88px; left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      background: var(--green); color: #0f0a1e;
+      padding: 8px 18px; border-radius: 20px;
+      font-family: 'Fredoka One', cursive; font-size: 0.95rem;
+      opacity: 0; transition: all 0.25s; z-index: 600;
+      white-space: nowrap; pointer-events: none;
+    }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .toast.warn { background: var(--pink); color: #fff; }
+
+    /* ── Confetti ── */
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 999;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div id="app"></div>
+<div id="toast" class="toast"></div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// DATA
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+const INGREDIENTS = {
+  bread:        { name: 'Bread',         emoji: '🍞', price: 2 },
+  butter:       { name: 'Butter',        emoji: '🧈', price: 2 },
+  eggs:         { name: 'Eggs',          emoji: '🥚', price: 1 },
+  milk:         { name: 'Milk',          emoji: '🥛', price: 2 },
+  flour:        { name: 'Flour',         emoji: '🌾', price: 3 },
+  sugar:        { name: 'Sugar',         emoji: '🍬', price: 2 },
+  peanutbutter: { name: 'Peanut Butter', emoji: '🥜', price: 4 },
+  jam:          { name: 'Jam',           emoji: '🍓', price: 3 },
+  pasta:        { name: 'Pasta',         emoji: '🍝', price: 4 },
+  cheese:       { name: 'Cheese',        emoji: '🧀', price: 5 },
+  banana:       { name: 'Banana',        emoji: '🍌', price: 2 },
+  chocolate:    { name: 'Chocolate',     emoji: '🍫', price: 6 },
+};
+
+const RECIPES = [
+  {
+    id: 'toast',
+    name: 'Toast',
+    emoji: '🍞',
+    steps: ['bread', 'butter'],
+    needs: { bread: 1, butter: 1 },
+    sellPrice: 8,
+    panEmoji: '🍳',
+  },
+  {
+    id: 'scrambled-eggs',
+    name: 'Scrambled Eggs',
+    emoji: '🍳',
+    steps: ['eggs', 'eggs', 'butter'],
+    needs: { eggs: 2, butter: 1 },
+    sellPrice: 12,
+    panEmoji: '🍳',
+  },
+  {
+    id: 'pbj',
+    name: 'PB&J',
+    emoji: '🥪',
+    steps: ['bread', 'peanutbutter', 'jam', 'bread'],
+    needs: { bread: 2, peanutbutter: 1, jam: 1 },
+    sellPrice: 20,
+    panEmoji: '🥪',
+  },
+  {
+    id: 'pancakes',
+    name: 'Pancakes',
+    emoji: '🥞',
+    steps: ['flour', 'eggs', 'eggs', 'milk', 'butter'],
+    needs: { flour: 1, eggs: 2, milk: 1, butter: 1 },
+    sellPrice: 22,
+    panEmoji: '🥞',
+  },
+  {
+    id: 'waffles',
+    name: 'Waffles',
+    emoji: '🧇',
+    steps: ['flour', 'eggs', 'eggs', 'milk', 'sugar', 'butter'],
+    needs: { flour: 1, eggs: 2, milk: 1, sugar: 1, butter: 1 },
+    sellPrice: 28,
+    panEmoji: '🧇',
+  },
+  {
+    id: 'mac-cheese',
+    name: 'Mac & Cheese',
+    emoji: '🍲',
+    steps: ['pasta', 'milk', 'cheese', 'butter'],
+    needs: { pasta: 1, milk: 1, cheese: 1, butter: 1 },
+    sellPrice: 30,
+    panEmoji: '🍲',
+  },
+  {
+    id: 'banana-bread',
+    name: 'Banana Bread',
+    emoji: '🍌',
+    steps: ['banana', 'banana', 'flour', 'eggs', 'eggs', 'sugar', 'butter'],
+    needs: { banana: 2, flour: 1, eggs: 2, sugar: 1, butter: 1 },
+    sellPrice: 38,
+    panEmoji: '🫙',
+  },
+  {
+    id: 'choc-biscuits',
+    name: 'Choc Biscuits',
+    emoji: '🍫',
+    steps: ['flour', 'butter', 'sugar', 'chocolate'],
+    needs: { flour: 1, butter: 1, sugar: 1, chocolate: 1 },
+    sellPrice: 32,
+    panEmoji: '🍪',
+  },
+];
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// STATE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+let state = {
+  coins: 10,
+  inventory: { bread: 3, butter: 2, eggs: 4 },
+  screen: 'kitchen',   // kitchen | store | recipe | cooking | result
+  selectedId: null,
+  cookStep: 0,
+  isCooking: false,
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// PERSISTENCE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function saveGame() {
+  localStorage.setItem('mayas-kitchen-v1', JSON.stringify({
+    coins: state.coins,
+    inventory: state.inventory,
+  }));
+}
+
+function loadGame() {
+  try {
+    const saved = JSON.parse(localStorage.getItem('mayas-kitchen-v1'));
+    if (saved) {
+      if (typeof saved.coins === 'number') state.coins = saved.coins;
+      if (saved.inventory) state.inventory = saved.inventory;
+    }
+  } catch (e) {}
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// HELPERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function canMake(recipe) {
+  return Object.entries(recipe.needs).every(([id, qty]) => (state.inventory[id] || 0) >= qty);
+}
+
+function getRecipe(id) {
+  return RECIPES.find(r => r.id === id);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// ACTIONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function goTo(screen) {
+  state.screen = screen;
+  if (screen === 'kitchen' || screen === 'store') state.selectedId = null;
+  render();
+}
+
+function openRecipe(id) {
+  state.selectedId = id;
+  state.screen = 'recipe';
+  render();
+}
+
+function closeRecipe() {
+  state.screen = 'kitchen';
+  state.selectedId = null;
+  render();
+}
+
+function startCooking() {
+  state.screen = 'cooking';
+  state.cookStep = 0;
+  state.isCooking = false;
+  render();
+}
+
+function tapStep(index) {
+  if (index !== state.cookStep) return;
+  state.cookStep++;
+  render();
+}
+
+function cookIt() {
+  const recipe = getRecipe(state.selectedId);
+  Object.entries(recipe.needs).forEach(([id, qty]) => {
+    state.inventory[id] = (state.inventory[id] || 0) - qty;
+  });
+  saveGame();
+  state.isCooking = true;
+  render();
+  setTimeout(() => {
+    state.isCooking = false;
+    state.screen = 'result';
+    render();
+  }, 1800);
+}
+
+function sellDish() {
+  const recipe = getRecipe(state.selectedId);
+  state.coins += recipe.sellPrice;
+  saveGame();
+  launchConfetti();
+  showToast(`+${recipe.sellPrice} coins! 🎉`);
+  bumpCoins();
+  state.screen = 'kitchen';
+  state.selectedId = null;
+  state.cookStep = 0;
+  render();
+}
+
+function cookAgain() {
+  const recipe = getRecipe(state.selectedId);
+  if (recipe && canMake(recipe)) {
+    startCooking();
+  } else {
+    state.screen = 'store';
+    state.selectedId = null;
+    render();
+  }
+}
+
+function buyIngredient(id) {
+  const ing = INGREDIENTS[id];
+  if (state.coins < ing.price) {
+    showToast('Not enough coins! 💸', true);
+    return;
+  }
+  state.coins -= ing.price;
+  state.inventory[id] = (state.inventory[id] || 0) + 1;
+  saveGame();
+  showToast(`Got ${ing.emoji} ${ing.name}!`);
+  render();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// RENDER
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+function render() {
+  document.getElementById('app').innerHTML = buildApp();
+}
+
+function buildApp() {
+  const noNav = state.screen === 'cooking' || state.screen === 'result';
+  return `
+    ${buildHeader()}
+    <div class="screen${noNav ? ' no-nav' : ''}">
+      ${buildScreen()}
+    </div>
+    ${noNav ? '' : buildNav()}
+    ${state.screen === 'recipe' ? buildRecipeModal() : ''}
+  `;
+}
+
+function buildHeader() {
+  const titles = {
+    kitchen: "🍳 Maya's Kitchen",
+    store:   "🏪 The Store",
+    recipe:  "🍳 Maya's Kitchen",
+    cooking: "👩‍🍳 Cooking!",
+    result:  "✨ Ready!",
+  };
+  return `
+    <div class="header">
+      <span class="header-title">${titles[state.screen] || "🍳 Maya's Kitchen"}</span>
+      <div class="coins" id="coin-display">🪙 ${state.coins}</div>
+    </div>
+  `;
+}
+
+function buildNav() {
+  const onKitchen = state.screen === 'kitchen' || state.screen === 'recipe';
+  return `
+    <nav class="bottom-nav">
+      <button class="nav-btn ${onKitchen ? 'active' : ''}" onclick="goTo('kitchen')">
+        <span class="nav-icon">🍳</span>Kitchen
+      </button>
+      <button class="nav-btn ${state.screen === 'store' ? 'active' : ''}" onclick="goTo('store')">
+        <span class="nav-icon">🏪</span>Store
+      </button>
+    </nav>
+  `;
+}
+
+function buildScreen() {
+  switch (state.screen) {
+    case 'kitchen':
+    case 'recipe':  return buildKitchen();
+    case 'store':   return buildStore();
+    case 'cooking': return buildCooking();
+    case 'result':  return buildResult();
+    default:        return buildKitchen();
+  }
+}
+
+// ── Kitchen ──────────────────────────
+
+function buildKitchen() {
+  const cards = RECIPES.map(r => {
+    const ready = canMake(r);
+    return `
+      <div class="recipe-card${ready ? ' can-make' : ''}" onclick="openRecipe('${r.id}')">
+        ${ready ? '<span class="ready-badge">READY!</span>' : ''}
+        <span class="food-emoji">${r.emoji}</span>
+        <span class="food-name">${r.name}</span>
+        <span class="sell-tag">🪙${r.sellPrice}</span>
+      </div>
+    `;
+  }).join('');
+
+  const pantry = Object.entries(INGREDIENTS).map(([id, ing]) => {
+    const count = state.inventory[id] || 0;
+    return `
+      <div class="pantry-item${count === 0 ? ' empty' : ''}">
+        <span class="pi-emoji">${ing.emoji}</span>
+        <span class="pi-count">${count}</span>
+        <span class="pi-name">${ing.name}</span>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <p class="section-title">Recipes</p>
+    <div class="recipe-scroll">${cards}</div>
+    <p class="section-title">Your Pantry</p>
+    <div class="pantry-grid">${pantry}</div>
+  `;
+}
+
+// ── Recipe modal ─────────────────────
+
+function buildRecipeModal() {
+  const recipe = getRecipe(state.selectedId);
+  if (!recipe) return '';
+  const makeable = canMake(recipe);
+
+  const ingRows = Object.entries(recipe.needs).map(([id, qty]) => {
+    const ing = INGREDIENTS[id];
+    const have = state.inventory[id] || 0;
+    const ok = have >= qty;
+    return `
+      <li>
+        <span class="ing-emoji">${ing.emoji}</span>
+        <span>${ing.name} × ${qty}</span>
+        <span class="ing-status ${ok ? 'have' : 'need'}">${ok ? `✓ have ${have}` : `✗ have ${have}`}</span>
+      </li>
+    `;
+  }).join('');
+
+  return `
+    <div class="modal-overlay" onclick="if(event.target===this)closeRecipe()">
+      <div class="modal">
+        <div class="modal-header">
+          <span class="modal-title">${recipe.name}</span>
+          <button class="modal-close" onclick="closeRecipe()">✕</button>
+        </div>
+        <span class="recipe-emoji-big">${recipe.emoji}</span>
+        <p class="section-title">Ingredients needed</p>
+        <ul class="ingredients-list">${ingRows}</ul>
+        <div class="sell-info">Sells for 🪙 ${recipe.sellPrice} coins</div>
+        ${makeable
+          ? `<button class="btn btn-cook" onclick="startCooking()">Let's Cook! 👩‍🍳</button>`
+          : `<button class="btn btn-disabled">Need more ingredients</button>
+             <button class="btn btn-store" onclick="goTo('store')">Go to Store 🏪</button>`
+        }
+      </div>
+    </div>
+  `;
+}
+
+// ── Store ─────────────────────────────
+
+function buildStore() {
+  const items = Object.entries(INGREDIENTS).map(([id, ing]) => {
+    const affordable = state.coins >= ing.price;
+    const owned = state.inventory[id] || 0;
+    return `
+      <div class="store-item${affordable ? ' affordable' : ' cant-afford'}" onclick="buyIngredient('${id}')">
+        <span class="si-emoji">${ing.emoji}</span>
+        <div class="si-name">${ing.name}</div>
+        <div class="si-price">🪙 ${ing.price}</div>
+        <div class="si-owned">Have: ${owned}</div>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <p class="section-title">Buy Ingredients</p>
+    <div class="store-grid">${items}</div>
+  `;
+}
+
+// ── Cooking ───────────────────────────
+
+function buildCooking() {
+  const recipe = getRecipe(state.selectedId);
+  if (!recipe) return '';
+
+  if (state.isCooking) {
+    return `
+      <div class="cooking-area">
+        <div class="cooking-title">Cooking... 🔥</div>
+        <div class="pan-wrap">
+          <div class="steam"><span>💨</span><span>💨</span><span>💨</span></div>
+          <div class="pan-visual sizzle">${recipe.panEmoji}</div>
+        </div>
+        <p style="color:var(--muted);font-size:0.85rem">Almost ready!</p>
+      </div>
+    `;
+  }
+
+  const allDone = state.cookStep >= recipe.steps.length;
+  const panContent = state.cookStep > 0
+    ? INGREDIENTS[recipe.steps[state.cookStep - 1]].emoji
+    : recipe.panEmoji;
+
+  const steps = recipe.steps.map((ingId, i) => {
+    const ing = INGREDIENTS[ingId];
+    const isDone = i < state.cookStep;
+    const isNext = i === state.cookStep;
+    return `
+      <div class="cooking-step${isDone ? ' is-done' : ''}${isNext ? ' is-next' : ''}"
+           onclick="tapStep(${i})">
+        <span class="cs-emoji">${ing.emoji}</span>
+        <span class="cs-name">${ing.name}</span>
+      </div>
+    `;
+  }).join('');
+
+  return `
+    <div class="cooking-area">
+      <div class="cooking-title">Making ${recipe.name}</div>
+      <div class="cooking-hint">${allDone ? '✨ Now cook it!' : 'Tap each ingredient in order!'}</div>
+      <div class="pan-wrap">
+        <div class="pan-visual">${panContent}</div>
+      </div>
+      <div class="cooking-steps">${steps}</div>
+      ${allDone
+        ? `<button class="btn btn-cook" onclick="cookIt()">🔥 Cook it!</button>`
+        : `<button class="btn btn-disabled">Add all ingredients first…</button>`
+      }
+      <button class="btn btn-ghost" style="margin-top:10px" onclick="goTo('kitchen')">← Back</button>
+    </div>
+  `;
+}
+
+// ── Result ────────────────────────────
+
+function buildResult() {
+  const recipe = getRecipe(state.selectedId);
+  if (!recipe) return '';
+  const hasMore = canMake(recipe);
+
+  return `
+    <div class="result-area">
+      <span class="result-emoji">${recipe.emoji}</span>
+      <div class="result-title">You made ${recipe.name}! 🎉</div>
+      <div class="result-earn">Sell for 🪙 ${recipe.sellPrice} coins</div>
+      <button class="btn btn-sell" onclick="sellDish()">Sell it! 💰</button>
+      <button class="btn ${hasMore ? 'btn-cook' : 'btn-store'}" style="margin-top:10px" onclick="cookAgain()">
+        ${hasMore ? 'Make another! 🍳' : 'Buy more ingredients 🏪'}
+      </button>
+    </div>
+  `;
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// UTILITIES
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+let toastTimer = null;
+function showToast(msg, warn = false) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (warn ? ' warn' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('show'), 2200);
+}
+
+function bumpCoins() {
+  setTimeout(() => {
+    const el = document.getElementById('coin-display');
+    if (el) { el.classList.add('bump'); setTimeout(() => el.classList.remove('bump'), 350); }
+  }, 100);
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.width  = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const ctx = canvas.getContext('2d');
+  const colors = ['#ff6eb4','#ffe14d','#5dffb0','#5bc8ff','#c77dff','#ff9a3c'];
+  const particles = Array.from({ length: 100 }, () => ({
+    x:     Math.random() * canvas.width,
+    y:     -10 - Math.random() * 80,
+    vx:    (Math.random() - 0.5) * 5,
+    vy:    2 + Math.random() * 4,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    size:  5 + Math.random() * 7,
+    rot:   Math.random() * 360,
+    rs:    (Math.random() - 0.5) * 9,
+    rect:  Math.random() > 0.4,
+  }));
+
+  let frame = 0;
+  function tick() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.vy += 0.06; p.rot += p.rs;
+      ctx.save();
+      ctx.translate(p.x, p.y);
+      ctx.rotate(p.rot * Math.PI / 180);
+      ctx.fillStyle = p.color;
+      if (p.rect) ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
+      else { ctx.beginPath(); ctx.arc(0, 0, p.size / 2, 0, Math.PI * 2); ctx.fill(); }
+      ctx.restore();
+    });
+    if (++frame < 160) requestAnimationFrame(tick);
+    else ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+  tick();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+// BOOT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+loadGame();
+render();
+</script>
+</body>
+</html>
