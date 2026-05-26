@@ -21,10 +21,14 @@ Team space battle inspired by Netrek — pick **Federation** or **Klingons**, fl
 ### Controls
 | Input | Action |
 |-------|--------|
-| ◀ / ▶ (or arrow keys) | Rotate ship |
-| 🚀 (or ↑) | Thrust |
-| 💥 (or Space) | Fire |
-| iPad | On-screen buttons at bottom |
+| **Mouse / finger in sky** | Ship points at cursor; **hold** to thrust |
+| ◀ / ▶ buttons | Rotate (hold) |
+| 🚀 button | Thrust (hold) |
+| 💥 button | Fire |
+| Arrow keys / A D | Rotate |
+| W or ↑ | Thrust |
+| Space (hold) | Fire |
+| iPad | One finger in sky to fly; other finger on 💥 to shoot |
 
 ### Win
 - Capture **all 3 planets** for your team, **or**

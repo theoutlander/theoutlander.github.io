@@ -561,25 +561,31 @@ function isStrayPipeType(type){
   return type==='I'||type==='L'||type==='T'||type==='B'||type==='V'||type==='X';
 }
 
-function structuralReachableFromSource(){
+function portReachableFromSource(){
   const seen=new Set();
   const q=[];
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell=grid[r]&&grid[r][c];
-      if(cell&&cell.type==='S'){q.push([r,c]);seen.add(r+','+c);}
+      if(isSource(cell)){q.push([r,c]);seen.add(r+','+c);}
     }
   }
   while(q.length){
     const cur=q.shift();
     const r=cur[0],c=cur[1];
+    const cell=grid[r]&&grid[r][c];
+    if(!cell)continue;
+    const m=maskFor(cell);
     for(let i=0;i<4;i++){
-      const dk=dirKey(DIRS[i]);
+      const d=DIRS[i];
+      if(!(m&d))continue;
+      const dk=dirKey(d);
       const nr=r+DR[dk][0],nc=c+DR[dk][1];
       const nk=nr+','+nc;
       if(nr<0||nc<0||nr>=rows||nc>=cols||seen.has(nk))continue;
       const nb=grid[nr]&&grid[nr][nc];
       if(!nb||nb.type==='#')continue;
+      if(!(maskFor(nb)&OPP[d]))continue;
       seen.add(nk);
       q.push([nr,nc]);
     }
@@ -587,27 +593,14 @@ function structuralReachableFromSource(){
   return seen;
 }
 
-function hasReachableNeighbor(r,c,reach){
-  for(let i=0;i<4;i++){
-    const dk=dirKey(DIRS[i]);
-    const nr=r+DR[dk][0],nc=c+DR[dk][1];
-    if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
-    if(reach.has(nr+','+nc))return true;
-  }
-  return false;
-}
-
 function pruneStrayPipes(){
   if(buildMode)return;
-  const reach=structuralReachableFromSource();
+  const reach=portReachableFromSource();
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell=grid[r]&&grid[r][c];
       if(!cell||!isStrayPipeType(cell.type))continue;
-      const k=r+','+c;
-      if(reach.has(k))continue;
-      if(hasReachableNeighbor(r,c,reach))continue;
-      grid[r][c]=null;
+      if(!reach.has(r+','+c))grid[r][c]=null;
     }
   }
 }
@@ -1781,14 +1774,11 @@ function drawPipe(r,c,cell){
   const k=r+','+c;
   const dist=flowDist.get(k);
   const hasWater=dist!==undefined&&flowPhase>=dist;
-  const onCircuit=filled.has(k);
-  const spare=isStrayPipeType(cell.type)&&!onCircuit;
   const m=maskFor(cell);
   let spin=0;
   if(spinAnim&&spinAnim.r===r&&spinAnim.c===c)spin=spinAnim.t*Math.PI/2;
 
   ctx.save();
-  if(spare)ctx.globalAlpha=.28;
   ctx.translate(cx,cy);
   ctx.rotate(spin);
   ctx.translate(-cx,-cy);
@@ -1845,12 +1835,6 @@ function drawPipe(r,c,cell){
     ctx.fillText(cell.open?'🟢':'🔴',cx,cy+cellSize*.28);
   }
 
-  if(!cell.fixed){
-    ctx.fillStyle='rgba(255,255,255,.25)';
-    ctx.beginPath();
-    ctx.arc(cx,cy,cellSize*.08,0,Math.PI*2);
-    ctx.fill();
-  }
   ctx.restore();
 }
 
@@ -1960,20 +1944,13 @@ function clearDrag(){
 function drawDropHighlights(){
   if(!drag||!drag.moved)return;
   const hover=pointerToCell(drag.x,drag.y);
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      if(!canDropAt(r,c,drag.r,drag.c))continue;
-      const x=gridOffX+c*cellSize,y=gridOffY+r*cellSize;
-      ctx.fillStyle='rgba(255,225,77,.2)';
-      ctx.fillRect(x+5,y+5,cellSize-10,cellSize-10);
-    }
-  }
-  if(hover&&canDropAt(hover.r,hover.c,drag.r,drag.c)){
-    const x=gridOffX+hover.c*cellSize,y=gridOffY+hover.r*cellSize;
-    ctx.strokeStyle='rgba(255,225,77,.85)';
-    ctx.lineWidth=3;
-    ctx.strokeRect(x+4,y+4,cellSize-8,cellSize-8);
-  }
+  if(!hover||!canDropAt(hover.r,hover.c,drag.r,drag.c))return;
+  const x=gridOffX+hover.c*cellSize,y=gridOffY+hover.r*cellSize;
+  ctx.fillStyle='rgba(255,225,77,.18)';
+  ctx.fillRect(x+5,y+5,cellSize-10,cellSize-10);
+  ctx.strokeStyle='rgba(255,225,77,.85)';
+  ctx.lineWidth=3;
+  ctx.strokeRect(x+4,y+4,cellSize-8,cellSize-8);
 }
 
 function drawDragGhost(){

@@ -30,10 +30,12 @@
   }
 })();
 </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;background:#050818;touch-action:none}
+html,body{width:100%;height:100%;overflow:hidden;background:#050818;touch-action:none;font-family:'Nunito',system-ui,sans-serif}
 #game-container canvas{display:block}
 </style>
 </head>
@@ -73,20 +75,66 @@ function beep(freq, dur, type, vol) {
   } catch (e) {}
 }
 
-function fz(r) { return Math.floor(Math.min(GW, GH) * r) + 'px'; }
+const FF_TITLE = '"Fredoka One", Arial, sans-serif';
+const FF_BODY = '"Nunito", system-ui, Arial, sans-serif';
+
+function fontPx(r) { return Math.max(12, Math.floor(Math.min(GW, GH) * r)); }
+function fz(r) { return fontPx(r) + 'px'; }
+
+function btnWidth(label, fsPx) {
+  let w = 36;
+  for (let i = 0; i < label.length; i++) {
+    const cp = label.codePointAt(i);
+    if (cp > 0xffff) { i++; w += fsPx * 1.15; continue; }
+    w += cp > 0x2600 ? fsPx * 1.1 : fsPx * 0.52;
+  }
+  return Math.max(Math.ceil(w), 148);
+}
+
+function parseFs(fontSize) {
+  if (typeof fontSize === 'number') return fontSize;
+  return parseFloat(String(fontSize)) || fontPx(0.035);
+}
+
+function addRoundedBox(scene, x, y, w, h, radius, fill, fillAlpha, strokeCol, strokeAlpha) {
+  const gx = x - w / 2;
+  const gy = y - h / 2;
+  const g = scene.add.graphics();
+  g.fillStyle(fill, fillAlpha);
+  g.fillRoundedRect(gx, gy, w, h, radius);
+  if (strokeCol != null) {
+    g.lineStyle(2, strokeCol, strokeAlpha == null ? 1 : strokeAlpha);
+    g.strokeRoundedRect(gx, gy, w, h, radius);
+  }
+  return g;
+}
 
 function makeBtn(scene, x, y, label, fill, textCol, fontSize, cb, stroke) {
-  const fsNum = typeof fontSize === 'number' ? fontSize : parseFloat(String(fontSize)) || 24;
-  const tw = Math.max(label.length * fsNum * 0.5 + 24, 120);
-  const th = 52;
-  const btn = scene.add.rectangle(x, y, tw, th, fill)
-    .setStrokeStyle(3, stroke || 0x000000, 0.4)
+  const fsPx = parseFs(fontSize);
+  const tw = btnWidth(label, fsPx);
+  const th = Math.max(52, Math.ceil(fsPx * 1.75));
+  const strokeCol = stroke == null ? 0x000000 : stroke;
+  const btn = scene.add.rectangle(x, y, tw, th, fill, 1)
+    .setStrokeStyle(3, strokeCol, 0.45)
     .setInteractive({ useHandCursor: true });
-  scene.add.text(x, y, label, { fontFamily: 'Fredoka One', fontSize, fill: textCol }).setOrigin(0.5);
-  btn.on('pointerdown', cb);
-  btn.on('pointerover', () => btn.setAlpha(0.85));
-  btn.on('pointerout', () => btn.setAlpha(1));
+  const txt = scene.add.text(x, y, label, {
+    fontFamily: FF_TITLE,
+    fontSize: fsPx,
+    fill: textCol,
+  }).setOrigin(0.5);
+  txt.setDepth(btn.depth + 1);
+  const hit = () => { btn.on('pointerdown', cb); btn.on('pointerover', () => btn.setAlpha(0.88)); btn.on('pointerout', () => btn.setAlpha(1)); };
+  hit();
+  btn._label = txt;
   return btn;
+}
+
+function textStyle(sizeRatio, color, title) {
+  return {
+    fontFamily: title ? FF_TITLE : FF_BODY,
+    fontSize: fz(sizeRatio),
+    fill: color,
+  };
 }
 
 function drawStars(scene) {
@@ -109,39 +157,61 @@ class MenuScene extends Phaser.Scene {
 
   create() {
     G.reset();
-    drawStars(this);
     const cx = GW / 2;
+    const g = this.add.graphics().setDepth(0);
+    g.fillGradientStyle(0x0f0a1e, 0x0f0a1e, 0x050818, 0x1a1040, 1);
+    g.fillRect(0, 0, GW, GH);
+    drawStars(this);
 
-    this.add.text(cx, GH * 0.1, '🌌', { fontSize: fz(0.1) }).setOrigin(0.5);
-    this.add.text(cx, GH * 0.22, 'Star Squads!',
-      { fontFamily: 'Fredoka One', fontSize: fz(0.07), fill: '#ffe14d', stroke: '#000', strokeThickness: 4 })
-      .setOrigin(0.5);
-    this.add.text(cx, GH * 0.3, 'Team space battle!',
-      { fontFamily: 'Nunito', fontSize: fz(0.028), fill: '#f0e6ff' }).setOrigin(0.5);
+    this.add.text(cx, GH * 0.09, '🚀', { fontSize: fz(0.11) }).setOrigin(0.5).setDepth(2);
+    this.add.text(cx, GH * 0.2, 'Star Squads!', Object.assign(textStyle(0.068, '#ffe14d', true), {
+      stroke: '#000', strokeThickness: 5,
+    })).setOrigin(0.5).setDepth(2);
+    this.add.text(cx, GH * 0.28, 'Team space battle!', textStyle(0.03, '#f0e6ff', false))
+      .setOrigin(0.5).setDepth(2);
 
-    const pw = Math.min(GW * 0.9, 400);
-    const panel = this.add.rectangle(cx, GH * 0.44, pw, GH * 0.2, 0x1a0a3c, 0.92).setStrokeStyle(2, 0x3a2a5c);
+    const pw = Math.min(GW * 0.92, 420);
+    const ph = Math.min(GH * 0.22, 200);
+    const py = GH * 0.4;
+    addRoundedBox(this, cx, py, pw, ph, 16, 0x1e1440, 0.94, 0xc77dff, 0.35).setDepth(1);
     [
-      '🪐 Fly near planets to capture them for your team',
-      '💥 Shoot enemy ships — capture all planets OR wipe them out!',
-      '🎮 Rotate, thrust, and blast like classic space games',
+      '🪐 Fly near planets to capture them',
+      '💥 Shoot enemies or take all 3 planets',
+      '🎮 Point at the sky to steer — hold to fly!',
     ].forEach((s, i) => {
-      this.add.text(cx, GH * 0.36 + i * GH * 0.055, s,
-        { fontFamily: 'Nunito', fontSize: fz(0.024), fill: '#f0e6ff', align: 'center', wordWrap: { width: pw - 28 } })
-        .setOrigin(0.5);
+      this.add.text(cx, py - ph * 0.32 + i * fontPx(0.038), s,
+        Object.assign(textStyle(0.026, '#f0e6ff', false), {
+          align: 'center',
+          wordWrap: { width: pw - 40 },
+          lineSpacing: 4,
+        })).setOrigin(0.5).setDepth(2);
     });
 
-    this.add.text(cx, GH * 0.58, 'Pick your team:', { fontFamily: 'Nunito', fontSize: fz(0.026), fill: 'rgba(255,255,255,.6)' }).setOrigin(0.5);
+    this.add.text(cx, GH * 0.56, 'Pick your team', textStyle(0.028, 'rgba(240,230,255,0.65)', false))
+      .setOrigin(0.5).setDepth(2);
 
-    const bw = Math.min(GW * 0.38, 160);
-    this.fedBtn = makeBtn(this, cx - bw * 0.55, GH * 0.66, '🌟 Federation', 0x5bc8ff, '#050818', fz(0.028), () => this.pickTeam('fed'));
-    this.kliBtn = makeBtn(this, cx + bw * 0.55, GH * 0.66, '🔥 Klingons', 0xff9a3c, '#050818', fz(0.028), () => this.pickTeam('kli'));
+    const fs = fontPx(0.032);
+    const fedLabel = '🌟 Federation';
+    const kliLabel = '🔥 Klingons';
+    const fedW = btnWidth(fedLabel, fs);
+    const kliW = btnWidth(kliLabel, fs);
+    const stackTeams = GW < 520;
+
+    if (stackTeams) {
+      this.fedBtn = makeBtn(this, cx, GH * 0.62, fedLabel, 0x5bc8ff, '#050818', fs, () => this.pickTeam('fed'), 0x3a8ab0);
+      this.kliBtn = makeBtn(this, cx, GH * 0.7, kliLabel, 0xff9a3c, '#050818', fs, () => this.pickTeam('kli'), 0xc06020);
+    } else {
+      const gap = 14;
+      const total = fedW + kliW + gap;
+      this.fedBtn = makeBtn(this, cx - total / 2 + fedW / 2, GH * 0.65, fedLabel, 0x5bc8ff, '#050818', fs, () => this.pickTeam('fed'), 0x3a8ab0);
+      this.kliBtn = makeBtn(this, cx + total / 2 - kliW / 2, GH * 0.65, kliLabel, 0xff9a3c, '#050818', fs, () => this.pickTeam('kli'), 0xc06020);
+    }
     this.highlightTeam(G.team);
 
-    makeBtn(this, cx, GH * 0.82, 'Launch! 🚀', 0xffe14d, '#050818', fz(0.04), () => {
+    makeBtn(this, cx, GH * 0.84, 'Launch! 🚀', 0xffe14d, '#050818', fontPx(0.04), () => {
       beep(520, 0.12, 'square', 0.2);
       this.scene.start('Play');
-    });
+    }, 0xcc9900);
   }
 
   pickTeam(id) {
@@ -151,8 +221,10 @@ class MenuScene extends Phaser.Scene {
   }
 
   highlightTeam(id) {
-    this.fedBtn.setStrokeStyle(id === 'fed' ? 4 : 2, 0xffffff, id === 'fed' ? 1 : 0.3);
-    this.kliBtn.setStrokeStyle(id === 'kli' ? 4 : 2, 0xffffff, id === 'kli' ? 1 : 0.3);
+    this.fedBtn.setStrokeStyle(id === 'fed' ? 4 : 2, 0xffffff, id === 'fed' ? 1 : 0.25);
+    this.kliBtn.setStrokeStyle(id === 'kli' ? 4 : 2, 0xffffff, id === 'kli' ? 1 : 0.25);
+    this.fedBtn.setAlpha(id === 'fed' ? 1 : 0.72);
+    this.kliBtn.setAlpha(id === 'kli' ? 1 : 0.72);
   }
 }
 
@@ -168,8 +240,13 @@ class PlayScene extends Phaser.Scene {
     this.score = 0;
     this.fireCd = 0;
     this.thrusting = false;
+    this.rotL = false;
+    this.rotR = false;
+    this.pointerThrust = false;
     this.invuln = 0;
     this.gameOver = false;
+    this.controlBarH = Math.max(108, GH * 0.24);
+    this.playZoneBottom = GH - this.controlBarH;
 
     this.physics.world.setBounds(0, 0, GW, GH);
     drawStars(this);
@@ -204,14 +281,14 @@ class PlayScene extends Phaser.Scene {
     });
 
     // Player ship
-    this.player = this.add.text(GW * 0.5, GH * 0.75, this.myTeam.ship, { fontSize: fz(0.065) })
+    this.player = this.add.text(GW * 0.5, this.playZoneBottom * 0.55, this.myTeam.ship, { fontSize: fz(0.065) })
       .setOrigin(0.5).setDepth(10);
     this.physics.add.existing(this.player);
     this.player.body.setCircle(22);
     this.player.body.setCollideWorldBounds(true);
     this.player.body.setBounce(0.35);
-    this.player.body.setDrag(40);
-    this.player.body.setMaxVelocity(280);
+    this.player.body.setDrag(28);
+    this.player.body.setMaxVelocity(340);
     this.player.angle = -90;
     this.playerHp = 100;
 
@@ -248,21 +325,54 @@ class PlayScene extends Phaser.Scene {
 
     // HUD
     this.hudTeam = this.add.text(14, 12, this.myTeam.emoji + ' ' + this.myTeam.name,
-      { fontFamily: 'Fredoka One', fontSize: fz(0.028), fill: this.myTeam.fill }).setDepth(50);
-    this.hudPlanets = this.add.text(14, 38, '🪐 0 / 3',
-      { fontFamily: 'Nunito', fontSize: fz(0.024), fill: '#f0e6ff' }).setDepth(50);
-    this.hudEnemies = this.add.text(14, 62, '💥 Enemies: 4',
-      { fontFamily: 'Nunito', fontSize: fz(0.024), fill: '#f0e6ff' }).setDepth(50);
+      textStyle(0.028, this.myTeam.fill, true)).setDepth(50);
+    this.hudPlanets = this.add.text(14, 38, '🪐 0 / 3', textStyle(0.024, '#f0e6ff', false)).setDepth(50);
+    this.hudEnemies = this.add.text(14, 62, '💥 Enemies: 4', textStyle(0.024, '#f0e6ff', false)).setDepth(50);
     this.hudLives = this.add.text(GW - 14, 12, '❤️'.repeat(G.lives),
       { fontFamily: 'Nunito', fontSize: fz(0.028) }).setOrigin(1, 0).setDepth(50);
     this.hudHp = this.add.graphics().setDepth(50);
     this.drawHpBar();
 
     this.buildTouchControls();
+    this.setupPointerFlight();
     this.cursors = this.input.keyboard.createCursorKeys();
     this.keyFire = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
     this.cameras.main.setBackgroundColor(0x050818);
+  }
+
+  inPlayZone(p) {
+    return p && p.y < this.playZoneBottom - 8;
+  }
+
+  aimAt(x, y) {
+    const target = Phaser.Math.RadToDeg(Math.atan2(y - this.player.y, x - this.player.x)) - 90;
+    let diff = target - this.player.angle;
+    while (diff > 180) diff -= 360;
+    while (diff < -180) diff += 360;
+    if (Math.abs(diff) > 120) this.player.angle = target;
+    else this.player.angle += diff * 0.35;
+  }
+
+  setupPointerFlight() {
+    const stopSkyThrust = () => { this.pointerThrust = false; };
+    this.input.on('pointermove', (p) => {
+      if (this.gameOver || !this.inPlayZone(p)) return;
+      this.aimAt(p.x, p.y);
+      if (p.isDown) this.pointerThrust = true;
+    });
+    this.input.on('pointerdown', (p) => {
+      if (this.gameOver) return;
+      if (this.inPlayZone(p)) {
+        this.aimAt(p.x, p.y);
+        this.pointerThrust = true;
+      }
+    });
+    this.input.on('pointerup', stopSkyThrust);
+    this.input.on('pointerupoutside', stopSkyThrust);
   }
 
   drawHpBar() {
@@ -277,24 +387,42 @@ class PlayScene extends Phaser.Scene {
   }
 
   buildTouchControls() {
-    const y = GH - 56;
-    const sz = 52;
+    const barH = this.controlBarH;
+    const y = GH - barH * 0.42;
+    const sz = Math.max(56, Math.min(68, barH * 0.38));
+
+    this.add.rectangle(GW / 2, GH - barH / 2, GW, barH, 0x0f0a1e, 0.82).setDepth(58);
+
+    this.add.text(GW / 2, GH - barH + fontPx(0.022),
+      '👆 Point & hold the sky to fly  ·  💥 to shoot',
+      Object.assign(textStyle(0.02, 'rgba(240,230,255,0.5)', false), { align: 'center' }))
+      .setOrigin(0.5).setDepth(62);
+
     const holdBtn = (x, label, col, onDown, onUp) => {
-      const b = this.add.circle(x, y, sz, col, 0.35).setStrokeStyle(3, col, 0.9).setDepth(60).setInteractive();
-      this.add.text(x, y, label, { fontSize: fz(0.032) }).setOrigin(0.5).setDepth(61);
-      b.on('pointerdown', onDown);
-      b.on('pointerup', onUp);
-      b.on('pointerout', onUp);
+      const hit = Math.max(sz + 12, 64);
+      const b = this.add.circle(x, y, sz, col, 0.4).setStrokeStyle(3, col, 0.95).setDepth(60)
+        .setInteractive(new Phaser.Geom.Circle(0, 0, hit), Phaser.Geom.Circle.Contains);
+      this.add.text(x, y, label, { fontSize: fz(0.034) }).setOrigin(0.5).setDepth(61);
+      const stop = (p) => { if (p.event && p.event.stopPropagation) p.event.stopPropagation(); };
+      b.on('pointerdown', (p) => { stop(p); onDown(); });
+      b.on('pointerup', (p) => { stop(p); onUp(); });
+      b.on('pointerout', (p) => { stop(p); onUp(); });
       return b;
     };
-    this.rotL = false;
-    this.rotR = false;
-    holdBtn(GW * 0.18, '◀', 0x3a2a5c, () => { this.rotL = true; }, () => { this.rotL = false; });
-    holdBtn(GW * 0.38, '▶', 0x3a2a5c, () => { this.rotR = true; }, () => { this.rotR = false; });
-    holdBtn(GW * 0.82, '🚀', 0x5dffb0, () => { this.thrusting = true; }, () => { this.thrusting = false; });
-    const fireBtn = this.add.circle(GW * 0.62, y, sz, 0xff6eb4, 0.35).setStrokeStyle(3, 0xff6eb4, 0.9).setDepth(60).setInteractive();
-    this.add.text(GW * 0.62, y, '💥', { fontSize: fz(0.034) }).setOrigin(0.5).setDepth(61);
-    fireBtn.on('pointerdown', () => this.tryFire(this.player, this.myTeam, true));
+
+    holdBtn(GW * 0.16, '◀', 0x3a2a5c, () => { this.rotL = true; }, () => { this.rotL = false; });
+    holdBtn(GW * 0.34, '▶', 0x3a2a5c, () => { this.rotR = true; }, () => { this.rotR = false; });
+    holdBtn(GW * 0.52, '🚀', 0x5dffb0, () => { this.thrusting = true; }, () => { this.thrusting = false; });
+
+    const fireHit = Math.max(sz + 14, 68);
+    const fireBtn = this.add.circle(GW * 0.78, y, sz, 0xff6eb4, 0.4)
+      .setStrokeStyle(3, 0xff6eb4, 0.95).setDepth(60)
+      .setInteractive(new Phaser.Geom.Circle(0, 0, fireHit), Phaser.Geom.Circle.Contains);
+    this.add.text(GW * 0.78, y, '💥', { fontSize: fz(0.038) }).setOrigin(0.5).setDepth(61);
+    fireBtn.on('pointerdown', (p) => {
+      if (p.event && p.event.stopPropagation) p.event.stopPropagation();
+      this.tryFire(this.player, this.myTeam, true);
+    });
   }
 
   update(time, delta) {
@@ -304,15 +432,16 @@ class PlayScene extends Phaser.Scene {
     if (this.invuln > 0) this.invuln -= delta;
     if (this.fireCd > 0) this.fireCd -= delta;
 
-    const rot = 200 * dt;
-    if (this.rotL || this.cursors.left.isDown) this.player.angle -= rot;
-    if (this.rotR || this.cursors.right.isDown) this.player.angle += rot;
+    const rot = 260 * dt;
+    if (this.rotL || this.cursors.left.isDown || this.keyA.isDown) this.player.angle -= rot;
+    if (this.rotR || this.cursors.right.isDown || this.keyD.isDown) this.player.angle += rot;
 
-    const thrust = this.thrusting || this.cursors.up.isDown;
+    const thrust = this.thrusting || this.pointerThrust
+      || this.cursors.up.isDown || this.keyW.isDown;
     if (thrust) {
       const rad = Phaser.Math.DegToRad(this.player.angle + 90);
-      this.player.body.velocity.x += Math.cos(rad) * 420 * dt;
-      this.player.body.velocity.y += Math.sin(rad) * 420 * dt;
+      this.player.body.velocity.x += Math.cos(rad) * 520 * dt;
+      this.player.body.velocity.y += Math.sin(rad) * 520 * dt;
     }
 
     if (this.keyFire.isDown) this.tryFire(this.player, this.myTeam, true);
@@ -443,7 +572,7 @@ class PlayScene extends Phaser.Scene {
       }
       this.playerHp = 100;
       this.player.x = GW * 0.5;
-      this.player.y = GH * 0.75;
+      this.player.y = this.playZoneBottom * 0.55;
       this.player.body.velocity.set(0);
       this.invuln = 2000;
       this.hudLives.setText('❤️'.repeat(G.lives));
@@ -535,40 +664,62 @@ class EndScene extends Phaser.Scene {
     this.add.text(cx, cy - GH * 0.12, this.won ? '🏆' : '💫',
       { fontSize: fz(0.12) }).setOrigin(0.5);
     this.add.text(cx, cy - GH * 0.02, this.won ? 'Your squad wins!' : 'Mission over',
-      { fontFamily: 'Fredoka One', fontSize: fz(0.065), fill: this.won ? '#ffe14d' : '#ff6eb4', stroke: '#000', strokeThickness: 4 })
+      Object.assign(textStyle(0.065, this.won ? '#ffe14d' : '#ff6eb4', true), { stroke: '#000', strokeThickness: 4 }))
       .setOrigin(0.5);
-    this.add.text(cx, cy + GH * 0.08, 'Score: ' + this.score,
-      { fontFamily: 'Nunito', fontSize: fz(0.04), fill: '#f0e6ff' }).setOrigin(0.5);
+    this.add.text(cx, cy + GH * 0.08, 'Score: ' + this.score, textStyle(0.04, '#f0e6ff', false)).setOrigin(0.5);
 
     if (this.won) {
       this.add.text(cx, cy + GH * 0.16, TEAMS[G.team].emoji + ' ' + TEAMS[G.team].name + ' rules the galaxy!',
-        { fontFamily: 'Nunito', fontSize: fz(0.028), fill: TEAMS[G.team].fill }).setOrigin(0.5);
+        textStyle(0.028, TEAMS[G.team].fill, false)).setOrigin(0.5);
     }
 
-    const bw = Math.min(GW * 0.4, 170);
-    makeBtn(this, cx - bw * 0.55, cy + GH * 0.28, 'Play Again 🚀', 0xffe14d, '#050818', fz(0.033), () => {
+    const fs = fontPx(0.033);
+    const againW = btnWidth('Play Again 🚀', fs);
+    const menuW = btnWidth('Menu 🌌', fs);
+    const gap = 12;
+    const total = againW + menuW + gap;
+    makeBtn(this, cx - total / 2 + againW / 2, cy + GH * 0.28, 'Play Again 🚀', 0xffe14d, '#050818', fs, () => {
       G.lives = 3;
       G.score = 0;
       this.scene.start('Play');
-    });
-    makeBtn(this, cx + bw * 0.55, cy + GH * 0.28, 'Menu 🌌', 0x3a2a5c, '#f0e6ff', fz(0.033), () => this.scene.start('Menu'), 0x5a4a7c);
+    }, 0xcc9900);
+    makeBtn(this, cx + total / 2 - menuW / 2, cy + GH * 0.28, 'Menu 🌌', 0x3a2a5c, '#f0e6ff', fs, () => this.scene.start('Menu'), 0x5a4a7c);
   }
 }
 
-new Phaser.Game({
-  type: Phaser.AUTO,
-  width: GW,
-  height: GH,
-  backgroundColor: '#050818',
-  parent: 'game-container',
-  physics: {
-    default: 'arcade',
-    arcade: { debug: false },
-  },
-  scene: [MenuScene, PlayScene, EndScene],
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
-  input: { touch: true, activePointers: 4 },
-});
+function bootPhaser() {
+  new Phaser.Game({
+    type: Phaser.AUTO,
+    width: GW,
+    height: GH,
+    backgroundColor: '#050818',
+    parent: 'game-container',
+    physics: {
+      default: 'arcade',
+      arcade: { debug: false },
+    },
+    scene: [MenuScene, PlayScene, EndScene],
+    scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+    input: { touch: true, mouse: true, activePointers: 6 },
+  });
+}
+
+function waitForFonts(done) {
+  let called = false;
+  const finish = () => { if (!called) { called = true; done(); } };
+  if (document.fonts && document.fonts.load) {
+    Promise.all([
+      document.fonts.load('16px "Fredoka One"'),
+      document.fonts.load('16px "Nunito"'),
+    ]).then(finish).catch(finish);
+    document.fonts.ready.then(finish).catch(finish);
+    setTimeout(finish, 1200);
+    return;
+  }
+  setTimeout(finish, 500);
+}
+
+waitForFonts(bootPhaser);
 </script>
 </body>
 </html>
