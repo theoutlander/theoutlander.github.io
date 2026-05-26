@@ -136,7 +136,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">💧 Build a <strong style="color:var(--yellow)">complete circuit</strong> — every pipe end must connect!<br><strong style="color:var(--yellow)">Drag pipes</strong> to move them · <strong style="color:var(--yellow)">tap</strong> to spin.<br>Gardens only get water when the loop is sealed 🌻</div>
+  <div class="sub">💧 Seal the hose path to each garden — <strong style="color:var(--yellow)">no open ends</strong>!<br><strong style="color:var(--yellow)">Drag pipes</strong> to move · <strong style="color:var(--yellow)">tap</strong> to spin.<br>Extra pipes not on the path fade out — you can ignore them.</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
   <button class="sec-btn" id="menu-games-btn">← All Games</button>
@@ -227,7 +227,7 @@ const LEVELS=[
   {name:'Quick Turn',par:1,rows:['S0 I0 L2 .','.  .  L3 G0']},
   {name:'Down the Garden',par:2,rows:['S0 I1 L0 .','.  I2 L3 G0']},
   {name:'Long Hose',par:2,rows:['S0 I1 I0 L0','.  .  .  G1']},
-  {name:'T Junction',par:2,tip:'↪️ T has 3 arms — connect every arm (cap counts too)!',rows:['.  .  K2 .  .','S0 I0 T2 I0 G0']},
+  {name:'T Junction',par:2,tip:'↪️ Point the T’s extra arm at the cap above!',rows:['.  .  K2 .  .','S0 I0 T2 I0 G0']},
   {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
   {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
   {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
@@ -243,8 +243,8 @@ const LEVELS=[
   {name:'Fix the Leaks',par:2,tip:'🔗 Close the loop — seal cracked pipes & every open end!',rows:['S0 B1 I0 B1 G0']},
   {name:'Valve Control',par:3,tip:'🚰 Tap valve twice: spin, then open!',rows:['S0 I1 V0 I1 G0']},
   {name:'Rainbow Hose',par:2,tip:'💙❤️ Match hose color to each flower!',rows:['Sb0 I1 Gb0','Sr0 I1 Gr0']},
-  {name:'Rush Hour',par:3,tip:'⏱ Beat the clock on a bigger field!',timer:90,rows:['.  .  S0 I1 L0 I0 .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
-  {name:'Big Backyard',par:4,tip:'📐 7×6 wide field — more room to think!',rows:['.  .  .  S0 I1 I0 I0 L0 .','.  .  .  .  .  I0 L2 I1 G0','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
+  {name:'Rush Hour',par:3,tip:'⏱ Beat the clock — seal the path!',timer:90,rows:['.  .  S0 I1 L0 .  .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
+  {name:'Big Backyard',par:4,tip:'📐 Wide field — seal one path to the flower!',rows:['.  .  .  S0 I1 I0 L0 .  .','.  .  .  .  .  .  L2 I1 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
   {name:'End of the World',par:5,theme:'apocalypse',tip:'🌍 Huge last stand — every trick you know!',timer:100,rows:['.  .  .  S0 I1 T1 I1 I0 .  .','.  .  #  .  I0 B1 g0  .  .  .','.  .  .  .  V0 L1 I0 L2 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
   {name:'Longest Hose',par:14,build:true,theme:'greenhouse',routeMin:16,budget:{I:8,L:8,T:4},tip:'🛤 8×8 field — build the LONGEST working route!',rows:BUILD_GRID},
   {name:'Shortest Hose',par:6,build:true,theme:'meadow',routeMax:7,budget:{I:6,L:6,T:3},tip:'⚡ Same big field — FEWEST pipes possible!',rows:BUILD_GRID},
@@ -469,12 +469,16 @@ function canDropAt(tr,tc,fr,fc){
   return true;
 }
 
-function transferPipe(fr,fc,tr,tc){
-  const from=grid[fr]&&grid[fr][fc];
-  if(!isMovable(from)||!canDropAt(tr,tc,fr,fc))return false;
+function transferPipe(fr,fc,tr,tc,fromCell){
+  const from=fromCell||grid[fr]&&grid[fr][fc];
+  if(!from||!isMovable(from)||!canDropAt(tr,tc,fr,fc))return false;
   const to=grid[tr][tc];
-  grid[tr][tc]=from;
-  grid[fr][fc]=to||null;
+  const placed=cloneCell(from);
+  grid[tr][tc]=placed;
+  if(tr!==fr||tc!==fc){
+    if(to&&isMovable(to))grid[fr][fc]=to;
+    else grid[fr][fc]=null;
+  }
   moves++;
   document.getElementById('moves').textContent=String(moves);
   playRotate();
@@ -553,26 +557,64 @@ function gardensReadyForWin(){
   return allGardenBucketsFull();
 }
 
-function countDryParts(filledSet){
-  let n=0;
+function isStrayPipeType(type){
+  return type==='I'||type==='L'||type==='T'||type==='B'||type==='V'||type==='X';
+}
+
+function structuralReachableFromSource(){
+  const seen=new Set();
+  const q=[];
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell=grid[r]&&grid[r][c];
-      if(!cell||cell.type==='#')continue;
-      if(!filledSet.has(r+','+c))n++;
+      if(cell&&cell.type==='S'){q.push([r,c]);seen.add(r+','+c);}
     }
   }
-  return n;
+  while(q.length){
+    const cur=q.shift();
+    const r=cur[0],c=cur[1];
+    for(let i=0;i<4;i++){
+      const dk=dirKey(DIRS[i]);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      const nk=nr+','+nc;
+      if(nr<0||nc<0||nr>=rows||nc>=cols||seen.has(nk))continue;
+      const nb=grid[nr]&&grid[nr][nc];
+      if(!nb||nb.type==='#')continue;
+      seen.add(nk);
+      q.push([nr,nc]);
+    }
+  }
+  return seen;
 }
 
-function allPartsConnected(filledSet){
-  return countDryParts(filledSet)===0;
+function hasReachableNeighbor(r,c,reach){
+  for(let i=0;i<4;i++){
+    const dk=dirKey(DIRS[i]);
+    const nr=r+DR[dk][0],nc=c+DR[dk][1];
+    if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
+    if(reach.has(nr+','+nc))return true;
+  }
+  return false;
+}
+
+function pruneStrayPipes(){
+  if(buildMode)return;
+  const reach=structuralReachableFromSource();
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(!cell||!isStrayPipeType(cell.type))continue;
+      const k=r+','+c;
+      if(reach.has(k))continue;
+      if(hasReachableNeighbor(r,c,reach))continue;
+      grid[r][c]=null;
+    }
+  }
 }
 
 function circuitComplete(filledSet){
   if(!filledSet||!filledSet.size)return false;
-  if(computeLeaks(filledSet).length>0)return false;
-  return allPartsConnected(filledSet);
+  return computeLeaks(filledSet).length===0;
 }
 
 function updateLeakBuckets(badLeakList){
@@ -801,6 +843,7 @@ function loadLevel(idx){
   leakBuckets=new Map();
   siphonStreams=[];
   clearDrag();
+  pruneStrayPipes();
   initGardenBuckets();
   updateBucketHud();
   spinAnim=null;
@@ -808,7 +851,7 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  if(!levelTip&&idx<3)levelTip='🔗 Drag pipes to move · tap to spin · close the circuit!';
+  if(!levelTip&&idx<3)levelTip='🔗 Drag pipes · tap to spin · seal the hose path!';
   buildMode=!!lv.build;
   routeMin=lv.routeMin!=null?lv.routeMin:null;
   routeMax=lv.routeMax!=null?lv.routeMax:null;
@@ -1044,6 +1087,7 @@ function computeFlow(){
 }
 
 function updateFlow(triggerWin){
+  pruneStrayPipes();
   const result=computeFlow();
   filled=result.filled;
   flowDist=result.dist;
@@ -1053,7 +1097,6 @@ function updateFlow(triggerWin){
   leaks=computeLeaks(filled);
   const openEnds=leaks.length;
   const circuitOk=circuitComplete(filled);
-  const dryParts=countDryParts(filled);
   updateLeakBuckets(leaks);
   updateGardenBuckets();
   updateBucketHud();
@@ -1105,8 +1148,7 @@ function updateFlow(triggerWin){
   }else if(!circuitOk&&filled.size>1){
     flowPhase=Math.max(flowPhase,0.03);
     if(openEnds>0)setStatus('🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!','flow');
-    else if(dryParts>0)setStatus('🔧 '+dryParts+' piece'+(dryParts>1?'s':'')+' not connected — use every pipe!','flow');
-    else setStatus('🔗 Connect every port — complete the circuit!','flow');
+    else setStatus('🔗 Connect every port on the hose path!','flow');
   }else if(result.goalReached&&openEnds>0){
     flowPhase=Math.max(flowPhase,0.04);
     setStatus('🔗 Fix '+openEnds+' joint'+(openEnds>1?'s':'')+' — pipes must connect!','flow');
@@ -1123,8 +1165,7 @@ function updateFlow(triggerWin){
     let gCount=0;
     for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
     if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!';
-    else if(dryParts>0&&filled.size>1)msg='🔧 Connect every pipe piece on the board!';
-    else if(filled.size>1)msg='Water flowing — finish the circuit!';
+    else if(filled.size>1)msg='Water flowing — seal the hose path!';
     setStatus(msg,filled.size>1||openEnds>0?'flow':'idle');
   }
 }
@@ -1740,11 +1781,14 @@ function drawPipe(r,c,cell){
   const k=r+','+c;
   const dist=flowDist.get(k);
   const hasWater=dist!==undefined&&flowPhase>=dist;
+  const onCircuit=filled.has(k);
+  const spare=isStrayPipeType(cell.type)&&!onCircuit;
   const m=maskFor(cell);
   let spin=0;
   if(spinAnim&&spinAnim.r===r&&spinAnim.c===c)spin=spinAnim.t*Math.PI/2;
 
   ctx.save();
+  if(spare)ctx.globalAlpha=.28;
   ctx.translate(cx,cy);
   ctx.rotate(spin);
   ctx.translate(-cx,-cy);
@@ -1974,6 +2018,7 @@ function onCanvasPointerMove(e){
   const dx=drag.x-drag.x0,dy=drag.y-drag.y0;
   if(!drag.moved&&drag.cell&&dx*dx+dy*dy>DRAG_THRESHOLD*DRAG_THRESHOLD){
     drag.moved=true;
+    grid[drag.r][drag.c]=null;
     ensureAnimLoop();
   }
 }
@@ -1982,7 +2027,7 @@ function onCanvasPointerUp(e){
   if(!drag||drag.pointerId!==e.pointerId)return;
   const wasDrag=drag.moved;
   const fr=drag.r,fc=drag.c;
-  const hadCell=!!drag.cell;
+  const lifted=drag.cell;
   const dropPt=pointerToCell(e.clientX,e.clientY);
   const tapPt=pointerToCell(drag.x0,drag.y0);
   clearDrag();
@@ -1990,11 +2035,12 @@ function onCanvasPointerUp(e){
   if(mode!=='play'||won||winPending)return;
   canvas.style.cursor='grab';
 
-  if(wasDrag&&hadCell){
-    if(dropPt&&transferPipe(fr,fc,dropPt.r,dropPt.c)){
+  if(wasDrag&&lifted){
+    if(dropPt&&transferPipe(fr,fc,dropPt.r,dropPt.c,lifted)){
       spinAnim={r:dropPt.r,c:dropPt.c,t:0};
-      setStatus('Pipe moved!','flow');
+      setStatus(dropPt.r===fr&&dropPt.c===fc?'Pipe turned!':'Pipe moved!','flow');
     }else{
+      grid[fr][fc]=lifted;
       setStatus('Drop on grass or swap with another pipe','idle');
       updateFlow(true);
     }

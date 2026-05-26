@@ -70,8 +70,9 @@ After **End of the World**, two **designer** challenges use the same **8×8** em
 - **Garden buckets** 🌻 — each goal has a bucket that **fills up** when water arrives (HUD shows `full/total`).
 - **Leak catch buckets** — bad leaks spawn small **🪣 buckets** on the board that fill; **tap a bucket** to empty it toward the hose.
 - **Spill bucket** (HUD) — leakage fills one meter; turns orange when high. **Use Again** sends that water back to the hose.
-- **Closed loop rule:** every open port on a wet pipe must connect — gaps, cracks, edges, and open ends into grass all block winning. Hose and garden only connect on their used side.
-- Gardens only count as watered when the **full circuit** is sealed and **every pipe piece** on the board is connected.
+- **Closed loop rule:** every open port on the **water path** must connect — gaps, cracks, edges, and open ends into grass block winning.
+- Gardens only count as watered when that path is a **sealed circuit** (no leaks).
+- **Spare pipes** not touching the hose cluster are removed automatically; pipes left off-path are drawn faint so they are easy to ignore.
 - Water sprays from any open end until you spin pipes to **close the loop**. Use Again reuses spilled water but **cannot win** until blocking leaks are fixed (`open ends = 0`).
 - **Puddles** at open ends; **overflow** droplets when gardens are full.
 - **Win rule:** gardens watered, **garden buckets full**, **closed loop** (zero open ends), plus route length on build levels.
