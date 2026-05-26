@@ -3,13 +3,13 @@
 **File:** `maya/legend-of-the-rainbow-dragon.html`
 **Framework:** Plain HTML/CSS/JS (DOM)
 **Status:** Phase 1+ shipped (solo, expanded content); Phase 2 API designed, not implemented
-**Inspired by:** BBS door game LORD (fan homage, not official)
+**Inspired by:** LORD (fan homage for adults; kids see **Sparkle Dragon 3000** as the in-game console name)
 
 ---
 
 ## Concept
 
-A kid-safe daily-turn fantasy RPG. Spend turns in town and the forest, level up, visit the Snack Bar for jokes and riddles, and defeat the Rainbow Dragon when strong enough.
+A kid-safe daily-turn fantasy RPG (**Legend of the Rainbow Dragon**; family nickname **LORD**). Cartoon “play-fighting” tone: monsters are fluffy or silly rivals; nobody dies; dragon ends as a friend; no blood, crude humor, bombs, skulls, or scary phrasing ("dark forest", phantom, etc.). Console UI name: **Sparkle Dragon 3000**.
 
 ---
 
@@ -48,7 +48,7 @@ Forest, Weapon Shop (weapons + armor), Healer, Inn, Snack Bar, **Bard's Stage** 
 - ~62% combat (common/tough/elite)
 - 8% treasure chest
 - 10% funny event (no combat)
-- **Elite** monsters (orange tag): tougher, better loot
+- **Star** monsters (orange tag): bonus loot, framed as sparkly friends — not Elite/gory
 - **Adventure Buddy** helps every 3rd combat round (+2 dmg)
 - **Charm:** better flee chance; +1 gold per 3 Charm on victory
 - Flee: 65% + 1% per Charm (max 90%); fail = forced fight
@@ -85,7 +85,7 @@ Once per day: random song buff (STR, HP, gold, Charm, or DEF).
 Free to read; new letter each day; spend 1 turn to request extra mail.
 
 ### Achievements (local)
-First Victory, level 5/10, 500 gold, 15 Charm, buddy, dragon, NG+, 50 kills.
+First Victory, level 5/10, 500 gold, 15 Charm, buddy, Rainbow Champion / NG+, 50 battles won (🏅 emoji, not skulls).
 
 ### Rainbow Dragon (boss)
 - Unlock at **level 12**
@@ -103,7 +103,7 @@ playerDmg = max(1, floor(STR + weaponStr) - floor(monster.def * 0.5))
 monsterDmg = max(1, floor(monster.atk) - floor(DEF * 0.4))
 ```
 
-Rounds alternate until monster HP ≤ 0 (win: XP + gold) or player HP ≤ 0 (**knocked out**: wake at inn, lose 25% gold, no death screen gore).
+Rounds alternate until monster HP ≤ 0 (**win**) or hero HP ≤ 0 (**sleepy scrape**: wake at inn, lose gold; no scary defeat screen).
 
 ---
 
@@ -125,7 +125,7 @@ On level up: +2 MaxHP, +1 STR, +1 DEF, full heal.
 | Tavern / flirt | Snack Bar (jokes, riddles) |
 | Marriage | Adventure Buddy mention only (flavor) |
 | Red Dragon | Rainbow Dragon |
-| Death | Knocked out → inn |
+| Death | Too tired → rest at inn (no death) |
 
 ---
 
@@ -165,7 +165,7 @@ On level up: +2 MaxHP, +1 STR, +1 DEF, full heal.
 ## Controls
 
 - Large tap buttons (min 44–48px by device)
-- Scrollable BBS-style log; main area scrolls if buttons overflow
+- Scrollable adventure log (Sparkle Dragon 3000); main area scrolls if buttons overflow
 - Responsive: iPhone (narrow + landscape), iPad (2-column town buttons), Mac (wider layout, hover, centered card at 1200px+)
 - Safe-area padding for notched iPhones
 - iPad-first; `touch-action: manipulation` on buttons

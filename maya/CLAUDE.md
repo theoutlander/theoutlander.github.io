@@ -182,10 +182,7 @@ Cook-and-sell tycoon: customer orders, recipe unlocks, shop upgrades. **Plain HT
 Skyline building toy. **Plain HTML/canvas**.
 
 ### 8. Legend of the Rainbow Dragon (`legend-of-the-rainbow-dragon.html`)
-BBS-style daily-turn RPG (LORD homage). Forest, shop, healer, inn, Snack Bar, Rainbow Dragon boss. **Plain HTML** (DOM UI).
-
-### 9. Star Squads! (`star-squads.html`) — **Phaser 4**
-Netrek-inspired team space battle: Federation vs Klingons, planet capture, bot enemies. See `docs/star-squads.md`.
+Daily-turn RPG (LORD homage). Family nickname **LORD**; in-game console **Sparkle Dragon 3000**. Forest, shop, healer, inn, Snack Bar, Rainbow Dragon boss. **Plain HTML** (DOM UI).
 
 ---
 

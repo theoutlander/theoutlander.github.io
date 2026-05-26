@@ -106,6 +106,7 @@ body{
 .ov.hidden{display:none!important}
 .ov-title{font-family:'Fredoka One',cursive;font-size:clamp(28px,8vw,42px);line-height:1.1;background:linear-gradient(135deg,var(--pink),var(--purple),var(--blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .ov-sub{font-size:13px;color:var(--muted);line-height:1.6;max-width:300px}
+.ov-nick{font-family:'Fredoka One',cursive;font-size:1.1rem;color:var(--yellow);letter-spacing:.06em;margin-top:-4px}
 .ov-big{font-size:56px}
 .avatar-grid{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:8px 0}
 .av-btn{font-size:2rem;width:56px;height:56px;border-radius:12px;border:3px solid transparent;background:var(--card);cursor:pointer;touch-action:manipulation}
@@ -240,7 +241,7 @@ body{
   <div class="screen" id="screen-hub">
     <div class="hub-title" id="hub-greet">Welcome, Hero!</div>
     <div class="bbs-frame hub-log">
-      <div class="bbs-bar">✨ SPARKLE BBS 3000 ✨</div>
+      <div class="bbs-bar" id="hub-console-bar">✨ SPARKLE DRAGON 3000 ✨</div>
       <div id="log"></div>
     </div>
     <div class="actions" id="hub-actions"></div>
@@ -305,11 +306,12 @@ body{
 
 <div class="ov" id="ov-title">
   <div class="ov-big">🐉🌈</div>
-  <div class="ov-title">Legend of the Rainbow Dragon</div>
-  <div class="ov-sub">Dial up adventure on Sparkle BBS 3000!<br>Daily turns · forest fights · beat the dragon!</div>
+  <div class="ov-title" id="ov-main-title">Legend of the Rainbow Dragon</div>
+  <div class="ov-nick" id="ov-nick">We call it LORD!</div>
+  <div class="ov-sub">Welcome to Sparkle Dragon 3000!<br>Daily turns · forest play-fights · befriend the dragon!</div>
   <button type="button" class="act-btn primary" id="btn-continue" style="max-width:280px;width:100%">Continue Adventure</button>
   <button type="button" class="act-btn muted" id="btn-new" style="max-width:280px;width:100%">New Hero</button>
-  <button type="button" class="act-btn lab hidden" id="btn-leave-lab" style="max-width:280px;width:100%">✕ Back to Game Lab</button>
+  <button type="button" class="act-btn lab" id="btn-leave-lab" style="max-width:280px;width:100%">✕ Back to Game Lab</button>
 </div>
 
 <div class="ov hidden" id="ov-create">
@@ -319,12 +321,13 @@ body{
   <div class="avatar-grid" id="avatar-grid"></div>
   <button type="button" class="act-btn primary" id="btn-start" style="max-width:280px;width:100%">Enter the Realm! ⚔️</button>
   <button type="button" class="act-btn muted" id="btn-create-cancel">Cancel</button>
+  <button type="button" class="act-btn lab" id="btn-create-leave">✕ Back to Game Lab</button>
 </div>
 
 <div class="ov hidden" id="ov-victory">
   <div class="ov-big">🏆</div>
-  <div class="ov-title">Dragon Defeated!</div>
-  <div class="ov-sub" id="victory-msg">You saved the realm!</div>
+  <div class="ov-title">You Did It!</div>
+  <div class="ov-sub" id="victory-msg">The dragon is your sparkly friend now!</div>
   <button type="button" class="act-btn primary" id="btn-victory-ok">Awesome! 🎉</button>
 </div>
 
@@ -339,6 +342,9 @@ body{
 
 <script>
 const SAVE_KEY = 'lord_rainbow_dragon_v1';
+const CONSOLE_NAME = 'Sparkle Dragon 3000';
+const GAME_TITLE = 'Legend of the Rainbow Dragon';
+const GAME_NICK = 'LORD';
 const MAX_TURNS = 18;
 const AVATARS = ['🧙‍♀️', '🧝‍♀️', '🦸‍♀️', '🦸', '🐱', '🦄', '🐉', '👸'];
 const BOSS_UNLOCK_LEVEL = 12;
@@ -362,7 +368,7 @@ const ARMOR = [
 
 const MONSTERS = [
   { name: 'Silly Slime', emoji: '🟢', hp: 4, atk: 2, def: 0, xp: 12, gold: 8, tier: 1 },
-  { name: 'Giggle Goblin', emoji: '👺', hp: 6, atk: 3, def: 1, xp: 18, gold: 12, tier: 1 },
+  { name: 'Giggle Goblin', emoji: '🤪', hp: 6, atk: 3, def: 1, xp: 18, gold: 12, tier: 1 },
   { name: 'Bouncy Bat', emoji: '🦇', hp: 5, atk: 4, def: 0, xp: 15, gold: 10, tier: 1 },
   { name: 'Puddle Pixie', emoji: '💧', hp: 5, atk: 3, def: 0, xp: 14, gold: 11, tier: 1 },
   { name: 'Moss Troll', emoji: '🧌', hp: 10, atk: 5, def: 2, xp: 28, gold: 20, tier: 2 },
@@ -370,25 +376,25 @@ const MONSTERS = [
   { name: 'Spark Wizard', emoji: '🧙', hp: 8, atk: 8, def: 1, xp: 32, gold: 22, tier: 2 },
   { name: 'Candy Crab', emoji: '🦀', hp: 9, atk: 5, def: 2, xp: 26, gold: 18, tier: 2 },
   { name: 'Stone Golem', emoji: '🗿', hp: 18, atk: 7, def: 5, xp: 50, gold: 35, tier: 3 },
-  { name: 'Shadow Wolf', emoji: '🐺', hp: 14, atk: 9, def: 3, xp: 45, gold: 30, tier: 3 },
+  { name: 'Silver Wolf', emoji: '🐺', hp: 14, atk: 9, def: 3, xp: 45, gold: 30, tier: 3 },
   { name: 'Crystal Sprite', emoji: '✨', hp: 10, atk: 10, def: 2, xp: 42, gold: 28, tier: 3 },
   { name: 'Giant Snail', emoji: '🐌', hp: 16, atk: 6, def: 6, xp: 40, gold: 32, tier: 3 },
   { name: 'Dragon Pup', emoji: '🐲', hp: 22, atk: 11, def: 4, xp: 65, gold: 45, tier: 4 },
   { name: 'Thunder Knight', emoji: '⚡', hp: 20, atk: 12, def: 6, xp: 70, gold: 50, tier: 4 },
-  { name: 'Phantom Jester', emoji: '🃏', hp: 15, atk: 13, def: 2, xp: 55, gold: 40, tier: 4 },
+  { name: 'Silly Jester', emoji: '🃏', hp: 15, atk: 13, def: 2, xp: 55, gold: 40, tier: 4 },
   { name: 'Lava Lizard', emoji: '🦎', hp: 24, atk: 14, def: 5, xp: 80, gold: 55, tier: 5 },
   { name: 'Moon Serpent', emoji: '🐍', hp: 20, atk: 15, def: 4, xp: 75, gold: 52, tier: 5 },
 ];
 
-const ELITE_NAMES = ['Elite', 'Super', 'Mega', 'Ultra'];
+const ELITE_NAMES = ['Rainbow', 'Star', 'Mega', 'Sparkly'];
 
 const FOREST_INTROS = [
   'You push through twisted trees...',
   'A chilly wind rattles the leaves.',
   'Your boots squish in mossy mud.',
   'Fireflies blink between the trunks.',
-  'You hear a twig snap nearby!',
-  'The path narrows. Something watches you.',
+  'You hear a twig snap — it is just a chipmunk!',
+  'The path narrows. A friendly face peeks from the trees!',
   'A squirrel drops an acorn on your head. Then —',
 ];
 
@@ -420,7 +426,7 @@ const SNACK_JOKES = [
 const SNACK_RIDDLES = [
   { q: 'I have keys but no locks. What am I?', opts: ['A piano', 'A dragon', 'A sword'], ans: 0 },
   { q: 'The more you take, the more you leave behind. What?', opts: ['Footsteps', 'Gold', 'Rainbows'], ans: 0 },
-  { q: 'What has a head and a tail but no body?', opts: ['A coin', 'A ghost', 'A muffin'], ans: 0 },
+  { q: 'What has a head and a tail but no body?', opts: ['A coin', 'A story', 'A muffin'], ans: 0 },
   { q: 'I fly without wings. I cry without eyes. What am I?', opts: ['A cloud', 'A sword', 'A goblin'], ans: 0 },
   { q: 'What gets wetter the more it dries?', opts: ['A towel', 'A dragon', 'The forest'], ans: 0 },
   { q: 'What has hands but cannot clap?', opts: ['A troll', 'A clock', 'A pancake'], ans: 1 },
@@ -440,14 +446,14 @@ const SNACK_RIDDLES = [
   { q: 'What gets bigger the more you take away from it?', opts: ['A balloon', 'A hole', 'A cookie'], ans: 1 },
   { q: 'What has a ring but no finger?', opts: ['A tree', 'A phone', 'A bell'], ans: 1 },
   { q: 'What comes down but never goes up?', opts: ['A hero', 'Rain', 'Smoke'], ans: 1 },
-  { q: 'What has legs but cannot walk?', opts: ['A spider', 'A table', 'A robot'], ans: 1 },
+  { q: 'What has legs but cannot walk?', opts: ['A chair', 'A table', 'A robot'], ans: 1 },
   { q: 'What can you break without touching it?', opts: ['A rock', 'A promise', 'A sword'], ans: 1 },
   { q: 'What is so fragile that saying its name breaks it?', opts: ['Glass', 'Silence', 'Ice'], ans: 1 },
   { q: 'What month has 28 days?', opts: ['Only February', 'All of them', 'Only June'], ans: 1 },
   { q: 'What has a bottom at the top?', opts: ['A mountain', 'Your legs', 'A hat'], ans: 1 },
   { q: 'What invention lets you look right through a wall?', opts: ['A spell', 'A window', 'A telescope'], ans: 1 },
   { q: 'What has lots of hearts but no other organs?', opts: ['A dragon', 'A deck of cards', 'A garden'], ans: 1 },
-  { q: 'What goes tick-tock but is not a clock?', opts: ['A bomb in cartoons', 'A metronome', 'Your heart'], ans: 2 },
+  { q: 'What goes tick-tock but is not a clock?', opts: ['A hopping frog', 'A metronome', 'Your heart'], ans: 2 },
   { q: 'I am tall when I am young and short when I am old. What am I?', opts: ['A hero', 'A tree', 'A candle'], ans: 2 },
   { q: 'What has stripes and goes roar but is not a tiger?', opts: ['A zebra', 'A dragon', 'Thunder'], ans: 2 },
   { q: 'What room has no doors or windows?', opts: ['A bedroom', 'A cave', 'A mushroom'], ans: 2 },
@@ -467,7 +473,7 @@ const BUDDIES = [
 ];
 
 const BARD_SONGS = [
-  { title: 'Ballad of the Brave', text: 'Your STR swells with courage!', str: 2 },
+  { title: 'Ballad of the Brave', text: 'Your STR grows with courage!', str: 2 },
   { title: 'Lullaby of Leaves', text: 'You feel cozy. +8 HP!', hp: 8 },
   { title: 'Coin Jingle Rag', text: 'Gold jingles into your pouch!', gold: 25 },
   { title: 'Charm Waltz', text: 'Everyone likes you more! +4 Charm.', charm: 4 },
@@ -476,11 +482,11 @@ const BARD_SONGS = [
 
 const NPC_MAIL = [
   { from: 'Town Elder 🧓', text: 'Brave one, the Rainbow Dragon snores glitter. Stock up at the shop!' },
-  { from: 'Healer Greenleaf 🌿', text: 'Remember: rest at the inn when HP is low. I charge less than knockout!' },
+  { from: 'Healer Greenleaf 🌿', text: 'When HP is low, rest at the inn for free — or pay me for a quick heal!' },
   { from: 'Snack Bar Betty 🧁', text: 'Try the riddles — I hide extra gold in the right answers!' },
-  { from: 'Forest Ranger 🌲', text: 'Elite monsters have orange names. Extra tough, extra loot!' },
+  { from: 'Forest Ranger 🌲', text: 'Orange tags mean extra-sparkly forest friends with bonus loot!' },
   { from: 'Bard Stringsong 🎵', text: 'Visit my stage once a day for a free buff. No turn wasted twice!' },
-  { from: 'Dad (SysOp) 💕', text: 'Maya — proud of you! Use your turns wisely and have fun.' },
+  { from: 'Dad 💕', text: 'Proud of you! Have a blast on Sparkle Dragon 3000!' },
 ];
 
 const ACHIEVEMENTS = [
@@ -490,9 +496,9 @@ const ACHIEVEMENTS = [
   { id: 'rich', em: '🪙', name: 'Treasure Hoarder', desc: 'Hold 500 gold' },
   { id: 'charming', em: '✨', name: 'Super Charming', desc: 'Reach 15 Charm' },
   { id: 'buddy', em: '🐾', name: 'Best Friends', desc: 'Recruit an Adventure Buddy' },
-  { id: 'dragon', em: '🐉', name: 'Dragon Slayer', desc: 'Defeat the Rainbow Dragon' },
-  { id: 'ng', em: '👑', name: 'Legend Retold', desc: 'Beat New Game+ dragon' },
-  { id: 'kills50', em: '💀', name: 'Monster Hunter', desc: 'Defeat 50 monsters' },
+  { id: 'dragon', em: '🐉', name: 'Rainbow Champion', desc: 'Befriend the Rainbow Dragon' },
+  { id: 'ng', em: '👑', name: 'Legend Retold', desc: 'Win the extra-tough dragon round' },
+  { id: 'kills50', em: '🏅', name: 'Monster Hunter', desc: 'Win 50 forest battles' },
 ];
 
 let audioCtx = null;
@@ -685,7 +691,7 @@ function seedForestEncounter(m) {
   const intro = FOREST_INTROS[Math.floor(Math.random() * FOREST_INTROS.length)];
   addForestLog(intro, 'fun');
   addForestLog(m.emoji + ' ' + m.name + ' blocks your path!', 'hi');
-  if (m.elite) addForestLog('⚠️ ELITE monster — extra tough, extra loot!', 'bad');
+  if (m.elite) addForestLog('⭐ Star monster — extra sparkly, extra loot!', 'hi');
   addForestLog('HP ' + m.hp + ' · ATK ' + m.atk + ' — Fight or Flee?', '');
 }
 
@@ -782,7 +788,7 @@ function knockout() {
   const lost = Math.floor(state.gold * 0.25);
   state.gold = Math.max(0, state.gold - lost);
   state.hp = state.maxHp;
-  addLog('💫 Knocked out! You wake at the inn. Lost ' + lost + ' gold.', 'bad');
+  addLog('💫 You got sleepy during the scrap! Wake at the inn. Lost ' + lost + ' gold.', 'bad');
   goToHub();
   updateHud();
   saveGame();
@@ -827,37 +833,44 @@ function notifyPortalScreen(name) {
   } catch (e) {}
 }
 
+function labIndexUrl() {
+  const p = location.pathname;
+  const i = p.lastIndexOf('/');
+  const base = i >= 0 ? p.slice(0, i + 1) : '/';
+  return base + 'index.html';
+}
+
 function leaveToLab() {
   if (inMayaPortal()) {
     try {
       window.parent.postMessage('maya:leave-game', '*');
     } catch (e) {}
+    return;
   }
+  window.location.href = labIndexUrl();
 }
 
 function syncPortalChrome() {
-  const show = inMayaPortal();
-  document.getElementById('btn-leave-lab').classList.toggle('hidden', !show);
+  document.getElementById('btn-leave-lab').classList.remove('hidden');
 }
 
 function syncHeaderBack(name) {
   const back = document.getElementById('back-btn');
-  if (inMayaPortal()) {
+  if (inMayaPortal() && name === 'hub') {
     back.classList.remove('hidden');
-    if (name === 'hub') {
-      back.textContent = '✕ Game Lab';
-    } else {
-      back.textContent = '← Town';
-    }
-  } else {
-    back.textContent = '← Town';
-    back.classList.toggle('hidden', name === 'hub');
+    back.textContent = '✕ Game Lab';
+    return;
   }
+  back.textContent = '← Town';
+  back.classList.toggle('hidden', name === 'hub');
 }
 
 function onHeaderBackClick() {
-  if (inMayaPortal() && currentScreen === 'hub') leaveToLab();
-  else goToHub();
+  if (inMayaPortal() && currentScreen === 'hub') {
+    leaveToLab();
+    return;
+  }
+  goToHub();
 }
 
 function goToHub() {
@@ -879,7 +892,7 @@ function showScreen(name) {
   document.getElementById('screen-mail').classList.toggle('hidden', name !== 'mail');
   document.getElementById('screen-bard').classList.toggle('hidden', name !== 'bard');
   syncHeaderBack(name);
-  const titles = { hub: 'Town Square', forest: 'Dark Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: "Bard's Stage" };
+  const titles = { hub: 'Town Square', forest: 'Friendly Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: "Bard's Stage" };
   document.getElementById('hdr-title').textContent = titles[name] || 'Rainbow Dragon';
   notifyPortalScreen(name);
 }
@@ -961,7 +974,7 @@ function goForest() {
   const elite = roll > 0.92;
   pendingMonster = scaleMonster(pickMonster(tough), elite);
   seedForestEncounter(pendingMonster);
-  const eliteTag = pendingMonster.elite ? '<span class="elite-tag">ELITE</span>' : '';
+  const eliteTag = pendingMonster.elite ? '<span class="elite-tag">STAR</span>' : '';
   document.getElementById('encounter-box').innerHTML =
     '<div class="enc-emoji">' + pendingMonster.emoji + '</div>' +
     '<div class="enc-name">' + pendingMonster.name + eliteTag + '</div>' +
@@ -1014,12 +1027,12 @@ function doFight() {
     if (mhp <= 0) break;
     const md = monsterDamage(m.atk);
     state.hp -= md;
-    addForestLog(m.name + ' hits you for ' + md + '!', 'bad');
+    addForestLog(m.name + ' tags you (-' + md + ' HP)!', 'bad');
     updateHud();
     round++;
   }
   if (state.hp <= 0) {
-    addForestLog('You got knocked out...', 'bad');
+    addForestLog('Too tired... nap time!', 'bad');
     pendingMonster = null;
     knockout();
     return;
@@ -1029,7 +1042,7 @@ function doFight() {
   state.xp += m.xp;
   state.kills++;
   addForestLog('Victory! +' + m.xp + ' XP, +' + (m.gold + bonus) + ' gold', 'hi');
-  addLog('⚔️ Defeated ' + m.name + '! +' + m.xp + ' XP', 'hi');
+  addLog('⚔️ Outsmarted ' + m.name + '! +' + m.xp + ' XP', 'hi');
   if (bonus > 0) addLog('✨ Charm bonus: +' + bonus + ' gold', 'fun');
   sfx('win');
   checkLevelUp();
@@ -1254,7 +1267,7 @@ function goDragon() {
   document.getElementById('log-dragon').innerHTML = '';
   document.getElementById('dragon-hp-text').textContent = 'HP: ' + state.dragonHp + ' / ' + max;
   addDragonLog(state.newGamePlus >= 1 ? 'The dragon returned stronger!' : 'The Rainbow Dragon roars in glitter!', 'hi');
-  addDragonLog('Each attack costs 1 turn. Chip away its HP!', '');
+  addDragonLog('Each turn you land a sparkly hit. Friendly contest!', '');
   showScreen('dragon');
 }
 
@@ -1273,7 +1286,7 @@ function dragonAttack() {
   if (state.dragonDefeated) return;
   const dmg = Math.max(5, Math.floor((state.str + weaponStr()) * 1.5));
   state.dragonHp = Math.max(0, state.dragonHp - dmg);
-  addDragonLog('You strike for ' + dmg + ' damage!', 'hi');
+  addDragonLog('Bonk! ' + dmg + ' sparkle-points!', 'hi');
   const max = bossMaxHp();
   document.getElementById('dragon-hp-text').textContent = 'HP: ' + state.dragonHp + ' / ' + max;
   sfx('hit');
@@ -1282,11 +1295,11 @@ function dragonAttack() {
     state.dragonDefeated = true;
     addDragonLog('The Rainbow Dragon surrenders with a sparkly sneeze!', 'hi');
     const ng = state.newGamePlus >= 1;
-    addLog(ng ? '🏆 LEGEND! You beat New Game+!' : '🏆 YOU DEFEATED THE RAINBOW DRAGON!', 'hi');
+    addLog(ng ? '🏆 Super legend! You mastered the sparkle rematch!' : '🏆 The Rainbow Dragon gives up … you saved the realm!', 'hi');
     sfx('win');
     checkAchievements();
     saveGame();
-    document.getElementById('victory-msg').textContent = state.name + ' the mighty ' + state.avatar + (ng ? ' is a true legend!' : ' saved the realm!');
+    document.getElementById('victory-msg').textContent = state.name + ' the brave ' + state.avatar + (ng ? ' is a double legend!' : ' made friends with the sparkly dragon!');
     document.getElementById('ov-victory').classList.remove('hidden');
     buildHubActions();
     return;
@@ -1294,10 +1307,10 @@ function dragonAttack() {
 
   const counter = Math.max(3, Math.floor(8 + state.level * 0.5));
   state.hp -= counter;
-  addDragonLog('Dragon tail-swipe! You take ' + counter + ' damage.', 'bad');
+  addDragonLog('Woosh! Sparkly tail-wiggle — lose ' + counter + ' HP!', 'bad');
   updateHud();
   if (state.hp <= 0) {
-    addDragonLog('Knocked out! Dragged to the inn...', 'bad');
+    addDragonLog('So sleepy… friends walk you back to the inn!', 'bad');
     knockout();
   }
   saveGame();
@@ -1331,7 +1344,7 @@ function goStats() {
     ['Gold', state.gold],
     ['Weapon', weaponName()],
     ['Armor', (ARMOR.find(function(a){return a.id===state.armorId;})||{}).name],
-    ['Monsters defeated', state.kills],
+    ['Battles won', state.kills],
     ['Buddy', state.buddy ? state.buddy.emoji + ' ' + state.buddy.name : 'None yet'],
     ['Dragon', state.dragonDefeated ? (state.newGamePlus >= 1 ? 'NG+ beaten!' : 'Defeated!') : (state.dragonHp + ' HP left')],
   ];
@@ -1463,7 +1476,8 @@ function createHero() {
   state.created = true;
   state.log = [
     '══════════════════════════',
-    ' LEGEND OF THE RAINBOW DRAGON',
+    ' ✨ ' + CONSOLE_NAME.toUpperCase() + ' ✨',
+    ' (' + GAME_NICK + ' at home!)',
     '══════════════════════════',
     'Welcome, ' + name + '! ' + selectedAvatar,
     'You have ' + MAX_TURNS + ' turns today.',
@@ -1475,6 +1489,8 @@ function createHero() {
 }
 
 function init() {
+  var hubBar = document.getElementById('hub-console-bar');
+  if (hubBar) hubBar.textContent = '✨ ' + CONSOLE_NAME.toUpperCase() + ' ✨';
   syncPortalChrome();
   window.addEventListener('message', function(ev) {
     if (ev.data === 'maya:nav-back') goToHub();
@@ -1489,13 +1505,7 @@ function init() {
 }
 
 window.mayaGameCanGoBack = function() {
-  if (!document.getElementById('ov-no-turns').classList.contains('hidden')) return true;
-  if (!state.created) return false;
-  if (currentScreen === 'hub') return false;
-  if (!document.getElementById('ov-title').classList.contains('hidden')) return false;
-  if (!document.getElementById('ov-create').classList.contains('hidden')) return false;
-  if (!document.getElementById('ov-victory').classList.contains('hidden')) return false;
-  return true;
+  return false;
 };
 
 document.getElementById('btn-continue').addEventListener('click', startGame);
@@ -1507,6 +1517,7 @@ document.getElementById('btn-create-cancel').addEventListener('click', function(
 });
 document.getElementById('back-btn').addEventListener('click', onHeaderBackClick);
 document.getElementById('btn-leave-lab').addEventListener('click', leaveToLab);
+document.getElementById('btn-create-leave').addEventListener('click', leaveToLab);
 document.getElementById('shop-back').addEventListener('click', goToHub);
 document.getElementById('dragon-back').addEventListener('click', goToHub);
 document.getElementById('stats-back').addEventListener('click', goToHub);

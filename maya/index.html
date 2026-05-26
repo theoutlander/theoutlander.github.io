@@ -98,19 +98,23 @@ header{text-align:center;padding:48px 0 36px}
 .gg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:640px){.gg{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:380px){.gg{grid-template-columns:1fr}}
-.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
 .gc:hover{transform:translateY(-4px);box-shadow:0 14px 44px rgba(0,0,0,.5)}
-.ga{height:120px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
+.ga{height:120px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
 .ga::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--card))}
-.gb{padding:12px 14px 16px}
+.ga-p1{background:linear-gradient(135deg,#2d1260,#1a0a3c)}
+.ga-p2{background:linear-gradient(135deg,#0a2840,#0d4020)}
+.ga-p3{background:linear-gradient(135deg,#3d1a00,#1a0a00)}
+.ga-p4{background:linear-gradient(135deg,#0a1628,#1a2a4a)}
+.ga-p5{background:linear-gradient(135deg,#1a3a1a,#0a2010)}
+.ga-p6{background:linear-gradient(135deg,#2a0840,#4a1060)}
+.gb{flex:1;display:flex;flex-direction:column;padding:12px 14px 16px;min-height:168px}
 .gt{font-family:'Fredoka One',cursive;font-size:18px;line-height:1.1;margin-bottom:3px}
-.gd{font-size:11px;color:var(--muted);line-height:1.5}
-.tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px}
+.gd{flex:1;font-size:11px;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
-.ts{background:rgba(255,110,180,.1);color:var(--pink);border:1px solid rgba(255,110,180,.18)}
 .pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
 .pb:active{background:rgba(255,255,255,.2);transform:scale(.97)}
-.gc.soon{opacity:.45;pointer-events:none}
 
 /* Doodle */
 #doodle-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -198,10 +202,10 @@ header{text-align:center;padding:48px 0 36px}
   <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
   <div id="gotw">
     <span class="gotw-badge">✨ New!</span>
-    <div class="gotw-em" id="ge">🚀</div>
+    <div class="gotw-em" id="ge">🐉</div>
     <div class="gotw-info">
-      <div class="gotw-title" id="gtt">Star Squads!</div>
-      <div class="gotw-desc" id="gdt">Team space battle — capture planets or blast the enemy squad!</div>
+      <div class="gotw-title" id="gtt">Legend of the Rainbow Dragon!</div>
+      <div class="gotw-desc" id="gdt">Daily turns on Sparkle Dragon 3000 — forest fights and a sparkly dragon boss!</div>
     </div>
     <button class="gotw-btn">▶ Play!</button>
   </div>
@@ -210,34 +214,25 @@ header{text-align:center;padding:48px 0 36px}
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0a1628,#1a2848)">🚀</div>
+      <div class="ga ga-p6">🐉</div>
       <div class="gb">
-        <div class="gt">Star Squads!</div>
-        <div class="gd">Pick Federation or Klingons! Fly, shoot, and capture all the planets!</div>
+        <div class="gt">LORD! 🐉</div>
+        <div class="gd">Legend of the Rainbow Dragon — Dad's sparkly LORD! Daily turns, forest, beat the dragon.</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('star-squads.html','Star Squads! 🚀')">▶ Play Now</button>
+        <button class="pb" data-game="legend-of-the-rainbow-dragon.html" data-title="LORD! 🐉 Rainbow Dragon">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#2a0840,#4a1060)">🐉</div>
-      <div class="gb">
-        <div class="gt">Legend of the Rainbow Dragon!</div>
-        <div class="gd">BBS-style daily turns! Fight in the forest, visit the Snack Bar, and defeat the Rainbow Dragon!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('legend-of-the-rainbow-dragon.html','Legend of the Rainbow Dragon! 🐉')">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0a2840,#0d4020)">💧</div>
+      <div class="ga ga-p2">💧</div>
       <div class="gb">
         <div class="gt">Pipe Flow!</div>
-        <div class="gd">Spin the pipes and connect the hose to the garden field. Water the crops!</div>
+        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('pipe-flow.html','Pipe Flow! 💧')">▶ Play Now</button>
+        <button class="pb" data-game="pipe-flow.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#3d1a00,#1a0a00)">🍳</div>
+      <div class="ga ga-p3">🍳</div>
       <div class="gb">
         <div class="gt">Maya's Kitchen!</div>
         <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
@@ -246,25 +241,25 @@ header{text-align:center;padding:48px 0 36px}
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0a1628,#1a2a4a)">🏙️</div>
+      <div class="ga ga-p4">🏙️</div>
       <div class="gb">
         <div class="gt">City Builder!</div>
-        <div class="gd">Place bricks, windows, doors and rooftops to build your own glittering city skyline!</div>
+        <div class="gd">Place bricks, windows, doors, and rooftops to build a glittering skyline!</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" data-game="skyline-builder.html" data-title="City Builder! 🏙️">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#1a3a1a,#0a2010)">🏰</div>
+      <div class="ga ga-p5">🏰</div>
       <div class="gb">
         <div class="gt">Castle Defenders!</div>
-        <div class="gd">Chop wood by day, forge weapons at the forge, then fight off the zombie horde at night!</div>
+        <div class="gd">Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" data-game="castle-defenders.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#2d1260,#1a0a3c)">🪅</div>
+      <div class="ga ga-p1">🪅</div>
       <div class="gb">
         <div class="gt">Piñata Piano!</div>
         <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
@@ -273,29 +268,21 @@ header{text-align:center;padding:48px 0 36px}
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0d0520,#2d1260)">👻</div>
+      <div class="ga ga-p1">👻</div>
       <div class="gb">
-        <div class="gt">Dust Chasers</div>
+        <div class="gt">Dust Chasers!</div>
         <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="dust-chasers.html" data-title="Dust Chasers 👻">▶ Play Now</button>
+        <button class="pb" data-game="dust-chasers.html" data-title="Dust Chasers! 👻">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#1a3a20,#0a2010)">🌈</div>
+      <div class="ga ga-p5">🌈</div>
       <div class="gb">
-        <div class="gt">Spell It! 🌈</div>
-        <div class="gd">Letters rain down — tap them in order to spell the word! Grade 1 to 5.</div>
+        <div class="gt">Spell It!</div>
+        <div class="gd">Letters rain down — tap them in order to spell the word! Grades 1–5.</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" data-game="letter-tumble.html" data-title="Spell It! 🌈">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc soon">
-      <div class="ga" style="background:linear-gradient(135deg,#1a1030,#0f0a1e)">🌙✨</div>
-      <div class="gb">
-        <div class="gt">Coming Soon...</div>
-        <div class="gd">Dad is dreaming up something new. Check back after our next call!</div>
-        <span class="tag ts">In progress ✨</span>
       </div>
     </div>
   </div>
@@ -346,7 +333,7 @@ header{text-align:center;padding:48px 0 36px}
 <!-- Game modal -->
 <div id="gm">
   <div id="mb">
-    <button id="mc">← Back</button>
+    <button id="mc" type="button">✕ Game Lab</button>
     <div id="mt"></div>
   </div>
   <iframe id="gf" allowfullscreen></iframe>
@@ -442,14 +429,13 @@ setTimeout(()=>{
 
 // ===== GAME OF THE WEEK =====
 const GLIST=[
-  {em:'🚀',title:'Star Squads!',desc:'Team space battle — capture planets or blast the enemy squad!',file:'star-squads.html'},
-  {em:'🐉',title:'Legend of the Rainbow Dragon!',desc:'Daily turns, forest fights, and a sparkly dragon boss!',file:'legend-of-the-rainbow-dragon.html'},
+  {em:'🐉',title:'LORD! 🐉 Rainbow Dragon',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'legend-of-the-rainbow-dragon.html'},
   {em:'💧',title:'Pipe Flow!',desc:'Spin pipes to connect the hose to the garden field!',file:'pipe-flow.html'},
   {em:'🍳',title:"Maya's Kitchen!",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'mayas-kitchen.html'},
   {em:'🏙️',title:'City Builder!',desc:'Build a glittering city skyline brick by brick!',file:'skyline-builder.html'},
   {em:'🏰',title:'Castle Defenders!',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'castle-defenders.html'},
   {em:'🪅',title:'Piñata Piano!',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'pinata-piano-v2.html'},
-  {em:'👻',title:'Dust Chasers',desc:'Find the invisible dust people lurking in the dark!',file:'dust-chasers.html'},
+  {em:'👻',title:'Dust Chasers!',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'dust-chasers.html'},
   {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
 ];
 const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
@@ -505,7 +491,7 @@ function gameIframeUrl(file){
 function openGameInModal(file,title){
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
-  updateModalBackLabel('hub');
+  updateModalBackLabel();
   document.body.style.overflow='hidden';
   gm.style.visibility='';
   gmLoad.classList.remove('done');
@@ -513,6 +499,8 @@ function openGameInModal(file,title){
   gf.src=gameIframeUrl(file);
   gm.classList.add('open');
 }
+var mayaClosingGame=false;
+
 function closeGameCore(){
   gm.classList.remove('open');
   gm.style.visibility='';
@@ -530,6 +518,12 @@ function closeGameCore(){
     blankIframe();
   },{once:true});
 }
+function exitToLab(){
+  mayaClosingGame=true;
+  closeGameCore();
+  history.replaceState(null,'',mayaDirectoryPath());
+  setTimeout(function(){ mayaClosingGame=false; },150);
+}
 function openGame(file,title){
   if(gm.classList.contains('open')){
     closeGameCore();
@@ -542,41 +536,20 @@ function openGame(file,title){
     history.pushState({mayaIframe:true,file:file},'',url);
   }
 }
-function tryGameNavBack(){
-  const gf=document.getElementById('gf');
-  const gm=document.getElementById('gm');
-  if(!gm.classList.contains('open')||!gf||!gf.contentWindow)return false;
-  try{
-    const w=gf.contentWindow;
-    if(typeof w.mayaGameCanGoBack==='function'&&w.mayaGameCanGoBack()){
-      w.postMessage('maya:nav-back','*');
-      return true;
-    }
-  }catch(e){}
-  return false;
-}
-function updateModalBackLabel(screen){
+function updateModalBackLabel(){
   const mc=document.getElementById('mc');
-  if(!mc)return;
-  mc.textContent=(screen&&screen!=='hub')?'← Town':'✕ Game Lab';
+  if(mc)mc.textContent='✕ Game Lab';
 }
 function closeGame(){
-  if(tryGameNavBack())return;
-  var wasGame=history.state&&history.state.mayaIframe;
-  closeGameCore();
-  if(wasGame){
-    history.back();
-  }else if(pathnameGameFile()){
-    history.replaceState(history.state,'',mayaDirectoryPath());
-  }
+  exitToLab();
 }
 window.addEventListener('message',function(ev){
-  if(ev.data&&ev.data.type==='maya:screen')updateModalBackLabel(ev.data.screen);
   if(ev.data==='maya:leave-game'||(ev.data&&ev.data.type==='maya:leave-game')){
-    if(gm.classList.contains('open'))closeGame();
+    if(gm.classList.contains('open'))exitToLab();
   }
 });
 function onGameModalPopState(){
+  if(mayaClosingGame)return;
   var file=pathnameGameFile();
   if(!file){
     if(gm.classList.contains('open'))closeGameCore();
@@ -589,11 +562,13 @@ function onGameModalPopState(){
 }
 window.addEventListener('popstate',onGameModalPopState);
 
-// Close button — pointerdown for instant iPad response
-document.getElementById('mc').addEventListener('pointerdown',function(e){
-  e.preventDefault();
-  closeGame();
-});
+// Close button — always returns to Game Lab (one tap, no trapped navigation)
+function onModalBack(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  exitToLab();
+}
+document.getElementById('mc').addEventListener('pointerdown',onModalBack);
+document.getElementById('mc').addEventListener('click',onModalBack);
 
 // ===== DOODLE PAD =====
 const dc=document.getElementById('dc');

@@ -62,11 +62,17 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 #use-again-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
 #use-again-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
 #route-pill{color:var(--purple)}
-#build-palette{display:none;flex-shrink:0;gap:6px;padding:0 2px 4px}
-#build-palette.show{display:flex}
-.pipe-pick{flex:1;font-family:'Fredoka One',cursive;font-size:13px;padding:10px 6px;border-radius:10px;border:2px solid var(--border);background:rgba(255,255,255,.06);color:var(--muted);cursor:pointer;min-height:44px}
-.pipe-pick.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(255,225,77,.12)}
-.pipe-pick .cnt{font-size:11px;opacity:.85}
+#kit-bar{display:none;flex-shrink:0;flex-direction:column;gap:6px;padding:0 4px 6px}
+#kit-bar.show{display:flex}
+#kit-step{font-size:12px;font-weight:900;color:var(--yellow);text-align:center;line-height:1.3}
+#build-palette{display:flex;gap:6px;width:100%}
+.pipe-pick{flex:1;font-family:'Fredoka One',cursive;font-size:12px;padding:8px 4px;border-radius:10px;border:2px solid var(--border);background:rgba(255,255,255,.06);color:var(--muted);cursor:pointer;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.15}
+.pipe-pick.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(255,225,77,.14)}
+.pipe-pick .kit-name{font-size:11px;letter-spacing:.02em}
+.pipe-pick .cnt{font-size:13px;color:var(--blue)}
+.pipe-pick.sel .cnt{color:var(--yellow)}
+.pipe-pick[data-pipe="erase"] .cnt{display:none}
+.pipe-pick.hidden{display:none}
 
 #board-wrap{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
 #game{width:100%;height:100%;display:block;touch-action:none}
@@ -115,11 +121,14 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
     <div id="status-pill">Tap pipes to spin!</div>
   </div>
   <div id="mechanic-tip"></div>
-  <div id="build-palette">
-    <button type="button" class="pipe-pick sel" data-pipe="I">━ <span class="cnt" id="cnt-I">0</span></button>
-    <button type="button" class="pipe-pick" data-pipe="L">└ <span class="cnt" id="cnt-L">0</span></button>
-    <button type="button" class="pipe-pick" data-pipe="T">┳ <span class="cnt" id="cnt-T">0</span></button>
-    <button type="button" class="pipe-pick" data-pipe="erase">🗑</button>
+  <div id="kit-bar">
+    <div id="kit-step">1. Pick a pipe · 2. Tap a + on the grid</div>
+    <div id="build-palette">
+      <button type="button" class="pipe-pick sel" data-pipe="I"><span class="kit-name">Straight</span><span class="cnt" id="cnt-I">0</span></button>
+      <button type="button" class="pipe-pick" data-pipe="L"><span class="kit-name">Corner</span><span class="cnt" id="cnt-L">0</span></button>
+      <button type="button" class="pipe-pick" data-pipe="T"><span class="kit-name">3-way</span><span class="cnt" id="cnt-T">0</span></button>
+      <button type="button" class="pipe-pick" data-pipe="erase"><span class="kit-name">Remove</span><span class="cnt"> </span></button>
+    </div>
   </div>
   <div id="board-wrap">
     <canvas id="game"></canvas>
@@ -136,7 +145,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">💧 Seal the hose path to each garden — <strong style="color:var(--yellow)">no open ends</strong>!<br><strong style="color:var(--yellow)">Drag pipes</strong> to move · <strong style="color:var(--yellow)">tap</strong> to spin.<br>Extra pipes not on the path fade out — you can ignore them.</div>
+  <div class="sub">Connect the shower to the flower!<br>Pick a pipe below the board, tap a <strong style="color:var(--yellow)">+</strong> square, then spin pipes to aim the water.</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
   <button class="sec-btn" id="menu-games-btn">← All Games</button>
@@ -223,14 +232,14 @@ function defaultTheme(idx){
 }
 
 const LEVELS=[
-  {name:'First Drop',par:1,rows:['S0 I2 I1 G0']},
-  {name:'Quick Turn',par:1,rows:['S0 I0 L2 .','.  .  L3 G0']},
-  {name:'Down the Garden',par:2,rows:['S0 I1 L0 .','.  I2 L3 G0']},
-  {name:'Long Hose',par:2,rows:['S0 I1 I0 L0','.  .  .  G1']},
-  {name:'T Junction',par:2,tip:'↪️ Point the T’s extra arm at the cap above!',rows:['.  .  K2 .  .','S0 I0 T2 I0 G0']},
-  {name:'Garden Gate',par:2,rows:['.  S0 I0 L0 .','.  .  .  L1 G0']},
-  {name:'Double Bend',par:3,rows:['S0 L2 I1 .','.  L1 I1 G0']},
-  {name:'Fork in the Path',par:3,rows:['.  .  S0 I1 T3 I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
+  {name:'First Drop',par:3,tip:'Pick Straight, tap both + squares.',rows:['S0 .  .  G0'],budget:{I:2,L:0,T:0}},
+  {name:'Quick Turn',par:3,tip:'Use Straight and Corner to link the pieces.',rows:['S0 L0 .  .','.  .  .  G0'],budget:{I:1,L:1,T:0}},
+  {name:'Down the Garden',par:4,tip:'Fill every + with pipes from the bar.',rows:['S0 .  .  .','.  I0 .  G0'],budget:{I:2,L:1,T:0}},
+  {name:'Long Hose',par:4,tip:'Bridge the big gap to the flower.',rows:['S0 I0 .  L0','.  .  .  G0'],budget:{I:2,L:0,T:0}},
+  {name:'T Junction',par:5,tip:'Point the 3-way at the rock above. Fill the gaps.',rows:['.  .  K2 .  .','S0 I0 .  T2 .','.  .  .  I0 G0'],budget:{I:2,L:0,T:1}},
+  {name:'Garden Gate',par:4,tip:'🚪 Two segments — kit pipes link the gate!',rows:['.  S0 I0 .  .','.  .  .  .  G0'],budget:{I:1,L:1,T:0}},
+  {name:'Double Bend',par:5,tip:'〰️ Two corners needed between the pieces!',rows:['S0 L0 .  .','.  .  .  G0'],budget:{I:1,L:2,T:0}},
+  {name:'Fork in the Path',par:4,tip:'🧩 Fill the gaps between hose pieces!',rows:['.  .  S0 I1 .  I1 .','.  .  .  .  L2 G0','.  .  .  .  .  .','.  .  .  .  .  .'],budget:{I:2,L:1,T:1}},
   {name:'Plumber Puzzle',par:3,rows:['.  .  S0 I3 T2 .','.  .  .  I0 L0 G0','.  .  .  .  .  .','.  .  .  .  .  .']},
   {name:'Snake Path',par:3,rows:['.  S0 I3 L2 I0 L3 .','.  .  .  L1 G0 .','.  .  .  .  .  .','.  .  .  .  .  .']},
   {name:'Twisty Turn',par:3,rows:['.  S0 I2 L0 I1 L0 .','.  .  I0 L2 I1 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
@@ -246,9 +255,9 @@ const LEVELS=[
   {name:'Rush Hour',par:3,tip:'⏱ Beat the clock — seal the path!',timer:90,rows:['.  .  S0 I1 L0 .  .','.  .  .  I1 L3 G0 .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .']},
   {name:'Big Backyard',par:4,tip:'📐 Wide field — seal one path to the flower!',rows:['.  .  .  S0 I1 I0 L0 .  .','.  .  .  .  .  .  L2 I1 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
   {name:'End of the World',par:5,theme:'apocalypse',tip:'🌍 Huge last stand — every trick you know!',timer:100,rows:['.  .  .  S0 I1 T1 I1 I0 .  .','.  .  #  .  I0 B1 g0  .  .  .','.  .  .  .  V0 L1 I0 L2 G0 .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .  .  .']},
-  {name:'Longest Hose',par:14,build:true,theme:'greenhouse',routeMin:16,budget:{I:8,L:8,T:4},tip:'🛤 8×8 field — build the LONGEST working route!',rows:BUILD_GRID},
-  {name:'Shortest Hose',par:6,build:true,theme:'meadow',routeMax:7,budget:{I:6,L:6,T:3},tip:'⚡ Same big field — FEWEST pipes possible!',rows:BUILD_GRID},
-  {name:'Secret Garden',par:2,theme:'secret',secret:true,tip:'🤫 You found the hidden level!',rows:['S0 I1 I0 G0','.  .  g0  .']},
+  {name:'Longest Hose',par:14,build:true,theme:'greenhouse',routeMin:14,budget:{I:10,L:8,T:4},tip:'🛤 Big field — place pipes from the kit to make the longest route!',rows:BUILD_GRID},
+  {name:'Shortest Hose',par:6,build:true,theme:'meadow',routeMax:8,budget:{I:6,L:5,T:2},tip:'⚡ Same field — use the fewest kit pipes you can!',rows:BUILD_GRID},
+  {name:'Secret Garden',par:3,theme:'secret',secret:true,tip:'🤫 You found the hidden level!',rows:['S0 .  I0 G0','.  .  g0  .'],budget:{I:1,L:1,T:0}},
 ];
 
 let canvas,ctx,levelIdx=0,grid=[],initialGrid=[],moves=0,levelPar=1;
@@ -422,25 +431,179 @@ function updateRouteHud(len){
   else val.textContent=String(len);
 }
 
+function kitTotal(){
+  return (buildInventory.I||0)+(buildInventory.L||0)+(buildInventory.T||0);
+}
+
+function kitActive(){
+  return buildMode||kitTotal()>0;
+}
+
+function countGridGaps(){
+  let n=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(!grid[r]||!grid[r][c])n++;
+    }
+  }
+  return n;
+}
+
+function gapTouchesHose(r,c){
+  for(let i=0;i<4;i++){
+    const dk=dirKey(DIRS[i]);
+    const nr=r+DR[dk][0],nc=c+DR[dk][1];
+    if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
+    const nb=grid[nr]&&grid[nr][nc];
+    if(!nb||nb.type==='#')continue;
+    if(nb.type==='S'||nb.type==='G'||nb.type==='K'||MASKS[nb.type])return true;
+  }
+  return false;
+}
+
+function countBridgingGaps(){
+  let n=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      if(grid[r]&&grid[r][c])continue;
+      if(gapTouchesHose(r,c))n++;
+    }
+  }
+  return n;
+}
+
+function defaultBudgetForGaps(){
+  const gaps=countBridgingGaps();
+  if(gaps<1)return null;
+  return {I:Math.max(1,gaps),L:Math.max(1,Math.ceil(gaps/2)),T:gaps>=4?1:0};
+}
+
+function countDryPipes(){
+  let n=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(!cell||!MASKS[cell.type]||cell.type==='S'||cell.type==='G'||cell.type==='K')continue;
+      if(!filled.has(r+','+c))n++;
+    }
+  }
+  return n;
+}
+
+function applyLevelKit(lv){
+  if(lv.budget)return {I:lv.budget.I||0,L:lv.budget.L||0,T:lv.budget.T||0};
+  const d=defaultBudgetForGaps();
+  if(d)return d;
+  if(lv.build)return {I:10,L:8,T:4};
+  return {I:2,L:1,T:0};
+}
+
+function pickKitPipeWithStock(){
+  if((buildInventory.I||0)>0)return 'I';
+  if((buildInventory.L||0)>0)return 'L';
+  if((buildInventory.T||0)>0)return 'T';
+  return 'I';
+}
+
+function padGridToCols(){
+  for(let r=0;r<rows;r++){
+    if(!grid[r])grid[r]=[];
+    while(grid[r].length<cols)grid[r].push(null);
+  }
+}
+
+function ensureGridRow(r){
+  if(!grid[r])grid[r]=[];
+  while(grid[r].length<cols)grid[r].push(null);
+}
+
+function kitLabel(type){
+  if(type==='I')return 'Straight';
+  if(type==='L')return 'Corner';
+  if(type==='T')return '3-way';
+  return type;
+}
+
+function updateKitStep(){
+  const el=document.getElementById('kit-step');
+  if(!el)return;
+  if(selectedBuildPipe==='erase'){
+    el.textContent='Tap a pipe with a yellow box to remove it';
+    return;
+  }
+  const n=kitStock(selectedBuildPipe);
+  el.textContent='Tap a + square to place a '+kitLabel(selectedBuildPipe).toLowerCase()+' ('+n+' left)';
+}
+
 function updateBuildPaletteHud(){
   document.getElementById('cnt-I').textContent=String(buildInventory.I||0);
   document.getElementById('cnt-L').textContent=String(buildInventory.L||0);
   document.getElementById('cnt-T').textContent=String(buildInventory.T||0);
   document.querySelectorAll('.pipe-pick').forEach(function(btn){
-    btn.classList.toggle('sel',btn.getAttribute('data-pipe')===selectedBuildPipe);
+    const t=btn.getAttribute('data-pipe');
+    btn.classList.toggle('sel',t===selectedBuildPipe);
+    if(t==='erase'){
+      btn.classList.remove('hidden');
+      btn.disabled=false;
+      btn.style.opacity='1';
+      return;
+    }
+    const n=buildInventory[t]||0;
+    btn.classList.toggle('hidden',n<1&&selectedBuildPipe!==t);
+    btn.disabled=n<1;
+    btn.style.opacity=n<1?'.35':'1';
   });
+  updateKitStep();
+}
+
+function kitStock(type){
+  return type==='erase'?0:(buildInventory[type]||0);
 }
 
 function setBuildPipe(type){
+  if(type!=='erase'&&BUILD_TYPES.indexOf(type)>=0&&kitStock(type)<=0){
+    setStatus('No '+kitLabel(type).toLowerCase()+' pipes left!','idle');
+    return;
+  }
   selectedBuildPipe=type;
   updateBuildPaletteHud();
+  if(type==='erase')setStatus('Tap a pipe with a yellow outline to remove it','idle');
+  else setStatus('Now tap a + square on the grid','idle');
 }
 
 function placeBuildPipe(r,c,type){
-  if(!buildInventory[type]||buildInventory[type]<=0)return false;
+  if(BUILD_TYPES.indexOf(type)<0)return false;
+  if(kitStock(type)<=0)return false;
+  ensureGridRow(r);
+  if(c<0||c>=cols)return false;
+  if(grid[r][c])return false;
   grid[r][c]={type:type,rot:0,fixed:false,placed:true,color:null,sprinkler:false};
   buildInventory[type]--;
+  if(kitStock(selectedBuildPipe)<=0)selectedBuildPipe=pickKitPipeWithStock();
   updateBuildPaletteHud();
+  return true;
+}
+
+function placeKitAt(r,c){
+  if(!kitActive()||selectedBuildPipe==='erase')return false;
+  if(r<0||c<0||r>=rows||c>=cols)return false;
+  ensureGridRow(r);
+  if(grid[r][c])return false;
+  if(BUILD_TYPES.indexOf(selectedBuildPipe)<0)return false;
+  if(kitStock(selectedBuildPipe)<=0){
+    setStatus('No '+selectedBuildPipe+' pipes left — pick another from the kit!','idle');
+    return false;
+  }
+  if(!placeBuildPipe(r,c,selectedBuildPipe)){
+    setStatus('Could not place pipe here','idle');
+    return false;
+  }
+  playRotate();
+  moves++;
+  document.getElementById('moves').textContent=String(moves);
+  spinAnim={r:r,c:c,t:0};
+  updateFlow(true);
+  setStatus('Pipe placed — connect the hose!','flow');
   return true;
 }
 
@@ -450,6 +613,26 @@ function cloneCell(cell){
   if(cell.open!==undefined)n.open=cell.open;
   if(cell.touched!==undefined)n.touched=cell.touched;
   return n;
+}
+
+function pipeRotCount(cell){
+  if(!cell||cell.fixed||cell.type==='#')return 0;
+  if(cell.type==='X')return 1;
+  if(!MASKS[cell.type])return 0;
+  return 4;
+}
+
+function randomizePipeRotations(){
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      const n=pipeRotCount(cell);
+      if(n<1)continue;
+      cell.rot=Math.floor(Math.random()*n);
+      if(cell.type==='V')cell.open=false;
+      if(cell.type==='B')cell.touched=false;
+    }
+  }
 }
 
 function isMovable(cell){
@@ -466,6 +649,8 @@ function canDropAt(tr,tc,fr,fc){
   if(target&&target.type==='#')return false;
   if(target&&target.fixed)return false;
   if(target&&(target.type==='S'||(target.type==='G'&&!target.sprinkler)||target.type==='K'))return false;
+  if(!target)return true;
+  if(!isMovable(target))return false;
   return true;
 }
 
@@ -488,11 +673,40 @@ function transferPipe(fr,fc,tr,tc,fromCell){
 
 function removeBuildPipe(r,c){
   const cell=grid[r]&&grid[r][c];
-  if(!cell||!cell.placed||BUILD_TYPES.indexOf(cell.type)<0)return false;
+  if(!cell||BUILD_TYPES.indexOf(cell.type)<0)return false;
+  if(!cell.placed&&!buildMode)return false;
   buildInventory[cell.type]=(buildInventory[cell.type]||0)+1;
   grid[r][c]=null;
+  moves++;
+  document.getElementById('moves').textContent=String(moves);
+  playRotate();
   updateBuildPaletteHud();
+  updateFlow(true);
+  setStatus('Pipe removed — back in your kit!','flow');
   return true;
+}
+
+function tryEraseAt(r,c){
+  ensureGridRow(r);
+  const cell=grid[r]&&grid[r][c];
+  if(!cell){
+    setStatus('Tap a pipe with a yellow outline','idle');
+    return false;
+  }
+  if(cell.placed)return removeBuildPipe(r,c);
+  if(buildMode&&isMovable(cell)&&!cell.fixed){
+    buildInventory[cell.type]=(buildInventory[cell.type]||0)+1;
+    grid[r][c]=null;
+    moves++;
+    document.getElementById('moves').textContent=String(moves);
+    playRotate();
+    updateBuildPaletteHud();
+    updateFlow(true);
+    setStatus('Pipe removed!','flow');
+    return true;
+  }
+  setStatus('That pipe is part of the level — only yellow-outline pipes can be removed','idle');
+  return false;
 }
 
 function interactBuildCell(r,c){
@@ -555,54 +769,6 @@ function updateGardenBuckets(){
 
 function gardensReadyForWin(){
   return allGardenBucketsFull();
-}
-
-function isStrayPipeType(type){
-  return type==='I'||type==='L'||type==='T'||type==='B'||type==='V'||type==='X';
-}
-
-function portReachableFromSource(){
-  const seen=new Set();
-  const q=[];
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const cell=grid[r]&&grid[r][c];
-      if(isSource(cell)){q.push([r,c]);seen.add(r+','+c);}
-    }
-  }
-  while(q.length){
-    const cur=q.shift();
-    const r=cur[0],c=cur[1];
-    const cell=grid[r]&&grid[r][c];
-    if(!cell)continue;
-    const m=maskFor(cell);
-    for(let i=0;i<4;i++){
-      const d=DIRS[i];
-      if(!(m&d))continue;
-      const dk=dirKey(d);
-      const nr=r+DR[dk][0],nc=c+DR[dk][1];
-      const nk=nr+','+nc;
-      if(nr<0||nc<0||nr>=rows||nc>=cols||seen.has(nk))continue;
-      const nb=grid[nr]&&grid[nr][nc];
-      if(!nb||nb.type==='#')continue;
-      if(!(maskFor(nb)&OPP[d]))continue;
-      seen.add(nk);
-      q.push([nr,nc]);
-    }
-  }
-  return seen;
-}
-
-function pruneStrayPipes(){
-  if(buildMode)return;
-  const reach=portReachableFromSource();
-  for(let r=0;r<rows;r++){
-    for(let c=0;c<cols;c++){
-      const cell=grid[r]&&grid[r][c];
-      if(!cell||!isStrayPipeType(cell.type))continue;
-      if(!reach.has(r+','+c))grid[r][c]=null;
-    }
-  }
 }
 
 function circuitComplete(filledSet){
@@ -753,9 +919,25 @@ function cloneGrid(g){
 function goalHasFlow(r,c,cell,filledSet,colorMap){
   const need=cell.color||'b';
   const k=r+','+c;
+  function colorOk(cols){
+    return cols&&(cols.has(need)||(!cell.color&&cols.size>0));
+  }
   if(filledSet.has(k)){
-    const cols=colorMap.get(k);
-    if(cols&&(cols.has(need)||(!cell.color&&cols.size>0)))return true;
+    if(colorOk(colorMap.get(k)))return true;
+  }
+  const gm=maskFor(cell);
+  for(let i=0;i<4;i++){
+    const d=DIRS[i];
+    if(!(gm&d))continue;
+    const dk=dirKey(d);
+    const pr=r-DR[dk][0],pc=c-DR[dk][1];
+    if(pr<0||pc<0||pr>=rows||pc>=cols)continue;
+    const nb=grid[pr]&&grid[pr][pc];
+    if(!nb||nb.type==='#')continue;
+    const nk=pr+','+pc;
+    if(!filledSet.has(nk))continue;
+    if(!(maskFor(nb)&d))continue;
+    if(colorOk(colorMap.get(nk)))return true;
   }
   if(!cell.sprinkler)return false;
   for(let i=0;i<4;i++){
@@ -766,14 +948,12 @@ function goalHasFlow(r,c,cell,filledSet,colorMap){
     if(!nb||nb.type==='#'||(nb.type==='G'&&!nb.sprinkler))continue;
     const nk=nr+','+nc;
     if(!filledSet.has(nk))continue;
-    const cols=colorMap.get(nk);
-    if(cols&&(cols.has(need)||(!cell.color&&cols.size>0)))return true;
+    if(colorOk(colorMap.get(nk)))return true;
   }
   return false;
 }
 
 function goalWateredAt(r,c,cell,filledSet,colorMap){
-  if(!circuitComplete(filledSet))return false;
   return goalHasFlow(r,c,cell,filledSet,colorMap);
 }
 
@@ -817,9 +997,12 @@ function loadLevel(idx){
   document.getElementById('hint-btn').classList.remove('hint-urgent');
   prevWatered=0;
   grid=lv.rows.map(function(row){return row.trim().split(/\s+/).map(parseCell);});
-  initialGrid=cloneGrid(grid);
   rows=grid.length;
   cols=Math.max.apply(null,grid.map(function(r){return r.length;}));
+  padGridToCols();
+  buildMode=!!lv.build;
+  if(!buildMode)randomizePipeRotations();
+  initialGrid=cloneGrid(grid);
   moves=0;
   won=false;
   winPending=false;
@@ -836,7 +1019,6 @@ function loadLevel(idx){
   leakBuckets=new Map();
   siphonStreams=[];
   clearDrag();
-  pruneStrayPipes();
   initGardenBuckets();
   updateBucketHud();
   spinAnim=null;
@@ -844,17 +1026,12 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  if(!levelTip&&idx<3)levelTip='🔗 Drag pipes · tap to spin · seal the hose path!';
-  buildMode=!!lv.build;
+  if(!levelTip&&idx<3)levelTip='Fill the gaps with pipes from the bar above the game.';
   routeMin=lv.routeMin!=null?lv.routeMin:null;
   routeMax=lv.routeMax!=null?lv.routeMax:null;
-  if(lv.budget){
-    buildInventory={I:lv.budget.I||0,L:lv.budget.L||0,T:lv.budget.T||0};
-  }else{
-    buildInventory={I:0,L:0,T:0};
-  }
-  selectedBuildPipe='I';
-  document.getElementById('build-palette').classList.toggle('show',buildMode);
+  buildInventory=applyLevelKit(lv);
+  selectedBuildPipe=pickKitPipeWithStock();
+  document.getElementById('kit-bar').classList.add('show');
   updateBuildPaletteHud();
   const label=lv.secret?'🤫 Secret':(buildMode?'🔧 Build':('Level '+(idx+1)));
   const sizeTag=(rows>=6||cols>=6)?' · '+rows+'×'+cols:'';
@@ -863,7 +1040,7 @@ function loadLevel(idx){
   document.getElementById('mechanic-tip').textContent=levelTip;
   applyTheme(idx,lv);
   document.getElementById('moves').textContent='0';
-  setStatus(levelTip||(buildMode?'Drag placed pipes · pick a piece · tap grass to build':'Drag pipes to move · tap to spin!'),'idle');
+  setStatus(levelTip||(buildMode?'Pick a pipe, then tap the grid':'Pick a pipe above, tap a + square'),'idle');
   updateFlow(false);
   resize();
   ensureAnimLoop();
@@ -915,15 +1092,21 @@ function portXY(r,c,d){
 }
 
 function portSealed(r,c,d,filledSet){
-  const m=maskFor(grid[r][c]);
+  const cell=grid[r][c];
+  const m=maskFor(cell);
   if(!(m&d))return true;
   const nr=r+DR[dirKey(d)][0],nc=c+DR[dirKey(d)][1];
-  if(nr<0||nc<0||nr>=rows||nc>=cols)return false;
+  if(nr<0||nc<0||nr>=rows||nc>=cols){
+    if(cell.type==='S'||cell.type==='G'||cell.type==='K')return true;
+    return false;
+  }
   const nb=grid[nr]&&grid[nr][nc];
   if(!nb)return false;
   if(nb.type==='#')return false;
   if(nb.type==='B'&&!nb.touched)return false;
   if(!(maskFor(nb)&OPP[d]))return false;
+  if(isGoal(nb))return true;
+  if(nb.type==='K')return true;
   if(!filledSet.has(nr+','+nc))return false;
   return true;
 }
@@ -1042,13 +1225,10 @@ function computeFlow(){
     }
   }
   let watered=0;
-  const circuitOk=circuitComplete(nextFilled);
-  if(circuitOk){
-    goals.forEach(function(g){
-      const cell=grid[g.r][g.c];
-      if(goalHasFlow(g.r,g.c,cell,nextFilled,nextColors))watered++;
-    });
-  }
+  goals.forEach(function(g){
+    const cell=grid[g.r][g.c];
+    if(goalHasFlow(g.r,g.c,cell,nextFilled,nextColors))watered++;
+  });
   const goalReached=goals.length>0&&watered===goals.length;
   let path=[];
   if(goalReached&&goals.length===1){
@@ -1080,7 +1260,6 @@ function computeFlow(){
 }
 
 function updateFlow(triggerWin){
-  pruneStrayPipes();
   const result=computeFlow();
   filled=result.filled;
   flowDist=result.dist;
@@ -1111,14 +1290,7 @@ function updateFlow(triggerWin){
     setStatus('🪣 Bucket full! Fix the pipes or tap Use Again!','flow');
   }
 
-  if(won&&(!circuitOk||openEnds>0)){
-    won=false;
-    winPending=false;
-    if(winTimer){clearTimeout(winTimer);winTimer=null;}
-    document.getElementById('win-ov').classList.add('hidden');
-  }
-
-  if(result.goalReached&&circuitOk&&bucketsReady&&routeOk){
+  if(result.goalReached&&routeOk){
     flowPhase=Math.max(flowPhase,0.05);
     if(triggerWin&&!won&&!winPending){
       won=true;
@@ -1127,7 +1299,7 @@ function updateFlow(triggerWin){
       document.getElementById('hint-btn').classList.remove('hint-urgent');
       if(moves<=levelPar)showComboReaction('perfect');
       playWin();
-      setStatus('Circuit complete — all gardens watered! 🌻','win');
+      setStatus('All gardens watered! 🌻','win');
       spawnCelebration();
       if(winTimer)clearTimeout(winTimer);
       winTimer=setTimeout(function(){
@@ -1136,7 +1308,7 @@ function updateFlow(triggerWin){
         showWin();
       },700);
     }else if(!won&&!winPending){
-      setStatus('Circuit sealed — gardens watering!','flow');
+      setStatus('Water reached every garden! 🌻','flow');
     }
   }else if(!circuitOk&&filled.size>1){
     flowPhase=Math.max(flowPhase,0.03);
@@ -1154,11 +1326,12 @@ function updateFlow(triggerWin){
     else if(routeMax!=null)setStatus('🛤 '+routeLen+' pipes — too long! Use fewer (≤'+routeMax+').','flow');
   }else if(!won){
     flowPhase=filled.size>1?Math.max(flowPhase,0.02):Math.max(0,flowPhase-0.04);
-    let msg='Drag pipes to move · tap to spin!';
-    let gCount=0;
-    for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))gCount++;
-    if(openEnds>0&&filled.size>1)msg='🔗 '+openEnds+' open end'+(openEnds>1?'s':'')+' — seal the circuit!';
-    else if(filled.size>1)msg='Water flowing — seal the hose path!';
+    let msg='Tap a pipe above, then tap a + square';
+    const dryPipes=countDryPipes();
+    if(dryPipes>0&&filled.size>0)msg='Water stops here — add more pipes in the gaps';
+    else if(gTotal>1&&wateredNow>0&&wateredNow<gTotal)msg=wateredNow+' of '+gTotal+' gardens watered — keep going!';
+    else if(goalsLeft>0&&filled.size>1)msg='Almost there — connect to every flower';
+    else if(kitTotal()>0&&countGridGaps()>0)msg='Pick a pipe above · tap a + on the grid';
     setStatus(msg,filled.size>1||openEnds>0?'flow':'idle');
   }
 }
@@ -1170,8 +1343,11 @@ function countGoals(){
 }
 
 function interactCell(r,c){
-  if(buildMode)return interactBuildCell(r,c);
+  ensureGridRow(r);
   const cell=grid[r]&&grid[r][c];
+  if(selectedBuildPipe==='erase')return tryEraseAt(r,c);
+  if(!cell&&kitActive()&&selectedBuildPipe!=='erase')return placeKitAt(r,c);
+  if(cell&&cell.placed&&kitActive())return interactBuildCell(r,c);
   if(!cell||cell.fixed||cell.type==='#')return false;
   if(won||winPending)return false;
   if(cell.type==='V'){
@@ -1208,6 +1384,26 @@ function resetLevel(){
 
 function showHint(){
   if(won)return;
+  if(kitActive()&&!buildMode){
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(grid[r]&&grid[r][c])continue;
+        const tryTypes=['I','L','T'];
+        for(let ti=0;ti<tryTypes.length;ti++){
+          const t=tryTypes[ti];
+          if(!buildInventory[t])continue;
+          if(placeBuildPipe(r,c,t)){
+            moves++;
+            document.getElementById('moves').textContent=String(moves);
+            playHint();
+            updateFlow(true);
+            setStatus('Placed a '+t+' pipe — keep connecting!','flow');
+            return;
+          }
+        }
+      }
+    }
+  }
   if(buildMode){
     for(let r=0;r<rows;r++){
       for(let c=0;c<cols;c++){
@@ -1240,7 +1436,7 @@ function showHint(){
         if(grid[r][c].type==='V'){grid[r][c].open=true;grid[r][c].touched=true;}
         const test=computeFlow();
         const tLen=countRoutePipes(test.filled);
-        if(test.goalReached&&circuitComplete(test.filled)&&routeConstraintOk(tLen)){
+        if(test.goalReached&&routeConstraintOk(tLen)){
           moves++;
           document.getElementById('moves').textContent=String(moves);
           spinAnim={r:r,c:c,t:0};
@@ -1293,8 +1489,7 @@ function ensureAnimLoop(){
 
 function tickWinCheck(){
   if(won||winPending||mode!=='play')return;
-  if(goalsLeft>0||!circuitComplete(filled))return;
-  if(!allGardenBucketsFull())return;
+  if(goalsLeft>0)return;
   if(!routeConstraintOk(countRoutePipes(filled)))return;
   updateFlow(true);
 }
@@ -1351,14 +1546,14 @@ function renderFrame(){
       }
       ctx.fillStyle=(r+c)%2===0?boardTheme.grass[0]:boardTheme.grass[1];
       ctx.fillRect(x,y,cellSize,cellSize);
-      if(buildMode&&!cell){
-        ctx.strokeStyle='rgba(255,225,77,.2)';
+      if(kitActive()&&!cell){
+        ctx.strokeStyle='rgba(255,225,77,.25)';
         ctx.lineWidth=1;
-        ctx.strokeRect(x+cellSize*.22,y+cellSize*.22,cellSize*.56,cellSize*.56);
-        ctx.font=(cellSize*.22)+'px serif';
+        ctx.strokeRect(x+cellSize*.2,y+cellSize*.2,cellSize*.6,cellSize*.6);
+        ctx.font=(cellSize*.24)+'px serif';
         ctx.textAlign='center';
         ctx.textBaseline='middle';
-        ctx.fillStyle='rgba(255,225,77,.35)';
+        ctx.fillStyle='rgba(255,225,77,.4)';
         ctx.fillText('+',x+cellSize/2,y+cellSize/2);
       }
       ctx.strokeStyle='rgba(255,255,255,.04)';
@@ -1369,6 +1564,7 @@ function renderFrame(){
   drawPuddles();
   drawNetworkFlow();
   drawFlowUnderlay();
+  drawPipelineBreaks();
   if(drag&&drag.moved)drawDropHighlights();
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
@@ -1384,6 +1580,46 @@ function renderFrame(){
   drawDecorations();
   drawLeakParticles();
   drawBubbles();
+}
+
+function drawPipelineBreaks(){
+  if(!filled.size)return;
+  filled.forEach(function(key){
+    const parts=key.split(',');
+    const r=+parts[0],c=+parts[1];
+    const cell=grid[r]&&grid[r][c];
+    if(!cell)return;
+    const m=maskFor(cell);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(!(m&d))continue;
+      const dk=dirKey(d);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      const nk=nr+','+nc;
+      let broken=false;
+      if(nr<0||nc<0||nr>=rows||nc>=cols)broken=true;
+      else{
+        const nb=grid[nr]&&grid[nr][nc];
+        if(!nb)broken=true;
+        else if(!filled.has(nk)||!(maskFor(nb)&OPP[d]))broken=true;
+      }
+      if(!broken)continue;
+      const xy=portXY(r,c,d);
+      const pulse=.55+.45*Math.sin(animT*6+r+c);
+      ctx.save();
+      ctx.globalAlpha=pulse;
+      ctx.fillStyle='#ff9a3c';
+      ctx.beginPath();
+      ctx.arc(xy[0],xy[1],cellSize*.1,0,Math.PI*2);
+      ctx.fill();
+      ctx.strokeStyle='rgba(255,225,77,.9)';
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.arc(xy[0],xy[1],cellSize*.14,0,Math.PI*2);
+      ctx.stroke();
+      ctx.restore();
+    }
+  });
 }
 
 function rebuildFlowParticles(){
@@ -1774,11 +2010,13 @@ function drawPipe(r,c,cell){
   const k=r+','+c;
   const dist=flowDist.get(k);
   const hasWater=dist!==undefined&&flowPhase>=dist;
+  const isPipe=cell.type==='I'||cell.type==='L'||cell.type==='T'||cell.type==='B'||cell.type==='V'||cell.type==='X';
   const m=maskFor(cell);
   let spin=0;
   if(spinAnim&&spinAnim.r===r&&spinAnim.c===c)spin=spinAnim.t*Math.PI/2;
 
   ctx.save();
+  if(isPipe&&!hasWater&&filled.size>0)ctx.globalAlpha=.42;
   ctx.translate(cx,cy);
   ctx.rotate(spin);
   ctx.translate(-cx,-cy);
@@ -1833,6 +2071,12 @@ function drawPipe(r,c,cell){
     ctx.textAlign='center';
     ctx.textBaseline='middle';
     ctx.fillText(cell.open?'🟢':'🔴',cx,cy+cellSize*.28);
+  }
+
+  if(cell.placed){
+    ctx.strokeStyle='rgba(255,225,77,.55)';
+    ctx.lineWidth=2;
+    ctx.strokeRect(cx-cellSize*.36,cy-cellSize*.36,cellSize*.72,cellSize*.72);
   }
 
   ctx.restore();
@@ -1977,13 +2221,27 @@ function onCanvasPointerDown(e){
   drag=null;
   if(pt){
     const cell=grid[pt.r]&&grid[pt.r][pt.c];
+    if(selectedBuildPipe==='erase'){
+      drag={r:pt.r,c:pt.c,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,eraseTap:true};
+      activePointerId=e.pointerId;
+      canvas.style.cursor='pointer';
+      try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+      return;
+    }
+    if(!cell&&kitActive()&&selectedBuildPipe!=='erase'){
+      drag={r:pt.r,c:pt.c,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,placeOnUp:true};
+      activePointerId=e.pointerId;
+      canvas.style.cursor='crosshair';
+      try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+      return;
+    }
     const canDrag=cell&&isMovable(cell)&&(!buildMode||cell.placed);
     if(canDrag){
-      drag={r:pt.r,c:pt.c,cell:cloneCell(cell),x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId};
+      drag={r:pt.r,c:pt.c,cell:cloneCell(cell),x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,placeOnUp:false};
       activePointerId=e.pointerId;
     }
   }
-  if(!drag)drag={r:-1,c:-1,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId};
+  if(!drag)drag={r:-1,c:-1,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,placeOnUp:false};
   canvas.style.cursor='grabbing';
   try{canvas.setPointerCapture(e.pointerId);}catch(err){}
 }
@@ -2005,6 +2263,7 @@ function onCanvasPointerUp(e){
   const wasDrag=drag.moved;
   const fr=drag.r,fc=drag.c;
   const lifted=drag.cell;
+  const eraseTap=!!drag.eraseTap;
   const dropPt=pointerToCell(e.clientX,e.clientY);
   const tapPt=pointerToCell(drag.x0,drag.y0);
   clearDrag();
@@ -2012,16 +2271,41 @@ function onCanvasPointerUp(e){
   if(mode!=='play'||won||winPending)return;
   canvas.style.cursor='grab';
 
+  if(eraseTap){
+    const pt=tapPt||dropPt;
+    if(pt)tryEraseAt(pt.r,pt.c);
+    return;
+  }
+
   if(wasDrag&&lifted){
+    if(selectedBuildPipe==='erase'&&lifted.placed){
+      removeBuildPipe(fr,fc);
+      return;
+    }
     if(dropPt&&transferPipe(fr,fc,dropPt.r,dropPt.c,lifted)){
       spinAnim={r:dropPt.r,c:dropPt.c,t:0};
       setStatus(dropPt.r===fr&&dropPt.c===fc?'Pipe turned!':'Pipe moved!','flow');
     }else{
       grid[fr][fc]=lifted;
-      setStatus('Drop on grass or swap with another pipe','idle');
+      setStatus('Drop on grass or another pipe','idle');
       updateFlow(true);
     }
     return;
+  }
+
+  const pt=tapPt||dropPt;
+  if(pt){
+    const cell=grid[pt.r]&&grid[pt.r][pt.c];
+    if(selectedBuildPipe==='erase'){
+      tryEraseAt(pt.r,pt.c);
+      return;
+    }
+    if(!cell&&kitActive()&&selectedBuildPipe!=='erase'){
+      if(placeKitAt(pt.r,pt.c))return;
+    }
+    if(buildMode&&!cell){
+      if(interactBuildCell(pt.r,pt.c))return;
+    }
   }
 
   const hit=hitLeakBucket(e.clientX,e.clientY);
@@ -2032,16 +2316,10 @@ function onCanvasPointerUp(e){
     return;
   }
 
-  const pt=tapPt||dropPt;
   if(!pt)return;
   const cell=grid[pt.r]&&grid[pt.r][pt.c];
-  if(buildMode){
-    if(cell&&cell.fixed)return;
-    if(cell&&cell.type==='#')return;
-    interactBuildCell(pt.r,pt.c);
-    return;
-  }
-  if(!cell||cell.fixed||cell.type==='#')return;
+  if(cell&&cell.fixed)return;
+  if(cell&&cell.type==='#')return;
   interactCell(pt.r,pt.c);
 }
 
@@ -2100,9 +2378,9 @@ function showWin(){
   const routeLen=countRoutePipes(filled);
   let msg=(lv?lv.name:'')+' — '+moves+' moves (par '+levelPar+')'+grade;
   if(isSecret)msg='Nobody else knows this garden exists. You are a legend! 💧';
-  else if(isFinale)msg='You saved the last gardens on Earth! Next: design your own hose path…';
-  else if(isLongest)msg='You used '+routeLen+' pipes (needed '+routeMin+'+). Next: can you do it with fewer?';
-  else if(isShortest)msg='Only '+routeLen+' pipes (max '+routeMax+')! You mastered both routes. 🤫 Tap menu title 5× for secret…';
+  else if(isFinale)msg='You saved the last gardens on Earth! Next: build the longest hose…';
+  else if(isLongest)msg='Longest route built! Next: try the shortest-path challenge…';
+  else if(isShortest)msg='Shortest route mastered! 🤫 Tap menu title 5× for the secret garden…';
   else if(isLastMain)msg='One more challenge awaits… End of the World! 🌍';
   else if(buildMode)msg=routeLen+' pipes in your route · par '+levelPar+grade;
   document.getElementById('win-msg').textContent=msg;
