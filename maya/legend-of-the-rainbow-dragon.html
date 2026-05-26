@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Legend of the Rainbow Dragon 🐉</title>
+<script src="portal-bridge.js"></script>
 <script>
 (function(){
   function loadGA(){
@@ -518,7 +519,7 @@ body{
   <div class="ov-sub">Welcome to Sparkle Dragon 3000!<br>Daily turns · forest play-fights · befriend the dragon!</div>
   <button type="button" class="act-btn primary" id="btn-continue" style="max-width:280px;width:100%">Continue Adventure</button>
   <button type="button" class="act-btn muted" id="btn-new" style="max-width:280px;width:100%">New Hero</button>
-  <button type="button" class="act-btn lab" id="btn-leave-lab" style="max-width:280px;width:100%">✕ Back to Game Lab</button>
+  <button type="button" class="act-btn lab maya-portal-hide" id="btn-leave-lab" style="max-width:280px;width:100%">✕ Back to Game Lab</button>
 </div>
 
 <div class="ov hidden" id="ov-create">
@@ -528,7 +529,7 @@ body{
   <div class="avatar-grid" id="avatar-grid"></div>
   <button type="button" class="act-btn primary" id="btn-start" style="max-width:280px;width:100%">Enter the Realm! ⚔️</button>
   <button type="button" class="act-btn muted" id="btn-create-cancel">Cancel</button>
-  <button type="button" class="act-btn lab" id="btn-create-leave">✕ Back to Game Lab</button>
+  <button type="button" class="act-btn lab maya-portal-hide" id="btn-create-leave">✕ Back to Game Lab</button>
 </div>
 
 <div class="ov hidden" id="ov-victory">
@@ -1126,48 +1127,32 @@ function scaleMonster(m, elite) {
   };
 }
 
-function inMayaPortal() {
-  if (window.parent === window) return false;
-  try {
-    return !!window.parent.document.getElementById('gf');
-  } catch (e) {
-    return true;
-  }
-}
-
 function notifyPortalScreen(name) {
-  if (!inMayaPortal()) return;
-  try {
-    window.parent.postMessage({ type: 'maya:screen', screen: name }, '*');
-  } catch (e) {}
-}
-
-function labIndexUrl() {
-  const p = location.pathname;
-  const i = p.lastIndexOf('/');
-  const base = i >= 0 ? p.slice(0, i + 1) : '/';
-  return base + 'index.html';
+  if (window.MayaPortal) window.MayaPortal.notifyScreen(name);
 }
 
 function leaveToLab() {
-  if (inMayaPortal()) {
-    try {
-      window.parent.postMessage('maya:leave-game', '*');
-    } catch (e) {}
-    return;
-  }
-  window.location.href = labIndexUrl();
+  if (window.MayaPortal) window.MayaPortal.leaveToLab();
 }
 
 function syncPortalChrome() {
-  document.getElementById('btn-leave-lab').classList.remove('hidden');
+  var leave = document.getElementById('btn-leave-lab');
+  if (window.MayaPortal && window.MayaPortal.inMayaPortal()) {
+    if (leave) leave.classList.add('maya-portal-hide');
+    return;
+  }
+  if (leave) leave.classList.remove('hidden');
 }
 
 function syncHeaderBack(name) {
   const back = document.getElementById('back-btn');
-  if (inMayaPortal() && name === 'hub') {
+  if (window.MayaPortal && window.MayaPortal.inMayaPortal()) {
+    if (name === 'hub') {
+      back.classList.add('hidden');
+      return;
+    }
+    back.textContent = '← Town';
     back.classList.remove('hidden');
-    back.textContent = '✕ Game Lab';
     return;
   }
   back.textContent = '← Town';
@@ -1175,7 +1160,7 @@ function syncHeaderBack(name) {
 }
 
 function onHeaderBackClick() {
-  if (inMayaPortal() && currentScreen === 'hub') {
+  if (window.MayaPortal && window.MayaPortal.inMayaPortal() && currentScreen === 'hub') {
     leaveToLab();
     return;
   }

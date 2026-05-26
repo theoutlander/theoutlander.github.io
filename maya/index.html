@@ -480,6 +480,16 @@ function pathnameGameFile(){
   if(!/\.html?$/i.test(last)||last.toLowerCase()==='index.html')return null;
   return MAYA_GAME_FILES.has(last)?last:null;
 }
+function playParamGameFile(){
+  try{
+    const play=new URLSearchParams(location.search).get('play');
+    if(!play||!MAYA_GAME_FILES.has(play))return null;
+    return play;
+  }catch(e){return null;}
+}
+function activeGameFile(){
+  return pathnameGameFile()||playParamGameFile();
+}
 function titleForGameFile(file){
   const row=GLIST.find(function(g){return g.file===file;});
   return row?row.title:file.replace(/\.html?$/i,'');
@@ -552,7 +562,7 @@ window.addEventListener('message',function(ev){
 });
 function onGameModalPopState(){
   if(mayaClosingGame)return;
-  var file=pathnameGameFile();
+  var file=activeGameFile();
   if(!file){
     if(gm.classList.contains('open'))closeGameCore();
   }else if(!gm.classList.contains('open')){
@@ -565,7 +575,7 @@ function onGameModalPopState(){
 window.addEventListener('popstate',onGameModalPopState);
 
 function syncGameModalFromLocation(){
-  var file=pathnameGameFile();
+  var file=activeGameFile();
   if(file){
     if(!gm.classList.contains('open')){
       openGameInModal(file,titleForGameFile(file));
