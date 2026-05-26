@@ -299,7 +299,7 @@ let COLS = 0, ROWS = 0;
 // Multi-cell block grid footprint (w cols × h rows)
 const BLOCK_SIZE = {
   door:    {w: 2, h: 4},
-  window:  {w: 2, h: 4},
+  window:  {w: 2, h: 3},
   balcony: {w: 3, h: 1},
 };
 function blockDims(type) { return BLOCK_SIZE[type] || {w: 1, h: 1}; }
@@ -566,10 +566,13 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
     }
 
     case 'window': {
-      // Slightly inset vs door — same grid footprint, smaller visual
-      const ix = 12, iy = 18;
+      // Narrower + shorter than door (2×3 grid vs door 2×4), inset within footprint
+      const ix = 8, iy = 6;
       const wx = x + ix, wy = y + iy;
       const wC = C - ix * 2, wH = H - iy * 2;
+      // Fill footprint so inset margins read as wall trim, not empty sky
+      ctx.fillStyle = adjCol(color, -35);
+      ctx.fillRect(x, y, C, H);
       // Modern floor-to-ceiling window: thin aluminium frame, large glass
       const fr = 5; // frame thickness
       // Outer frame (aluminium — derived from chosen colour)
@@ -621,13 +624,13 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
       ctx.fillRect(wx, wy+wH-2, wC, 2);
       ctx.fillRect(wx+wC-2, wy, 2, wH);
-      // Protruding sill ledge
+      // Protruding sill ledge (stays within window width)
       ctx.fillStyle = adjCol(color, 20);
-      ctx.fillRect(wx-4, wy+wH-fr-1, wC+8, fr+3);
+      ctx.fillRect(wx-2, wy+wH-fr-1, wC+4, fr+3);
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.fillRect(wx-4, wy+wH-fr-1, wC+8, 1.5);
+      ctx.fillRect(wx-2, wy+wH-fr-1, wC+4, 1.5);
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      ctx.fillRect(wx-4, wy+wH+1, wC+8, 2);
+      ctx.fillRect(wx-2, wy+wH+1, wC+4, 2);
       break;
     }
 

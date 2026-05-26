@@ -224,7 +224,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">Get water from the hose to every flower.<br><strong style="color:var(--yellow)">Drag</strong> pipes onto <strong style="color:var(--yellow)">+</strong> squares · <strong style="color:var(--yellow)">tap</strong> to spin · extra drips are fine!</div>
+  <div class="sub">Connect the hose to the flower.<br><strong style="color:var(--yellow)">Drag</strong> pipes onto <strong style="color:var(--yellow)">+</strong> squares · <strong style="color:var(--yellow)">tap</strong> to spin · extra drips are fine!</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
   <button class="sec-btn maya-portal-hide" id="menu-games-btn">← All Games</button>
@@ -377,6 +377,7 @@ let lastValveTap=0,lastValveCell=null;
 let timeLeft=0,timerId=null,levelTip='';
 let boardTheme=THEMES.dawn,prevWatered=0,comboHideTimer=null,menuTapCount=0,secretUnlocked=false;
 let gardenBuckets=new Map(),leakBuckets=new Map();
+let hintGlow=null;
 let buildMode=false,routeMin=null,routeMax=null,buildInventory={I:0,L:0,T:0},selectedBuildPipe='I';
 const SAVE_KEY='pipeflow_save';
 let saveData={nextLevel:0,stars:{},maxBeaten:-1};
@@ -675,6 +676,305 @@ function countGoalsInRows(rows){
     });
   });
   return n;
+}
+
+function maskForTypeRot(type,rot){
+  const m=MASKS[type];
+  if(!m)return 0;
+  if(type==='X')return m[0];
+  return m[rot%4];
+}
+
+function portBitsBetween(r1,c1,r2,c2){
+  if(r2<r1)return N;
+  if(r2>r1)return S;
+  if(c2<c1)return W;
+  return E;
+}
+
+function popMask(m){
+  let n=0;
+  for(let i=0;i<4;i++)if(m&DIRS[i])n++;
+  return n;
+}
+
+function portsAlongPath(pathKeys){
+  const ports=new Map();
+  for(let i=0;i<pathKeys.length;i++){
+    const parts=pathKeys[i].split(',');
+    const r=+parts[0],c=+parts[1];
+    let m=0;
+    if(i>0){
+      const p=pathKeys[i-1].split(',');
+      m|=portBitsBetween(+p[0],+p[1],r,c);
+    }
+    if(i<pathKeys.length-1){
+      const p=pathKeys[i+1].split(',');
+      m|=portBitsBetween(r,c,+p[0],+p[1]);
+    }
+    ports.set(pathKeys[i],m);
+  }
+  return ports;
+}
+
+function pipeSpecForPorts(need){
+  if(!need)return null;
+  const types=['I','L','T'];
+  let best=null,bestExtra=99;
+  for(let ti=0;ti<types.length;ti++){
+    const t=types[ti];
+    for(let rot=0;rot<4;rot++){
+      const m=maskForTypeRot(t,rot);
+      if((m&need)!==need)continue;
+      const extra=popMask(m)-popMask(need);
+      if(extra<bestExtra){bestExtra=extra;best={type:t,rot:rot};}
+    }
+  }
+  return best;
+}
+
+function routeWalkable(cell){
+  if(!cell)return true;
+  if(isSolidBlock(cell)||isRock(cell))return false;
+  if(cell.type==='S'||isGoal(cell))return true;
+  if(cell.type==='I'||cell.type==='L'||cell.type==='T'||cell.type==='B'||cell.type==='V'||cell.type==='X')return true;
+  return false;
+}
+
+function goalTargetCells(r,c,cell){
+  if(cell&&cell.sprinkler){
+    const out=[];
+    for(let i=0;i<4;i++){
+      const dk=dirKey(DIRS[i]);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
+      if(routeWalkable(grid[nr]&&grid[nr][nc]))out.push({r:nr,c:nc});
+    }
+    return out;
+  }
+  return [{r:r,c:c}];
+}
+
+function bfsPathKeysTo(targets){
+  const sources=[];
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(isSource(cell))sources.push({r:r,c:c,color:cell.color||null});
+    }
+  }
+  if(!sources.length||!targets.length)return null;
+  const parent=new Map();
+  const q=[];
+  sources.forEach(function(s){
+    const k=s.r+','+s.c;
+    parent.set(k,null);
+    q.push([s.r,s.c]);
+  });
+  let goalKey=null;
+  while(q.length){
+    const cur=q.shift();
+    const ck=cur[0]+','+cur[1];
+    for(let ti=0;ti<targets.length;ti++){
+      const t=targets[ti];
+      if(cur[0]===t.r&&cur[1]===t.c){goalKey=ck;break;}
+    }
+    if(goalKey)break;
+    const cell=grid[cur[0]][cur[1]];
+    const m=maskFor(cell);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(cell&&!isGoal(cell)&&!(m&d))continue;
+      const dk=dirKey(d);
+      const nr=cur[0]+DR[dk][0],nc=cur[1]+DR[dk][1];
+      if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
+      const nk=nr+','+nc;
+      if(parent.has(nk))continue;
+      const nb=grid[nr]&&grid[nr][nc];
+      if(!routeWalkable(nb))continue;
+      if(nb&&isSource(nb)){
+        const sc=nb.color||null;
+        let ok=false;
+        for(let si=0;si<sources.length;si++){
+          if(sources[si].r===nr&&sources[si].c===nc)ok=true;
+        }
+        if(!ok)continue;
+      }
+      if(nb&&isGoal(nb)&&!isSource(cell)){
+        const gColor=nb.color||null;
+        let srcColor=null;
+        for(let si=0;si<sources.length;si++){
+          if(parent.has(sources[si].r+','+sources[si].c)||(sources[si].r===cur[0]&&sources[si].c===cur[1])){
+            const scell=grid[sources[si].r][sources[si].c];
+            srcColor=scell.color||null;
+          }
+        }
+        const curColors=flowColors&&flowColors.get(ck);
+        if(gColor&&srcColor&&gColor!==srcColor&&!colorMapHas(curColors,gColor))continue;
+      }
+      parent.set(nk,ck);
+      q.push([nr,nc]);
+    }
+  }
+  if(!goalKey)return null;
+  const path=[];
+  let cur=goalKey;
+  while(cur){
+    path.unshift(cur);
+    cur=parent.get(cur);
+  }
+  return path;
+}
+
+function colorMapHas(cols,color){
+  return cols&&(cols.has(color)||(!color&&cols.size>0));
+}
+
+function listUnwateredGoals(flow){
+  const out=[];
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r]&&grid[r][c];
+      if(!isGoal(cell))continue;
+      if(!goalHasFlow(r,c,cell,flow.filled,flow.colors))out.push({r:r,c:c,cell:cell});
+    }
+  }
+  return out;
+}
+
+function rotateCellToTarget(r,c,targetRot){
+  const cell=grid[r]&&grid[r][c];
+  if(!cell)return false;
+  const max=cell.type==='X'?1:4;
+  let guard=0;
+  while(cell.rot!==targetRot&&guard<5){
+    cell.rot=(cell.rot+1)%max;
+    guard++;
+  }
+  if(cell.type==='B')cell.touched=true;
+  if(cell.type==='V'){cell.open=true;cell.touched=true;}
+  spinAnim={r:r,c:c,t:0};
+  return true;
+}
+
+function scoreFlowState(flow){
+  const total=countGoals();
+  return (total-flow.goalsLeft)*1000+flow.filled.size;
+}
+
+function findRotateImprovement(){
+  const base=computeFlow();
+  const baseScore=scoreFlowState(base);
+  let best=null,bestScore=baseScore;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const start=grid[r]&&grid[r][c];
+      if(!start||start.fixed||isSolidBlock(start))continue;
+      if(start.type==='I'||start.type==='L'||start.type==='T'||start.type==='B'||start.type==='V'||start.type==='X'){
+        const max=start.type==='X'?1:4;
+        for(let rot=0;rot<max;rot++){
+          if(rot===start.rot)continue;
+          const saved=cloneGrid(grid);
+          grid[r][c].rot=rot;
+          if(grid[r][c].type==='B')grid[r][c].touched=true;
+          if(grid[r][c].type==='V'){grid[r][c].open=true;grid[r][c].touched=true;}
+          const test=computeFlow();
+          const sc=scoreFlowState(test);
+          grid=saved;
+          if(sc>bestScore){bestScore=sc;best={r:r,c:c,rot:rot};}
+        }
+      }
+    }
+  }
+  return best;
+}
+
+function findNextHintStep(){
+  const flow=computeFlow();
+  const dry=listUnwateredGoals(flow);
+  if(!dry.length)return null;
+
+  for(let gi=0;gi<dry.length;gi++){
+    const g=dry[gi];
+    const targets=goalTargetCells(g.r,g.c,g.cell);
+    const pathKeys=bfsPathKeysTo(targets);
+    if(!pathKeys||pathKeys.length<2)continue;
+    const portMap=portsAlongPath(pathKeys);
+
+    for(let i=0;i<pathKeys.length;i++){
+      const k=pathKeys[i];
+      const parts=k.split(',');
+      const r=+parts[0],c=+parts[1];
+      const cell=grid[r]&&grid[r][c];
+      if(cell&&isSource(cell))continue;
+      if(cell&&isGoal(cell))continue;
+
+      const need=portMap.get(k)||0;
+      if(!need)continue;
+
+      if(cell&&cell.type==='B'&&!cell.touched){
+        return {kind:'rotate',r:r,c:c,msg:'💡 Spin the cracked pipe here'};
+      }
+      if(cell&&cell.type==='V'&&!cell.open){
+        return {kind:'valve',r:r,c:c,msg:'💡 Double-tap the valve to open it'};
+      }
+
+      const spec=pipeSpecForPorts(need);
+      if(!spec)continue;
+
+      if(!cell&&kitActive()){
+        if(kitStock(spec.type)<=0)continue;
+        return {kind:'place',r:r,c:c,type:spec.type,rot:spec.rot,msg:'💡 Place '+kitLabel(spec.type).toLowerCase()+' on the glow'};
+      }
+
+      if(cell&&(cell.type==='I'||cell.type==='L'||cell.type==='T')){
+        const have=(maskFor(cell)&need)===need;
+        if(flow.filled.has(k)&&have)continue;
+        if(cell.type===spec.type&&cell.rot!==spec.rot){
+          return {kind:'rotate',r:r,c:c,targetRot:spec.rot,msg:'💡 Spin this pipe to connect'};
+        }
+        if(cell.placed&&cell.type!==spec.type){
+          return {kind:'guide',r:r,c:c,type:spec.type,rot:spec.rot,msg:'💡 Wrong shape — trash this pipe, put '+kitLabel(spec.type).toLowerCase()+' on the glow'};
+        }
+        if(!have){
+          return {kind:'rotate',r:r,c:c,targetRot:spec.rot,msg:'💡 Spin this pipe to connect'};
+        }
+      }
+    }
+  }
+
+  const rot=findRotateImprovement();
+  if(rot)return {kind:'rotate',r:rot.r,c:rot.c,targetRot:rot.rot,msg:'💡 Spin this pipe — water gets closer'};
+  return null;
+}
+
+function applyHintStep(step){
+  hintGlow={r:step.r,c:step.c};
+  if(step.kind==='place'){
+    selectedBuildPipe=step.type;
+    updateBuildPaletteHud();
+    if(!placeBuildPipe(step.r,step.c,step.type))return false;
+    grid[step.r][step.c].rot=step.rot;
+    spawnPlaceSparkles(step.r,step.c);
+    return true;
+  }
+  if(step.kind==='valve'){
+    const cell=grid[step.r][step.c];
+    if(!cell||cell.type!=='V')return false;
+    cell.open=true;
+    cell.touched=true;
+    spinAnim={r:step.r,c:step.c,t:0};
+    return true;
+  }
+  if(step.kind==='rotate'){
+    return rotateCellToTarget(step.r,step.c,step.targetRot!=null?step.targetRot:(grid[step.r][step.c].rot+1)%4);
+  }
+  if(step.kind==='guide'){
+    selectedBuildPipe=step.type;
+    updateBuildPaletteHud();
+    return false;
+  }
+  return false;
 }
 
 function computeKitBudget(lv){
@@ -1222,7 +1522,10 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  if(!levelTip)levelTip='Connect the hose to every flower. Drag pipes onto +, tap to spin.';
+  if(!levelTip){
+    const fg=countGoals();
+    levelTip='Connect the hose to the '+flowerLabel(fg)+'. Drag pipes onto +, tap to spin.';
+  }
   if(idx<3&&!lv.build){
     const need=shortestPathPipeCells(lv.rows);
     levelTip='Route needs ~'+need+' pipes — '+levelTip;
@@ -1479,7 +1782,7 @@ function updateFlow(triggerWin){
       document.getElementById('hint-btn').classList.remove('hint-urgent');
       if(moves<=levelPar)showComboReaction('perfect');
       playWin();
-      setStatus('All flowers watered! 🌻','win');
+      setStatus(gTotal===1?'The flower is watered! 🌻':'All flowers watered! 🌻','win');
       spawnCelebration();
       addJuiceShake(6);
       if(winTimer)clearTimeout(winTimer);
@@ -1489,7 +1792,7 @@ function updateFlow(triggerWin){
         showWin();
       },700);
     }else if(!won&&!winPending){
-      let msg='All flowers have water! 🌻';
+      let msg=gTotal===1?'The flower has water! 🌻':'All flowers have water! 🌻';
       if(spills>0)msg+=' (extra drips are OK)';
       if(buildMode&&!routeConstraintOk(routeLen)){
         if(routeMin!=null)msg='🛤 Need '+routeMin+'+ pipes in the path ('+routeLen+' now)';
@@ -1503,9 +1806,9 @@ function updateFlow(triggerWin){
     const dryPipes=countDryPipes();
     if(buildMode&&routeMin!=null)msg='Connect hose → flower · use '+routeMin+'+ pipes';
     else if(buildMode&&routeMax!=null)msg='Connect hose → flower · use ≤'+routeMax+' pipes';
-    else if(dryPipes>0&&filled.size>0)msg='Water stops — add pipes to reach every flower';
+    else if(dryPipes>0&&filled.size>0)msg='Water stops — add pipes to reach the '+flowerLabel(gTotal);
     else if(gTotal>1&&wateredNow>0&&wateredNow<gTotal)msg=wateredNow+'/'+gTotal+' flowers watered';
-    else if(goalsLeft>0&&filled.size>1)msg='Keep going — connect every flower';
+    else if(goalsLeft>0&&filled.size>1)msg=gTotal===1?'Keep going — connect the flower':'Keep going — connect every flower';
     else if(kitTotal()>0)msg='Pick ━ └ ┳ above · drag onto + · tap pipe to spin';
     setStatus(msg,filled.size>1?'flow':'idle');
   }
@@ -1515,6 +1818,10 @@ function countGoals(){
   let n=0;
   for(let r=0;r<rows;r++)for(let c=0;c<cols;c++)if(isGoal(grid[r]&&grid[r][c]))n++;
   return n;
+}
+
+function flowerLabel(n){
+  return n===1?'flower':'flowers';
 }
 
 function interactCell(r,c){
