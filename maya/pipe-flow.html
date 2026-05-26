@@ -224,7 +224,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">Connect the shower to the flower!<br><strong style="color:var(--yellow)">Drag</strong> a pipe from the bar onto the grid — or tap to place on <strong style="color:var(--yellow)">+</strong> squares.</div>
+  <div class="sub">Get water from the hose to every flower.<br><strong style="color:var(--yellow)">Drag</strong> pipes onto <strong style="color:var(--yellow)">+</strong> squares · <strong style="color:var(--yellow)">tap</strong> to spin · extra drips are fine!</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
   <button class="sec-btn maya-portal-hide" id="menu-games-btn">← All Games</button>
@@ -335,8 +335,8 @@ function defaultTheme(idx){
 }
 
 const LEVELS=[
-  {name:'First Drop',par:5,tip:'Big yard — drag pipes onto every +.',rows:['S0 .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:10,L:3,T:0}},
-  {name:'Quick Turn',par:5,tip:'🧱 Wall in the middle — route underneath!',rows:['S0 .  .  .  .  .  .','.  .  .  W  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  .  .','.  .  .  .  .  G0'],budget:{I:12,L:4,T:0}},
+  {name:'First Drop',par:2,tip:'2 pipes reach the flower — drag ━ and └ onto +.',rows:['S0 .  .','.  .  G0']},
+  {name:'Quick Turn',par:3,tip:'🪨 Rock blocks the top row — route underneath!',rows:['S0 .  #  .','.  .  .  G0']},
   {name:'Down the Garden',par:6,tip:'🐰 Critters and walls — snake along the bottom!',rows:['S0 .  .  A0 .  .  .  .','.  .  .  .  .  .  .  .','.  .  W  .  .  .  W  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
   {name:'Long Hose',par:6,tip:'🪨 Boulders force a long winding path.',rows:['S0 .  .  #  .  .  .  .','.  .  .  .  .  .  .  .','.  .  #  .  .  .  #  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
   {name:'T Junction',par:7,tip:'┳ Split around the rock — big grid!',rows:['.  .  .  K2 .  .  .  .','.  .  .  .  .  .  .  .','S0 .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:16,L:6,T:2}},
@@ -591,10 +591,107 @@ function countBridgingGaps(){
   return n;
 }
 
-function defaultBudgetForGaps(){
-  const gaps=countBridgingGaps();
-  if(gaps<1)return null;
-  return {I:Math.max(1,gaps),L:Math.max(1,Math.ceil(gaps/2)),T:gaps>=4?1:0};
+function gridFromLevelRows(rows){
+  const g=rows.map(function(row){return row.trim().split(/\s+/).map(parseCell);});
+  const cols=Math.max.apply(null,g.map(function(r){return r.length;}));
+  for(let r=0;r<g.length;r++){
+    while(g[r].length<cols)g[r].push(null);
+  }
+  return g;
+}
+
+function pathCellWalkable(cell){
+  if(!cell)return true;
+  const t=cell.type;
+  if(t==='S'||t==='G')return true;
+  if(t==='I'||t==='L'||t==='T'||t==='B'||t==='V'||t==='X')return true;
+  return !blocksPipePlacement(cell)&&!isSolidBlock(cell);
+}
+
+function bfsPipeSteps(grid,sr,sc,gr,gc){
+  const R=grid.length,C=grid[0].length;
+  const start=sr+','+sc;
+  const q=[[sr,sc,0]];
+  const seen=new Set([start]);
+  while(q.length){
+    const cur=q.shift();
+    const r=cur[0],c=cur[1],d=cur[2];
+    if(r===gr&&c===gc)return d;
+    for(let i=0;i<4;i++){
+      const dk=dirKey(DIRS[i]);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      if(nr<0||nc<0||nr>=R||nc>=C)continue;
+      const key=nr+','+nc;
+      if(seen.has(key))continue;
+      const cell=grid[nr][nc];
+      if(!pathCellWalkable(cell))continue;
+      seen.add(key);
+      q.push([nr,nc,d+1]);
+    }
+  }
+  return Infinity;
+}
+
+function shortestPathPipeCells(rows){
+  const grid=gridFromLevelRows(rows);
+  const R=grid.length,C=grid[0].length;
+  const sources=[],goals=[];
+  for(let r=0;r<R;r++){
+    for(let c=0;c<C;c++){
+      const cell=grid[r][c];
+      if(isSource(cell))sources.push({r:r,c:c,color:cell.color||null});
+      if(isGoal(cell))goals.push({r:r,c:c,color:cell.color||null});
+    }
+  }
+  if(!sources.length||!goals.length)return 2;
+  let total=0;
+  goals.forEach(function(g){
+    let best=Infinity;
+    sources.forEach(function(s){
+      if(g.color&&s.color&&g.color!==s.color)return;
+      const d=bfsPipeSteps(grid,s.r,s.c,g.r,g.c);
+      if(d<best)best=d;
+    });
+    if(best<Infinity)total+=Math.max(0,best-1);
+  });
+  return Math.max(2,total||2);
+}
+
+function countObstaclesInRows(rows){
+  let n=0;
+  rows.forEach(function(row){
+    row.trim().split(/\s+/).forEach(function(code){
+      if(code==='#'||code[0]==='W'||code[0]==='A')n++;
+    });
+  });
+  return n;
+}
+
+function countGoalsInRows(rows){
+  let n=0;
+  rows.forEach(function(row){
+    row.trim().split(/\s+/).forEach(function(code){
+      if(code[0]==='G'||code[0]==='g')n++;
+    });
+  });
+  return n;
+}
+
+function computeKitBudget(lv){
+  if(lv.build)return lv.budget||{I:10,L:8,T:4};
+  const minP=shortestPathPipeCells(lv.rows);
+  const obs=countObstaclesInRows(lv.rows);
+  const goals=countGoalsInRows(lv.rows);
+  const slack=4+obs*2+(goals>1?3:0);
+  let I=Math.max(minP,Math.ceil(minP*0.55)+slack);
+  let L=Math.max(2,Math.ceil(minP*0.5)+Math.floor(slack/2)+obs);
+  let T=(minP>=5||obs>=2)?Math.max(1,Math.floor(minP/4)):0;
+  if(lv.budget){
+    I=Math.max(I,lv.budget.I||0);
+    L=Math.max(L,lv.budget.L||0);
+    T=Math.max(T,lv.budget.T||0);
+  }
+  return {I:I,L:L,T:T};
 }
 
 function countDryPipes(){
@@ -621,50 +718,17 @@ function countObstaclesOnGrid(){
   return n;
 }
 
-function generousKitBudget(budget){
-  const gaps=countBridgingGaps();
-  const obs=countObstaclesOnGrid();
-  budget.I=(budget.I||0)+1+Math.max(0,Math.floor(gaps/3));
-  budget.L=(budget.L||0)+1+obs;
-  if(obs>=2||gaps>=5)budget.T=(budget.T||0)+1;
-  if(gaps>=1)budget.I=Math.max(budget.I,gaps);
-  budget.L=Math.max(budget.L,Math.ceil(gaps/2)+1);
-  return budget;
-}
-
 function stripPipesAndBuildKit(lv){
-  const budget={I:0,L:0,T:0};
-  const hasBudget=!!lv.budget;
-  if(hasBudget){
-    budget.I=lv.budget.I||0;
-    budget.L=lv.budget.L||0;
-    budget.T=lv.budget.T||0;
-  }
+  const budget=computeKitBudget(lv);
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       const cell=grid[r]&&grid[r][c];
       if(!cell)continue;
       if(cell.type!=='I'&&cell.type!=='L'&&cell.type!=='T')continue;
-      if(!hasBudget)budget[cell.type]=(budget[cell.type]||0)+1;
       grid[r][c]=null;
     }
   }
-  if(!hasBudget){
-    const extra=defaultBudgetForGaps();
-    if(extra){
-      budget.I=Math.max(budget.I,extra.I||0);
-      budget.L=Math.max(budget.L,extra.L||0);
-      budget.T=Math.max(budget.T,extra.T||0);
-    }
-  }
-  if((budget.I||0)+(budget.L||0)+(budget.T||0)<1){
-    if(lv.build)return {I:10,L:8,T:4};
-    const d=defaultBudgetForGaps();
-    if(d)return generousKitBudget(d);
-    return generousKitBudget({I:3,L:2,T:0});
-  }
-  if(lv.build)return budget;
-  return generousKitBudget(budget);
+  return budget;
 }
 
 function pickKitPipeWithStock(){
@@ -775,7 +839,7 @@ function setBuildPipe(type){
   }
   selectedBuildPipe=type;
   updateBuildPaletteHud();
-  setStatus('Drag onto + to place · drag off board or 🗑 to remove','idle');
+  setStatus('Drag onto + · tap pipe to spin · trash zone to remove','idle');
 }
 
 function placeBuildPipe(r,c,type){
@@ -792,35 +856,11 @@ function placeBuildPipe(r,c,type){
   return true;
 }
 
-function swapPlacedPipeType(r,c,newType){
-  const cell=grid[r]&&grid[r][c];
-  if(!cell||!cell.placed||BUILD_TYPES.indexOf(newType)<0)return false;
-  if(cell.type===newType)return interactBuildCell(r,c);
-  if(kitStock(newType)<=0){
-    setStatus('No '+kitLabel(newType).toLowerCase()+' left — use Remove or pick another type','idle');
-    return false;
-  }
-  buildInventory[cell.type]=(buildInventory[cell.type]||0)+1;
-  buildInventory[newType]--;
-  cell.type=newType;
-  cell.rot=0;
-  moves++;
-  document.getElementById('moves').textContent=String(moves);
-  spinAnim={r:r,c:c,t:0};
-  playRotate();
-  updateBuildPaletteHud();
-  updateFlow(true);
-  setStatus('Changed to '+kitLabel(newType).toLowerCase()+' — tap again to spin it','flow');
-  return true;
-}
-
 function placeKitAt(r,c){
   if(!kitActive())return false;
   if(r<0||c<0||r>=rows||c>=cols)return false;
   ensureGridRow(r);
-  const existing=grid[r]&&grid[r][c];
-  if(existing&&existing.placed)return swapPlacedPipeType(r,c,selectedBuildPipe);
-  if(existing)return false;
+  if(grid[r]&&grid[r][c])return false;
   if(BUILD_TYPES.indexOf(selectedBuildPipe)<0)return false;
   if(kitStock(selectedBuildPipe)<=0){
     setStatus('No '+selectedBuildPipe+' pipes left — pick another from the kit!','idle');
@@ -1012,9 +1052,6 @@ function canWinNow(result){
   return routeConstraintOk(countRoutePipes(result.filled));
 }
 
-function spillCount(filledSet){
-  return computeLeaks(filledSet||filled).length;
-}
 
 function updateLeakBuckets(badLeakList){
   const active=new Set();
@@ -1185,7 +1222,11 @@ function loadLevel(idx){
   lastValveTap=0;
   levelPar=lv.par||1;
   levelTip=lv.tip||'';
-  if(!levelTip&&idx<3)levelTip='Drag pipes from the kit onto the + cells.';
+  if(!levelTip)levelTip='Connect the hose to every flower. Drag pipes onto +, tap to spin.';
+  if(idx<3&&!lv.build){
+    const need=shortestPathPipeCells(lv.rows);
+    levelTip='Route needs ~'+need+' pipes — '+levelTip;
+  }
   routeMin=lv.routeMin!=null?lv.routeMin:null;
   routeMax=lv.routeMax!=null?lv.routeMax:null;
   if(kitActive())document.getElementById('kit-bar').classList.add('show');
@@ -1639,7 +1680,8 @@ function ensureAnimLoop(){
 function tickWinCheck(){
   if(won||winPending||mode!=='play')return;
   if(goalsLeft>0)return;
-  if(!routeConstraintOk(countRoutePipes(filled)))return;
+  const result=computeFlow();
+  if(!canWinNow(result))return;
   updateFlow(true);
 }
 
@@ -2448,16 +2490,12 @@ function canPlaceKitAt(r,c,type){
   const cell=grid[r]&&grid[r][c];
   if(cell&&cell.fixed)return false;
   if(cell&&blocksPipePlacement(cell))return false;
-  if(!cell)return true;
-  return !!cell.placed;
+  return !cell;
 }
 
 function dropKitAt(r,c,type){
   selectedBuildPipe=type;
-  const cell=grid[r]&&grid[r][c];
-  if(!cell)return placeKitAt(r,c);
-  if(cell.placed)return swapPlacedPipeType(r,c,type);
-  return false;
+  return placeKitAt(r,c);
 }
 
 function endKitDragListeners(){
@@ -2522,7 +2560,7 @@ function onKitPointerUp(e){
     dropKitAt(pt.r,pt.c,pd.type);
     return;
   }
-  if(pd.moved)setStatus('Drop on an empty + cell (or a pipe to swap)','idle');
+  if(pd.moved)setStatus('Drop on an empty + cell','idle');
   else setBuildPipe(pd.type);
 }
 
@@ -2623,8 +2661,7 @@ function onCanvasPointerDown(e){
       return;
     }
     if(cell&&canDragPipe(cell)){
-      const swapOnTap=!!(cell.placed&&kitActive()&&cell.type!==selectedBuildPipe);
-      drag={r:pt.r,c:pt.c,cell:cloneCell(cell),x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,placeOnUp:false,swapOnTap:swapOnTap};
+      drag={r:pt.r,c:pt.c,cell:cloneCell(cell),x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,placeOnUp:false};
       activePointerId=e.pointerId;
       canvas.style.cursor='grabbing';
       startGridDragListeners();
@@ -2646,7 +2683,6 @@ function onCanvasPointerMove(e){
   const dx=drag.x-drag.x0,dy=drag.y-drag.y0;
   if(!drag.moved&&drag.cell&&dx*dx+dy*dy>DRAG_THRESHOLD*DRAG_THRESHOLD){
     drag.moved=true;
-    drag.swapOnTap=false;
     grid[drag.r][drag.c]=null;
     setStatus('Drop on grass, another pipe, or 🗑 to remove','flow');
     ensureAnimLoop();
@@ -2663,19 +2699,12 @@ function onCanvasPointerUp(e){
   const wasDrag=drag.moved;
   const fr=drag.r,fc=drag.c;
   const lifted=drag.cell;
-  const swapOnTap=!!drag.swapOnTap;
   const dropPt=pointerToCell(e.clientX,e.clientY);
   const tapPt=pointerToCell(drag.x0,drag.y0);
   clearDrag();
   try{canvas.releasePointerCapture(e.pointerId);}catch(err){}
   if(mode!=='play'||won||winPending)return;
   canvas.style.cursor='grab';
-
-  if(!wasDrag&&swapOnTap){
-    const pt=tapPt||dropPt;
-    if(pt)swapPlacedPipeType(pt.r,pt.c,selectedBuildPipe);
-    return;
-  }
 
   if(wasDrag&&lifted){
     if(isTrashDrop(e.clientX,e.clientY)){

@@ -7,18 +7,18 @@
 ---
 
 ## Concept
-Connect garden hoses to thirsty fields! Tap pipe tiles to rotate them until water flows from the 🚿 hose to the 🌾 field.
+Connect garden hoses to thirsty flowers! On kit levels, **drag pipes from the bar** onto **+** grass; on classic levels, **tap pipes to spin** them. Water flows from the hose through connected pipes.
 
 ---
 
 ## How It Works
 
 ### Core mechanic
-- Tap any **non-fixed pipe** to rotate it 90° clockwise
-- Water flows automatically through connected pipes (BFS from source)
-- Win when water reaches the goal field
-- **Reset** restores the starting layout
-- **Hint** auto-rotates one pipe toward a solution
+- **Win:** every flower has water (matching color on rainbow levels). Open ends and drips are **visual only** — they do not block winning.
+- **Kit levels:** drag ━ └ ┳ onto **+** cells; drag placed pipes to move; drag to the **trash zone** (or off the board) to remove and refund; **tap** a pipe to rotate.
+- **Classic levels:** tap any **non-fixed pipe** to rotate 90° clockwise.
+- Water flows automatically (BFS from source).
+- **Reset** restores the starting layout; **Hint** places or rotates toward a solution.
 
 ### Pipe types
 | Type | Symbol | Behaviour |
@@ -53,11 +53,11 @@ Connect garden hoses to thirsty fields! Tap pipe tiles to rotate them until wate
 Board **auto-scales**: bigger grids use slightly smaller cells (down to 32px on 8×8) so the whole field fits on iPad.
 
 ### Build levels (longest & shortest)
-After **End of the World**, two **designer** challenges use the same **8×8** empty grid:
-- **Pipe palette** — tap ━ └ ┳ to choose, tap **+** grass to place, tap a pipe to rotate, 🗑 to remove and refund.
-- **Longest Hose** — water must reach the garden with **at least 16 pipes** in the connected route (snake the big field!).
-- **Shortest Hose** — same **8×8** layout, but **at most 7 pipes** (direct path).
-- HUD **🛤** meter tracks pipe count vs target. Teaches path length, planning, and tradeoffs.
+After **End of the World**, two **designer** challenges use a large empty grid:
+- **Pipe palette** — drag ━ └ ┳ onto **+** cells; tap to rotate; trash zone to remove and refund.
+- **Longest Hose** — reach every flower with **at least N pipes** in the connected route.
+- **Shortest Hose** — same layout, but **at most N pipes**.
+- HUD **🛤** meter tracks pipe count vs target.
 
 **Visual themes** shift by tier (dawn → meadow → garden → greenhouse → workshop → sunset; apocalypse/secret for bonus levels).
 
@@ -65,19 +65,13 @@ After **End of the World**, two **designer** challenges use the same **8×8** em
 
 **Wilting hint** — on timed levels, under 15s the status nudges you toward 💡 Hint and the hint button pulses.
 
-### Water physics, buckets & Use Again
-- Water **flows through the whole connected network** (animated pulses, droplets along pipes, path highlight).
-- **Garden buckets** 🌻 — each goal has a bucket that **fills up** when water arrives (HUD shows `full/total`).
-- **Leak catch buckets** — bad leaks spawn small **🪣 buckets** on the board that fill; **tap a bucket** to empty it toward the hose.
-- **Spill bucket** (HUD) — leakage fills one meter; turns orange when high. **Use Again** sends that water back to the hose.
-- **Closed loop rule:** every open port on the **water path** must connect — gaps, cracks, edges, and open ends into grass block winning.
-- Gardens only count as watered when that path is a **sealed circuit** (no leaks).
-- **Spare pipes** not touching the hose cluster are removed automatically; pipes left off-path are drawn faint so they are easy to ignore.
-- Water sprays from any open end until you spin pipes to **close the loop**. Use Again reuses spilled water but **cannot win** until blocking leaks are fixed (`open ends = 0`).
-- **Puddles** at open ends; **overflow** droplets when gardens are full.
-- **Win rule:** gardens watered, **garden buckets full**, **closed loop** (zero open ends), plus route length on build levels.
+### Water physics
+- Water **flows through connected pipes** (animated pulses, droplets, path highlight).
+- **Open ends** spray puddles for juice; they do **not** block winning.
+- HUD **🌻** shows flowers watered (`n/total`).
+- **Win rule:** all flowers watered (+ route min/max on build levels). Valves must be open; broken pipes need one spin to clear.
 
-**Controls:** drag movable pipes to empty grass or swap with another pipe; tap to spin (valves: tap twice to open). Hose, flower, rocks, and caps stay put.
+**Controls:** drag kit pipes onto **+**; drag placed pipes to move or trash; tap to spin (valves: double-tap to open). Hose, flowers, rocks, and animals stay put.
 
 Each level is verified solvable (`verify-pipe-levels.mjs` for 1–15, `verify-pipe-mechanics.mjs` for 16–23). Win screen shows stars based on moves vs par.
 
