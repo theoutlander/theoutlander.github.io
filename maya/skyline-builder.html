@@ -566,17 +566,21 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
     }
 
     case 'window': {
+      // Slightly inset vs door — same grid footprint, smaller visual
+      const ix = 6, iy = 10;
+      const wx = x + ix, wy = y + iy;
+      const wC = C - ix * 2, wH = H - iy * 2;
       // Modern floor-to-ceiling window: thin aluminium frame, large glass
       const fr = 5; // frame thickness
       // Outer frame (aluminium — derived from chosen colour)
       const frameCol = color;
       ctx.fillStyle = frameCol;
-      ctx.fillRect(x, y, C, H);
+      ctx.fillRect(wx, wy, wC, wH);
       // Inner shadow/reveal
       ctx.fillStyle = 'rgba(0,0,0,0.4)';
-      ctx.fillRect(x+fr-1, y+fr-1, C-fr*2+2, H-fr*2+2);
+      ctx.fillRect(wx+fr-1, wy+fr-1, wC-fr*2+2, wH-fr*2+2);
       // Glass area
-      const gx = x+fr, gy = y+fr, gw = C-fr*2, gh = H-fr*2;
+      const gx = wx+fr, gy = wy+fr, gw = wC-fr*2, gh = wH-fr*2;
       // Base glass colour (night sky tint)
       ctx.fillStyle = '#1a2d40';
       ctx.fillRect(gx, gy, gw, gh);
@@ -595,7 +599,7 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
       ctx.fillRect(gx + gw/2 - fr*0.5, gy, fr, gh);
       // Glass reflections — two diagonal streaks
       ctx.save();
-      ctx.beginPath(); ctx.rect(gx, gy, gw/2, H-fr*2); ctx.clip();
+      ctx.beginPath(); ctx.rect(gx, gy, gw/2, gh); ctx.clip();
       ctx.fillStyle = 'rgba(255,255,255,0.12)';
       ctx.beginPath();
       ctx.moveTo(gx+4,        gy+4);
@@ -611,19 +615,19 @@ function drawBlock(ctx, type, color, x, y, bw, bh) {
       ctx.restore();
       // Frame highlight (top + left edges)
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.fillRect(x, y, C, 2);
-      ctx.fillRect(x, y, 2, H);
+      ctx.fillRect(wx, wy, wC, 2);
+      ctx.fillRect(wx, wy, 2, wH);
       // Frame shadow (bottom + right edges)
       ctx.fillStyle = 'rgba(0,0,0,0.3)';
-      ctx.fillRect(x, y+H-2, C, 2);
-      ctx.fillRect(x+C-2, y, 2, H);
+      ctx.fillRect(wx, wy+wH-2, wC, 2);
+      ctx.fillRect(wx+wC-2, wy, 2, wH);
       // Protruding sill ledge
       ctx.fillStyle = adjCol(color, 20);
-      ctx.fillRect(x-4, y+H-fr-1, C+8, fr+3);
+      ctx.fillRect(wx-4, wy+wH-fr-1, wC+8, fr+3);
       ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.fillRect(x-4, y+H-fr-1, C+8, 1.5);
+      ctx.fillRect(wx-4, wy+wH-fr-1, wC+8, 1.5);
       ctx.fillStyle = 'rgba(0,0,0,0.25)';
-      ctx.fillRect(x-4, y+H+1, C+8, 2);
+      ctx.fillRect(wx-4, wy+wH+1, wC+8, 2);
       break;
     }
 
