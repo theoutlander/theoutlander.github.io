@@ -562,6 +562,21 @@ function onGameModalPopState(){
 }
 window.addEventListener('popstate',onGameModalPopState);
 
+function syncGameModalFromLocation(){
+  var file=pathnameGameFile();
+  if(file){
+    if(!gm.classList.contains('open')){
+      openGameInModal(file,titleForGameFile(file));
+    }
+    if(!history.state||!history.state.mayaIframe||history.state.file!==file){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
+    return;
+  }
+  if(gm.classList.contains('open'))closeGameCore();
+}
+syncGameModalFromLocation();
+
 // Close button — always returns to Game Lab (one tap, no trapped navigation)
 function onModalBack(e){
   if(e){ e.preventDefault(); e.stopPropagation(); }

@@ -42,7 +42,7 @@ A kid-safe daily-turn fantasy RPG (**Legend of the Rainbow Dragon**; family nick
 ## Locations
 
 ### Town hub
-Forest, Weapon Shop (weapons + armor), Healer, Inn, Snack Bar, **Bard's Stage** (once/day buff), **Mailbox**, **Hero Stats** (achievements), Rainbow Dragon (level 12+), **New Game+** after first dragon kill, End Day.
+Forest, Weapon Shop (weapons + armor), Healer, Inn, Snack Bar, **Music Stage** (once/day power boost), **Mailbox**, **Hero Stats** (achievements), Rainbow Dragon (level 12+), **New Game+** after first dragon kill, End Day.
 
 ### Forest
 - ~62% combat (common/tough/elite)
@@ -78,8 +78,8 @@ Restore HP to MaxHP. If turns = 0, also rolls day (same as End Day).
 ### Snack Bar
 Random: joke (+1 charm), riddle (39 kid-friendly riddles, correct +15 gold), recruit **Adventure Buddy** (permanent combat help), muffin (+3 HP).
 
-### Bard's Stage
-Once per day: random song buff (STR, HP, gold, Charm, or DEF).
+### Music Stage
+Once per day: random song power boost (STR, HP, gold, Charm, or DEF).
 
 ### Mailbox
 Free to read; new letter each day; spend 1 turn to request extra mail.

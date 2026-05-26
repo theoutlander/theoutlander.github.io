@@ -47,9 +47,9 @@ body{
   touch-action:manipulation;
 }
 
-.hdr{display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--card);border-bottom:2px solid var(--border);flex-shrink:0;gap:8px;padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
-.hdr-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--pink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
-.hdr-back{background:rgba(255,255,255,.08);border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Fredoka One',cursive;font-size:13px;color:var(--muted);cursor:pointer;touch-action:manipulation;min-height:44px;flex-shrink:0}
+.hdr{display:flex;align-items:center;justify-content:center;padding:10px 12px;background:var(--card);border-bottom:2px solid var(--border);flex-shrink:0;gap:8px;padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));position:relative}
+.hdr-title{font-family:'Fredoka One',cursive;font-size:1rem;color:var(--pink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:70%;text-align:center}
+.hdr-back{background:rgba(255,255,255,.08);border:2px solid var(--border);border-radius:10px;padding:8px 12px;font-family:'Fredoka One',cursive;font-size:13px;color:var(--muted);cursor:pointer;touch-action:manipulation;min-height:44px;position:absolute;left:max(12px,env(safe-area-inset-left))}
 .hdr-back.hidden{display:none}
 
 .stats{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;background:rgba(30,20,64,.6);flex-shrink:0;border-bottom:1px solid var(--border)}
@@ -72,7 +72,8 @@ body{
 #log-forest .line.hi,#log-dragon .line.hi{color:var(--yellow)}
 #log-forest .line.bad,#log-dragon .line.bad{color:var(--pink)}
 #log-forest .line.fun,#log-dragon .line.fun{color:var(--blue)}
-.log-hint{color:var(--muted);font-size:12px;font-style:italic;padding:8px 12px 4px}
+.log-hint{color:var(--muted);font-size:12px;font-style:italic;padding:6px 12px 2px;line-height:1.45}
+.log-empty{border-top:1px dashed rgba(61,42,106,.6);margin-top:6px;padding-top:8px}
 #log .line.hi{color:var(--yellow)}
 #log .line.bad{color:var(--pink)}
 #log .line.fun{color:var(--blue)}
@@ -95,6 +96,22 @@ body{
   border-radius:12px;
   background:rgba(255,255,255,.02);
 }
+.next-hint{
+  font-size:12px;
+  line-height:1.35;
+  color:var(--yellow);
+  background:rgba(255,225,77,.08);
+  border:1px solid rgba(255,225,77,.35);
+  border-radius:10px;
+  padding:8px 10px;
+  margin-bottom:2px;
+}
+.action-help{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.35;
+  padding:2px 4px 0;
+}
 .act-btn{font-family:'Fredoka One',cursive;font-size:16px;padding:14px 16px;border-radius:12px;border:none;cursor:pointer;min-height:48px;touch-action:manipulation;transition:transform .1s}
 .act-btn:active{transform:scale(.97)}
 .act-btn.primary{background:var(--yellow);color:#1a0a30;box-shadow:0 4px 0 #9a7a10}
@@ -114,6 +131,85 @@ body{
 .act-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 
 .hub-title{font-family:'Fredoka One',cursive;font-size:1.35rem;text-align:center;color:var(--purple);padding:4px 0}
+.hub-flavor{
+  text-align:center;font-size:.92rem;line-height:1.45;font-weight:800;
+  color:var(--blue);margin:2px 8px 6px;padding:10px 12px;border-radius:12px;
+  background:rgba(91,200,255,.1);border:1px dashed rgba(91,200,255,.35);
+  min-height:2.75em;display:flex;align-items:center;justify-content:center;
+}
+.mission-card{
+  background:rgba(30,20,64,.78);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:10px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+.mission-title{
+  font-family:'Fredoka One',cursive;
+  font-size:.96rem;
+  color:var(--yellow);
+  text-align:center;
+}
+.mission-text{
+  color:var(--text);
+  font-size:13px;
+  line-height:1.4;
+  text-align:center;
+}
+.challenge-box{
+  background:rgba(10,6,24,.85);
+  border:1px dashed rgba(199,125,255,.45);
+  border-radius:10px;
+  padding:8px;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.challenge-title{
+  font-size:12px;
+  color:var(--purple);
+  text-align:center;
+  letter-spacing:.02em;
+}
+.challenge-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  font-size:12px;
+  color:var(--text);
+}
+.challenge-row b{color:var(--green)}
+.challenge-claim{min-height:40px;font-size:13px}
+.fun-images{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+}
+.fun-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+}
+.fun-card svg{
+  width:100%;
+  height:64px;
+  border-radius:8px;
+  display:block;
+}
+.fun-card span{
+  font-size:10px;
+  color:var(--muted);
+  font-weight:900;
+  letter-spacing:.04em;
+  text-transform:uppercase;
+}
 .encounter{text-align:center;padding:12px;background:var(--card);border-radius:12px;border:2px solid var(--border)}
 .enc-emoji{font-size:3.5rem;line-height:1}
 .enc-name{font-family:'Fredoka One',cursive;font-size:1.2rem;color:var(--yellow);margin-top:6px}
@@ -148,6 +244,24 @@ body{
 .toast.hidden{display:none}
 @keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(12px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 .elite-tag{display:inline-block;font-size:10px;padding:2px 8px;border-radius:99px;background:var(--orange);color:#1a0a30;margin-left:6px;vertical-align:middle}
+.tip-pop{
+  position:fixed;
+  z-index:300;
+  background:rgba(14,9,32,.96);
+  border:1px solid rgba(199,125,255,.45);
+  color:var(--text);
+  font-size:12px;
+  font-weight:900;
+  padding:8px 10px;
+  border-radius:10px;
+  max-width:220px;
+  line-height:1.35;
+  pointer-events:none;
+  opacity:0;
+  transform:translateY(4px);
+  transition:opacity .12s ease,transform .12s ease;
+}
+.tip-pop.show{opacity:1;transform:translateY(0)}
 
 /* iPhone (narrow) */
 @media (max-width:374px){
@@ -157,9 +271,17 @@ body{
   #main{padding:6px;gap:6px}
   .act-btn{font-size:14px;padding:12px 14px;min-height:46px}
   .action-section{font-size:10px}
+  .action-help{font-size:10px}
+  .next-hint{font-size:11px;padding:7px 8px}
   .action-block{padding:6px;gap:6px}
   .hub-title{font-size:1.15rem}
+  .hub-flavor{font-size:.84rem;padding:8px;margin:2px 4px 4px}
+  .mission-card{padding:8px;gap:6px}
+  .mission-text{font-size:12px}
+  .challenge-row{font-size:11px}
   .enc-emoji{font-size:2.75rem}
+  .fun-images{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .fun-card svg{height:58px}
   .bbs-bar{font-size:10px}
   #log,#log-forest,#log-dragon{font-size:12px;padding:8px 10px}
   .bbs-frame.hub-log{max-height:min(180px,28vh)}
@@ -175,6 +297,10 @@ body{
   .encounter{padding:8px}
   .enc-emoji{font-size:2.25rem}
   .hub-title{font-size:1rem;padding:0}
+  .hub-flavor{font-size:.78rem;padding:5px 8px;margin:0 2px 4px;min-height:2em}
+  .mission-card{padding:7px;gap:5px}
+  .mission-text{font-size:11px}
+  .challenge-row{font-size:10px}
   .ov{padding:12px 20px;gap:8px}
   .ov-big{font-size:40px}
   .ov-title{font-size:clamp(22px,6vw,32px)}
@@ -195,6 +321,7 @@ body{
   .bbs-frame.combat-log{max-height:min(220px,32vh);min-height:100px}
   .act-btn{font-size:17px;padding:14px 18px;min-height:52px;border-radius:14px}
   .enc-emoji{font-size:4rem}
+  .fun-card svg{height:72px}
   .enc-name{font-size:1.35rem}
   #hub-actions{gap:12px}
   .action-block{padding:10px;gap:10px}
@@ -242,16 +369,76 @@ body{
   <div class="hdr-title" id="hdr-title">Rainbow Dragon</div>
 </header>
 <div class="stats" id="stats-bar">
-  <span class="stat-chip hp">❤️ <b id="s-hp">10</b>/<b id="s-maxhp">10</b></span>
-  <span class="stat-chip">⚔️ <b id="s-lv">1</b></span>
-  <span class="stat-chip">🪙 <b id="s-gold">200</b></span>
-  <span class="stat-chip turns">⏳ <b id="s-turns">18</b></span>
-  <span class="stat-chip charm">✨ <b id="s-charm">5</b></span>
+  <span class="stat-chip hp" data-tip="HP: your health. If it hits 0, you rest at the inn and lose some gold.">❤️ <b id="s-hp">10</b>/<b id="s-maxhp">10</b></span>
+  <span class="stat-chip" data-tip="Level: grows your power and unlocks tougher adventures.">⚔️ <b id="s-lv">1</b></span>
+  <span class="stat-chip" data-tip="Gold: spend it at the weapon shop and healer.">🪙 <b id="s-gold">200</b></span>
+  <span class="stat-chip turns" data-tip="Turns: actions you can take today. Resets tomorrow.">⏳ <b id="s-turns">18</b></span>
+  <span class="stat-chip charm" data-tip="Charm: helps with flee chance and bonus gold.">✨ <b id="s-charm">5</b></span>
 </div>
 
 <main id="main">
   <div class="screen" id="screen-hub">
     <div class="hub-title" id="hub-greet">Welcome, Hero!</div>
+    <div class="hub-flavor" id="hub-flavor" role="status" aria-live="polite"></div>
+    <div class="mission-card" id="hub-mission-card">
+      <div class="mission-title">🎯 Mission + How To Play</div>
+      <div class="mission-text" id="mission-text"></div>
+      <div class="challenge-box">
+        <div class="challenge-title" id="challenge-title"></div>
+        <div class="challenge-row">
+          <span id="challenge-progress-label"></span>
+          <b id="challenge-progress-value"></b>
+        </div>
+        <button type="button" class="act-btn snack challenge-claim" id="challenge-claim-btn"></button>
+      </div>
+    </div>
+    <div class="fun-images" aria-label="Fun scene images">
+      <div class="fun-card">
+        <svg viewBox="0 0 120 72" role="img" aria-label="Friendly dragon">
+          <defs>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#2a0840"/>
+              <stop offset="100%" stop-color="#5bc8ff"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="120" height="72" fill="url(#g1)"/>
+          <circle cx="16" cy="14" r="2" fill="#ffe14d"/>
+          <circle cx="28" cy="20" r="1.5" fill="#ffe14d"/>
+          <text x="60" y="46" text-anchor="middle" font-size="34">🐉</text>
+        </svg>
+        <span>Dragon Buddy</span>
+      </div>
+      <div class="fun-card">
+        <svg viewBox="0 0 120 72" role="img" aria-label="Forest path">
+          <defs>
+            <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#16314b"/>
+              <stop offset="100%" stop-color="#1a4020"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="120" height="72" fill="url(#g2)"/>
+          <text x="26" y="53" font-size="28">🌲</text>
+          <text x="52" y="46" font-size="22">✨</text>
+          <text x="78" y="53" font-size="28">🦄</text>
+        </svg>
+        <span>Forest Fun</span>
+      </div>
+      <div class="fun-card">
+        <svg viewBox="0 0 120 72" role="img" aria-label="Snack bar treats">
+          <defs>
+            <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#4a1038"/>
+              <stop offset="100%" stop-color="#ff6eb4"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width="120" height="72" fill="url(#g3)"/>
+          <text x="26" y="50" font-size="24">🧁</text>
+          <text x="54" y="50" font-size="24">🍭</text>
+          <text x="82" y="50" font-size="24">🍬</text>
+        </svg>
+        <span>Snack Stage</span>
+      </div>
+    </div>
     <div class="bbs-frame hub-log">
       <div class="bbs-bar" id="hub-console-bar">✨ SPARKLE DRAGON 3000 ✨</div>
       <div id="log"></div>
@@ -344,6 +531,7 @@ body{
 </div>
 
 <div id="ach-toast" class="toast hidden"></div>
+<div id="tip-pop" class="tip-pop"></div>
 
 <div class="ov hidden" id="ov-no-turns">
   <div class="ov-big">🌙</div>
@@ -357,6 +545,31 @@ const SAVE_KEY = 'lord_rainbow_dragon_v1';
 const CONSOLE_NAME = 'Sparkle Dragon 3000';
 const GAME_TITLE = 'Legend of the Rainbow Dragon';
 const GAME_NICK = 'LORD';
+const HUB_FLAVOR_TEXTS = [
+  'Today\'s vibe: extra sparkly. The town believes in you!',
+  'Fun fact: Rainbow Dragon naps on clouds made of cotton candy.',
+  'Hint: Mail and Music Stage refresh daily — don\'t skip the freebies!',
+  'Redmond Town Square says: stretch, snack, then save the realm.',
+  'Pick the forest if you want giggly monsters and loot.',
+  'Snack Bar riddles hide bonus gold. Big brain = big pockets!',
+  'Your Adventure Buddy cheers extra loud on Star monster days.',
+  'Low on HP? Inn rest is free soup for the soul (and HP!).',
+  'Charm isn\'t just cute — it helps you flee AND find more gold.',
+  'Weapons first, shiny armor second, dragon friendship third.',
+  'Boss unlocks at level 12 — grind those forest wins!',
+  'If a slime bounces twice, say hi. It counts as diplomacy.',
+];
+const LOG_EMPTY_TIPS = [
+  'Try 🌲 Forest for your first sparkly scrap!',
+  'Visit 📬 Mailbox for letters from silly townsfolk.',
+  '🎵 Music Stage gives a daily power-up — swing by once!',
+  'Out of juice? 🏠 Inn rest refills HP for free.',
+];
+const DAILY_CHALLENGES = [
+  { id: 'forest', title: 'Forest Explorer', label: 'Forest wins today', goal: 2, reward: '40 gold', rewardGold: 40 },
+  { id: 'snack', title: 'Snack Detective', label: 'Snack Bar visits today', goal: 1, reward: '2 charm', rewardCharm: 2 },
+  { id: 'mail', title: 'Mailbox Buddy', label: 'Mail checks today', goal: 1, reward: '30 gold', rewardGold: 30 },
+];
 const MAX_TURNS = 18;
 const AVATARS = ['🧙‍♀️', '🧝‍♀️', '🦸‍♀️', '🦸', '🐱', '🦄', '🐉', '👸'];
 const BOSS_UNLOCK_LEVEL = 12;
@@ -497,7 +710,7 @@ const NPC_MAIL = [
   { from: 'Healer Greenleaf 🌿', text: 'When HP is low, rest at the inn for free — or pay me for a quick heal!' },
   { from: 'Snack Bar Betty 🧁', text: 'Try the riddles — I hide extra gold in the right answers!' },
   { from: 'Forest Ranger 🌲', text: 'Orange tags mean extra-sparkly forest friends with bonus loot!' },
-  { from: 'Bard Stringsong 🎵', text: 'Visit my stage once a day for a free buff. No turn wasted twice!' },
+  { from: 'DJ Stringsong 🎵', text: 'Visit Music Stage once a day for a free power boost!' },
   { from: 'Dad 💕', text: 'Proud of you! Have a blast on Sparkle Dragon 3000!' },
 ];
 
@@ -563,7 +776,7 @@ function freshState() {
     dragonHp: BOSS_MAX_HP,
     dragonDefeated: false,
     newGamePlus: 0,
-    log: ['Welcome to the realm! Choose a destination.'],
+    log: [{ msg: 'Welcome! Pick a button below to start your sparkly quest.', cls: 'fun' }],
     created: false,
     kills: 0,
     achievements: [],
@@ -571,6 +784,10 @@ function freshState() {
     buddy: null,
     mail: [],
     mailRead: 0,
+    dailyForestWins: 0,
+    dailySnackVisits: 0,
+    dailyMailChecks: 0,
+    challengeClaimDay: '',
   };
 }
 
@@ -582,6 +799,26 @@ function migrateState() {
   if (state.newGamePlus == null) state.newGamePlus = 0;
   if (state.bardDay == null) state.bardDay = '';
   if (state.mailRead == null) state.mailRead = 0;
+  if (state.dailyForestWins == null) state.dailyForestWins = 0;
+  if (state.dailySnackVisits == null) state.dailySnackVisits = 0;
+  if (state.dailyMailChecks == null) state.dailyMailChecks = 0;
+  if (state.challengeClaimDay == null) state.challengeClaimDay = '';
+  if (state.log && state.log.length) {
+    var needsNorm = false;
+    for (var i = 0; i < state.log.length; i++) {
+      if (typeof state.log[i] === 'string') {
+        needsNorm = true;
+        break;
+      }
+    }
+    if (needsNorm) {
+      state.log = state.log.map(function(e) {
+        if (typeof e === 'string') return { msg: e, cls: '' };
+        if (!e || e.msg == null) return { msg: '', cls: '' };
+        return { msg: String(e.msg), cls: e.cls || '' };
+      });
+    }
+  }
 }
 
 function armorDef() {
@@ -664,6 +901,10 @@ function refreshDay() {
       const letter = NPC_MAIL[Math.floor(Math.random() * NPC_MAIL.length)];
       state.mail.push({ from: letter.from, text: letter.text, day: t });
     }
+    state.dailyForestWins = 0;
+    state.dailySnackVisits = 0;
+    state.dailyMailChecks = 0;
+    state.challengeClaimDay = '';
     saveGame();
   }
 }
@@ -730,20 +971,34 @@ function addDragonLog(msg, cls) {
   el.scrollTop = el.scrollHeight;
 }
 
+function normalizeLogRow(raw) {
+  if (raw == null) return { msg: '', cls: '' };
+  if (typeof raw === 'string') return { msg: raw, cls: '' };
+  return { msg: raw.msg != null ? String(raw.msg) : '', cls: raw.cls || '' };
+}
+
 function renderLog(container, entries) {
   if (!container) return;
   container.innerHTML = '';
-  entries.forEach(function(e) {
+  entries.forEach(function(raw) {
+    var e = normalizeLogRow(raw);
     const line = document.createElement('div');
     line.className = 'line' + (e.cls ? ' ' + e.cls : '');
     line.textContent = e.msg;
     container.appendChild(line);
   });
   if (!entries.length) {
+    const empty = document.createElement('div');
+    empty.className = 'log-empty';
     const hint = document.createElement('div');
     hint.className = 'log-hint';
-    hint.textContent = 'Your adventure log appears here. Try the forest!';
-    container.appendChild(hint);
+    hint.textContent = 'No story yet — this box fills up as you play!';
+    const tip = document.createElement('div');
+    tip.className = 'log-hint';
+    tip.textContent = LOG_EMPTY_TIPS[Math.floor(Math.random() * LOG_EMPTY_TIPS.length)];
+    empty.appendChild(hint);
+    empty.appendChild(tip);
+    container.appendChild(empty);
   }
   container.scrollTop = container.scrollHeight;
 }
@@ -752,6 +1007,34 @@ function scrollUiToTop() {
   const main = document.getElementById('main');
   if (!main) return;
   main.scrollTop = 0;
+}
+
+let tipHideTimer = null;
+function showTipFor(el) {
+  const msg = el && el.getAttribute('data-tip');
+  const pop = document.getElementById('tip-pop');
+  if (!msg || !pop) return;
+  pop.textContent = msg;
+  const r = el.getBoundingClientRect();
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const maxX = vw - 16;
+  const maxY = vh - 16;
+  let x = r.left + r.width / 2;
+  let y = r.top - 10;
+  pop.style.left = Math.max(16, Math.min(maxX, x)) + 'px';
+  pop.style.top = Math.max(16, Math.min(maxY, y)) + 'px';
+  pop.style.transform = 'translate(-50%, -100%)';
+  pop.classList.add('show');
+}
+
+function hideTipSoon(ms) {
+  const pop = document.getElementById('tip-pop');
+  if (!pop) return;
+  if (tipHideTimer) clearTimeout(tipHideTimer);
+  tipHideTimer = setTimeout(function() {
+    pop.classList.remove('show');
+  }, ms || 0);
 }
 
 function updateHud() {
@@ -899,6 +1182,72 @@ function goToHub() {
   buildHubActions();
 }
 
+function refreshHubFlavor() {
+  var el = document.getElementById('hub-flavor');
+  if (!el) return;
+  el.textContent = HUB_FLAVOR_TEXTS[Math.floor(Math.random() * HUB_FLAVOR_TEXTS.length)];
+}
+
+function currentDailyChallenge() {
+  var t = todayKey();
+  var seed = Number(t.slice(-2));
+  return DAILY_CHALLENGES[seed % DAILY_CHALLENGES.length];
+}
+
+function challengeProgress(def) {
+  if (!def) return 0;
+  if (def.id === 'forest') return state.dailyForestWins;
+  if (def.id === 'snack') return state.dailySnackVisits;
+  if (def.id === 'mail') return state.dailyMailChecks;
+  return 0;
+}
+
+function renderMissionAndChallenge() {
+  var mission = document.getElementById('mission-text');
+  if (mission) {
+    mission.innerHTML = 'Mission: reach Lv ' + BOSS_UNLOCK_LEVEL + ', then befriend the Rainbow Dragon.<br>' +
+      'How to play: use turns in Forest/Shop/Snack/Music, grow stronger, then challenge the dragon.';
+  }
+  var def = currentDailyChallenge();
+  if (!def) return;
+  var progress = challengeProgress(def);
+  var done = progress >= def.goal;
+  var claimed = state.challengeClaimDay === todayKey();
+  var t = document.getElementById('challenge-title');
+  var l = document.getElementById('challenge-progress-label');
+  var v = document.getElementById('challenge-progress-value');
+  var b = document.getElementById('challenge-claim-btn');
+  if (t) t.textContent = '⭐ Daily Challenge: ' + def.title + ' (Reward: ' + def.reward + ')';
+  if (l) l.textContent = def.label;
+  if (v) v.textContent = progress + ' / ' + def.goal;
+  if (b) {
+    b.disabled = claimed || !done;
+    if (claimed) b.textContent = '✅ Reward Claimed Today';
+    else if (!done) b.textContent = 'Keep Going!';
+    else b.textContent = '🎁 Claim Reward';
+  }
+}
+
+function claimDailyChallengeReward() {
+  var def = currentDailyChallenge();
+  if (!def) return;
+  if (state.challengeClaimDay === todayKey()) {
+    addLog('⭐ Daily challenge reward already claimed today.', 'fun');
+    return;
+  }
+  if (challengeProgress(def) < def.goal) {
+    addLog('⭐ Finish today\'s challenge first!', 'fun');
+    return;
+  }
+  if (def.rewardGold) state.gold += def.rewardGold;
+  if (def.rewardCharm) state.charm += def.rewardCharm;
+  state.challengeClaimDay = todayKey();
+  addLog('🎁 Daily challenge complete! You earned ' + def.reward + '.', 'hi');
+  updateHud();
+  renderMissionAndChallenge();
+  saveGame();
+}
+
 function showScreen(name) {
   currentScreen = name;
   document.getElementById('screen-hub').classList.toggle('hidden', name !== 'hub');
@@ -910,10 +1259,14 @@ function showScreen(name) {
   document.getElementById('screen-mail').classList.toggle('hidden', name !== 'mail');
   document.getElementById('screen-bard').classList.toggle('hidden', name !== 'bard');
   syncHeaderBack(name);
-  const titles = { hub: 'Town Square', forest: 'Friendly Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: "Bard's Stage" };
+  const titles = { hub: 'Redmond Town Square', forest: 'Friendly Forest', shop: 'Weapon Shop', snack: 'Snack Bar', dragon: 'Dragon Lair', stats: 'Hero Stats', mail: 'Mailbox', bard: 'Music Stage' };
   document.getElementById('hdr-title').textContent = titles[name] || 'Rainbow Dragon';
   notifyPortalScreen(name);
   scrollUiToTop();
+  if (name === 'hub') {
+    refreshHubFlavor();
+    renderMissionAndChallenge();
+  }
 }
 
 function buildHubActions() {
@@ -934,18 +1287,37 @@ function buildHubActions() {
     return b;
   }
 
-  function section(title) {
+  function section(title, helpText) {
     const s = document.createElement('div');
     s.className = 'action-section';
     s.textContent = title;
     box.appendChild(s);
+    if (helpText) {
+      const h = document.createElement('div');
+      h.className = 'action-help';
+      h.textContent = helpText;
+      box.appendChild(h);
+    }
     const wrap = document.createElement('div');
     wrap.className = 'action-block';
     box.appendChild(wrap);
     return wrap;
   }
 
-  const adventure = section('Adventure');
+  function recommendNextMove() {
+    if (state.turnsLeft <= 0) return 'No turns left today: tap End Day, then come back tomorrow for a fresh set.';
+    if (state.level < 3) return 'Start here: tap Explore Forest to gain XP and gold.';
+    if (state.hp <= Math.floor(state.maxHp * 0.45)) return 'You are low on HP: use Inn (free) or Healer before more fights.';
+    if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) return 'Big goal ready: challenge the Rainbow Dragon when you feel prepared.';
+    return 'Great momentum: Forest for XP, Shop for upgrades, then Dragon at level ' + BOSS_UNLOCK_LEVEL + '.';
+  }
+
+  const hint = document.createElement('div');
+  hint.className = 'next-hint';
+  hint.textContent = '👉 Recommended next move: ' + recommendNextMove();
+  box.appendChild(hint);
+
+  const adventure = section('Adventure', 'Fight monsters for XP + gold. This is your main progress path.');
   adventure.appendChild(btn('🌲 Explore Forest (1 turn)', 'forest', goForest, noTurns));
   const bardDone = state.bardDay === todayKey();
   if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) {
@@ -953,7 +1325,7 @@ function buildHubActions() {
     adventure.appendChild(btn(label, 'dragon', goDragon, noTurns));
   }
   const row2 = document.createElement('div');
-  const town = section('Town Services');
+  const town = section('Town Services', 'Get stronger or recover: buy gear, heal up, and collect buffs.');
   town.appendChild(btn('⚔️ Weapon Shop (1 turn)', 'shop', goShop, noTurns));
   const row = document.createElement('div');
   row.className = 'act-row';
@@ -961,9 +1333,9 @@ function buildHubActions() {
   row.appendChild(btn('🏠 Inn — Rest', 'inn', goInn, noTurns));
   town.appendChild(row);
   town.appendChild(btn('🧁 Snack Bar (1 turn)', 'snack', goSnack, noTurns));
-  town.appendChild(btn(bardDone ? '🎵 Bard (done today)' : '🎵 Bard\'s Stage (1 turn)', 'bard', goBard, noTurns || bardDone));
+  town.appendChild(btn(bardDone ? '🎵 Music Stage (done today)' : '🎵 Music Stage (+power, 1 turn)', 'bard', goBard, noTurns || bardDone));
 
-  const progress = section('Progress');
+  const progress = section('Progress', 'Check goals, tips, and records to decide what to do next.');
   row2.className = 'act-row';
   row2.appendChild(btn('📬 Mailbox', 'mail', goMail, false));
   row2.appendChild(btn('📜 Hero Stats', 'stats', goStats, false));
@@ -973,7 +1345,7 @@ function buildHubActions() {
     progress.appendChild(btn('👑 New Game+ — Dragon returns!', 'dragon', startNewGamePlus, noTurns));
   }
 
-  const dayEnd = section('Day End');
+  const dayEnd = section('Day End', 'Use this when you are done for today or out of turns.');
   dayEnd.appendChild(btn('🌙 End Day (rest)', 'muted', endDay, false));
 }
 
@@ -1086,6 +1458,7 @@ function doFight() {
   state.gold += m.gold + bonus;
   state.xp += m.xp;
   state.kills++;
+  state.dailyForestWins++;
   addForestLog('Victory! +' + m.xp + ' XP, +' + (m.gold + bonus) + ' gold', 'hi');
   addLog('⚔️ Outsmarted ' + m.name + '! +' + m.xp + ' XP', 'hi');
   if (bonus > 0) addLog('✨ Charm bonus: +' + bonus + ' gold', 'fun');
@@ -1222,6 +1595,7 @@ function goInn() {
 
 function goSnack() {
   if (!useTurn()) return;
+  state.dailySnackVisits++;
   const roll = Math.random();
   pendingSnack = { type: roll < 0.35 ? 'riddle' : roll < 0.7 ? 'joke' : roll < 0.85 ? 'ally' : 'muffin' };
   const box = document.getElementById('snack-box');
@@ -1433,6 +1807,7 @@ function renderMail() {
 
 function mailRefresh() {
   if (!useTurn()) return;
+  state.dailyMailChecks++;
   const letter = NPC_MAIL[Math.floor(Math.random() * NPC_MAIL.length)];
   state.mail.push({ from: letter.from, text: letter.text, day: todayKey() });
   addLog('📬 New mail from ' + letter.from, 'fun');
@@ -1442,7 +1817,7 @@ function mailRefresh() {
 
 function goBard() {
   if (state.bardDay === todayKey()) {
-    addLog('🎵 You already heard the bard today!', 'fun');
+    addLog('🎵 You already visited Music Stage today!', 'fun');
     return;
   }
   if (!useTurn()) return;
@@ -1455,7 +1830,7 @@ function goBard() {
   if (song.gold) state.gold += song.gold;
   if (song.charm) state.charm += song.charm;
   if (song.def) state.def += song.def;
-  addLog('🎵 Bard sang: ' + song.title, 'hi');
+  addLog('🎵 Music Stage boost: ' + song.title, 'hi');
   sfx('bard');
   const actions = document.getElementById('bard-actions');
   actions.innerHTML = '';
@@ -1520,13 +1895,13 @@ function createHero() {
   state.avatar = selectedAvatar;
   state.created = true;
   state.log = [
-    '══════════════════════════',
-    ' ✨ ' + CONSOLE_NAME.toUpperCase() + ' ✨',
-    ' (' + GAME_NICK + ' at home!)',
-    '══════════════════════════',
-    'Welcome, ' + name + '! ' + selectedAvatar,
-    'You have ' + MAX_TURNS + ' turns today.',
-    'Forest · Shop · Snack Bar · Bard · Mail!',
+    { msg: '══════════════════════════', cls: 'fun' },
+    { msg: ' ✨ ' + CONSOLE_NAME.toUpperCase() + ' ✨', cls: 'hi' },
+    { msg: ' (Your family calls this game ' + GAME_NICK + '!)', cls: 'fun' },
+    { msg: '══════════════════════════', cls: 'fun' },
+    { msg: 'Welcome, ' + name + '! ' + selectedAvatar, cls: 'hi' },
+    { msg: 'You have ' + MAX_TURNS + ' turns today — spend them on forest fun, shops, or silly snacks.', cls: '' },
+    { msg: '🌲 Forest · ⚔️ Shop · 🧁 Snack riddles · 🎵 Music Stage · 📬 Mail!', cls: 'fun' },
   ];
   state.mail.push({ from: NPC_MAIL[0].from, text: NPC_MAIL[0].text, day: todayKey() });
   saveGame();
@@ -1537,9 +1912,20 @@ function init() {
   var hubBar = document.getElementById('hub-console-bar');
   if (hubBar) hubBar.textContent = '✨ ' + CONSOLE_NAME.toUpperCase() + ' ✨';
   syncPortalChrome();
+  document.querySelectorAll('[data-tip]').forEach(function(el){
+    // Native title as fallback (helps accessibility).
+    el.setAttribute('title', el.getAttribute('data-tip'));
+    el.addEventListener('mouseenter', function(){ showTipFor(el); });
+    el.addEventListener('mouseleave', function(){ hideTipSoon(0); });
+    el.addEventListener('focus', function(){ showTipFor(el); });
+    el.addEventListener('blur', function(){ hideTipSoon(0); });
+    // Tap/click shows tooltip briefly on touch devices.
+    el.addEventListener('click', function(){ showTipFor(el); hideTipSoon(1600); });
+  });
   window.addEventListener('message', function(ev) {
     if (ev.data === 'maya:nav-back') goToHub();
   });
+  document.getElementById('challenge-claim-btn').addEventListener('click', claimDailyChallengeReward);
   renderAvatars();
   if (loadGame()) {
     document.getElementById('ov-title').classList.remove('hidden');
