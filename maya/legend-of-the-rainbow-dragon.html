@@ -64,10 +64,10 @@ body{
 .screen.hidden{display:none!important}
 
 .bbs-frame{display:flex;flex-direction:column;background:var(--term);border:2px solid var(--term-border);border-radius:10px;overflow:hidden}
-.bbs-frame.hub-log{flex:0 1 auto;max-height:min(220px,32vh);min-height:0}
-.bbs-frame.combat-log{flex:0 0 auto;max-height:min(200px,30vh);min-height:88px}
+.bbs-frame.hub-log{flex:0 0 auto;height:min(220px,32vh);min-height:120px}
+.bbs-frame.combat-log{flex:0 0 auto;height:min(200px,30vh);min-height:88px}
 .bbs-bar{padding:6px 10px;font-family:'Fredoka One',cursive;font-size:11px;color:var(--purple);background:rgba(61,42,106,.5);border-bottom:1px solid var(--term-border);letter-spacing:.05em}
-#log,#log-forest,#log-dragon{overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.55;color:var(--green);-webkit-overflow-scrolling:touch;flex:1;min-height:0}
+#log,#log-forest,#log-dragon{overflow-y:auto;padding:10px 12px;font-size:13px;line-height:1.55;color:var(--green);-webkit-overflow-scrolling:touch;flex:1;min-height:0;max-height:100%}
 #log .line,#log-forest .line,#log-dragon .line{margin-bottom:4px}
 #log-forest .line.hi,#log-dragon .line.hi{color:var(--yellow)}
 #log-forest .line.bad,#log-dragon .line.bad{color:var(--pink)}
