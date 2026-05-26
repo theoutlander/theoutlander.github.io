@@ -38,16 +38,37 @@
   --purple:#c77dff;--orange:#ff9a3c;--text:#f0e6ff;--muted:rgba(240,230,255,0.38);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;-webkit-user-select:none}
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;touch-action:none}
+html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;touch-action:none}
 
-#root{display:flex;flex-direction:column;height:100%;padding:8px;gap:6px}
+#root{
+  display:grid;
+  grid-template-rows:auto 1fr auto;
+  height:100%;
+  height:100dvh;
+  padding:env(safe-area-inset-top,0) env(safe-area-inset-right,0) env(safe-area-inset-bottom,0) env(safe-area-inset-left,0);
+  gap:0;
+}
 
-#hud{flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:12px;gap:8px;flex-wrap:wrap}
-#games-btn{font-family:'Fredoka One',cursive;font-size:12px;padding:6px 11px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--muted);cursor:pointer;flex-shrink:0;min-height:36px}
+#hud{
+  flex-shrink:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:5px 8px;
+  background:linear-gradient(180deg,rgba(22,9,46,.97),rgba(14,6,28,.92));
+  border-bottom:1px solid var(--border);
+  gap:6px;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+#hud::-webkit-scrollbar{display:none}
+#games-btn{font-family:'Fredoka One',cursive;font-size:11px;padding:5px 9px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.08);color:var(--muted);cursor:pointer;flex-shrink:0;min-height:32px}
 #games-btn:active{transform:scale(.96)}
-.hpill{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--muted)}
-.hval{font-family:'Fredoka One',cursive;font-size:18px;line-height:1;color:var(--text)}
-#level-badge{font-family:'Fredoka One',cursive;font-size:13px;padding:5px 14px;border-radius:99px;color:#08041a;background:var(--blue);white-space:nowrap}
+.hpill{display:flex;align-items:center;gap:4px;font-size:11px;font-weight:900;color:var(--muted);flex-shrink:0}
+.hval{font-family:'Fredoka One',cursive;font-size:16px;line-height:1;color:var(--text)}
+#level-badge{font-family:'Fredoka One',cursive;font-size:11px;padding:4px 10px;border-radius:99px;color:#08041a;background:var(--blue);white-space:nowrap;flex-shrink:0}
 .hpill.hidden{display:none}
 #timer-pill{color:var(--yellow)}
 #timer-pill.urgent{color:#ff7070;animation:tpulse .6s ease-in-out infinite alternate}
@@ -60,20 +81,55 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 #use-again-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
 #use-again-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
 #route-pill{color:var(--purple)}
-#play-stack{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0;align-items:center;justify-content:center}
-#play-hint{flex:1 1 100%;font-size:10px;font-weight:900;color:var(--muted);text-align:right;line-height:1.2;min-width:80px}
-#play-hint.flow{color:var(--blue)}
-#play-hint.win{color:var(--green)}
-#board-wrap{flex:1;position:relative;min-height:0;min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden}
-#board-wrap.has-kit{border-radius:12px}
-#kit-bar{display:none;position:absolute;z-index:4;flex-direction:row;padding:0;margin:0;gap:0;background:#1a1428;border:1px solid var(--border);border-bottom:none;pointer-events:auto}
+#play-stack{min-height:0;min-width:0;width:100%;height:100%;display:flex;flex-direction:column}
+#play-hint{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:5;
+  pointer-events:none;
+  max-width:min(92%,340px);
+  font-size:11px;
+  font-weight:900;
+  color:var(--text);
+  text-align:center;
+  line-height:1.25;
+  padding:6px 12px;
+  border-radius:99px;
+  background:rgba(8,4,22,.72);
+  border:1px solid rgba(255,255,255,.12);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  box-shadow:0 4px 20px rgba(0,0,0,.35);
+}
+#play-hint.flow{color:#b8ecff;border-color:rgba(91,200,255,.35);box-shadow:0 0 16px rgba(91,200,255,.2)}
+#play-hint.win{color:var(--green);border-color:rgba(93,255,176,.4);box-shadow:0 0 20px rgba(93,255,176,.25)}
+#board-wrap{
+  flex:1;
+  position:relative;
+  min-height:0;
+  min-width:0;
+  width:100%;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:stretch;
+  justify-content:stretch;
+  background:#0a0618;
+  padding:0;
+  overflow:hidden;
+}
+#board-wrap.flowing{box-shadow:inset 0 0 40px rgba(91,200,255,.08)}
+#kit-bar{display:none;position:absolute;z-index:4;flex-direction:row;padding:0;margin:0;gap:0;background:linear-gradient(180deg,#221838,#1a1428);border:1px solid rgba(255,225,77,.2);border-bottom:none;pointer-events:auto;box-shadow:0 4px 16px rgba(0,0,0,.4)}
 #kit-bar.show{display:flex}
 #kit-heading,#kit-step{display:none}
 #build-palette{display:flex;width:100%;height:100%;gap:0;margin:0;padding:0;align-items:stretch}
 .pipe-pick{flex:1;height:100%;min-width:0;font-family:'Fredoka One',cursive;font-size:9px;padding:0;border-radius:0;border:none;border-right:1px solid var(--border);background:rgba(255,255,255,.07);color:var(--muted);cursor:grab;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;touch-action:none}
 .pipe-pick:first-child{border-radius:0}
 .pipe-pick:last-child{border-right:none}
-.pipe-pick.sel{color:var(--yellow);background:rgba(255,225,77,.22);box-shadow:inset 0 0 0 2px var(--yellow)}
+.pipe-pick.sel{color:var(--yellow);background:rgba(255,225,77,.28);box-shadow:inset 0 0 0 2px var(--yellow),0 0 12px rgba(255,225,77,.35);animation:kitpulse 1s ease-in-out infinite alternate}
+@keyframes kitpulse{0%{filter:brightness(1)}100%{filter:brightness(1.15)}}
 .pipe-pick .kit-name{font-size:clamp(14px,4vw,20px);line-height:1}
 .pipe-pick .cnt{font-size:11px;color:var(--blue);line-height:1}
 .pipe-pick.sel .cnt{color:var(--yellow)}
@@ -81,11 +137,11 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .pipe-pick.hidden{display:none}
 .pipe-pick.dragging{opacity:.7;transform:scale(.95)}
 .pipe-pick[data-pipe="erase"]{cursor:pointer}
-#canvas-wrap{flex:1;position:relative;width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
-#game{width:100%;height:100%;display:block;touch-action:none;position:relative;z-index:1}
+#canvas-wrap{flex:1;position:relative;width:100%;min-height:0;height:100%;display:block}
+#game{width:100%;height:100%;display:block;touch-action:none;position:absolute;inset:0;z-index:1}
 
-#toolbar{flex-shrink:0;display:flex;gap:8px;padding:0 2px}
-.tool-btn{flex:1;font-family:'Fredoka One',cursive;font-size:15px;padding:12px;border-radius:10px;border:none;cursor:pointer;min-height:48px;transition:transform .1s}
+#toolbar{flex-shrink:0;display:flex;gap:5px;padding:5px 6px;background:linear-gradient(0deg,rgba(14,6,28,.95),rgba(22,9,46,.88));border-top:1px solid var(--border)}
+.tool-btn{flex:1;font-family:'Fredoka One',cursive;font-size:13px;padding:8px 6px;border-radius:8px;border:none;cursor:pointer;min-height:40px;transition:transform .1s}
 .tool-btn:active{transform:scale(.96)}
 #reset-btn{background:rgba(255,255,255,.08);color:var(--muted);border:1px solid var(--border)}
 #hint-btn{background:rgba(255,225,77,.12);color:var(--yellow);border:1px solid rgba(255,225,77,.25)}
@@ -125,12 +181,12 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
     <div class="hpill" id="waste-pill" title="Spilled water in the bucket — tap Use Again when it fills up!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
     <div class="hpill hidden" id="timer-pill">⏱ <span class="hval" id="timer-val">60</span></div>
     <div id="level-badge">Level 1</div>
-    <div id="play-hint">Drag a pipe from the kit onto the grid</div>
   </div>
   <div id="play-stack">
     <div id="board-wrap">
       <div id="kit-step" aria-hidden="true"></div>
       <div id="canvas-wrap">
+        <div id="play-hint">Drag a pipe from the kit onto the grid</div>
         <div id="kit-bar">
           <div id="build-palette">
             <button type="button" class="pipe-pick sel" data-pipe="I" title="Straight pipe"><span class="kit-name">━</span><span class="cnt" id="cnt-I">0</span></button>

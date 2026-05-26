@@ -492,6 +492,7 @@ function openGameInModal(file,title){
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
   updateModalBackLabel();
+  document.documentElement.style.overflow='hidden';
   document.body.style.overflow='hidden';
   gm.style.visibility='';
   gmLoad.classList.remove('done');
@@ -504,6 +505,7 @@ var mayaClosingGame=false;
 function closeGameCore(){
   gm.classList.remove('open');
   gm.style.visibility='';
+  document.documentElement.style.overflow='';
   document.body.style.overflow='';
   document.title=MAYA_PAGE_TITLE;
   gf.onload=null;
@@ -573,6 +575,8 @@ function syncGameModalFromLocation(){
     }
     return;
   }
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
   if(gm.classList.contains('open'))closeGameCore();
 }
 syncGameModalFromLocation();
