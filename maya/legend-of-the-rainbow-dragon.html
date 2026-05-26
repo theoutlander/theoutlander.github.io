@@ -78,6 +78,23 @@ body{
 #log .line.fun{color:var(--blue)}
 
 .actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.action-section{
+  font-family:'Fredoka One',cursive;
+  font-size:11px;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:2px 4px 0;
+}
+.action-block{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  padding:8px;
+  border:1px solid var(--border);
+  border-radius:12px;
+  background:rgba(255,255,255,.02);
+}
 .act-btn{font-family:'Fredoka One',cursive;font-size:16px;padding:14px 16px;border-radius:12px;border:none;cursor:pointer;min-height:48px;touch-action:manipulation;transition:transform .1s}
 .act-btn:active{transform:scale(.97)}
 .act-btn.primary{background:var(--yellow);color:#1a0a30;box-shadow:0 4px 0 #9a7a10}
@@ -139,6 +156,8 @@ body{
   .stat-chip b{font-size:12px}
   #main{padding:6px;gap:6px}
   .act-btn{font-size:14px;padding:12px 14px;min-height:44px}
+  .action-section{font-size:10px}
+  .action-block{padding:6px;gap:6px}
   .hub-title{font-size:1.15rem}
   .enc-emoji{font-size:2.75rem}
   .bbs-bar{font-size:10px}
@@ -177,15 +196,8 @@ body{
   .act-btn{font-size:17px;padding:14px 18px;min-height:50px;border-radius:14px}
   .enc-emoji{font-size:4rem}
   .enc-name{font-size:1.35rem}
-  #hub-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  #hub-actions>.act-row{grid-column:1/-1}
-  #hub-actions>.act-btn.forest,
-  #hub-actions>.act-btn.shop,
-  #hub-actions>.act-btn.snack,
-  #hub-actions>.act-btn.bard,
-  #hub-actions>.act-btn.dragon,
-  #hub-actions>.act-btn.elite,
-  #hub-actions>.act-btn.muted:last-child{grid-column:1/-1}
+  #hub-actions{gap:12px}
+  .action-block{padding:10px;gap:10px}
   .ach-grid{grid-template-columns:repeat(3,1fr)}
   .shop-item{padding:14px}
   .ov-sub{font-size:14px;max-width:360px}
@@ -582,7 +594,7 @@ function totalDef() {
 }
 
 function fleeChance() {
-  return Math.min(0.9, 0.65 + state.charm * 0.01);
+  return Math.min(0.82, 0.45 + state.charm * 0.008);
 }
 
 function charmGoldBonus() {
@@ -609,11 +621,11 @@ function weaponName() {
 }
 
 function playerDamage(monsterDef) {
-  return Math.max(1, Math.floor(state.str + weaponStr() - monsterDef * 0.5));
+  return Math.max(1, Math.floor((state.str + weaponStr()) * 0.85 - monsterDef * 0.7));
 }
 
 function monsterDamage(monsterAtk) {
-  return Math.max(1, Math.floor(monsterAtk - totalDef() * 0.4));
+  return Math.max(1, Math.floor(monsterAtk * 1.1 - totalDef() * 0.3));
 }
 
 function unlockAchievement(id) {
@@ -801,18 +813,18 @@ function pickMonster(tough) {
 }
 
 function scaleMonster(m, elite) {
-  const scale = 1 + (state.level - 1) * 0.08;
-  const em = elite ? 1.4 : 1;
+  const scale = 1 + (state.level - 1) * 0.12;
+  const em = elite ? 1.5 : 1;
   const prefix = elite ? ELITE_NAMES[Math.floor(Math.random() * ELITE_NAMES.length)] + ' ' : '';
   return {
     name: prefix + m.name,
     emoji: m.emoji,
     hp: Math.ceil(m.hp * scale * em),
     maxHp: Math.ceil(m.hp * scale * em),
-    atk: Math.ceil(m.atk * scale * (elite ? 1.15 : 1)),
-    def: m.def + (elite ? 2 : 0),
-    xp: Math.ceil(m.xp * scale * (elite ? 1.5 : 1)),
-    gold: Math.ceil(m.gold * scale * (elite ? 1.5 : 1)),
+    atk: Math.ceil(m.atk * scale * (elite ? 1.22 : 1)),
+    def: m.def + (elite ? 3 : 0),
+    xp: Math.ceil(m.xp * scale * (elite ? 1.6 : 1)),
+    gold: Math.ceil(m.gold * scale * (elite ? 1.6 : 1)),
     elite: !!elite,
   };
 }
@@ -902,10 +914,6 @@ function buildHubActions() {
   box.innerHTML = '';
   const noTurns = state.turnsLeft <= 0;
 
-  if (inMayaPortal()) {
-    box.appendChild(btn('✕ Back to Game Lab', 'lab', leaveToLab, false));
-  }
-
   function btn(label, cls, fn, disabled) {
     const b = document.createElement('button');
     b.type = 'button';
@@ -919,29 +927,47 @@ function buildHubActions() {
     return b;
   }
 
-  box.appendChild(btn('🌲 Explore Forest (1 turn)', 'forest', goForest, noTurns));
-  box.appendChild(btn('⚔️ Weapon Shop (1 turn)', 'shop', goShop, noTurns));
+  function section(title) {
+    const s = document.createElement('div');
+    s.className = 'action-section';
+    s.textContent = title;
+    box.appendChild(s);
+    const wrap = document.createElement('div');
+    wrap.className = 'action-block';
+    box.appendChild(wrap);
+    return wrap;
+  }
+
+  const adventure = section('Adventure');
+  adventure.appendChild(btn('🌲 Explore Forest (1 turn)', 'forest', goForest, noTurns));
+  const bardDone = state.bardDay === todayKey();
+  if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) {
+    const label = state.newGamePlus >= 1 ? '🌈🐉 Dragon (NG+)!' : '🌈🐉 Rainbow Dragon!';
+    adventure.appendChild(btn(label, 'dragon', goDragon, noTurns));
+  }
+  const row2 = document.createElement('div');
+  const town = section('Town Services');
+  town.appendChild(btn('⚔️ Weapon Shop (1 turn)', 'shop', goShop, noTurns));
   const row = document.createElement('div');
   row.className = 'act-row';
   row.appendChild(btn('💚 Healer', 'heal', goHealer, noTurns));
   row.appendChild(btn('🏠 Inn — Rest', 'inn', goInn, noTurns));
-  box.appendChild(row);
-  box.appendChild(btn('🧁 Snack Bar (1 turn)', 'snack', goSnack, noTurns));
-  const bardDone = state.bardDay === todayKey();
-  box.appendChild(btn(bardDone ? '🎵 Bard (done today)' : '🎵 Bard\'s Stage (1 turn)', 'bard', goBard, noTurns || bardDone));
-  const row2 = document.createElement('div');
+  town.appendChild(row);
+  town.appendChild(btn('🧁 Snack Bar (1 turn)', 'snack', goSnack, noTurns));
+  town.appendChild(btn(bardDone ? '🎵 Bard (done today)' : '🎵 Bard\'s Stage (1 turn)', 'bard', goBard, noTurns || bardDone));
+
+  const progress = section('Progress');
   row2.className = 'act-row';
   row2.appendChild(btn('📬 Mailbox', 'mail', goMail, false));
   row2.appendChild(btn('📜 Hero Stats', 'stats', goStats, false));
-  box.appendChild(row2);
-  if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) {
-    const label = state.newGamePlus >= 1 ? '🌈🐉 Dragon (NG+)!' : '🌈🐉 Rainbow Dragon!';
-    box.appendChild(btn(label, 'dragon', goDragon, noTurns));
-  }
+  progress.appendChild(row2);
+
   if (state.dragonDefeated && state.newGamePlus === 0) {
-    box.appendChild(btn('👑 New Game+ — Dragon returns!', 'dragon', startNewGamePlus, noTurns));
+    progress.appendChild(btn('👑 New Game+ — Dragon returns!', 'dragon', startNewGamePlus, noTurns));
   }
-  box.appendChild(btn('🌙 End Day (rest)', 'muted', endDay, false));
+
+  const dayEnd = section('Day End');
+  dayEnd.appendChild(btn('🌙 End Day (rest)', 'muted', endDay, false));
 }
 
 function goForest() {
@@ -970,8 +996,8 @@ function goForest() {
     saveGame();
     return;
   }
-  const tough = roll > 0.75;
-  const elite = roll > 0.92;
+  const tough = roll > 0.68;
+  const elite = roll > 0.9;
   pendingMonster = scaleMonster(pickMonster(tough), elite);
   seedForestEncounter(pendingMonster);
   const eliteTag = pendingMonster.elite ? '<span class="elite-tag">STAR</span>' : '';
@@ -1013,6 +1039,18 @@ function doFight() {
   const m = pendingMonster;
   if (!m) return;
   document.getElementById('forest-actions').innerHTML = '';
+  if (Math.random() < 0.25) {
+    const ambush = Math.max(1, Math.floor(monsterDamage(m.atk) * 0.8));
+    state.hp -= ambush;
+    addForestLog('Sneak attack! ' + m.name + ' tags you first (-' + ambush + ' HP).', 'bad');
+    updateHud();
+    if (state.hp <= 0) {
+      addForestLog('Too tired... nap time!', 'bad');
+      pendingMonster = null;
+      knockout();
+      return;
+    }
+  }
   let mhp = m.hp;
   let round = 0;
   while (mhp > 0 && state.hp > 0) {

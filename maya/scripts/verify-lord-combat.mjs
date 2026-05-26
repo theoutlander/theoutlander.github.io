@@ -4,11 +4,11 @@
  */
 
 function playerDamage(str, weaponStr, monsterDef) {
-  return Math.max(1, Math.floor(str + weaponStr - monsterDef * 0.5));
+  return Math.max(1, Math.floor((str + weaponStr) * 0.85 - monsterDef * 0.7));
 }
 
 function monsterDamage(monsterAtk, def) {
-  return Math.max(1, Math.floor(monsterAtk - def * 0.4));
+  return Math.max(1, Math.floor(monsterAtk * 1.1 - def * 0.3));
 }
 
 function xpForLevel(lv) {
@@ -52,6 +52,7 @@ assert(r.rounds <= 10, 'slime fight finishes quickly');
 const golem = { hp: 18, atk: 7, def: 5 };
 const r2 = simulateFight(10, 0, 5, golem);
 assert(!r2.win || r2.rounds > r.rounds, 'golem harder than slime (or longer fight)');
+assert(r2.hpLeft < r.hpLeft, 'hard fights cost more HP');
 
 assert(xpForLevel(2) === 50, 'level 2 xp threshold');
 assert(xpForLevel(5) === 50 + 3 * 40, 'level 5 xp threshold');
