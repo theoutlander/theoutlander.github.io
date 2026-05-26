@@ -368,22 +368,22 @@ const ARMOR = [
 
 const MONSTERS = [
   { name: 'Silly Slime', emoji: '🟢', hp: 4, atk: 2, def: 0, xp: 12, gold: 8, tier: 1 },
-  { name: 'Giggle Goblin', emoji: '🤪', hp: 6, atk: 3, def: 1, xp: 18, gold: 12, tier: 1 },
+  { name: 'Giggle Goofball', emoji: '🤪', hp: 6, atk: 3, def: 1, xp: 18, gold: 12, tier: 1 },
   { name: 'Bouncy Bat', emoji: '🦇', hp: 5, atk: 4, def: 0, xp: 15, gold: 10, tier: 1 },
   { name: 'Puddle Pixie', emoji: '💧', hp: 5, atk: 3, def: 0, xp: 14, gold: 11, tier: 1 },
-  { name: 'Moss Troll', emoji: '🧌', hp: 10, atk: 5, def: 2, xp: 28, gold: 20, tier: 2 },
+  { name: 'Moss Muffin', emoji: '🧌', hp: 10, atk: 5, def: 2, xp: 28, gold: 20, tier: 2 },
   { name: 'Grumpy Bear', emoji: '🐻', hp: 12, atk: 6, def: 3, xp: 35, gold: 25, tier: 2 },
-  { name: 'Spark Wizard', emoji: '🧙', hp: 8, atk: 8, def: 1, xp: 32, gold: 22, tier: 2 },
+  { name: 'Sparkle Wizard', emoji: '🧙', hp: 8, atk: 8, def: 1, xp: 32, gold: 22, tier: 2 },
   { name: 'Candy Crab', emoji: '🦀', hp: 9, atk: 5, def: 2, xp: 26, gold: 18, tier: 2 },
-  { name: 'Stone Golem', emoji: '🗿', hp: 18, atk: 7, def: 5, xp: 50, gold: 35, tier: 3 },
-  { name: 'Silver Wolf', emoji: '🐺', hp: 14, atk: 9, def: 3, xp: 45, gold: 30, tier: 3 },
+  { name: 'Cookie Golem', emoji: '🗿', hp: 18, atk: 7, def: 5, xp: 50, gold: 35, tier: 3 },
+  { name: 'Silver Puppy', emoji: '🐺', hp: 14, atk: 9, def: 3, xp: 45, gold: 30, tier: 3 },
   { name: 'Crystal Sprite', emoji: '✨', hp: 10, atk: 10, def: 2, xp: 42, gold: 28, tier: 3 },
-  { name: 'Giant Snail', emoji: '🐌', hp: 16, atk: 6, def: 6, xp: 40, gold: 32, tier: 3 },
+  { name: 'Giant Snail Buddy', emoji: '🐌', hp: 16, atk: 6, def: 6, xp: 40, gold: 32, tier: 3 },
   { name: 'Dragon Pup', emoji: '🐲', hp: 22, atk: 11, def: 4, xp: 65, gold: 45, tier: 4 },
-  { name: 'Thunder Knight', emoji: '⚡', hp: 20, atk: 12, def: 6, xp: 70, gold: 50, tier: 4 },
-  { name: 'Silly Jester', emoji: '🃏', hp: 15, atk: 13, def: 2, xp: 55, gold: 40, tier: 4 },
-  { name: 'Lava Lizard', emoji: '🦎', hp: 24, atk: 14, def: 5, xp: 80, gold: 55, tier: 5 },
-  { name: 'Moon Serpent', emoji: '🐍', hp: 20, atk: 15, def: 4, xp: 75, gold: 52, tier: 5 },
+  { name: 'Zap Knight', emoji: '⚡', hp: 20, atk: 12, def: 6, xp: 70, gold: 50, tier: 4 },
+  { name: 'Party Jester', emoji: '🃏', hp: 15, atk: 13, def: 2, xp: 55, gold: 40, tier: 4 },
+  { name: 'Lollipop Lizard', emoji: '🦎', hp: 24, atk: 14, def: 5, xp: 80, gold: 55, tier: 5 },
+  { name: 'Moon Noodle', emoji: '🐍', hp: 20, atk: 15, def: 4, xp: 75, gold: 52, tier: 5 },
 ];
 
 const ELITE_NAMES = ['Rainbow', 'Star', 'Mega', 'Sparkly'];
@@ -498,7 +498,7 @@ const ACHIEVEMENTS = [
   { id: 'buddy', em: '🐾', name: 'Best Friends', desc: 'Recruit an Adventure Buddy' },
   { id: 'dragon', em: '🐉', name: 'Rainbow Champion', desc: 'Befriend the Rainbow Dragon' },
   { id: 'ng', em: '👑', name: 'Legend Retold', desc: 'Win the extra-tough dragon round' },
-  { id: 'kills50', em: '🏅', name: 'Monster Hunter', desc: 'Win 50 forest battles' },
+  { id: 'kills50', em: '🏅', name: 'Monster Hunter', desc: 'Defeat 50 silly monsters' },
 ];
 
 let audioCtx = null;
@@ -1344,7 +1344,7 @@ function goStats() {
     ['Gold', state.gold],
     ['Weapon', weaponName()],
     ['Armor', (ARMOR.find(function(a){return a.id===state.armorId;})||{}).name],
-    ['Battles won', state.kills],
+    ['Monsters defeated', state.kills],
     ['Buddy', state.buddy ? state.buddy.emoji + ' ' + state.buddy.name : 'None yet'],
     ['Dragon', state.dragonDefeated ? (state.newGamePlus >= 1 ? 'NG+ beaten!' : 'Defeated!') : (state.dragonHp + ' HP left')],
   ];

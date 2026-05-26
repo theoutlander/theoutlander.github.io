@@ -85,7 +85,7 @@ Once per day: random song buff (STR, HP, gold, Charm, or DEF).
 Free to read; new letter each day; spend 1 turn to request extra mail.
 
 ### Achievements (local)
-First Victory, level 5/10, 500 gold, 15 Charm, buddy, Rainbow Champion / NG+, 50 battles won (🏅 emoji, not skulls).
+First Victory, level 5/10, 500 gold, 15 Charm, buddy, Rainbow Champion / NG+, 50 silly monsters defeated (🏅 emoji, not skulls).
 
 ### Rainbow Dragon (boss)
 - Unlock at **level 12**

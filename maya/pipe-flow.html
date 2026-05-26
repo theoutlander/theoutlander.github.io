@@ -48,12 +48,10 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 .hpill{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:900;color:var(--muted)}
 .hval{font-family:'Fredoka One',cursive;font-size:18px;line-height:1;color:var(--text)}
 #level-badge{font-family:'Fredoka One',cursive;font-size:13px;padding:5px 14px;border-radius:99px;color:#08041a;background:var(--blue);white-space:nowrap}
-#status-pill{font-size:11px;font-weight:900;padding:4px 10px;border-radius:99px;background:rgba(91,200,255,.12);color:var(--blue);border:1px solid rgba(91,200,255,.25)}
 .hpill.hidden{display:none}
 #timer-pill{color:var(--yellow)}
 #timer-pill.urgent{color:#ff7070;animation:tpulse .6s ease-in-out infinite alternate}
 @keyframes tpulse{0%{opacity:1}100%{opacity:.55}}
-#mechanic-tip{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:.04em;text-align:center;padding:0 4px 2px;line-height:1.35}
 #garden-pill{color:var(--green)}
 #waste-pill{gap:4px;min-width:52px}
 .waste-track{width:14px;height:28px;border-radius:4px;background:rgba(0,0,0,.25);border:1px solid rgba(91,200,255,.25);overflow:hidden;display:flex;flex-direction:column;justify-content:flex-end}
@@ -62,20 +60,29 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
 #use-again-btn{background:rgba(91,200,255,.15);color:var(--blue);border:1px solid rgba(91,200,255,.35)}
 #use-again-btn.ready{animation:hintpulse .7s ease-in-out infinite alternate}
 #route-pill{color:var(--purple)}
-#kit-bar{display:none;flex-shrink:0;flex-direction:column;gap:6px;padding:0 4px 6px}
+#play-stack{flex:1;display:flex;flex-direction:column;min-height:0;min-width:0;align-items:center;justify-content:center}
+#play-hint{flex:1 1 100%;font-size:10px;font-weight:900;color:var(--muted);text-align:right;line-height:1.2;min-width:80px}
+#play-hint.flow{color:var(--blue)}
+#play-hint.win{color:var(--green)}
+#board-wrap{flex:1;position:relative;min-height:0;min-width:0;width:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:12px;padding:0;overflow:hidden}
+#board-wrap.has-kit{border-radius:12px}
+#kit-bar{display:none;position:absolute;z-index:4;flex-direction:row;padding:0;margin:0;gap:0;background:#1a1428;border:1px solid var(--border);border-bottom:none;pointer-events:auto}
 #kit-bar.show{display:flex}
-#kit-step{font-size:12px;font-weight:900;color:var(--yellow);text-align:center;line-height:1.3}
-#build-palette{display:flex;gap:6px;width:100%}
-.pipe-pick{flex:1;font-family:'Fredoka One',cursive;font-size:12px;padding:8px 4px;border-radius:10px;border:2px solid var(--border);background:rgba(255,255,255,.06);color:var(--muted);cursor:pointer;min-height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;line-height:1.15}
-.pipe-pick.sel{border-color:var(--yellow);color:var(--yellow);background:rgba(255,225,77,.14)}
-.pipe-pick .kit-name{font-size:11px;letter-spacing:.02em}
-.pipe-pick .cnt{font-size:13px;color:var(--blue)}
+#kit-heading,#kit-step{display:none}
+#build-palette{display:flex;width:100%;height:100%;gap:0;margin:0;padding:0;align-items:stretch}
+.pipe-pick{flex:1;height:100%;min-width:0;font-family:'Fredoka One',cursive;font-size:9px;padding:0;border-radius:0;border:none;border-right:1px solid var(--border);background:rgba(255,255,255,.07);color:var(--muted);cursor:grab;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1;touch-action:none}
+.pipe-pick:first-child{border-radius:0}
+.pipe-pick:last-child{border-right:none}
+.pipe-pick.sel{color:var(--yellow);background:rgba(255,225,77,.22);box-shadow:inset 0 0 0 2px var(--yellow)}
+.pipe-pick .kit-name{font-size:clamp(14px,4vw,20px);line-height:1}
+.pipe-pick .cnt{font-size:11px;color:var(--blue);line-height:1}
 .pipe-pick.sel .cnt{color:var(--yellow)}
 .pipe-pick[data-pipe="erase"] .cnt{display:none}
 .pipe-pick.hidden{display:none}
-
-#board-wrap{flex:1;position:relative;min-height:0;display:flex;align-items:center;justify-content:center}
-#game{width:100%;height:100%;display:block;touch-action:none}
+.pipe-pick.dragging{opacity:.7;transform:scale(.95)}
+.pipe-pick[data-pipe="erase"]{cursor:pointer}
+#canvas-wrap{flex:1;position:relative;width:100%;min-height:0;display:flex;align-items:center;justify-content:center}
+#game{width:100%;height:100%;display:block;touch-action:none;position:relative;z-index:1}
 
 #toolbar{flex-shrink:0;display:flex;gap:8px;padding:0 2px}
 .tool-btn{flex:1;font-family:'Fredoka One',cursive;font-size:15px;padding:12px;border-radius:10px;border:none;cursor:pointer;min-height:48px;transition:transform .1s}
@@ -118,21 +125,24 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
     <div class="hpill" id="waste-pill" title="Spilled water in the bucket — tap Use Again when it fills up!">🪣<div class="waste-track"><div id="waste-fill"></div></div></div>
     <div class="hpill hidden" id="timer-pill">⏱ <span class="hval" id="timer-val">60</span></div>
     <div id="level-badge">Level 1</div>
-    <div id="status-pill">Tap pipes to spin!</div>
+    <div id="play-hint">Drag a pipe from the kit onto the grid</div>
   </div>
-  <div id="mechanic-tip"></div>
-  <div id="kit-bar">
-    <div id="kit-step">1. Pick a pipe · 2. Tap a + on the grid</div>
-    <div id="build-palette">
-      <button type="button" class="pipe-pick sel" data-pipe="I"><span class="kit-name">Straight</span><span class="cnt" id="cnt-I">0</span></button>
-      <button type="button" class="pipe-pick" data-pipe="L"><span class="kit-name">Corner</span><span class="cnt" id="cnt-L">0</span></button>
-      <button type="button" class="pipe-pick" data-pipe="T"><span class="kit-name">3-way</span><span class="cnt" id="cnt-T">0</span></button>
-      <button type="button" class="pipe-pick" data-pipe="erase"><span class="kit-name">Remove</span><span class="cnt"> </span></button>
+  <div id="play-stack">
+    <div id="board-wrap">
+      <div id="kit-step" aria-hidden="true"></div>
+      <div id="canvas-wrap">
+        <div id="kit-bar">
+          <div id="build-palette">
+            <button type="button" class="pipe-pick sel" data-pipe="I" title="Straight pipe"><span class="kit-name">━</span><span class="cnt" id="cnt-I">0</span></button>
+            <button type="button" class="pipe-pick" data-pipe="L" title="Corner pipe"><span class="kit-name">└</span><span class="cnt" id="cnt-L">0</span></button>
+            <button type="button" class="pipe-pick" data-pipe="T" title="3-way pipe"><span class="kit-name">┳</span><span class="cnt" id="cnt-T">0</span></button>
+            <button type="button" class="pipe-pick" data-pipe="erase" title="Remove placed pipe"><span class="kit-name">🗑</span><span class="cnt"> </span></button>
+          </div>
+        </div>
+        <canvas id="game"></canvas>
+        <div id="combo-wrap"><div id="combo-text"></div><div id="combo-sub"></div></div>
+      </div>
     </div>
-  </div>
-  <div id="board-wrap">
-    <canvas id="game"></canvas>
-    <div id="combo-wrap"><div id="combo-text"></div><div id="combo-sub"></div></div>
   </div>
   <div id="toolbar">
     <button class="tool-btn" id="reset-btn">↺ Reset</button>
@@ -145,7 +155,7 @@ html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-fam
   <div class="big-title" id="menu-title">Pipe Flow!</div>
   <div id="menu-progress-hint"></div>
   <div id="menu-secret-hint"></div>
-  <div class="sub">Connect the shower to the flower!<br>Pick a pipe below the board, tap a <strong style="color:var(--yellow)">+</strong> square, then spin pipes to aim the water.</div>
+  <div class="sub">Connect the shower to the flower!<br><strong style="color:var(--yellow)">Drag</strong> a pipe from the bar onto the grid — or tap to place on <strong style="color:var(--yellow)">+</strong> squares.</div>
   <button class="big-btn" id="start-btn">Let's Go! 🌱</button>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
   <button class="sec-btn" id="menu-games-btn">← All Games</button>
@@ -266,7 +276,7 @@ let filled=new Set(),flowColors=new Map(),flowPath=[],flowDist=new Map(),goalsLe
 let won=false,winPending=false,winTimer=null,animT=0,flowPhase=0;
 let waterDrops=[],bubbles=[],leakDrips=[],flowParticles=[],leaks=[],puddles=new Map(),mode='menu',audioCtx=null;
 let lastTap=0,touchHandled=false,animRunning=false,spinAnim=null;
-let drag=null,activePointerId=null;
+let drag=null,activePointerId=null,paletteDrag=null,suppressPipePickClick=false;
 const DRAG_THRESHOLD=10;
 let lastValveTap=0,lastValveCell=null;
 let timeLeft=0,timerId=null,levelTip='';
@@ -526,13 +536,15 @@ function kitLabel(type){
 
 function updateKitStep(){
   const el=document.getElementById('kit-step');
-  if(!el)return;
-  if(selectedBuildPipe==='erase'){
-    el.textContent='Tap a pipe with a yellow box to remove it';
-    return;
+  const hint=document.getElementById('play-hint');
+  let msg='';
+  if(selectedBuildPipe==='erase')msg='🗑 Tap yellow pipe to remove';
+  else{
+    const n=kitStock(selectedBuildPipe);
+    msg='Drag '+kitLabel(selectedBuildPipe).toLowerCase()+' ('+n+')';
   }
-  const n=kitStock(selectedBuildPipe);
-  el.textContent='Tap a + square to place a '+kitLabel(selectedBuildPipe).toLowerCase()+' ('+n+' left)';
+  if(el)el.textContent=msg;
+  if(hint&&!hint.classList.contains('flow')&&!hint.classList.contains('win'))hint.textContent=msg;
 }
 
 function updateBuildPaletteHud(){
@@ -554,6 +566,39 @@ function updateBuildPaletteHud(){
     btn.style.opacity=n<1?'.35':'1';
   });
   updateKitStep();
+  if(cellSize>0){
+    const gw=cellSize*cols;
+    layoutKitHeader(gw,kitHeaderHeight(gw),gridOffX,gridOffY);
+  }
+}
+
+function kitBtnCount(){
+  return Math.max(1,document.querySelectorAll('#build-palette .pipe-pick:not(.hidden)').length);
+}
+
+function kitHeaderHeight(gw){
+  const nBtn=kitBtnCount();
+  return Math.max(34,Math.min(48,Math.floor(gw/nBtn)));
+}
+
+function layoutKitHeader(gw,kh,gridX,gridY){
+  const kit=document.getElementById('kit-bar');
+  const board=document.getElementById('board-wrap');
+  if(!kit||!board)return;
+  const show=kit.classList.contains('show');
+  board.classList.toggle('has-kit',show);
+  if(!show){
+    kit.style.width='';
+    kit.style.height='';
+    kit.style.left='';
+    kit.style.top='';
+    return;
+  }
+  const top=Math.max(0,gridY-kh);
+  kit.style.width=gw+'px';
+  kit.style.height=kh+'px';
+  kit.style.left=gridX+'px';
+  kit.style.top=top+'px';
 }
 
 function kitStock(type){
@@ -567,8 +612,8 @@ function setBuildPipe(type){
   }
   selectedBuildPipe=type;
   updateBuildPaletteHud();
-  if(type==='erase')setStatus('Tap a pipe with a yellow outline to remove it','idle');
-  else setStatus('Now tap a + square on the grid','idle');
+  if(type==='erase')setStatus('Tap a yellow-outline pipe to remove it','idle');
+  else setStatus('Drag '+kitLabel(type).toLowerCase()+' onto the grid (or tap + to place)','idle');
 }
 
 function placeBuildPipe(r,c,type){
@@ -584,11 +629,35 @@ function placeBuildPipe(r,c,type){
   return true;
 }
 
+function swapPlacedPipeType(r,c,newType){
+  const cell=grid[r]&&grid[r][c];
+  if(!cell||!cell.placed||BUILD_TYPES.indexOf(newType)<0)return false;
+  if(cell.type===newType)return interactBuildCell(r,c);
+  if(kitStock(newType)<=0){
+    setStatus('No '+kitLabel(newType).toLowerCase()+' left — use Remove or pick another type','idle');
+    return false;
+  }
+  buildInventory[cell.type]=(buildInventory[cell.type]||0)+1;
+  buildInventory[newType]--;
+  cell.type=newType;
+  cell.rot=0;
+  moves++;
+  document.getElementById('moves').textContent=String(moves);
+  spinAnim={r:r,c:c,t:0};
+  playRotate();
+  updateBuildPaletteHud();
+  updateFlow(true);
+  setStatus('Changed to '+kitLabel(newType).toLowerCase()+' — tap again to spin it','flow');
+  return true;
+}
+
 function placeKitAt(r,c){
   if(!kitActive()||selectedBuildPipe==='erase')return false;
   if(r<0||c<0||r>=rows||c>=cols)return false;
   ensureGridRow(r);
-  if(grid[r][c])return false;
+  const existing=grid[r]&&grid[r][c];
+  if(existing&&existing.placed)return swapPlacedPipeType(r,c,selectedBuildPipe);
+  if(existing)return false;
   if(BUILD_TYPES.indexOf(selectedBuildPipe)<0)return false;
   if(kitStock(selectedBuildPipe)<=0){
     setStatus('No '+selectedBuildPipe+' pipes left — pick another from the kit!','idle');
@@ -1031,16 +1100,17 @@ function loadLevel(idx){
   routeMax=lv.routeMax!=null?lv.routeMax:null;
   buildInventory=applyLevelKit(lv);
   selectedBuildPipe=pickKitPipeWithStock();
-  document.getElementById('kit-bar').classList.add('show');
+  if(kitActive())document.getElementById('kit-bar').classList.add('show');
+  else document.getElementById('kit-bar').classList.remove('show');
   updateBuildPaletteHud();
   const label=lv.secret?'🤫 Secret':(buildMode?'🔧 Build':('Level '+(idx+1)));
   const sizeTag=(rows>=6||cols>=6)?' · '+rows+'×'+cols:'';
   const badgeExtra=buildMode?(routeMin!=null?' · '+routeMin+'+ pipes':routeMax!=null?' · ≤'+routeMax+' pipes':' · Par '+levelPar):(' · Par '+levelPar);
   document.getElementById('level-badge').textContent=label+sizeTag+badgeExtra;
-  document.getElementById('mechanic-tip').textContent=levelTip;
   applyTheme(idx,lv);
   document.getElementById('moves').textContent='0';
-  setStatus(levelTip||(buildMode?'Pick a pipe, then tap the grid':'Pick a pipe above, tap a + square'),'idle');
+  if(levelTip)setStatus(levelTip,'idle');
+  else updateKitStep();
   updateFlow(false);
   resize();
   ensureAnimLoop();
@@ -1049,20 +1119,14 @@ function loadLevel(idx){
 }
 
 function setStatus(text,kind){
-  const pill=document.getElementById('status-pill');
-  pill.textContent=text;
-  if(kind==='win'){
-    pill.style.color='#08041a';
-    pill.style.background='var(--green)';
-    pill.style.borderColor='rgba(93,255,176,.5)';
-  }else if(kind==='flow'){
-    pill.style.color='var(--blue)';
-    pill.style.background='rgba(91,200,255,.18)';
-    pill.style.borderColor='rgba(91,200,255,.35)';
-  }else{
-    pill.style.color='var(--blue)';
-    pill.style.background='rgba(91,200,255,.12)';
-    pill.style.borderColor='rgba(91,200,255,.25)';
+  const step=document.getElementById('kit-step');
+  const hint=document.getElementById('play-hint');
+  if(step)step.textContent=text;
+  if(hint){
+    hint.textContent=text;
+    hint.classList.remove('flow','win');
+    if(kind==='flow')hint.classList.add('flow');
+    else if(kind==='win')hint.classList.add('win');
   }
 }
 
@@ -1346,8 +1410,11 @@ function interactCell(r,c){
   ensureGridRow(r);
   const cell=grid[r]&&grid[r][c];
   if(selectedBuildPipe==='erase')return tryEraseAt(r,c);
+  if(cell&&cell.placed&&kitActive()&&selectedBuildPipe!=='erase'){
+    if(cell.type!==selectedBuildPipe)return swapPlacedPipeType(r,c,selectedBuildPipe);
+    return interactBuildCell(r,c);
+  }
   if(!cell&&kitActive()&&selectedBuildPipe!=='erase')return placeKitAt(r,c);
-  if(cell&&cell.placed&&kitActive())return interactBuildCell(r,c);
   if(!cell||cell.fixed||cell.type==='#')return false;
   if(won||winPending)return false;
   if(cell.type==='V'){
@@ -1454,7 +1521,7 @@ function showHint(){
 
 function resize(){
   if(!canvas)return;
-  const wrap=document.getElementById('board-wrap');
+  const wrap=document.getElementById('canvas-wrap')||document.getElementById('board-wrap');
   const w=wrap.clientWidth,h=wrap.clientHeight;
   const dpr=Math.min(window.devicePixelRatio||1,2);
   canvas.width=Math.floor(w*dpr);
@@ -1464,16 +1531,30 @@ function resize(){
   ctx.setTransform(dpr,0,0,dpr,0,0);
   const dim=Math.max(rows,cols);
   const pad=dim>=8?10:dim>=6?12:16;
-  cellSize=Math.floor(Math.min((w-pad*2)/cols,(h-pad*2)/rows));
+  const kit=document.getElementById('kit-bar');
+  const hasKit=kit&&kit.classList.contains('show');
   let minCell=44;
   if(dim>=9)minCell=28;
   else if(dim>=8)minCell=32;
   else if(dim>=7)minCell=36;
   else if(dim>=6)minCell=40;
+  let playH=h;
+  if(hasKit){
+    const estGw=Math.floor(Math.min((w-pad*2)/cols,(h-pad*2)/rows))*cols;
+    playH=Math.max(rows*minCell,h-kitHeaderHeight(estGw));
+  }
+  cellSize=Math.floor(Math.min((w-pad*2)/cols,(playH-pad*2)/rows));
   cellSize=Math.max(minCell,Math.min(cellSize,96));
   const gw=cellSize*cols,gh=cellSize*rows;
+  const kh=hasKit?kitHeaderHeight(gw):0;
   gridOffX=(w-gw)/2;
-  gridOffY=(h-gh)/2;
+  if(hasKit){
+    gridOffY=kh+Math.max(0,(h-kh-gh)/2);
+    if(gridOffY+gh>h-pad)gridOffY=Math.max(kh,(h-gh)/2);
+  }else{
+    gridOffY=(h-gh)/2;
+  }
+  layoutKitHeader(gw,kh,gridOffX,gridOffY);
   renderFrame();
 }
 
@@ -1565,7 +1646,7 @@ function renderFrame(){
   drawNetworkFlow();
   drawFlowUnderlay();
   drawPipelineBreaks();
-  if(drag&&drag.moved)drawDropHighlights();
+  if((drag&&drag.moved)||(paletteDrag&&paletteDrag.moved))drawDropHighlights();
   for(let r=0;r<rows;r++){
     for(let c=0;c<cols;c++){
       if(drag&&drag.moved&&drag.r===r&&drag.c===c)continue;
@@ -1573,7 +1654,7 @@ function renderFrame(){
       if(cell)drawPipe(r,c,cell);
     }
   }
-  if(drag&&drag.moved)drawDragGhost();
+  if((drag&&drag.moved)||(paletteDrag&&paletteDrag.moved))drawDragGhost();
   drawFlowParticles();
   drawLeakBuckets();
   drawSiphonStreams();
@@ -2159,11 +2240,15 @@ function updateAndDrawDrops(){
   }
 }
 
-function pointerToCell(clientX,clientY){
+function clientToCanvas(clientX,clientY){
   const rect=canvas.getBoundingClientRect();
-  const x=clientX-rect.left,y=clientY-rect.top;
-  const c=Math.floor((x-gridOffX)/cellSize);
-  const r=Math.floor((y-gridOffY)/cellSize);
+  return{x:clientX-rect.left,y:clientY-rect.top};
+}
+
+function pointerToCell(clientX,clientY){
+  const p=clientToCanvas(clientX,clientY);
+  const c=Math.floor((p.x-gridOffX)/cellSize);
+  const r=Math.floor((p.y-gridOffY)/cellSize);
   if(r<0||c<0||r>=rows||c>=cols)return null;
   return{r,c};
 }
@@ -2181,11 +2266,124 @@ function onSiphonTap(){
 
 function clearDrag(){
   drag=null;
+  paletteDrag=null;
   activePointerId=null;
+  document.querySelectorAll('.pipe-pick.dragging').forEach(function(b){b.classList.remove('dragging');});
   if(canvas)canvas.style.cursor=mode==='play'?'grab':'';
 }
 
+function canPlaceKitAt(r,c,type){
+  if(!type||BUILD_TYPES.indexOf(type)<0||kitStock(type)<=0)return false;
+  if(r<0||c<0||r>=rows||c>=cols)return false;
+  ensureGridRow(r);
+  const cell=grid[r]&&grid[r][c];
+  if(cell&&cell.fixed)return false;
+  if(cell&&cell.type==='#')return false;
+  if(cell&&(cell.type==='S'||(cell.type==='G'&&!cell.sprinkler)||cell.type==='K'))return false;
+  if(!cell)return true;
+  return !!cell.placed;
+}
+
+function dropKitAt(r,c,type){
+  selectedBuildPipe=type;
+  const cell=grid[r]&&grid[r][c];
+  if(!cell)return placeKitAt(r,c);
+  if(cell.placed)return swapPlacedPipeType(r,c,type);
+  return false;
+}
+
+function endKitDragListeners(){
+  document.removeEventListener('pointermove',onKitPointerMove,true);
+  document.removeEventListener('pointerup',onKitPointerUp,true);
+  document.removeEventListener('pointercancel',onKitPointerUp,true);
+  if(canvas&&mode==='play')canvas.style.cursor='grab';
+}
+
+function startKitDragListeners(){
+  document.addEventListener('pointermove',onKitPointerMove,{capture:true,passive:false});
+  document.addEventListener('pointerup',onKitPointerUp,{capture:true});
+  document.addEventListener('pointercancel',onKitPointerUp,{capture:true});
+}
+
+function onKitPointerDown(e){
+  if(mode!=='play'||won||winPending)return;
+  if(e.button!==0)return;
+  const btn=e.target.closest('.pipe-pick');
+  if(!btn||btn.disabled||btn.classList.contains('hidden'))return;
+  const type=btn.getAttribute('data-pipe');
+  if(type==='erase'){
+    setBuildPipe('erase');
+    return;
+  }
+  if(kitStock(type)<=0)return;
+  e.preventDefault();
+  e.stopPropagation();
+  clearDrag();
+  endKitDragListeners();
+  paletteDrag={type:type,x:e.clientX,y:e.clientY,x0:e.clientX,y0:e.clientY,moved:false,pointerId:e.pointerId,btn:btn};
+  btn.classList.add('dragging');
+  setBuildPipe(type);
+  startKitDragListeners();
+  try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+  ensureAnimLoop();
+}
+
+function onKitPointerMove(e){
+  if(!paletteDrag||paletteDrag.pointerId!==e.pointerId)return;
+  e.preventDefault();
+  paletteDrag.x=e.clientX;
+  paletteDrag.y=e.clientY;
+  const dx=paletteDrag.x-paletteDrag.x0,dy=paletteDrag.y-paletteDrag.y0;
+  if(!paletteDrag.moved&&dx*dx+dy*dy>DRAG_THRESHOLD*DRAG_THRESHOLD){
+    paletteDrag.moved=true;
+    if(canvas)canvas.style.cursor='crosshair';
+    setStatus('Release on a + cell to place','flow');
+  }
+  ensureAnimLoop();
+}
+
+function onKitPointerUp(e){
+  if(!paletteDrag||paletteDrag.pointerId!==e.pointerId)return;
+  const pd=paletteDrag;
+  paletteDrag=null;
+  endKitDragListeners();
+  try{canvas.releasePointerCapture(e.pointerId);}catch(err){}
+  if(pd.btn)pd.btn.classList.remove('dragging');
+  if(pd.moved){
+    suppressPipePickClick=true;
+    setTimeout(function(){suppressPipePickClick=false;},400);
+  }
+  const pt=pointerToCell(pd.x,pd.y);
+  if(pd.moved&&pt&&canPlaceKitAt(pt.r,pt.c,pd.type)){
+    dropKitAt(pt.r,pt.c,pd.type);
+    return;
+  }
+  if(pd.moved)setStatus('Drop on an empty + cell (or a pipe to swap)','idle');
+  else setBuildPipe(pd.type);
+}
+
 function drawDropHighlights(){
+  if(paletteDrag&&paletteDrag.moved){
+    const type=paletteDrag.type;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        if(!canPlaceKitAt(r,c,type))continue;
+        const x=gridOffX+c*cellSize,y=gridOffY+r*cellSize;
+        ctx.fillStyle='rgba(255,225,77,.12)';
+        ctx.fillRect(x+4,y+4,cellSize-8,cellSize-8);
+      }
+    }
+    const hover=pointerToCell(paletteDrag.x,paletteDrag.y);
+    if(hover&&canPlaceKitAt(hover.r,hover.c,type)){
+      const x=gridOffX+hover.c*cellSize,y=gridOffY+hover.r*cellSize;
+      ctx.fillStyle='rgba(255,225,77,.28)';
+      ctx.fillRect(x+4,y+4,cellSize-8,cellSize-8);
+      ctx.strokeStyle='rgba(255,225,77,.95)';
+      ctx.lineWidth=3;
+      ctx.strokeRect(x+3,y+3,cellSize-6,cellSize-6);
+    }
+    return;
+  }
   if(!drag||!drag.moved)return;
   const hover=pointerToCell(drag.x,drag.y);
   if(!hover||!canDropAt(hover.r,hover.c,drag.r,drag.c))return;
@@ -2197,21 +2395,50 @@ function drawDropHighlights(){
   ctx.strokeRect(x+4,y+4,cellSize-8,cellSize-8);
 }
 
-function drawDragGhost(){
-  if(!drag||!drag.moved||!drag.cell)return;
-  const cell=drag.cell;
-  const cx=drag.x,cy=drag.y;
+function drawDragGhostAt(cx,cy,cell,alpha){
   const half=cellSize*.34;
   const w=cellSize*.18;
   const m=maskFor(cell);
   ctx.save();
-  ctx.globalAlpha=.9;
-  ctx.fillStyle='rgba(255,225,77,.25)';
+  ctx.globalAlpha=alpha||.92;
+  ctx.fillStyle='rgba(255,225,77,.3)';
   ctx.beginPath();
   ctx.arc(cx,cy,cellSize*.4,0,Math.PI*2);
   ctx.fill();
   drawConnections(cx,cy,half,w,m,true,0,cell.color||'b');
   ctx.restore();
+}
+
+function drawDragGhost(){
+  if(paletteDrag&&paletteDrag.moved){
+    const ghost={type:paletteDrag.type,rot:0,color:null};
+    const hover=pointerToCell(paletteDrag.x,paletteDrag.y);
+    let cx,cy;
+    if(hover&&canPlaceKitAt(hover.r,hover.c,paletteDrag.type)){
+      const cc=cellCenter(hover.r,hover.c);
+      cx=cc[0];
+      cy=cc[1];
+    }else{
+      const p=clientToCanvas(paletteDrag.x,paletteDrag.y);
+      cx=p.x;
+      cy=p.y;
+    }
+    drawDragGhostAt(cx,cy,ghost,.92);
+    return;
+  }
+  if(!drag||!drag.moved||!drag.cell)return;
+  const hover=pointerToCell(drag.x,drag.y);
+  let cx,cy;
+  if(hover){
+    const cc=cellCenter(hover.r,hover.c);
+    cx=cc[0];
+    cy=cc[1];
+  }else{
+    const p=clientToCanvas(drag.x,drag.y);
+    cx=p.x;
+    cy=p.y;
+  }
+  drawDragGhostAt(cx,cy,drag.cell,.9);
 }
 
 function onCanvasPointerDown(e){
@@ -2223,6 +2450,13 @@ function onCanvasPointerDown(e){
     const cell=grid[pt.r]&&grid[pt.r][pt.c];
     if(selectedBuildPipe==='erase'){
       drag={r:pt.r,c:pt.c,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,eraseTap:true};
+      activePointerId=e.pointerId;
+      canvas.style.cursor='pointer';
+      try{canvas.setPointerCapture(e.pointerId);}catch(err){}
+      return;
+    }
+    if(cell&&cell.placed&&selectedBuildPipe!=='erase'&&cell.type!==selectedBuildPipe){
+      drag={r:pt.r,c:pt.c,cell:null,x0:e.clientX,y0:e.clientY,x:e.clientX,y:e.clientY,moved:false,pointerId:e.pointerId,kitSwapTap:true};
       activePointerId=e.pointerId;
       canvas.style.cursor='pointer';
       try{canvas.setPointerCapture(e.pointerId);}catch(err){}
@@ -2264,6 +2498,7 @@ function onCanvasPointerUp(e){
   const fr=drag.r,fc=drag.c;
   const lifted=drag.cell;
   const eraseTap=!!drag.eraseTap;
+  const kitSwapTap=!!drag.kitSwapTap;
   const dropPt=pointerToCell(e.clientX,e.clientY);
   const tapPt=pointerToCell(drag.x0,drag.y0);
   clearDrag();
@@ -2274,6 +2509,12 @@ function onCanvasPointerUp(e){
   if(eraseTap){
     const pt=tapPt||dropPt;
     if(pt)tryEraseAt(pt.r,pt.c);
+    return;
+  }
+
+  if(kitSwapTap){
+    const pt=tapPt||dropPt;
+    if(pt&&selectedBuildPipe!=='erase')swapPlacedPipeType(pt.r,pt.c,selectedBuildPipe);
     return;
   }
 
@@ -2516,18 +2757,12 @@ ctx=canvas.getContext('2d');
 loadSave();
 updateMenuProgress(true);
 document.querySelectorAll('.pipe-pick').forEach(function(btn){
+  btn.addEventListener('pointerdown',onKitPointerDown);
   btn.addEventListener('click',function(){
-    if(touchHandled)return;
+    if(suppressPipePickClick||touchHandled)return;
     setBuildPipe(btn.getAttribute('data-pipe'));
     playHint();
   });
-  btn.addEventListener('touchend',function(e){
-    e.preventDefault();
-    touchHandled=true;
-    setBuildPipe(btn.getAttribute('data-pipe'));
-    playHint();
-    setTimeout(function(){touchHandled=false;},400);
-  },{passive:false});
 });
 bindTap(document.getElementById('games-btn'),goToAllGames);
 bindTap(document.getElementById('menu-games-btn'),goToAllGames);
