@@ -3,6 +3,7 @@ import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { META, PERSON } from "../data/person";
 import { COPY } from "../data/site-copy";
+import { analytics } from "../lib/analytics";
 
 const CALENDAR_URL =
   "https://calendar.google.com/calendar/appointments/schedules/AcZssZ285Y0xFrPqJ1ktb3KiZrnmDJxP0d6BUicUs93HTXWCtOrnZgZAe7pur4_JFNdyeIS5GEgynDhc?gv=true";
@@ -38,6 +39,7 @@ export function CalendarPagePanda() {
               target="_blank"
               rel="noopener noreferrer"
               style={{ color: "var(--ink)", borderBottom: "1px solid var(--rule)", textDecoration: "none" }}
+              onClick={() => analytics.ctaClick("open_calendar_booking", "calendar_lede")}
             >
               {calendar.ledeLink}
             </a>

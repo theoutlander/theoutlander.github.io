@@ -18,8 +18,8 @@ const router = createRouter({
 	},
 });
 
-// Track page views on every route change
-router.subscribe("onLoad", (event) => {
+// Track page views after navigation completes (not on preload)
+router.subscribe("onResolved", (event) => {
 	const pathname = event.toLocation.pathname;
 	const search = event.toLocation.search ? `?${event.toLocation.search}` : '';
 	analytics.pageView(pathname + search, document.title);

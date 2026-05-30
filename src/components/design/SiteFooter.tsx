@@ -2,6 +2,7 @@ import React from "react";
 import { Wordmark } from "./Marks";
 import { COPY } from "../../data/site-copy";
 import { PERSON, SOCIAL_LINKS } from "../../data/person";
+import { analytics } from "../../lib/analytics";
 
 const SOCIAL_LINKS_LIST = [
 	{ href: SOCIAL_LINKS.github, label: "GitHub" },
@@ -43,7 +44,12 @@ export function SiteFooter() {
 					<ul>
 						{SOCIAL_LINKS_LIST.map((l) => (
 							<li key={l.href}>
-								<a href={l.href} target="_blank" rel="noreferrer">
+								<a
+									href={l.href}
+									target="_blank"
+									rel="noreferrer"
+									onClick={() => analytics.outboundClick(l.href, l.label)}
+								>
 									{l.label}
 								</a>
 							</li>

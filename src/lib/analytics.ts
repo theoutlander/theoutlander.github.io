@@ -2,13 +2,14 @@ declare global {
 	interface Window {
 		gtag?: (...args: any[]) => void;
 		dataLayer?: any[];
+		__gaLoaded?: boolean;
 	}
 }
 
 function track(eventName: string, params?: Record<string, any>) {
-	if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
-		window.gtag('event', eventName, params);
-	}
+	if (typeof window === 'undefined') return;
+	if (typeof window.gtag !== 'function') return;
+	window.gtag('event', eventName, params);
 }
 
 export const analytics = {
@@ -21,6 +22,7 @@ export const analytics = {
 			page_path: path,
 			page_title: title,
 			page_location: typeof window !== 'undefined' ? window.location.href : '',
+			site_area: path.startsWith('/maya') ? 'maya' : 'site',
 		});
 	},
 

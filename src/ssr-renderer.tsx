@@ -549,31 +549,7 @@ ${JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd, null, 2)}
 		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_32x32.png?v=2">
 		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_16x16.png?v=2">
 
-		<!-- Google Analytics: lazy loader to reduce unused JS on initial load -->
-		<script>
-			(function(){
-				function loadGA(){
-					if (window.__gaLoaded) return;
-					window.__gaLoaded = true;
-					var s = document.createElement('script');
-					s.async = true;
-					s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
-					document.head.appendChild(s);
-					window.dataLayer = window.dataLayer || [];
-					window.gtag = function(){ dataLayer.push(arguments); };
-					gtag('js', new Date());
-					gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
-				}
-				// If user previously granted consent, load after idle; otherwise on first interaction
-				var consent = null;
-				try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
-				if (consent === 'granted') {
-					(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
-				} else {
-					window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
-				}
-			})();
-		</script>
+		<script src="/ga-analytics.js" defer></script>
 
 		${additionalHead || ""}
 

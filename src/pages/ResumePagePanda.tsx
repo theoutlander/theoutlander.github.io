@@ -3,6 +3,7 @@ import { Helmet } from "../components/seo/HelmetShim";
 import { SectionTag } from "../components/design/SectionTag";
 import { META, PERSON } from "../data/person";
 import { COPY } from "../data/site-copy";
+import { analytics } from "../lib/analytics";
 import {
   EDUCATION,
   PATENTS,
@@ -97,6 +98,7 @@ export function ResumePagePanda() {
                 href={resume.pdfHref}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => analytics.ctaClick("download_resume_pdf", "resume_header")}
               >
                 {resume.pdfLink}
               </a>

@@ -5,6 +5,7 @@ import type { BlogPost } from "../types/blog";
 import { HERO_LEDE, META, PERSON, WORK_BLOCKS } from "../data/person";
 import { COPY } from "../data/site-copy";
 import { formatBlogDate, postCategoryLabel, postReadMinutes } from "../lib/blog-format";
+import { analytics } from "../lib/analytics";
 
 interface HomePageProps {
   posts: BlogPost[];
@@ -41,10 +42,18 @@ export function HomePagePanda({ posts }: HomePageProps) {
             {HERO_LEDE}
           </p>
           <div className="ds-hero-actions">
-            <a href="/blog" className="ds-btn">
+            <a
+              href="/blog"
+              className="ds-btn"
+              onClick={() => analytics.ctaClick("read_writing", "hero")}
+            >
               {COPY.home.ctaPrimary}
             </a>
-            <a href="/resume" className="ds-btn ds-btn-ghost">
+            <a
+              href="/resume"
+              className="ds-btn ds-btn-ghost"
+              onClick={() => analytics.ctaClick("view_resume", "hero")}
+            >
               {COPY.home.ctaSecondary}
             </a>
           </div>
@@ -55,7 +64,11 @@ export function HomePagePanda({ posts }: HomePageProps) {
           <SectionTag
             num={COPY.home.writingSectionNum}
             label={COPY.home.writingHeading}
-            right={<a href="/blog">{COPY.home.writingLink}</a>}
+            right={
+              <a href="/blog" onClick={() => analytics.ctaClick("all_essays", "home_writing")}>
+                {COPY.home.writingLink}
+              </a>
+            }
           />
           {top3.length > 0 ? (
             <div className="ds-post-grid">
