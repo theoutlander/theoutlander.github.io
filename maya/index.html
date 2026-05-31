@@ -118,6 +118,38 @@ header{text-align:center;padding:48px 0 36px}
 #wsend:disabled{opacity:.5;cursor:not-allowed;transform:none}
 #wsent{display:none;text-align:center;padding:20px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--green)}
 
+/* Family chat */
+#family-chat-wrap{background:var(--card);border:1px solid rgba(199,125,255,.22);border-radius:var(--radius);padding:16px 16px 14px}
+.chat-hint{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:12px}
+.chat-lock{display:flex;flex-direction:column;gap:10px}
+.chat-lock.shake{animation:chat-shake .35s ease}
+@keyframes chat-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.chat-pin-in,.chat-text-in{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.2);border-radius:12px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:16px;color:var(--text);outline:none;min-height:48px;-webkit-appearance:none}
+.chat-pin-in:focus,.chat-text-in:focus{border-color:rgba(199,125,255,.5)}
+.chat-send-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:18px;color:#fff;cursor:pointer;min-height:48px;box-shadow:0 3px 0 rgba(0,0,0,.35);touch-action:manipulation}
+.chat-send-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
+.chat-send-btn:disabled{opacity:.55}
+.chat-err{font-size:12px;color:#ff7070;font-weight:900}
+.chat-role-row{display:flex;gap:10px}
+.chat-role-btn{flex:1;padding:14px 10px;background:rgba(255,110,180,.12);border:2px solid rgba(255,110,180,.35);border-radius:12px;font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);cursor:pointer;min-height:52px;touch-action:manipulation}
+.chat-role-btn.dad{background:rgba(91,200,255,.1);border-color:rgba(91,200,255,.35)}
+.chat-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--muted)}
+.chat-you{flex:1;min-width:120px}
+.chat-link-btn{background:none;border:none;color:var(--purple);font-size:11px;font-weight:900;cursor:pointer;padding:6px 8px;min-height:36px;font-family:'Nunito',sans-serif}
+.chat-log{max-height:min(42vh,320px);overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding:8px 4px 12px;margin-bottom:10px;background:rgba(0,0,0,.2);border-radius:12px}
+.chat-empty{text-align:center;font-size:13px;color:var(--muted);padding:24px 8px}
+.chat-bubble{max-width:88%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45}
+.chat-bubble.mine{align-self:flex-end;background:linear-gradient(135deg,rgba(255,110,180,.25),rgba(199,125,255,.2));border:1px solid rgba(255,110,180,.25);border-radius:14px 14px 4px 14px}
+.chat-bubble.theirs{align-self:flex-start;background:rgba(91,200,255,.12);border:1px solid rgba(91,200,255,.2);border-radius:14px 14px 14px 4px}
+.chat-bubble.dad.theirs{background:rgba(199,125,255,.12);border-color:rgba(199,125,255,.25)}
+.chat-who{display:block;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
+.chat-bubble.maya .chat-who{color:var(--pink)}
+.chat-body{display:block;word-break:break-word}
+.chat-time{display:block;font-size:10px;color:var(--muted);margin-top:6px;text-align:right}
+.chat-form{display:flex;gap:8px;align-items:stretch}
+.chat-form .chat-text-in{flex:1}
+.chat-form .chat-send-btn{width:auto;min-width:88px;padding:12px 18px;font-size:16px}
+
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -289,6 +321,12 @@ header{text-align:center;padding:48px 0 36px}
       <button class="cb" id="clr2" onclick="document.getElementById('clr').click()" style="padding:12px 16px;min-height:46px">🗑 Clear</button>
     </div>
     <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
+  </div>
+
+  <!-- FAMILY CHAT -->
+  <div class="sh"><h2>💬 Chat with Dad</h2><div class="sl"></div></div>
+  <div id="family-chat-wrap">
+    <div id="family-chat-root"></div>
   </div>
 
   <!-- WISHLIST -->
@@ -747,5 +785,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
+<script type="module" src="family-chat.js"></script>
 </body>
 </html>
