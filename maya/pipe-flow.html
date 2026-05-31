@@ -1382,20 +1382,6 @@ function goalHasFlow(r,c,cell,filledSet,colorMap){
   if(filledSet.has(k)){
     if(colorOk(colorMap.get(k)))return true;
   }
-  const gm=maskFor(cell);
-  for(let i=0;i<4;i++){
-    const d=DIRS[i];
-    if(!(gm&d))continue;
-    const dk=dirKey(d);
-    const pr=r-DR[dk][0],pc=c-DR[dk][1];
-    if(pr<0||pc<0||pr>=rows||pc>=cols)continue;
-    const nb=grid[pr]&&grid[pr][pc];
-    if(!nb||blocksWaterPass(nb.type))continue;
-    const nk=pr+','+pc;
-    if(!filledSet.has(nk))continue;
-    if(!(maskFor(nb)&d))continue;
-    if(colorOk(colorMap.get(nk)))return true;
-  }
   if(!cell.sprinkler)return false;
   for(let i=0;i<4;i++){
     const d=DIRS[i];
@@ -1810,6 +1796,8 @@ function interactCell(r,c){
     }
     lastValveCell={r:r,c:c};
     lastValveTap=now;
+    setStatus('Double-tap the valve to open or close it 🚰','idle');
+    return true;  // first tap primes double-tap — don't rotate the valve
   }
   const max=cell.type==='X'?1:4;
   cell.rot=(cell.rot+1)%max;
