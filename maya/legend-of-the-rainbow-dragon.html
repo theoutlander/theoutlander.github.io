@@ -67,11 +67,10 @@ body{
 #hub-actions{padding-bottom:8px}
 .action-section{
   font-family:'Fredoka One',cursive;
-  font-size:11px;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  color:var(--muted);
-  padding:2px 4px 0;
+  font-size:12px;
+  letter-spacing:.03em;
+  color:var(--blue);
+  padding:6px 4px 2px;
 }
 .action-block{
   display:flex;
@@ -347,6 +346,18 @@ body{
     box-shadow:0 12px 48px rgba(0,0,0,.45);
   }
 }
+
+/* Kid-friendly enhancements */
+.stat-chip{display:inline-flex;flex-direction:column;align-items:center;gap:1px}
+.stat-chip small.sl{font-size:8px;color:var(--muted);font-weight:900;letter-spacing:.04em;text-transform:uppercase;line-height:1}
+.xp-bar-wrap{width:100%;padding:2px 6px 4px;display:flex;align-items:center;gap:7px}
+.xp-bar-label{font-size:10px;color:var(--muted);font-weight:900;white-space:nowrap}
+.xp-bar-track{flex:1;height:6px;background:rgba(255,255,255,.1);border-radius:99px;overflow:hidden}
+.xp-bar-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:99px;transition:width .4s ease;min-width:0}
+.hint-bubble{background:rgba(199,125,255,.12);border:2px dashed rgba(199,125,255,.5);border-radius:14px;padding:10px 14px;font-size:13px;color:var(--text);line-height:1.4;text-align:center}
+.act-btn.big{font-size:17px;padding:18px 10px;min-height:68px;line-height:1.25}
+@media (max-width:374px){.act-btn.big{font-size:15px;padding:14px 8px;min-height:58px}}
+@media (min-width:600px){.act-btn.big{font-size:19px;padding:22px 14px;min-height:76px}}
 </style>
 </head>
 <body>
@@ -356,11 +367,16 @@ body{
   <div class="hdr-title" id="hdr-title">Rainbow Dragon</div>
 </header>
 <div class="stats" id="stats-bar">
-  <span class="stat-chip hp" data-tip="HP: your health. If it hits 0, you rest at the inn and lose some gold.">❤️ <b id="s-hp">10</b>/<b id="s-maxhp">10</b></span>
-  <span class="stat-chip" data-tip="Level: grows your power and unlocks tougher adventures.">⚔️ <b id="s-lv">1</b></span>
-  <span class="stat-chip" data-tip="Gold: spend it at the weapon shop and healer.">🪙 <b id="s-gold">200</b></span>
-  <span class="stat-chip turns" data-tip="Turns: actions you can take today. Resets tomorrow.">⏳ <b id="s-turns">18</b></span>
-  <span class="stat-chip charm" data-tip="Charm: helps with flee chance and bonus gold.">✨ <b id="s-charm">5</b></span>
+  <span class="stat-chip hp" data-tip="HP: your health! If it hits 0, you wake up at the inn.">❤️ <b id="s-hp">10</b>/<b id="s-maxhp">10</b><small class="sl">HP</small></span>
+  <span class="stat-chip" data-tip="Level: get stronger and unlock new adventures!">⭐ <b id="s-lv">1</b><small class="sl">Level</small></span>
+  <span class="stat-chip" data-tip="Gold: spend it at the shop and healer.">🪙 <b id="s-gold">200</b><small class="sl">Gold</small></span>
+  <span class="stat-chip turns" data-tip="Turns: how many things you can do today. Resets tomorrow!">⏳ <b id="s-turns">18</b><small class="sl">Turns</small></span>
+  <span class="stat-chip charm" data-tip="Charm: helps you run away from monsters and find more gold!">✨ <b id="s-charm">5</b><small class="sl">Charm</small></span>
+  <div class="xp-bar-wrap">
+    <span class="xp-bar-label">⭐ XP</span>
+    <div class="xp-bar-track"><div class="xp-bar-fill" id="xp-bar-fill" style="width:0%"></div></div>
+    <span class="xp-bar-label" id="xp-bar-text">0 / 50</span>
+  </div>
 </div>
 
 <main id="main">
@@ -368,7 +384,7 @@ body{
     <div class="hub-title" id="hub-greet">Welcome, Hero!</div>
     <div class="hub-flavor" id="hub-flavor" role="status" aria-live="polite"></div>
     <div class="mission-card" id="hub-mission-card">
-      <div class="mission-title">🎯 Mission + How To Play</div>
+      <div class="mission-title">🎯 Your Quest</div>
       <div class="mission-text" id="mission-text"></div>
       <div class="challenge-box">
         <div class="challenge-title" id="challenge-title"></div>
@@ -1033,6 +1049,12 @@ function updateHud() {
   document.getElementById('s-charm').textContent = state.charm;
   const title = state.dragonDefeated && state.newGamePlus >= 1 ? ' 👑' : (state.dragonDefeated ? ' 🏆' : '');
   document.getElementById('hub-greet').textContent = state.avatar + ' ' + (state.name || 'Hero') + title;
+  const xpNeeded = xpForLevel(state.level + 1);
+  const xpPct = state.level >= 50 ? 100 : Math.min(100, Math.round(state.xp / xpNeeded * 100));
+  const xpFill = document.getElementById('xp-bar-fill');
+  const xpText = document.getElementById('xp-bar-text');
+  if (xpFill) xpFill.style.width = xpPct + '%';
+  if (xpText) xpText.textContent = state.xp + ' / ' + xpNeeded;
 }
 
 function saveGame() {
@@ -1176,8 +1198,12 @@ function challengeProgress(def) {
 function renderMissionAndChallenge() {
   var mission = document.getElementById('mission-text');
   if (mission) {
-    mission.innerHTML = 'Mission: reach Lv ' + BOSS_UNLOCK_LEVEL + ', then befriend the Rainbow Dragon.<br>' +
-      'How to play: use turns in Forest/Shop/Snack/Music, grow stronger, then challenge the dragon.';
+    if (state.dragonDefeated) {
+      mission.innerHTML = '🏆 You made friends with the Rainbow Dragon! You\'re a legend!';
+    } else {
+      mission.innerHTML = 'Get to <b style="color:var(--yellow)">Level ' + BOSS_UNLOCK_LEVEL + '</b> and challenge the Rainbow Dragon! 🌈🐉<br>' +
+        '<span style="color:var(--muted);font-size:12px">Fight in the Forest to earn XP ⭐ and level up!</span>';
+    }
   }
   var def = currentDailyChallenge();
   if (!def) return;
@@ -1240,10 +1266,20 @@ function showScreen(name) {
   }
 }
 
+function friendlyHint() {
+  if (state.turnsLeft <= 0) return 'No more turns today — come back tomorrow! 😴';
+  if (state.hp <= Math.floor(state.maxHp * 0.45)) return 'Your HP is low! Rest at the Inn first 💚';
+  if (state.level < 3) return 'Go to the Forest to earn XP and level up! 🌲';
+  if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) return 'You\'re strong enough! Try the Rainbow Dragon! 🌈';
+  if (state.gold < 50 && state.level >= 3) return 'Fight in the Forest to earn more gold! 🪙';
+  return 'Explore the Forest to level up and earn gold! 🌲';
+}
+
 function buildHubActions() {
   const box = document.getElementById('hub-actions');
   box.innerHTML = '';
   const noTurns = state.turnsLeft <= 0;
+  const bardDone = state.bardDay === todayKey();
 
   function btn(label, cls, fn, disabled) {
     const b = document.createElement('button');
@@ -1251,73 +1287,66 @@ function buildHubActions() {
     b.className = 'act-btn ' + cls;
     b.textContent = label;
     if (disabled) b.disabled = true;
-    b.addEventListener('click', function(e) {
-      e.preventDefault();
-      fn();
-    });
+    b.addEventListener('click', function(e) { e.preventDefault(); fn(); });
     return b;
   }
 
-  function section(title, helpText) {
+  function sectionLabel(text) {
     const s = document.createElement('div');
     s.className = 'action-section';
-    s.textContent = title;
+    s.textContent = text;
     box.appendChild(s);
-    if (helpText) {
-      const h = document.createElement('div');
-      h.className = 'action-help';
-      h.textContent = helpText;
-      box.appendChild(h);
-    }
-    const wrap = document.createElement('div');
-    wrap.className = 'action-block';
-    box.appendChild(wrap);
-    return wrap;
   }
 
-  function recommendNextMove() {
-    if (state.turnsLeft <= 0) return 'No turns left today: tap End Day, then come back tomorrow for a fresh set.';
-    if (state.level < 3) return 'Start here: tap Explore Forest to gain XP and gold.';
-    if (state.hp <= Math.floor(state.maxHp * 0.45)) return 'You are low on HP: use Inn (free) or Healer before more fights.';
-    if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) return 'Big goal ready: challenge the Rainbow Dragon when you feel prepared.';
-    return 'Great momentum: Forest for XP, Shop for upgrades, then Dragon at level ' + BOSS_UNLOCK_LEVEL + '.';
-  }
-
+  // Dragon speech-bubble hint
   const hint = document.createElement('div');
-  hint.className = 'next-hint';
-  hint.textContent = '👉 Recommended next move: ' + recommendNextMove();
+  hint.className = 'hint-bubble';
+  hint.textContent = '🐉 ' + friendlyHint();
   box.appendChild(hint);
 
-  const adventure = section('Adventure', 'Fight monsters for XP + gold. This is your main progress path.');
-  adventure.appendChild(btn('🌲 Explore Forest (1 turn)', 'forest', goForest, noTurns));
-  const bardDone = state.bardDay === todayKey();
+  // Dragon challenge button — full width, shown at top when unlocked
   if (state.level >= BOSS_UNLOCK_LEVEL && !state.dragonDefeated) {
-    const label = state.newGamePlus >= 1 ? '🌈🐉 Dragon (NG+)!' : '🌈🐉 Rainbow Dragon!';
-    adventure.appendChild(btn(label, 'dragon', goDragon, noTurns));
+    const label = state.newGamePlus >= 1 ? '🌈🐉 Rainbow Dragon — Round 2!' : '🌈🐉 Challenge the Rainbow Dragon!';
+    box.appendChild(btn(label, 'dragon big', goDragon, noTurns));
   }
-  const row2 = document.createElement('div');
-  const town = section('Town Services', 'Get stronger or recover: buy gear, heal up, and collect buffs.');
-  town.appendChild(btn('⚔️ Weapon Shop (1 turn)', 'shop', goShop, noTurns));
-  const row = document.createElement('div');
-  row.className = 'act-row';
-  row.appendChild(btn('💚 Healer', 'heal', goHealer, noTurns));
-  row.appendChild(btn('🏠 Inn — Rest', 'inn', goInn, noTurns));
-  town.appendChild(row);
-  town.appendChild(btn('🧁 Snack Bar (1 turn)', 'snack', goSnack, noTurns));
-  town.appendChild(btn(bardDone ? '🎵 Music Stage (done today)' : '🎵 Music Stage (+power, 1 turn)', 'bard', goBard, noTurns || bardDone));
 
-  const progress = section('Progress', 'Check goals, tips, and records to decide what to do next.');
-  row2.className = 'act-row';
-  row2.appendChild(btn('📬 Mailbox', 'mail', goMail, false));
-  row2.appendChild(btn('📜 Hero Stats', 'stats', goStats, false));
-  progress.appendChild(row2);
+  // Main 2×2 action grid
+  sectionLabel('🌟 What do you want to do?');
+  const grid1 = document.createElement('div');
+  grid1.className = 'act-row';
+  grid1.appendChild(btn('🌲 Forest Adventure!', 'forest big', goForest, noTurns));
+  grid1.appendChild(btn('🧁 Snack Bar!', 'snack big', goSnack, noTurns));
+  box.appendChild(grid1);
+
+  const grid2 = document.createElement('div');
+  grid2.className = 'act-row';
+  grid2.appendChild(btn(bardDone ? '🎵 Music (done today!)' : '🎵 Music Stage!', 'bard big', goBard, noTurns || bardDone));
+  grid2.appendChild(btn('⚔️ Get Better Gear!', 'shop big', goShop, noTurns));
+  box.appendChild(grid2);
+
+  // Recovery
+  sectionLabel('💊 Need a boost?');
+  const recRow = document.createElement('div');
+  recRow.className = 'act-row';
+  recRow.appendChild(btn('💚 Visit Healer', 'heal', goHealer, noTurns));
+  recRow.appendChild(btn('🏠 Rest at Inn', 'inn', goInn, noTurns));
+  box.appendChild(recRow);
+
+  // My stuff
+  sectionLabel('📚 My stuff');
+  const stuffRow = document.createElement('div');
+  stuffRow.className = 'act-row';
+  stuffRow.appendChild(btn('📬 Mailbox', 'mail', goMail, false));
+  stuffRow.appendChild(btn('📜 My Hero', 'stats', goStats, false));
+  box.appendChild(stuffRow);
 
   if (state.dragonDefeated && state.newGamePlus === 0) {
-    progress.appendChild(btn('👑 New Game+ — Dragon returns!', 'dragon', startNewGamePlus, noTurns));
+    box.appendChild(btn('👑 Play Again! (Dragon Returns!)', 'dragon', startNewGamePlus, noTurns));
   }
 
-  const dayEnd = section('Day End', 'Use this when you are done for today or out of turns.');
-  dayEnd.appendChild(btn('🌙 End Day (rest)', 'muted', endDay, false));
+  // Day end — subtle, always last
+  sectionLabel('💤 Done for today?');
+  box.appendChild(btn('😴 End the Day', 'muted', endDay, false));
 }
 
 function goForest() {
