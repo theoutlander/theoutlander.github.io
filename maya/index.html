@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Maya's Game Lab 🎮</title>
 
 <!-- Google Analytics -->
 <script src="ga-analytics.js" defer></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="family-chat.css">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
@@ -46,14 +47,6 @@ header{text-align:center;padding:48px 0 36px}
 .heart{color:var(--pink);display:inline-block;animation:hb 1.4s ease-in-out infinite}
 @keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .tap-hint{font-size:11px;color:rgba(255,255,255,.18);margin-top:6px;letter-spacing:.08em}
-
-/* Floating Dad message bubble */
-#dad-bubble{position:fixed;bottom:28px;right:20px;max-width:min(280px,80vw);background:linear-gradient(135deg,#2d1260,#1a0a3c);border:1px solid rgba(199,125,255,.3);border-radius:18px 18px 4px 18px;padding:14px 16px 12px;z-index:400;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:bubble-in .4s cubic-bezier(.34,1.56,.64,1);display:none}
-#dad-bubble.show{display:block}
-@keyframes bubble-in{0%{transform:scale(0) translateY(20px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
-.bubble-from{font-size:10px;font-weight:900;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.bubble-text{font-size:14px;line-height:1.55;color:var(--text)}
-.bubble-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1}
 
 /* Section heading */
 .sh{display:flex;align-items:center;gap:12px;margin:36px 0 18px}
@@ -117,38 +110,6 @@ header{text-align:center;padding:48px 0 36px}
 #wsend:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
 #wsend:disabled{opacity:.5;cursor:not-allowed;transform:none}
 #wsent{display:none;text-align:center;padding:20px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--green)}
-
-/* Family chat */
-#family-chat-wrap{background:var(--card);border:1px solid rgba(199,125,255,.22);border-radius:var(--radius);padding:16px 16px 14px}
-.chat-hint{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:12px}
-.chat-lock{display:flex;flex-direction:column;gap:10px}
-.chat-lock.shake{animation:chat-shake .35s ease}
-@keyframes chat-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.chat-pin-in,.chat-text-in{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.2);border-radius:12px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:16px;color:var(--text);outline:none;min-height:48px;-webkit-appearance:none}
-.chat-pin-in:focus,.chat-text-in:focus{border-color:rgba(199,125,255,.5)}
-.chat-send-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:18px;color:#fff;cursor:pointer;min-height:48px;box-shadow:0 3px 0 rgba(0,0,0,.35);touch-action:manipulation}
-.chat-send-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-.chat-send-btn:disabled{opacity:.55}
-.chat-err{font-size:12px;color:#ff7070;font-weight:900}
-.chat-role-row{display:flex;gap:10px}
-.chat-role-btn{flex:1;padding:14px 10px;background:rgba(255,110,180,.12);border:2px solid rgba(255,110,180,.35);border-radius:12px;font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);cursor:pointer;min-height:52px;touch-action:manipulation}
-.chat-role-btn.dad{background:rgba(91,200,255,.1);border-color:rgba(91,200,255,.35)}
-.chat-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--muted)}
-.chat-you{flex:1;min-width:120px}
-.chat-link-btn{background:none;border:none;color:var(--purple);font-size:11px;font-weight:900;cursor:pointer;padding:6px 8px;min-height:36px;font-family:'Nunito',sans-serif}
-.chat-log{max-height:min(42vh,320px);overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding:8px 4px 12px;margin-bottom:10px;background:rgba(0,0,0,.2);border-radius:12px}
-.chat-empty{text-align:center;font-size:13px;color:var(--muted);padding:24px 8px}
-.chat-bubble{max-width:88%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45}
-.chat-bubble.mine{align-self:flex-end;background:linear-gradient(135deg,rgba(255,110,180,.25),rgba(199,125,255,.2));border:1px solid rgba(255,110,180,.25);border-radius:14px 14px 4px 14px}
-.chat-bubble.theirs{align-self:flex-start;background:rgba(91,200,255,.12);border:1px solid rgba(91,200,255,.2);border-radius:14px 14px 14px 4px}
-.chat-bubble.dad.theirs{background:rgba(199,125,255,.12);border-color:rgba(199,125,255,.25)}
-.chat-who{display:block;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
-.chat-bubble.maya .chat-who{color:var(--pink)}
-.chat-body{display:block;word-break:break-word}
-.chat-time{display:block;font-size:10px;color:var(--muted);margin-top:6px;text-align:right}
-.chat-form{display:flex;gap:8px;align-items:stretch}
-.chat-form .chat-text-in{flex:1}
-.chat-form .chat-send-btn{width:auto;min-width:88px;padding:12px 18px;font-size:16px}
 
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
@@ -218,6 +179,17 @@ header{text-align:center;padding:48px 0 36px}
       <div class="gotw-desc" id="gdt">Daily turns on Sparkle Dragon 3000 — forest fights and a sparkly dragon boss!</div>
     </div>
     <button class="gotw-btn">▶ Play!</button>
+  </div>
+
+  <!-- SHOP BANNER -->
+  <div class="sh"><h2>🛍️ Maya's Shop</h2><div class="sl"></div></div>
+  <div style="background:linear-gradient(135deg,#2a0840,#1a1060);border:2px solid rgba(199,125,255,0.3);border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px">
+    <div style="font-size:52px;line-height:1">🛍️📚✨</div>
+    <div style="flex:1;min-width:180px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
+      <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
+    </div>
+    <a href="maya-shop.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
   </div>
 
   <!-- ALL GAMES -->
@@ -323,12 +295,6 @@ header{text-align:center;padding:48px 0 36px}
     <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
   </div>
 
-  <!-- FAMILY CHAT -->
-  <div class="sh"><h2>💬 Chat with Dad</h2><div class="sl"></div></div>
-  <div id="family-chat-wrap">
-    <div id="family-chat-root"></div>
-  </div>
-
   <!-- WISHLIST -->
   <div class="sh"><h2>💌 Send Dad a Game Idea!</h2><div class="sl"></div></div>
   <div id="ww">
@@ -337,13 +303,6 @@ header{text-align:center;padding:48px 0 36px}
     <button id="wsend" onclick="sendWish()">Send to Dad! 🚀</button>
     <div id="wsent">🎉 Dad got your idea! Can't wait for our next call! 💕</div>
   </div>
-</div>
-
-<!-- Dad bubble -->
-<div id="dad-bubble">
-  <button class="bubble-close" onclick="closeBubble()">×</button>
-  <div class="bubble-from">💬 A message from Dad</div>
-  <div class="bubble-text" id="bubble-text"></div>
 </div>
 
 <!-- Game modal -->
@@ -357,6 +316,26 @@ header{text-align:center;padding:48px 0 36px}
 </div>
 
 <div id="toast"></div>
+
+<!-- Family chat + Dad notes — bottom-right -->
+<div id="family-chat-backdrop" aria-hidden="true"></div>
+<div id="family-chat-widget" aria-live="polite">
+  <div id="dad-peek" class="dad-peek" hidden>
+    <button type="button" class="dad-peek-close" id="dad-peek-close" aria-label="Dismiss">×</button>
+    <div class="dad-peek-from">💬 A message from Dad</div>
+    <p class="dad-peek-text" id="dad-peek-text"></p>
+    <button type="button" class="dad-peek-reply" id="dad-peek-reply">Reply 💕</button>
+  </div>
+  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad">💬</button>
+  <span id="family-chat-badge" hidden aria-label="New messages"></span>
+  <div id="family-chat-panel" role="dialog" aria-label="Chat with Dad">
+    <div class="fcw-panel-head">
+      <span class="fcw-panel-title">💬 Chat with Dad</span>
+      <button type="button" class="fcw-panel-close" id="family-chat-close" aria-label="Close chat">×</button>
+    </div>
+    <div id="family-chat-root"></div>
+  </div>
+</div>
 
 <script>
 // ===== EMAILJS — replace these with your values from emailjs.com =====
@@ -424,13 +403,10 @@ document.getElementById('title').addEventListener('click',()=>{
   }
 });
 
-// ===== RANDOM DAD BUBBLE =====
+// ===== DAD NOTES (peek + live chat — family-chat.js) =====
 function showDadBubble(msg){
-  const b=document.getElementById('dad-bubble');
-  document.getElementById('bubble-text').textContent=msg;
-  b.classList.add('show');
+  if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
 }
-function closeBubble(){document.getElementById('dad-bubble').classList.remove('show');}
 
 // Show a random message after 6 seconds on first visit
 setTimeout(()=>{
