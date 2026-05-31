@@ -124,6 +124,7 @@ The main page Maya visits. Key elements:
 - **Games grid** — cards for all games, 3 columns desktop / 2 tablet / 1 mobile
 - **Doodle pad** — canvas she can draw on and email to Dad
 - **Wishlist** — she types game ideas, emails to Dad via EmailJS
+- **Family chat** — bottom-right 💬 + Dad peek; direct Supabase (`x-family-pin`); `family-chat.js` + `family-chat-dual-pin.sql`; see `docs/family-chat-setup.md`
 - **Secret message** — tap the title 5 times to reveal a message from Dad + confetti
 - **Dad bubble** — random warm message pops up 6 seconds after visiting
 

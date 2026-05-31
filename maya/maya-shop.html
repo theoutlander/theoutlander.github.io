@@ -495,13 +495,20 @@
   ];
 
   // ─────────────────────────────────────────────
-  //  EmailJS (same keys as portal)
+  //  EmailJS — lazy init so CDN failures don't
+  //  block the rest of the page from rendering
   // ─────────────────────────────────────────────
   const EJS_KEY = 'aobGgwT--7krdk9Qv';
   const EJS_SVC = 'service_08wvsfl';
   const EJS_TPL = 'template_b7g9ipp';
 
-  emailjs.init(EJS_KEY);
+  let ejsReady = false;
+  function initEJS() {
+    if (!ejsReady && typeof emailjs !== 'undefined') {
+      emailjs.init(EJS_KEY);
+      ejsReady = true;
+    }
+  }
 
   // ─────────────────────────────────────────────
   //  Render books
@@ -596,6 +603,14 @@
 
     btnSend.disabled = true;
     btnSend.textContent = 'Sending…';
+
+    initEJS();
+    if (!ejsReady) {
+      showToast('Email not available right now — try nick@karnik.io 💌', false);
+      btnSend.disabled = false;
+      btnSend.textContent = 'Send Order ✉️';
+      return;
+    }
 
     const message = `🛍️ NEW ORDER from Maya's Shop!\n\nItem: ${currentItem}\nName: ${name}\nEmail: ${email}${note ? '\nNote: ' + note : ''}`;
 

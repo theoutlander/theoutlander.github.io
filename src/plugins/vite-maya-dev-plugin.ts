@@ -42,7 +42,13 @@ export function mayaDevPlugin(mayaRoot: string): Plugin {
 				if (!pathname.startsWith("/maya")) return next();
 
 				let rel = pathname.slice("/maya".length);
-				if (!rel || rel === "/") rel = "/index.html";
+				// Redirect bare /maya → /maya/ so relative links resolve correctly
+				if (rel === "") {
+					res.writeHead(301, { Location: "/maya/" });
+					res.end();
+					return;
+				}
+				if (rel === "/") rel = "/index.html";
 
 				const parts = rel.split("/").filter(Boolean);
 				if (parts.some((p) => p === "..")) return next();
