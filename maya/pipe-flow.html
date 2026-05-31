@@ -313,7 +313,7 @@ function defaultTheme(idx){
 }
 
 const LEVELS=[
-  {name:'First Drop',par:2,tip:'2 pipes reach the flower — drag ━ and └ onto +.',rows:['S0 .  .','.  .  G0']},
+  {name:'First Drop',par:3,tip:'2 pipes reach the flower — drag ━ and └ onto +, then tap the corner to spin it.',rows:['S0 .  .','.  .  G1']},
   {name:'Quick Turn',par:3,tip:'🪨 Rock blocks the top row — route underneath!',rows:['S0 .  #  .','.  .  .  G0']},
   {name:'Down the Garden',par:6,tip:'🐰 Critters and walls — snake along the bottom!',rows:['S0 .  .  A0 .  .  .  .','.  .  .  .  .  .  .  .','.  .  W  .  .  .  W  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
   {name:'Long Hose',par:6,tip:'🪨 Boulders force a long winding path.',rows:['S0 .  .  #  .  .  .  .','.  .  .  .  .  .  .  .','.  .  #  .  .  .  #  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
@@ -684,7 +684,7 @@ function portsAlongPath(pathKeys){
     let m=0;
     if(i>0){
       const p=pathKeys[i-1].split(',');
-      m|=portBitsBetween(+p[0],+p[1],r,c);
+      m|=OPP[portBitsBetween(+p[0],+p[1],r,c)];
     }
     if(i<pathKeys.length-1){
       const p=pathKeys[i+1].split(',');
