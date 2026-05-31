@@ -313,7 +313,7 @@ function defaultTheme(idx){
 }
 
 const LEVELS=[
-  {name:'First Drop',par:3,tip:'2 pipes reach the flower — drag ━ and └ onto +, then tap the corner to spin it.',rows:['S0 .  .','.  .  G1']},
+  {name:'First Drop',par:2,tip:'Drag ━ then └ onto + — water drips down onto the garden!',rows:['S0 .  .','.  .  g0']},
   {name:'Quick Turn',par:3,tip:'🪨 Rock blocks the top row — route underneath!',rows:['S0 .  #  .','.  .  .  G0']},
   {name:'Down the Garden',par:6,tip:'🐰 Critters and walls — snake along the bottom!',rows:['S0 .  .  A0 .  .  .  .','.  .  .  .  .  .  .  .','.  .  W  .  .  .  W  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
   {name:'Long Hose',par:6,tip:'🪨 Boulders force a long winding path.',rows:['S0 .  .  #  .  .  .  .','.  .  .  .  .  .  .  .','.  .  #  .  .  .  #  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  .  .','.  .  .  .  .  .  G0'],budget:{I:14,L:5,T:0}},
@@ -1107,6 +1107,33 @@ function setBuildPipe(type){
   setStatus('Drag onto + · tap pipe to spin · trash zone to remove','idle');
 }
 
+function autoOrientPlacedPipe(r,c){
+  const cell=grid[r]&&grid[r][c];
+  if(!cell||cell.fixed||BUILD_TYPES.indexOf(cell.type)<0)return;
+  const flow=computeFlow();
+  let bestRot=0,bestScore=-1;
+  for(let rot=0;rot<4;rot++){
+    cell.rot=rot;
+    let score=0;
+    const m=maskFor(cell);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(!(m&d))continue;
+      const dk=dirKey(d);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      if(nr<0||nc<0||nr>=rows||nc>=cols)continue;
+      const nk=nr+','+nc;
+      const nb=grid[nr]&&grid[nr][nc];
+      if(!nb)continue;
+      if(isSource(nb))score+=3;
+      else if(flow.filled.has(nk))score+=2;
+      else if(isGoal(nb))score+=2;
+    }
+    if(score>bestScore){bestScore=score;bestRot=rot;}
+  }
+  cell.rot=bestRot;
+}
+
 function placeBuildPipe(r,c,type){
   if(BUILD_TYPES.indexOf(type)<0)return false;
   if(kitStock(type)<=0)return false;
@@ -1114,6 +1141,7 @@ function placeBuildPipe(r,c,type){
   if(c<0||c>=cols)return false;
   if(grid[r][c])return false;
   grid[r][c]={type:type,rot:0,fixed:false,placed:true,color:null,sprinkler:false};
+  autoOrientPlacedPipe(r,c);
   buildInventory[type]--;
   if(kitStock(selectedBuildPipe)<=0)selectedBuildPipe=pickKitPipeWithStock();
   updateBuildPaletteHud();
@@ -1382,7 +1410,23 @@ function goalHasFlow(r,c,cell,filledSet,colorMap){
   if(filledSet.has(k)){
     if(colorOk(colorMap.get(k)))return true;
   }
-  if(!cell.sprinkler)return false;
+  if(!cell.sprinkler){
+    const gm=maskFor(cell);
+    for(let i=0;i<4;i++){
+      const d=DIRS[i];
+      if(!(gm&d))continue;
+      const dk=dirKey(d);
+      const nr=r+DR[dk][0],nc=c+DR[dk][1];
+      const nb=grid[nr]&&grid[nr][nc];
+      if(!nb||blocksWaterPass(nb.type))continue;
+      if(nb.type==='G'&&!nb.sprinkler)continue;
+      const nk=nr+','+nc;
+      if(!filledSet.has(nk))continue;
+      if(!(maskFor(nb)&OPP[d]))continue;
+      if(colorOk(colorMap.get(nk)))return true;
+    }
+    return false;
+  }
   for(let i=0;i<4;i++){
     const d=DIRS[i];
     const dk=dirKey(d);
