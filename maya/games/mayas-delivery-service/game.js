@@ -68,19 +68,29 @@ const DAD_NOTES=[
 /* ── shared state (persisted) ── */
 const G={
   coins:0, soundOn:true, musicOn:true, hinted:false,
-  vehicle:'van', pet:'dog', ownedV:['van'], ownedP:['dog'], bestStars:0, track:0,
+  vehicle:'van', pet:'dog', ownedV:['van'], ownedP:['dog'], bestStars:0, track:0, lettersSeen:[],
   load(){try{const s=JSON.parse(localStorage.getItem('mds3')||'{}');
     this.coins=s.coins||0; this.vehicle=s.vehicle||'van'; this.pet=s.pet||'dog'; this.track=s.track||0;
     this.ownedV=s.ownedV||['van']; this.ownedP=s.ownedP||['dog']; this.bestStars=s.bestStars||0;
+    this.lettersSeen=Array.isArray(s.lettersSeen)?s.lettersSeen:[];
     this.soundOn=s.soundOn!==false; this.musicOn=s.musicOn!==false;
     if(!this.ownedV.includes('van'))this.ownedV.push('van');
     if(!this.ownedP.includes('dog'))this.ownedP.push('dog');
   }catch(e){}},
   save(){try{localStorage.setItem('mds3',JSON.stringify({coins:this.coins,vehicle:this.vehicle,pet:this.pet,
-    ownedV:this.ownedV,ownedP:this.ownedP,bestStars:this.bestStars,soundOn:this.soundOn,musicOn:this.musicOn,track:this.track}));}catch(e){}},
+    ownedV:this.ownedV,ownedP:this.ownedP,bestStars:this.bestStars,soundOn:this.soundOn,musicOn:this.musicOn,track:this.track,lettersSeen:this.lettersSeen}));}catch(e){}},
   veh(){return VEHICLES.find(v=>v.id===this.vehicle)||VEHICLES[0];},
   petDef(){return PETS.find(p=>p.id===this.pet)||PETS[0];},
 };
+
+/* pick a Dad letter to show — prefer one Maya hasn't collected yet — and remember it for the scrapbook */
+function recordDadLetter(){
+  const seen=G.lettersSeen||(G.lettersSeen=[]);
+  const unseen=[]; for(let i=0;i<DAD_NOTES.length;i++){ if(seen.indexOf(i)<0) unseen.push(i); }
+  const idx = unseen.length ? unseen[Math.floor(Math.random()*unseen.length)] : Math.floor(Math.random()*DAD_NOTES.length);
+  if(seen.indexOf(idx)<0){ seen.push(idx); G.save(); }
+  return idx;
+}
 
 /* ── audio ── */
 let _actx, _master, _musicBus, _sfxBus;
@@ -261,6 +271,8 @@ class MenuScene extends Phaser.Scene{
     // buttons
     makeBtn(this,cx,GH*0.66,'Start Driving!  🚐',C.pink,'#ffffff',fz(0.042),()=>{resumeAudio();startMusic();this.scene.start('Play');},C.purple);
     makeBtn(this,cx,GH*0.78,'🚙  Garage',C.card,HX.text,fz(0.036),()=>{resumeAudio();this.scene.start('Garage');},C.cardB);
+    const lc=(G.lettersSeen||[]).length;
+    makeBtn(this,cx,GH*0.88,'📖  Letters  '+lc+'/'+DAD_NOTES.length,C.card,HX.text,fz(0.034),()=>{resumeAudio();this.scene.start('Scrapbook');},C.cardB);
     // sound/music toggles
     this.t1=this.add.text(GW-20,20,G.soundOn?'🔊':'🔇',{fontSize:fz(0.04)}).setOrigin(1,0).setInteractive({useHandCursor:true});
     this.t1.on('pointerdown',()=>{G.soundOn=!G.soundOn;G.save();this.t1.setText(G.soundOn?'🔊':'🔇');});
@@ -694,7 +706,7 @@ class PlayScene extends Phaser.Scene{
       const ang=-Math.PI/2+(Math.random()-0.5)*1.6,d=50+Math.random()*70;
       this.tweens.add({targets:e,x:x+Math.cos(ang)*d,y:y-30+Math.sin(ang)*d,alpha:0,scale:0.5,duration:900,onComplete:()=>e.destroy()});}
     // speech: thank you + fact (learning)
-    const note = this.pkgType==='dad' ? ('Dad says: '+Phaser.Utils.Array.GetRandom(DAD_NOTES))
+    const note = this.pkgType==='dad' ? ('Dad says: '+DAD_NOTES[recordDadLetter()])
       : Phaser.Utils.Array.GetRandom(['Thank you! 💕','Yay, my package! 🎉','You\'re the best! ⭐','Woohoo! 🌈']);
     this.speech(this.pkgType==='dad'?'💌 '+note:note, this.pkgType==='dad'?C.yellow:C.white);
     if(this.pkgType!=='dad') this.factBubble(h);
@@ -785,10 +797,10 @@ class PlayScene extends Phaser.Scene{
     this.ctlRects.push({x,y,w:r*2,h:r*2}); return {g,t,x,y,r};
   }
   doTurbo(){ if(this.turbo<0.34){sfx.deny();this.actionBanner('Charging… ⚡',C.yellow);return;} this.boostT=Math.max(this.boostT,1.1); this.turbo=Math.max(0,this.turbo-0.5); sfx.boost(); this.actionBanner('TURBO! 💨',C.yellow); }
-  /* one-tap auto-pilot: drive me to the next stop! (kid-friendly) */
+  /* one-tap auto-pilot: always drive to the next delivery house (kid-friendly) */
   goToStop(){ if(!this.driving){this.startDriving();return;}
-    const dst=(this.carrying&&this.target)?this.target.door:(this.depot&&this.depot.door);
-    if(dst){ this.setDest(dst.x,dst.y); this.actionBanner('On my way! 🚐',C.green); } }
+    if(this.target){ this.setDest(this.target.door.x,this.target.door.y); this.actionBanner('On my way! 🚐',C.green); }
+    else { this.actionBanner('All delivered! 🎉',C.green); } }
   honk(){ if(this._honkCd&&this.time.now<this._honkCd)return; this._honkCd=this.time.now+300; carHorn();
     if(this.petIcon){this.tweens.add({targets:this.petIcon,scaleX:1.4,scaleY:1.4,duration:120,yoyo:true});}
     const n=this.add.text(this.van.x,this.van.y-26,'🎵',{fontSize:'24px'}).setOrigin(.5).setDepth(6000);
@@ -1127,11 +1139,62 @@ function holdBtn(scene,x,y,w,h,label,key,owner,big){
   owner.ctlRects.push({x,y,w,h}); return hit;
 }
 
+/* ═══════════ SCRAPBOOK — Letters from Dad ═══════════ */
+class ScrapbookScene extends Phaser.Scene{
+  constructor(){super('Scrapbook');}
+  create(){
+    G.load();
+    const cx=GW/2, seen=G.lettersSeen||[];
+    this.cameras.main.setBackgroundColor('#0f0a1e');
+    this.add.rectangle(cx,GH*0.82,GW,GH*0.42,C.grass,0.10);
+    this.add.text(cx,GH*0.08,'📖 Letters from Dad',{fontFamily:'Fredoka One',fontSize:fz(0.05),color:HX.pink,stroke:'#0f0a1e',strokeThickness:5}).setOrigin(.5);
+    this.add.text(cx,GH*0.15,seen.length+' / '+DAD_NOTES.length+' collected 💌',{fontFamily:'Fredoka One',fontSize:fz(0.032),color:HX.yellow}).setOrigin(.5);
+
+    const cols=4, rows=Math.ceil(DAD_NOTES.length/cols);
+    const availW=GW*0.88, availH=GH*0.56;
+    const cellW=availW/cols, cellH=availH/rows;
+    const cw=Math.min(cellW,cellH)*0.84;
+    const sx=cx-(cols-1)*cellW/2, sy=GH*0.25;
+    for(let i=0;i<DAD_NOTES.length;i++){
+      const col=i%cols, row=Math.floor(i/cols);
+      const x=sx+col*cellW, y=sy+row*cellH;
+      const isSeen=seen.indexOf(i)>=0;
+      const g=this.add.graphics().setDepth(10);
+      g.fillStyle(0x000000,0.3).fillRoundedRect(x-cw/2,y-cw/2+4,cw,cw,14);
+      g.fillStyle(isSeen?C.card:0x171127,1).fillRoundedRect(x-cw/2,y-cw/2,cw,cw,14);
+      g.lineStyle(2,isSeen?C.pink:0x33284d,isSeen?0.85:0.6).strokeRoundedRect(x-cw/2,y-cw/2,cw,cw,14);
+      this.add.text(x,y,isSeen?'💌':'🔒',{fontSize:Math.round(cw*0.46)+'px'}).setOrigin(.5).setDepth(11).setAlpha(isSeen?1:0.45);
+      if(isSeen){
+        const hit=this.add.rectangle(x,y,cw,cw,0xffffff,0.001).setDepth(12).setInteractive({useHandCursor:true});
+        hit.on('pointerdown',()=>{g.y=3;}); hit.on('pointerout',()=>{g.y=0;}); hit.on('pointerup',()=>{g.y=0;this.openLetter(i);});
+      }
+    }
+    if(seen.length===0){
+      this.add.text(cx,GH*0.82,"Deliver Dad's special 💌 packages to collect his letters!",{fontFamily:'Nunito',fontStyle:'900',fontSize:fz(0.028),color:HX.muted,align:'center',wordWrap:{width:GW*0.8}}).setOrigin(.5).setDepth(20);
+    }
+    makeBtn(this,cx,GH*0.93,'← Back',C.card,HX.text,fz(0.034),()=>this.scene.start('Menu'),C.cardB);
+  }
+  openLetter(i){
+    const cx=GW/2, cy=GH/2;
+    const dim=this.add.rectangle(cx,cy,GW,GH,0x000000,0.66).setDepth(3000).setInteractive();
+    const cardW=Math.min(GW*0.84,560), cardH=Math.min(GH*0.5,GW*0.7,420);
+    const g=this.add.graphics().setDepth(3001);
+    g.fillStyle(C.card,1).fillRoundedRect(cx-cardW/2,cy-cardH/2,cardW,cardH,22);
+    g.lineStyle(3,C.pink,0.7).strokeRoundedRect(cx-cardW/2,cy-cardH/2,cardW,cardH,22);
+    const head=this.add.text(cx,cy-cardH/2+16,'💌',{fontSize:fz(0.075)}).setOrigin(.5,0).setDepth(3002);
+    const body=this.add.text(cx,cy+6,DAD_NOTES[i],{fontFamily:'Fredoka One',fontSize:fz(0.044),color:HX.text,align:'center',wordWrap:{width:cardW*0.82}}).setOrigin(.5).setDepth(3002);
+    const hint=this.add.text(cx,cy+cardH/2-24,'tap to close 💕',{fontFamily:'Nunito',fontStyle:'900',fontSize:fz(0.026),color:HX.pink}).setOrigin(.5).setDepth(3002);
+    body.setScale(0.7).setAlpha(0); this.tweens.add({targets:body,scale:1,alpha:1,duration:220,ease:'Back.out'});
+    const close=()=>{dim.destroy();g.destroy();head.destroy();body.destroy();hint.destroy();};
+    dim.on('pointerup',close);
+  }
+}
+
 /* ── launch ── */
 window.__game = new Phaser.Game({
   type:Phaser.AUTO, width:GW, height:GH, backgroundColor:'#0f0a1e', parent:'game-container',
   physics:{ default:'arcade', arcade:{ gravity:{x:0,y:0}, debug:false } },
-  scene:[MenuScene, GarageScene, PlayScene, WinScene],
+  scene:[MenuScene, GarageScene, PlayScene, WinScene, ScrapbookScene],
   scale:{ mode:Phaser.Scale.RESIZE, autoCenter:Phaser.Scale.CENTER_BOTH },
   input:{ touch:true, activePointers:3 },
 });
