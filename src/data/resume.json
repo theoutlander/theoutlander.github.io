@@ -44,7 +44,7 @@
 			"role": "Lead Software Engineer",
 			"dates": "Mar 2026 – Present",
 			"current": true,
-			"blurb": "Leading a product team building data and search infrastructure for the financial intelligence platform used by investment professionals worldwide.",
+			"blurb": "Leading the creation of a new product on PitchBook's financial intelligence platform, setting product and technical direction with PM, Design, and Engineering leadership. Architected and built it across the full stack, frontend to backend to search and integrations, including a data ingestion pipeline that makes large datasets searchable in real time. Built search over a billion documents with low-latency results, and led development of an MCP server and AI chat features with LLM integration.",
 			"tags": ["Data Infrastructure", "Search", "FinTech"]
 		},
 		{
