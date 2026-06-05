@@ -41,11 +41,11 @@
 	"roles": [
 		{
 			"co": "PitchBook (Morningstar)",
-			"role": "Lead Software Engineer",
+			"role": "Lead Software Development Engineer",
 			"dates": "Mar 2026 – Present",
 			"current": true,
 			"blurb": "Leading the creation of a new product on PitchBook's financial intelligence platform, setting product and technical direction with PM, Design, and Engineering leadership. Architected and built it across the full stack, frontend to backend to search and integrations, including a data ingestion pipeline that makes large datasets searchable in real time. Built search over a billion documents with low-latency results, and led development of an MCP server and AI chat features with LLM integration.",
-			"tags": ["Data Infrastructure", "Search", "FinTech"]
+			"tags": ["Search", "LLM", "MCP", "Data Infrastructure", "FinTech"]
 		},
 		{
 			"co": "Google",
@@ -98,7 +98,7 @@
 		},
 		{
 			"co": "Institute for Disease Modeling (Gates Foundation)",
-			"role": "Senior Software Engineer",
+			"role": "Senior Software Development Engineer",
 			"dates": "Sep 2012 – Oct 2016",
 			"blurb": "Built simulation and visualization tools for malaria, HIV, TB, polio, and more. Developed software and spatial models featured in Bill Gates' TED Talk \"The next outbreak? We're not ready.\" Collaborated with organizations like WHO, ministries of health, NGOs, and universities.",
 			"tags": ["Data Visualization", "Simulation", "Global Health", "Scientific Computing"]
