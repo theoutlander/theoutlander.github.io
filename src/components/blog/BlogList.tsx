@@ -1,5 +1,4 @@
 import { css, cx } from "../../../styled-system/css/index.mjs";
-// import { Helmet } from 'react-helmet-async';
 import type { Post } from "../../types/blog";
 import { capitalizeFirstLetter } from "../../utils/stringUtils";
 

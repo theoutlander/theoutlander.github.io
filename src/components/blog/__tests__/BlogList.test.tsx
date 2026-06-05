@@ -20,13 +20,6 @@ vi.mock("@tanstack/react-router", () => ({
 	}) => <a href={`${to}${params ? `/${params.slug}` : ""}`}>{children}</a>,
 }));
 
-// Mock Helmet
-vi.mock("react-helmet-async", () => ({
-	Helmet: ({ children }: { children: React.ReactNode }) => (
-		<div data-testid="helmet">{children}</div>
-	),
-}));
-
 const mockPosts: Post[] = [
 	{
 		slug: "post-1",

@@ -22,16 +22,12 @@
 		"deploy": "./scripts/deploy.sh"
 	},
 	"dependencies": {
-		"@emotion/react": "^11.14.0",
-		"@emotion/styled": "^11.14.1",
 		"@heroicons/react": "^2.2.0",
 		"@pandacss/dev": "^1.4.1",
 		"@tanstack/react-router": "^1.132.21",
-		"framer-motion": "^12.23.22",
 		"marked": "^16.4.1",
 		"react": "^19.1.1",
 		"react-dom": "^19.1.1",
-		"react-helmet-async": "^2.0.5",
 		"react-icons": "^5.5.0",
 		"react-markdown": "^10.1.0"
 	},
