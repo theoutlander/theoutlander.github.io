@@ -99,18 +99,6 @@ header{text-align:center;padding:48px 0 36px}
 .cb{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.18);color:#ff7070;font-size:11px;font-weight:900;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;min-height:32px}
 #dc{display:block;width:100%;touch-action:none;cursor:crosshair;background:#0a0718}
 
-/* Wish */
-#ww{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.wi{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-#winput{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.18);border-radius:12px;padding:13px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);resize:none;height:76px;outline:none;transition:border-color .15s;-webkit-appearance:none}
-#winput:focus{border-color:rgba(199,125,255,.5)}
-#winput::placeholder{color:var(--muted)}
-#wsend{margin-top:10px;width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:19px;color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 0 rgba(0,0,0,.35);min-height:50px}
-#wsend:hover{transform:translateY(-2px)}
-#wsend:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-#wsend:disabled{opacity:.5;cursor:not-allowed;transform:none}
-#wsent{display:none;text-align:center;padding:20px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--green)}
-
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -304,14 +292,6 @@ header{text-align:center;padding:48px 0 36px}
     <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
   </div>
 
-  <!-- WISHLIST -->
-  <div class="sh"><h2>💌 Send Dad a Game Idea!</h2><div class="sl"></div></div>
-  <div id="ww">
-    <div class="wi">Got an idea for our next game together? Send it to Dad and he'll see it before your next call! 🚀</div>
-    <textarea id="winput" placeholder="A game where a unicorn jumps over rainbows... or where you catch falling stars... or anything you can imagine!"></textarea>
-    <button id="wsend" onclick="sendWish()">Send to Dad! 🚀</button>
-    <div id="wsent">🎉 Dad got your idea! Can't wait for our next call! 💕</div>
-  </div>
 </div>
 
 <!-- Game modal -->
@@ -335,7 +315,7 @@ header{text-align:center;padding:48px 0 36px}
     <p class="dad-peek-text" id="dad-peek-text"></p>
     <button type="button" class="dad-peek-reply" id="dad-peek-reply">Reply 💕</button>
   </div>
-  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad">💬</button>
+  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad — tell him anything!">💬</button>
   <span id="family-chat-badge" hidden aria-label="New messages"></span>
   <div id="family-chat-panel" role="dialog" aria-label="Chat with Dad">
     <div class="fcw-panel-head">
@@ -396,6 +376,17 @@ const DAD_MESSAGES=[
   "I love you more than all the stars up there. ⭐",
   "Bet you can beat your high score today! 👀",
   "You are my favourite person to make things with. 💕",
+  "No matter how far apart we are, you're always right here in my heart. 💛",
+  "Whenever I see a rainbow, I think of you. 🌈",
+  "If I could hug you through this screen, I'd never let go. 🤗",
+  "Being your dad is the best job I'll ever have. 💼💕",
+  "I believe in you on the easy days AND the hard ones. 🌟",
+  "Tell me everything tonight — I want to hear all of it. 📞",
+  "You'll always be my little star, no matter how big you grow. ⭐",
+  "When you laugh, it's my favourite sound in the whole world. 😄",
+  "You can do hard things, Maya. I've watched you do them. 💪",
+  "Goodnight, sweet Maya — dream the biggest dreams. 🌙",
+  "P.S. I love you. (I'll always sneak that in.) 💌",
 ];
 let taps=0,tapT=null;
 document.getElementById('title').addEventListener('click',()=>{
@@ -424,6 +415,10 @@ setTimeout(()=>{
     "Which game will you play first? 🎮",
     "Dad made this just for you. 💕",
     "You're the best! Have so much fun! 🌟",
+    "Welcome back, superstar! 🌟",
+    "I missed you today, Maya! 💕",
+    "Dad's thinking about you right now. 💭💛",
+    "Ready for an adventure? 🚐",
   ];
   showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
 },6000);
@@ -742,31 +737,6 @@ async function sendDoodle(){
     btn.style.display='';btn.disabled=false;btn.textContent='Send to Dad! 🎨';
     document.getElementById('doodle-sent').style.display='none';
   },4000);
-}
-
-// ===== WISHLIST =====
-async function sendWish(){
-  const val=document.getElementById('winput').value.trim();
-  if(!val)return;
-  const btn=document.getElementById('wsend');
-  btn.disabled=true;btn.textContent='Sending... 🚀';
-  try{
-    emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,{
-      message:val,
-      wish:val,
-      idea:val,
-      from_name:'Maya'
-    });
-  }catch(e){
-    console.log('email err',e);
-    showToast('Could not send — try again');
-  }
-  document.getElementById('winput').value='';
-  document.getElementById('wsend').style.display='none';
-  document.getElementById('wsent').style.display='block';
-  confetti(20);
-  showToast('🚀 Sent to Dad!');
 }
 
 // ===== TOAST =====

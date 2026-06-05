@@ -55,6 +55,14 @@ const DAD_NOTES=[
   "You're the best driver in the world! 🏆",
   "Give your pet a hug for me! 🐶",
   "Miss you, kiddo. Drive safe! 🚐",
+  "Whenever you miss me, look up at the moon — I'm looking too. 🌙",
+  "I keep your drawings where I can see them every day. 🖼️💕",
+  "You make my whole world brighter, Maya. ☀️",
+  "No matter what, I'm always in your corner. 💛",
+  "Being your dad is my favourite adventure. 🚐💕",
+  "You're braver than you know, kiddo. 🦁",
+  "Save me the first turn at our next game, okay? 🎮",
+  "Dream the biggest dreams tonight, superstar. ✨",
 ];
 
 /* ── shared state (persisted) ── */
@@ -620,7 +628,7 @@ class PlayScene extends Phaser.Scene{
     this.tweens.killTweensOf(this.kid); this.kid.destroy(); this.kidPkg.destroy();
     this.skipHint.destroy(); sfx.vroom?sfx.vroom():beep(120,0.18,'sawtooth',0.07,180);
     this.pickTarget();
-    if(!G.hinted){G.hinted=true;this.toast('Tap where to go! 👆',30);}
+    if(!G.hinted){G.hinted=true;this.toast('Tap the green Go to Stop button — I drive there for you! 🚐',30);}
   }
 
   /* ── delivery loop ── */
@@ -760,6 +768,12 @@ class PlayScene extends Phaser.Scene{
     this.turboBtn=this.makeRound(colX,GOy,sm,'⚡',C.yellow,()=>this.doTurbo());
     this.honkBtn =this.makeRound(colX,revY,sm,'🎺',C.blue,()=>this.honk());
     this.turboRing=this.add.graphics().setScrollFactor(0).setDepth(1903);
+    // big, friendly one-tap auto-pilot — drives to the next stop for you
+    const adFs=fz(0.032), adFn=parseFloat(String(adFs))||24, adLabel='Go to Stop 🏠';
+    const adW=Math.max(adLabel.length*adFn*0.5+44,150), adH=adFn*1.7+18;
+    const adY=bottom - sz - 12 - adH/2;
+    makeBtn(this, GW/2, adY, adLabel, C.green, '#0f2a1e', adFs, ()=>this.goToStop(), C.green);
+    this.ctlRects.push({x:GW/2,y:adY,w:adW+12,h:adH+12});
   }
   makeRound(x,y,r,label,col,cb){
     const g=this.add.graphics().setScrollFactor(0).setDepth(1900);
@@ -771,6 +785,10 @@ class PlayScene extends Phaser.Scene{
     this.ctlRects.push({x,y,w:r*2,h:r*2}); return {g,t,x,y,r};
   }
   doTurbo(){ if(this.turbo<0.34){sfx.deny();this.actionBanner('Charging… ⚡',C.yellow);return;} this.boostT=Math.max(this.boostT,1.1); this.turbo=Math.max(0,this.turbo-0.5); sfx.boost(); this.actionBanner('TURBO! 💨',C.yellow); }
+  /* one-tap auto-pilot: drive me to the next stop! (kid-friendly) */
+  goToStop(){ if(!this.driving){this.startDriving();return;}
+    const dst=(this.carrying&&this.target)?this.target.door:(this.depot&&this.depot.door);
+    if(dst){ this.setDest(dst.x,dst.y); this.actionBanner('On my way! 🚐',C.green); } }
   honk(){ if(this._honkCd&&this.time.now<this._honkCd)return; this._honkCd=this.time.now+300; carHorn();
     if(this.petIcon){this.tweens.add({targets:this.petIcon,scaleX:1.4,scaleY:1.4,duration:120,yoyo:true});}
     const n=this.add.text(this.van.x,this.van.y-26,'🎵',{fontSize:'24px'}).setOrigin(.5).setDepth(6000);
@@ -885,7 +903,7 @@ class PlayScene extends Phaser.Scene{
     const dt=Math.min(0.05,delta/1000);
     if(!this.driving){ this.glowPulse(); return; }
     const v=this.van, veh=G.veh();
-    const MAX=300*veh.spd*(this.boostT>0?1.7:1), ACC=560*veh.spd*(this.boostT>0?1.5:1), REV=160, TURN=4.7*veh.turn;
+    const MAX=205*veh.spd*(this.boostT>0?1.5:1), ACC=400*veh.spd*(this.boostT>0?1.4:1), REV=125, TURN=4.2*veh.turn;
     const useDrag=this.drag.active&&this.drag.mag>0.08;
     const anyBtn=this.ctl.left||this.ctl.right||this.ctl.gas||this.ctl.rev;
     // when carrying & near the target house, ease up to the FRONT (door) and stop — don't drive into the house
@@ -922,9 +940,9 @@ class PlayScene extends Phaser.Scene{
       // crawl when a big turn is needed (small turning radius), full speed only when aimed straight
       const aim=Math.max(0,1-Math.abs(diff)/0.9);
       if(isFinal){
-        const desired = dist<22 ? 0 : Phaser.Math.Clamp(dist*3.0,45,MAX)*(0.18+0.82*aim);
-        this.speed += (desired-this.speed)*Math.min(1,dt*6);
-        if(dist<22 && Math.abs(this.speed)<22){ this.speed=0; this.clearDest(); }
+        const desired = dist<30 ? 0 : Phaser.Math.Clamp(dist*2.4,40,MAX)*(0.30+0.70*aim);
+        this.speed += (desired-this.speed)*Math.min(1,dt*5);
+        if(dist<30 && Math.abs(this.speed)<26){ this.speed=0; this.clearDest(); }
       } else {
         const desired = MAX*(0.22+0.78*aim);
         this.speed += (desired-this.speed)*Math.min(1,dt*5);

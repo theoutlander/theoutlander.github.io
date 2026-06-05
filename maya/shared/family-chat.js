@@ -188,7 +188,7 @@ export function initFamilyChat(root, hooks = {}) {
       </div>
       <div id="chat-log" class="chat-log" aria-live="polite"></div>
       <form id="chat-form" class="chat-form">
-        <input type="text" id="chat-input" class="chat-text-in" placeholder="${myRole === 'maya' ? 'Say hi to Dad! 💕' : 'Reply to Maya…'}" maxlength="${MAX_BODY}" autocomplete="off" />
+        <input type="text" id="chat-input" class="chat-text-in" placeholder="${myRole === 'maya' ? 'Tell Dad anything — even a game idea! 💕' : 'Reply to Maya…'}" maxlength="${MAX_BODY}" autocomplete="off" />
         <button type="submit" class="chat-send-btn">Send</button>
       </form>`;
 
