@@ -405,7 +405,8 @@ const generateBaseHTML = (
 	jsonLd?: object | object[],
 	inlineDataScript?: string,
 	ogImageWidth?: number,
-	ogImageHeight?: number
+	ogImageHeight?: number,
+	ogTitle?: string
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	// Site-wide default OG image fallback; individual pages may override via ogImage.
@@ -416,6 +417,8 @@ const generateBaseHTML = (
 			? ogImage
 			: `${siteUrl}${ogImage}`
 		: defaultOgImage;
+	// Social (OG/Twitter) title can differ from the HTML <title>; fall back to it.
+	const finalOgTitle = ogTitle || title;
 	const finalOgType = ogType || "website";
 	const finalCanonicalUrl = canonicalUrl || siteUrl;
 	const facebookAppId = process.env.FACEBOOK_APP_ID;
@@ -454,7 +457,7 @@ const generateBaseHTML = (
 		<link rel="canonical" href="${finalCanonicalUrl}" />
 
 		<!-- Open Graph Meta Tags -->
-		<meta property="og:title" content="${title}" />
+		<meta property="og:title" content="${finalOgTitle}" />
 		<meta property="og:description" content="${description}" />
 		<meta property="og:type" content="${finalOgType}" />
 		<meta property="og:url" content="${finalCanonicalUrl}" />
@@ -479,7 +482,7 @@ const generateBaseHTML = (
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:site" content="@theoutlander" />
 		<meta name="twitter:creator" content="@theoutlander" />
-		<meta name="twitter:title" content="${title}" />
+		<meta name="twitter:title" content="${finalOgTitle}" />
 		<meta name="twitter:description" content="${description}" />
 		<meta name="twitter:image" content="${finalOgImage}" />
 		<meta name="twitter:image:alt" content="${title}" />
@@ -875,7 +878,8 @@ export async function renderAllStaticPagesSSR() {
 		blogJsonLd,
 		inlineAllPostsScript,
 		1200,
-		630
+		630,
+		"Nick Karnik | Engineering, Leadership & AI"
 	);
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
@@ -902,7 +906,8 @@ export async function renderAllStaticPagesSSR() {
 		blogsJsonLd,
 		inlineAllPostsScript,
 		1200,
-		630
+		630,
+		"Nick Karnik | Engineering, Leadership & AI"
 	);
 	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
 	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
