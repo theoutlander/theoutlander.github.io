@@ -398,9 +398,48 @@ function duckMusic(amt, ms) {
 function resumeAudio() {
 	try {
 		const c = AC();
-		if (c && c.state === "suspended") c.resume();
+		// "interrupted" is an iOS-only state (after a call, Siri, silent switch, etc.)
+		if (c && c.state !== "running") c.resume();
 	} catch (e) {}
 }
+// Fully unlock audio on mobile: resume the context AND play a 1-sample silent
+// buffer — iOS Safari requires both, inside a real user gesture, or it stays mute.
+function unlockAudio() {
+	try {
+		const c = AC();
+		if (!c) return;
+		if (c.state !== "running") c.resume();
+		buses(); // make sure the bus graph exists before the first real sound
+		const src = c.createBufferSource();
+		src.buffer = c.createBuffer(1, 1, 22050);
+		src.connect(c.destination);
+		src.start(0);
+	} catch (e) {}
+}
+// One-time global unlock: the FIRST touch/click/key anywhere wakes the audio,
+// so by the time Maya taps the horn the context is already running.
+(function installAudioUnlock() {
+	if (typeof window === "undefined") return;
+	const EVENTS = [
+		"pointerdown",
+		"touchstart",
+		"touchend",
+		"mousedown",
+		"keydown",
+		"click",
+	];
+	const kick = () => {
+		unlockAudio();
+		const c = AC();
+		if (c && c.state === "running")
+			EVENTS.forEach((ev) => window.removeEventListener(ev, kick, true));
+	};
+	EVENTS.forEach((ev) => window.addEventListener(ev, kick, true));
+	// iOS interrupts audio when the tab backgrounds / device locks — re-wake it.
+	document.addEventListener("visibilitychange", () => {
+		if (!document.hidden) resumeAudio();
+	});
+})();
 function beep(freq, dur, type = "sine", vol = 0.18, slideTo) {
 	if (!G.soundOn) return;
 	const c = AC();
@@ -1950,10 +1989,7 @@ class PlayScene extends Phaser.Scene {
 		}
 		if (!G.hinted) {
 			G.hinted = true;
-			this.toast(
-				"Tap the green Go to Stop button — I drive there for you! 🚐",
-				30,
-			);
+			this.toast("Tap the banner up top — I'll drive there for you! 🚐", 30);
 		}
 	}
 
@@ -2545,6 +2581,23 @@ class PlayScene extends Phaser.Scene {
 			})
 			.setOrigin(0, 0.5);
 		this.banner.add([this.bannerBG, this.bannerLabel, this.bannerTxt]);
+		// the destination banner doubles as the one-tap "drive me there" button
+		this.banner.setInteractive(
+			new Phaser.Geom.Rectangle(-100, -22, 200, 44),
+			Phaser.Geom.Rectangle.Contains,
+		);
+		this.banner.input.cursor = "pointer";
+		this.banner.on("pointerdown", () => {
+			resumeAudio();
+			this.goToStop();
+			this.tweens.add({
+				targets: this.banner,
+				scaleX: 0.94,
+				scaleY: 0.94,
+				duration: 90,
+				yoyo: true,
+			});
+		});
 		// sound + music top-right
 		this.musicBtn = this.add
 			.text(GW - pad - 22, pad + ch / 2, G.musicOn ? "🎵" : "🔈", {
@@ -2611,8 +2664,15 @@ class PlayScene extends Phaser.Scene {
 				.fillStyle(C.card, 0.85)
 				.fillRoundedRect(-totalW / 2 - 12, -ch / 2, totalW + 24, ch, ch / 2);
 			this.bannerBG
-				.lineStyle(1.5, C.cardB, 1)
+				.lineStyle(2.5, C.green, 1)
 				.strokeRoundedRect(-totalW / 2 - 12, -ch / 2, totalW + 24, ch, ch / 2);
+			if (this.banner.input)
+				this.banner.input.hitArea.setTo(
+					-totalW / 2 - 12,
+					-ch / 2,
+					totalW + 24,
+					ch,
+				);
 		}
 	}
 
@@ -2620,7 +2680,8 @@ class PlayScene extends Phaser.Scene {
 	buildControls() {
 		this.ctlRects = [];
 		const bottom = GH - Math.max(22, GH * 0.04);
-		const sz = Math.min(80, GW * 0.15);
+		// bigger, kid-friendly tap targets (still scale with width so they never overlap on small phones)
+		const sz = Math.min(92, GW * 0.17);
 		holdBtn(this, 28 + sz / 2, bottom - sz / 2, sz, sz, "◀", "left", this);
 		holdBtn(
 			this,
@@ -2632,8 +2693,8 @@ class PlayScene extends Phaser.Scene {
 			"right",
 			this,
 		);
-		const gr = Math.min(46, GW * 0.09),
-			sm = Math.min(33, GW * 0.064);
+		const gr = Math.min(54, GW * 0.105),
+			sm = Math.min(40, GW * 0.078);
 		const GOx = GW - 26 - gr,
 			GOy = bottom - gr;
 		holdBtn(this, GOx, GOy, gr * 2, gr * 2, "GO", "gas", this, true);
@@ -2647,25 +2708,6 @@ class PlayScene extends Phaser.Scene {
 			this.honk(),
 		);
 		this.turboRing = this.add.graphics().setScrollFactor(0).setDepth(1903);
-		// big, friendly one-tap auto-pilot — drives to the next stop for you
-		const adFs = fz(0.032),
-			adFn = parseFloat(String(adFs)) || 24,
-			adLabel = "Go to Stop 🏠";
-		const adW = Math.max(adLabel.length * adFn * 0.5 + 44, 150),
-			adH = adFn * 1.7 + 18;
-		const adY = bottom - sz - 12 - adH / 2;
-		makeBtn(
-			this,
-			GW / 2,
-			adY,
-			adLabel,
-			C.green,
-			"#0f2a1e",
-			adFs,
-			() => this.goToStop(),
-			C.green,
-		);
-		this.ctlRects.push({ x: GW / 2, y: adY, w: adW + 12, h: adH + 12 });
 	}
 	makeRound(x, y, r, label, col, cb) {
 		const g = this.add.graphics().setScrollFactor(0).setDepth(1900);
@@ -2878,6 +2920,19 @@ class PlayScene extends Phaser.Scene {
 		});
 	}
 	overControl(px, py) {
+		// the destination banner is a button too — don't also read it as a map tap
+		if (this.banner && this.banner.visible && this.banner.input) {
+			const ha = this.banner.input.hitArea,
+				bx = this.banner.x,
+				by = this.banner.y;
+			if (
+				px > bx + ha.x &&
+				px < bx + ha.x + ha.width &&
+				py > by + ha.y &&
+				py < by + ha.y + ha.height
+			)
+				return true;
+		}
 		return this.ctlRects.some(
 			(r) =>
 				px > r.x - r.w / 2 &&
