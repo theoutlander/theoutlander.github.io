@@ -26,15 +26,43 @@ Nick builds them here, and Maya plays them on her iPad. The site is her creative
 All games are **self-contained single HTML files** — no build step, no npm, no bundler.
 They load from CDN and work by just opening in a browser or deploying to GitHub Pages.
 
+### Framework choice (read this before starting a game)
+
+**Future games do NOT have to use Phaser.** Pick the stack by game type:
+
+| Use **Phaser 4** | Use **plain HTML/CSS/JS** (DOM and/or canvas) |
+|------------------|-----------------------------------------------|
+| Real-time action: movement, aiming, collision, many moving sprites | UI-heavy: shops, menus, modals, tycoon loops |
+| Continuous game loop with scenes (menu → play → game over) | Turn-based or tap puzzles (pipe connect, word spell) |
+| Side-scrollers, shooters, platformers, horde survival | Music/rhythm tap (piano keys) |
+| When physics/tweens/scene management would dominate the code | Educational / reading games |
+| | Short canvas effects only (confetti, one mini animation) |
+
+**Default for new ideas:** vanilla unless Nick or Maya explicitly want an arcade/action game — then Phaser.
+
+**Do not migrate a working vanilla game to Phaser** unless there is a concrete reason (bugs from hand-rolled loop, need for physics, major feature rewrite). Migration is costly; prefer polish in place.
+
 ### Frameworks in use
-- **Phaser 4.0.0** — for action/arcade games going forward
+- **Phaser 4.1.0** — action/arcade games
   - CDN: `https://cdn.jsdelivr.net/npm/phaser@4.1.0/dist/phaser.min.js`
   - Use scenes: `preload()`, `create()`, `update()`
-  - Draw with graphics primitives — no external image files needed
-  - Arcade physics for collision
-- **Plain HTML/CSS/Canvas** — for simpler games (Piñata Piano, Spell It, Dust Chasers)
-- **Babylon.js** — planned for future 3D games
+  - Draw with graphics primitives + emoji text — no external image files needed
+  - Arcade physics when collision matters
+  - Audio: Web Audio API directly (simple tones), not Phaser audio
+  - **In production:** `games/castle-defenders/`
+- **Plain HTML/CSS/Canvas** — everything else
+  - DOM for layouts; canvas when a small draw loop is enough
+  - **In production:** `games/pinata-piano/`, `games/dust-chasers/`, `games/spell-it/`, `games/pipe-flow/`, `games/mayas-kitchen/`, `games/skyline-builder/`, `games/legend-of-the-rainbow-dragon/`
+- **Babylon.js** — future 3D only (not required for 2D)
   - CDN: `https://cdn.babylonjs.com/babylon.js`
+
+### Phaser migration backlog (optional, not mandatory)
+
+| Game | Status | Notes |
+|------|--------|-------|
+| Castle Defenders | **Already Phaser 4** | Stabilize/polish only; do not rebuild unless broken |
+| Dust Chasers | Stay vanilla unless major rework | Canvas loop works; migrate only if adding heavy physics |
+| Piñata Piano, Spell It, Pipe Flow, Maya's Kitchen, City Builder | **Keep vanilla** | Wrong fit for Phaser (UI, puzzle, words, tycoon, creative builder) |
 
 ### Fonts (always load from Google Fonts)
 ```html
@@ -67,7 +95,7 @@ They load from CDN and work by just opening in a browser or deploying to GitHub 
 4. **Responsive** — works on iPad (768px+), iPhone (375px+), desktop
 5. **No external assets** — all graphics drawn with code or emoji, no image files to host
 6. **Sound via Web Audio API** — simple tones only, no audio files needed
-7. **Self-contained** — each game is one HTML file, deployable anywhere
+7. **Self-contained** — each game lives in its own folder (`maya/games/<slug>/index.html` + any game-specific assets), sharing only `maya/shared/`; no build step, deployable as static files
 
 ---
 
@@ -80,13 +108,40 @@ git push
 
 # Files go in:
 theoutlander.github.io/maya/
-├── index.html          ← portal (always update when adding games)
-├── pinata-piano-v2.html
-├── dust-chasers.html
-├── letter-tumble.html
-├── castle-defenders.html
-└── docs/               ← game specs (this folder)
+├── index.html                       ← portal (always update when adding games)
+├── shared/                          ← shared scripts used by every game
+│   ├── ga-analytics.js
+│   ├── portal-bridge.js
+│   ├── family-chat.js
+│   └── family-chat.css
+├── games/                           ← every game lives here, one folder each
+│   ├── pipe-flow/
+│   │   ├── index.html               ← the game (was pipe-flow.html)
+│   │   └── garden.js                ← game-specific asset (was pipe-flow-garden.js)
+│   ├── legend-of-the-rainbow-dragon/
+│   │   ├── index.html
+│   │   ├── lord.css
+│   │   └── data.js · audio.js · fx.js · game.js · combat.js   ← (were lord-*.js)
+│   ├── spell-it/index.html          ← (was letter-tumble.html)
+│   ├── pinata-piano/index.html      ← (was pinata-piano-v2.html)
+│   ├── castle-defenders/index.html  · dust-chasers/index.html · mayas-kitchen/index.html
+│   ├── skyline-builder/index.html   · maya-shop/index.html
+│   ├── star-squads/index.html       ← retired game (redirect back to lab)
+│   └── _template/index.html         ← copy this to start a new game
+└── docs/                            ← game specs (this folder)
 ```
+
+### Folder + path conventions (read before editing a game)
+- **Every game is a folder under `games/`**: `maya/games/<slug>/index.html`. Public URL: `/maya/games/<slug>/`.
+- **Shared scripts live in `maya/shared/`.** From inside a game (two levels deep) reference them with `../../`: `<script src="../../shared/portal-bridge.js"></script>` and `<script src="../../shared/ga-analytics.js" defer></script>`.
+- **Every game must declare its play-key** (its path from the maya root) before loading the bridge, so the bridge knows how to return to the lab and the portal's `?play=` deep-link matches:
+  ```html
+  <script>window.MAYA_GAME='games/pipe-flow/index.html';</script>
+  <script src="../../shared/portal-bridge.js"></script>
+  ```
+- Game-specific assets (extra `.js`/`.css`) stay **inside the game's own folder**, referenced with plain relative paths (same folder).
+- The portal keys games by that **full path** (`file:'games/<slug>/index.html'`), which is both the iframe src and the `?play=` value — see `GLIST` / `MAYA_GAME_FILES` in index.html. `resolveGameUrl` builds from a base anchored once at load (`MAYA_BASE`), so opening multiple games in a row resolves correctly.
+- No legacy redirect stubs: old flat `/maya/<game>.html` URLs are gone (Maya navigates via the portal).
 
 ---
 
@@ -96,6 +151,7 @@ The main page Maya visits. Key elements:
 - **Games grid** — cards for all games, 3 columns desktop / 2 tablet / 1 mobile
 - **Doodle pad** — canvas she can draw on and email to Dad
 - **Wishlist** — she types game ideas, emails to Dad via EmailJS
+- **Family chat** — bottom-right 💬 + Dad peek; direct Supabase (`x-family-pin`); `family-chat.js` + `family-chat-dual-pin.sql`; see `docs/family-chat-setup.md`
 - **Secret message** — tap the title 5 times to reveal a message from Dad + confetti
 - **Dad bubble** — random warm message pops up 6 seconds after visiting
 
@@ -124,30 +180,43 @@ If **text or images are missing** in the inbox, the template usually does not ex
 3. **Wishlist** — the portal sends the idea as `message`, and duplicates as `wish` and `idea` in case the template uses those names instead.
 
 ### Adding a new game to the portal
-1. Add a card to the `.gg` games grid in index.html
-2. Add to `GLIST` array (for "Our Latest Creation" rotation)
-3. Put the new game first in GLIST so it shows as latest
+1. Copy `games/_template/` to `games/<slug>/` and build the game in its `index.html`. Set `window.MAYA_GAME='games/<slug>/index.html'` and keep the `../../shared/` script tags. Put game-specific assets in that same folder.
+2. Add a card to the `.gg` games grid in index.html — the play button uses `data-game="games/<slug>/index.html"`.
+3. Add to `GLIST` with `file:'games/<slug>/index.html'` (for "Our Latest Creation" rotation). `MAYA_GAME_FILES` and the iframe src are derived from this; `?play=games/<slug>/index.html` also deep-links to it.
+4. Put the new game first in GLIST so it shows as latest.
 
 ---
 
 ## Games
 
-### 1. Piñata Piano (`pinata-piano-v2.html`)
+### 1. Piñata Piano (`games/pinata-piano/`)
 See: `docs/pinata-piano.md`
 
-### 2. Dust Chasers (`dust-chasers.html`)
+### 2. Dust Chasers (`games/dust-chasers/`)
 See: `docs/dust-chasers.md`
 
-### 3. Spell It! (`letter-tumble.html`)
+### 3. Spell It! (`games/spell-it/`)
 See: `docs/spell-it.md`
 
-### 4. Castle Defenders (`castle-defenders.html`)
+### 4. Castle Defenders (`games/castle-defenders/`) — **Phaser 4**
 See: `docs/castle-defenders.md`
+
+### 5. Pipe Flow! (`games/pipe-flow/`)
+See: `docs/pipe-flow.md`
+
+### 6. Maya's Kitchen (`games/mayas-kitchen/`)
+Cook-and-sell tycoon: customer orders, recipe unlocks, shop upgrades. **Plain HTML** (DOM UI).
+
+### 7. City Builder (`games/skyline-builder/`)
+Skyline building toy. **Plain HTML/canvas**.
+
+### 8. Legend of the Rainbow Dragon (`games/legend-of-the-rainbow-dragon/`)
+Daily-turn RPG (LORD homage). Family nickname **LORD**; in-game console **Sparkle Dragon 3000**. Forest, shop, healer, inn, Snack Bar, Rainbow Dragon boss. **Plain HTML** (DOM UI).
 
 ---
 
 ## Known Issues / Backlog
-- Castle Defenders needs rebuild in Phaser 4 (current version is plain HTML, buggy)
+- Castle Defenders (Phaser): polish bugs (e.g. forge flow), not a framework migration
 - Dust Chasers: shockwave could feel more impactful
 - Spell It: could use more word variety per grade
 - All games: need consistent audio volume levels
@@ -164,8 +233,9 @@ See: `docs/castle-defenders.md`
 ## Notes for Claude Code
 - Always check this file at session start
 - Check individual game docs before modifying a game
-- Keep all games as single HTML files unless explicitly told otherwise
+- **Framework:** follow the table in “Framework choice” — Phaser is not the default for every new game
+- Keep all games as single HTML files unless explicitly told otherwise (Phaser still = one `.html` + CDN script)
 - Test logic in your head before writing — these games have had many bugs from rushed patches
 - When fixing bugs, read the full relevant function first, don't patch blindly
-- iPad touch events always need both `click` and `touchend` handlers
+- iPad: prefer `pointerup` delegation or both `click` and `touchend`; Phaser games use Phaser input
 - Never use `localStorage` as the only save mechanism without a fallback

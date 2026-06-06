@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Legend of the Rainbow Dragon 🐉</title>
+<script>window.MAYA_GAME='games/legend-of-the-rainbow-dragon/index.html';</script>
+<script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ga-analytics.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="lord.css">
+</head>
+<body>
+
+<div id="stage">
+  <!-- ===== TOP STATUS BAR ===== -->
+  <div class="topbar" id="topbar">
+    <div class="chip hp" data-screen-label="hp">
+      <span class="ico">❤️</span>
+      <span class="col">
+        <span class="val"><b id="s-hp">20</b><span style="opacity:.5">/</span><b id="s-maxhp">20</b></span>
+        <span class="hpbar"><i id="s-hpfill" style="width:100%"></i></span>
+      </span>
+    </div>
+    <div class="chip lv">
+      <span class="lvring">
+        <svg viewBox="0 0 30 30" width="30" height="30"><circle cx="15" cy="15" r="12.5" fill="none" stroke="rgba(255,255,255,.14)" stroke-width="3"/><circle id="s-xpring" cx="15" cy="15" r="12.5" fill="none" stroke="#c77dff" stroke-width="3" stroke-linecap="round" stroke-dasharray="78.5" stroke-dashoffset="78.5" transform="rotate(-90 15 15)"/></svg>
+        <span class="num" id="s-lv">1</span>
+      </span>
+      <span class="col"><span class="lbl">Level</span></span>
+    </div>
+    <div class="chip" >
+      <span class="ico">🪙</span>
+      <span class="col"><span class="val" id="s-gold">120</span><span class="lbl">Gold</span></span>
+    </div>
+    <div class="chip turns">
+      <span class="ico">⏳</span>
+      <span class="col"><span class="val" id="s-turns">18</span><span class="lbl">Turns</span></span>
+    </div>
+    <button class="iconbtn" id="btn-mute" title="Sound on/off">🔊</button>
+  </div>
+
+  <!-- ===== SCREENS ===== -->
+  <div id="screens">
+
+    <!-- HUB -->
+    <div class="screen" id="screen-hub" data-screen-label="Town">
+      <div class="hub-head">
+        <span class="hub-hero" id="hub-hero">🧚‍♀️</span>
+        <span class="hub-name" id="hub-name">Hero</span>
+      </div>
+      <div class="tip-bubble"><span class="tdrag">🐉</span><span id="hub-tip">Welcome!</span></div>
+      <div class="chal-ribbon" id="chal-ribbon">
+        <span class="ct" id="chal-text"></span>
+        <button class="cclaim" id="chal-claim">🎁</button>
+      </div>
+      <div class="dragon-banner" id="dragon-banner" style="display:none">
+        <span class="dbe">🌈🐉</span>
+        <span class="col" style="display:flex;flex-direction:column">
+          <span class="dbt">Rainbow Dragon!</span>
+          <span class="dbs" id="dragon-banner-sub">You're strong enough — go be friends!</span>
+        </span>
+      </div>
+      <div class="town-grid" id="town-grid"></div>
+      <div class="hub-foot">
+        <button class="btn ghost sm" id="btn-story">📜 Story</button>
+        <button class="btn ghost sm" id="btn-endday">😴 End Day</button>
+      </div>
+    </div>
+
+    <!-- COMBAT -->
+    <div class="screen" id="screen-combat" data-screen-label="Battle">
+      <div class="battle">
+        <div class="battle-sky" id="battle-sky"></div>
+        <div class="battle-decor" id="battle-decor"></div>
+        <div class="battle-top">
+          <span class="biome-name" id="biome-name">Sunny Meadow</span>
+          <button class="flee-btn" id="flee-btn">🏃 Flee</button>
+        </div>
+        <div class="combat-say" id="combat-say"></div>
+        <div class="mon-stage">
+          <div class="mon-emoji" id="mon-emoji">🟢</div>
+          <div class="mon-name" id="mon-name">Silly Slime</div>
+          <div class="mon-hpbar"><i id="mon-hpfill" style="width:100%"></i></div>
+          <div class="mon-hptext" id="mon-hptext">HP 8 / 8</div>
+        </div>
+        <div class="hero-corner">
+          <span class="ha" id="combat-hero-av">🧚‍♀️</span>
+          <span class="hh"><span class="hn" id="combat-hero-name">Hero</span><span class="hpmini" id="combat-hero-hp">❤️ 20/20</span></span>
+        </div>
+      </div>
+      <div class="combat-controls" id="combat-controls">
+        <div class="meter-wrap" id="meter-wrap">
+          <div class="meter-zone" id="meter-zone"></div>
+          <div class="meter-zone core" id="meter-core"></div>
+          <div class="meter-needle" id="meter-needle"></div>
+          <div class="meter-label">Tap STRIKE in the gold zone!</div>
+        </div>
+        <button class="strike-btn" id="strike-btn"><span class="deftag">⚔️ STRIKE!</span><span class="nowtag">💥 NOW! TAP!</span></button>
+      </div>
+      <div class="combat-result hidden" id="combat-result"></div>
+    </div>
+
+    <!-- SHOP -->
+    <div class="screen" id="screen-shop" data-screen-label="Shop">
+      <div class="scr-title">🛒 Gear Shop</div>
+      <div class="scr-sub" id="shop-gold">Gold: 120</div>
+      <div class="sheet" id="shop-list"></div>
+      <button class="btn ghost" id="shop-back">← Back to Town</button>
+    </div>
+
+    <!-- SNACK -->
+    <div class="screen" id="screen-snack" data-screen-label="Snack Bar">
+      <div class="scr-title">🧁 Snack Bar</div>
+      <div class="sheet" id="snack-body"></div>
+      <div id="snack-actions"></div>
+    </div>
+
+    <!-- MUSIC -->
+    <div class="screen" id="screen-music" data-screen-label="Music Stage">
+      <div class="scr-title">🎵 Music Stage</div>
+      <div class="sheet" id="music-body"></div>
+      <div id="music-actions"></div>
+    </div>
+
+    <!-- MAIL -->
+    <div class="screen" id="screen-mail" data-screen-label="Mailbox">
+      <div class="scr-title">📬 Mailbox</div>
+      <div class="sheet" id="mail-list"></div>
+      <button class="btn ghost" id="mail-back">← Back to Town</button>
+    </div>
+
+    <!-- STATS -->
+    <div class="screen" id="screen-stats" data-screen-label="My Hero">
+      <div class="scr-title" id="stats-title">📜 My Hero</div>
+      <div class="sheet" id="stats-body"></div>
+      <button class="btn ghost" id="stats-back">← Back to Town</button>
+    </div>
+
+  </div><!-- /screens -->
+
+  <!-- ===== OVERLAYS ===== -->
+  <div class="ov" id="ov-title">
+    <div class="title-dragon">🌈🐉</div>
+    <div class="ov-title">Legend of the<br>Rainbow Dragon</div>
+    <div class="ov-nick">We call it LORD!</div>
+    <div class="ov-sub">Welcome to <b>Sparkle Dragon 3000</b>!<br>Explore · play-fight silly critters · befriend the dragon!</div>
+    <button class="btn primary" id="btn-continue">▶ Continue</button>
+    <button class="btn purple" id="btn-new">✨ New Hero</button>
+    <button class="btn ghost maya-portal-hide" id="btn-leave-lab">✕ Back to Game Lab</button>
+  </div>
+
+  <div class="ov hidden" id="ov-create">
+    <div class="ov-emoji">✨</div>
+    <div class="ov-title" style="font-size:1.7rem">Create Your Hero</div>
+    <input type="text" class="name-in" id="hero-name" maxlength="12" placeholder="Type your name" autocomplete="off">
+    <div class="ov-sub">Pick your hero!</div>
+    <div class="avatar-grid" id="avatar-grid"></div>
+    <button class="btn primary" id="btn-start">Enter the Realm! ⚔️</button>
+    <button class="btn ghost" id="btn-create-cancel">← Back</button>
+  </div>
+
+  <div class="ov hidden" id="ov-levelup">
+    <div class="ov-emoji">⭐</div>
+    <div class="ov-title">LEVEL UP!</div>
+    <div class="ov-nick" id="lvup-level">Level 2!</div>
+    <div class="lvup-stats" id="lvup-stats"></div>
+    <div class="ov-sub" id="lvup-unlock"></div>
+    <button class="btn primary" id="btn-lvup-ok">Woohoo! 🎉</button>
+  </div>
+
+  <div class="ov hidden" id="ov-victory">
+    <div class="ov-emoji" style="font-size:80px">🏆</div>
+    <div class="ov-title">You Did It!</div>
+    <div class="ov-sub" id="victory-msg">The dragon is your sparkly friend now!</div>
+    <button class="btn primary" id="btn-victory-ok">Amazing! 🌈</button>
+  </div>
+
+  <div class="ov hidden" id="ov-noturns">
+    <div class="ov-emoji">🌙</div>
+    <div class="ov-title">Day Complete!</div>
+    <div class="ov-sub">You used all your turns today. Come back tomorrow for <b>18 more</b> adventures!</div>
+    <button class="btn primary" id="btn-day-ok">Goodnight! 😴</button>
+    <button class="btn ghost" id="btn-day-stay">Stay & look around</button>
+  </div>
+
+  <div class="ov hidden" id="ov-story">
+    <div class="ov-title" style="font-size:1.4rem">📜 Story Log</div>
+    <div class="sheet" id="story-log" style="width:100%;max-width:360px;max-height:60vh"></div>
+    <button class="btn primary" id="btn-story-close">Close</button>
+  </div>
+
+  <div class="toast hidden" id="toast"></div>
+
+  <!-- FX layers -->
+  <canvas id="fx-canvas"></canvas>
+  <div id="float-layer"></div>
+  <div id="flash-layer"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="audio.js"></script>
+<script src="fx.js"></script>
+<script src="game.js"></script>
+<script src="combat.js"></script>
+</body>
+</html>

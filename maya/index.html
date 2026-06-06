@@ -2,35 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Maya's Game Lab 🎮</title>
 
 <!-- Google Analytics -->
-<script>
-	(function(){
-		function loadGA(){
-			if (window.__gaLoaded) return;
-			window.__gaLoaded = true;
-			var s = document.createElement('script');
-			s.async = true;
-			s.src = 'https://www.googletagmanager.com/gtag/js?id=G-62FC7BDSGJ';
-			document.head.appendChild(s);
-			window.dataLayer = window.dataLayer || [];
-			window.gtag = function(){ dataLayer.push(arguments); };
-			gtag('js', new Date());
-			gtag('config', 'G-62FC7BDSGJ', { anonymize_ip: true });
-		}
-		var consent = null;
-		try { consent = localStorage.getItem('ga_consent'); } catch (e) {}
-		if (consent === 'granted') {
-			(window.requestIdleCallback || function(cb){ setTimeout(cb, 2000); })(loadGA);
-		} else {
-			window.addEventListener('click', function onFirst(){ loadGA(); window.removeEventListener('click', onFirst, { capture: false }); }, { once: true, passive: true });
-		}
-	})();
-</script>
+<script src="shared/ga-analytics.js" defer></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/family-chat.css">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
@@ -69,21 +48,13 @@ header{text-align:center;padding:48px 0 36px}
 @keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .tap-hint{font-size:11px;color:rgba(255,255,255,.18);margin-top:6px;letter-spacing:.08em}
 
-/* Floating Dad message bubble */
-#dad-bubble{position:fixed;bottom:28px;right:20px;max-width:min(280px,80vw);background:linear-gradient(135deg,#2d1260,#1a0a3c);border:1px solid rgba(199,125,255,.3);border-radius:18px 18px 4px 18px;padding:14px 16px 12px;z-index:400;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:bubble-in .4s cubic-bezier(.34,1.56,.64,1);display:none}
-#dad-bubble.show{display:block}
-@keyframes bubble-in{0%{transform:scale(0) translateY(20px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
-.bubble-from{font-size:10px;font-weight:900;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.bubble-text{font-size:14px;line-height:1.55;color:var(--text)}
-.bubble-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1}
-
 /* Section heading */
 .sh{display:flex;align-items:center;gap:12px;margin:36px 0 18px}
 .sh h2{font-family:'Fredoka One',cursive;font-size:24px;color:var(--text);white-space:nowrap}
 .sl{flex:1;height:1px;background:var(--border)}
 
 /* Game of the week */
-#gotw{background:linear-gradient(135deg,rgba(255,225,77,.07),rgba(255,110,180,.07));border:1px solid rgba(255,225,77,.18);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none}
+#gotw{background:linear-gradient(135deg,rgba(255,225,77,.07),rgba(255,110,180,.07));border:1px solid rgba(255,225,77,.18);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;touch-action:manipulation}
 #gotw:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.4)}
 #gotw:active{transform:scale(.98)}
 .gotw-badge{background:var(--yellow);color:#0f0a1e;font-family:'Fredoka One',cursive;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0;align-self:flex-start}
@@ -91,26 +62,30 @@ header{text-align:center;padding:48px 0 36px}
 .gotw-info{flex:1;min-width:0}
 .gotw-title{font-family:'Fredoka One',cursive;font-size:20px;line-height:1.1;margin-bottom:3px}
 .gotw-desc{font-size:12px;color:var(--muted);line-height:1.5}
-.gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s}
+.gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s;touch-action:manipulation;min-height:44px}
 .gotw-btn:active{transform:scale(.94)}
 
 /* Games grid */
 .gg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:640px){.gg{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:380px){.gg{grid-template-columns:1fr}}
-.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
 .gc:hover{transform:translateY(-4px);box-shadow:0 14px 44px rgba(0,0,0,.5)}
-.ga{height:120px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
+.ga{height:120px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
 .ga::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--card))}
-.gb{padding:12px 14px 16px}
+.ga-p1{background:linear-gradient(135deg,#2d1260,#1a0a3c)}
+.ga-p2{background:linear-gradient(135deg,#0a2840,#0d4020)}
+.ga-p3{background:linear-gradient(135deg,#3d1a00,#1a0a00)}
+.ga-p4{background:linear-gradient(135deg,#0a1628,#1a2a4a)}
+.ga-p5{background:linear-gradient(135deg,#1a3a1a,#0a2010)}
+.ga-p6{background:linear-gradient(135deg,#2a0840,#4a1060)}
+.gb{flex:1;display:flex;flex-direction:column;padding:12px 14px 16px;min-height:168px}
 .gt{font-family:'Fredoka One',cursive;font-size:18px;line-height:1.1;margin-bottom:3px}
-.gd{font-size:11px;color:var(--muted);line-height:1.5}
-.tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px}
+.gd{flex:1;font-size:11px;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
-.ts{background:rgba(255,110,180,.1);color:var(--pink);border:1px solid rgba(255,110,180,.18)}
-.pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s;min-height:44px}
-.pb:hover,.pb:active{background:rgba(255,255,255,.15)}
-.gc.soon{opacity:.45;pointer-events:none}
+.pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
+.pb:active{background:rgba(255,255,255,.2);transform:scale(.97)}
 
 /* Doodle */
 #doodle-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
@@ -124,29 +99,51 @@ header{text-align:center;padding:48px 0 36px}
 .cb{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.18);color:#ff7070;font-size:11px;font-weight:900;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;min-height:32px}
 #dc{display:block;width:100%;touch-action:none;cursor:crosshair;background:#0a0718}
 
-/* Wish */
-#ww{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.wi{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-#winput{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.18);border-radius:12px;padding:13px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);resize:none;height:76px;outline:none;transition:border-color .15s;-webkit-appearance:none}
-#winput:focus{border-color:rgba(199,125,255,.5)}
-#winput::placeholder{color:var(--muted)}
-#wsend{margin-top:10px;width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:19px;color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 0 rgba(0,0,0,.35);min-height:50px}
-#wsend:hover{transform:translateY(-2px)}
-#wsend:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-#wsend:disabled{opacity:.5;cursor:not-allowed;transform:none}
-#wsent{display:none;text-align:center;padding:20px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--green)}
-
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
 #toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-/* Game modal */
-#gm{position:fixed;inset:0;z-index:200;display:none;flex-direction:column;background:#000;box-sizing:border-box}
-#gm.open{display:flex}
-#mb{background:#0f0a1e;padding:8px 14px;display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--border);flex-shrink:0;min-height:50px}
-#mc{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);color:var(--text);font-size:14px;font-weight:900;padding:8px 16px;border-radius:99px;cursor:pointer;font-family:'Nunito',sans-serif;min-width:44px;min-height:44px}
-#mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text)}
-#gf{flex:1 1 auto;min-height:0;width:100%;border:none;background:#000}
+/* Game modal — slide up/down with CSS, no JS height hacks */
+#gm{
+  position:fixed;inset:0;z-index:200;
+  display:grid;grid-template-rows:auto 1fr;
+  background:#000;
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+  visibility:hidden;
+}
+#gm.open{transform:translateY(0);visibility:visible}
+#mb{
+  background:#0f0a1e;
+  padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--border);
+  min-height:54px;
+}
+#mc{
+  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
+  color:var(--text);font-size:14px;font-weight:900;
+  padding:8px 18px;border-radius:99px;cursor:pointer;
+  font-family:'Nunito',sans-serif;min-width:44px;min-height:44px;
+  touch-action:manipulation;
+  transition:background .1s;
+}
+#mc:active{background:rgba(255,255,255,.2)}
+#mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#gf{width:100%;height:100%;border:none;background:#0f0a1e;display:block}
+/* Loading spinner inside the modal */
+#gm-load{
+  position:absolute;inset:54px 0 0;display:flex;align-items:center;justify-content:center;
+  background:#0f0a1e;z-index:2;transition:opacity .25s;pointer-events:none;
+}
+#gm-load.done{opacity:0}
+.spin{
+  width:44px;height:44px;border-radius:50%;
+  border:4px solid rgba(199,125,255,.15);border-top-color:var(--purple);
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -162,70 +159,109 @@ header{text-align:center;padding:48px 0 36px}
 
   <!-- GAME OF THE WEEK -->
   <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
-  <div id="gotw" onclick="gotwPlay()">
+  <div id="gotw">
     <span class="gotw-badge">✨ New!</span>
-    <div class="gotw-em" id="ge">🪅</div>
+    <div class="gotw-em" id="ge">🐉</div>
     <div class="gotw-info">
-      <div class="gotw-title" id="gtt">Piñata Piano!</div>
-      <div class="gotw-desc" id="gdt">Play songs on the piano to pop candy!</div>
+      <div class="gotw-title" id="gtt">Legend of the Rainbow Dragon!</div>
+      <div class="gotw-desc" id="gdt">Daily turns on Sparkle Dragon 3000 — forest fights and a sparkly dragon boss!</div>
     </div>
     <button class="gotw-btn">▶ Play!</button>
+  </div>
+
+  <!-- SHOP BANNER -->
+  <div class="sh"><h2>🛍️ Maya's Shop</h2><div class="sl"></div></div>
+  <div style="background:linear-gradient(135deg,#2a0840,#1a1060);border:2px solid rgba(199,125,255,0.3);border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px">
+    <div style="font-size:52px;line-height:1">🛍️📚✨</div>
+    <div style="flex:1;min-width:180px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
+      <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
+    </div>
+    <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
   </div>
 
   <!-- ALL GAMES -->
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#2d1260,#1a0a3c)">🪅</div>
+      <div class="ga ga-p1">🚐</div>
+      <div class="gb">
+        <div class="gt">Maya's Delivery Service!</div>
+        <div class="gd">Drive deliveries, earn coins, and unlock new vans and pets!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/mayas-delivery-service/index.html" data-title="Maya's Delivery Service 🚐">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">🐉</div>
+      <div class="gb">
+        <div class="gt">LORD! 🐉</div>
+        <div class="gd">Legend of the Rainbow Dragon — Dad's sparkly LORD! Daily turns, forest, beat the dragon.</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/legend-of-the-rainbow-dragon/index.html" data-title="LORD! 🐉 Rainbow Dragon">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p2">💧</div>
+      <div class="gb">
+        <div class="gt">Pipe Flow!</div>
+        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p3">🍳</div>
+      <div class="gb">
+        <div class="gt">Maya's Kitchen!</div>
+        <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/mayas-kitchen/index.html" data-title="Maya's Kitchen! 🍳">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p4">🏙️</div>
+      <div class="gb">
+        <div class="gt">City Builder!</div>
+        <div class="gd">Place bricks, windows, doors, and rooftops to build a glittering skyline!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/skyline-builder/index.html" data-title="City Builder! 🏙️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders!</div>
+        <div class="gd">Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/castle-defenders/index.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🪅</div>
       <div class="gb">
         <div class="gt">Piñata Piano!</div>
         <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('pinata-piano-v2.html','Piñata Piano! 🪅')">▶ Play Now</button>
+        <button class="pb" data-game="games/pinata-piano/index.html" data-title="Piñata Piano! 🪅">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0d0520,#2d1260)">👻</div>
+      <div class="ga ga-p1">👻</div>
       <div class="gb">
-        <div class="gt">Dust Chasers</div>
+        <div class="gt">Dust Chasers!</div>
         <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('dust-chasers.html','Dust Chasers 👻')">▶ Play Now</button>
+        <button class="pb" data-game="games/dust-chasers/index.html" data-title="Dust Chasers! 👻">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#1a3a20,#0a2010)">🌈</div>
+      <div class="ga ga-p5">🌈</div>
       <div class="gb">
-        <div class="gt">Spell It! 🌈</div>
-        <div class="gd">Letters rain down — tap them in order to spell the word! Grade 1 to 5.</div>
+        <div class="gt">Spell It!</div>
+        <div class="gd">Letters rain down — tap them in order to spell the word! Grades 1–5.</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('letter-tumble.html','Letter Tumble! 🌈')">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#1a3a1a,#0a2010)">🏰</div>
-      <div class="gb">
-        <div class="gt">Castle Defenders!</div>
-        <div class="gd">Chop wood by day, forge weapons at the forge, then fight off the zombie horde at night!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('castle-defenders.html','Castle Defenders! 🏰')">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga" style="background:linear-gradient(135deg,#0a1628,#1a2a4a)">🏙️</div>
-      <div class="gb">
-        <div class="gt">City Builder!</div>
-        <div class="gd">Place bricks, windows, doors and rooftops to build your own glittering city skyline!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" onclick="openGame('skyline-builder.html','City Builder! 🏙️')">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc soon">
-      <div class="ga" style="background:linear-gradient(135deg,#1a1030,#0f0a1e)">🌙✨</div>
-      <div class="gb">
-        <div class="gt">Coming Soon...</div>
-        <div class="gd">Dad is dreaming up something new. Check back after our next call!</div>
-        <span class="tag ts">In progress ✨</span>
+        <button class="pb" data-game="games/spell-it/index.html" data-title="Spell It! 🌈">▶ Play Now</button>
       </div>
     </div>
   </div>
@@ -256,33 +292,39 @@ header{text-align:center;padding:48px 0 36px}
     <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
   </div>
 
-  <!-- WISHLIST -->
-  <div class="sh"><h2>💌 Send Dad a Game Idea!</h2><div class="sl"></div></div>
-  <div id="ww">
-    <div class="wi">Got an idea for our next game together? Send it to Dad and he'll see it before your next call! 🚀</div>
-    <textarea id="winput" placeholder="A game where a unicorn jumps over rainbows... or where you catch falling stars... or anything you can imagine!"></textarea>
-    <button id="wsend" onclick="sendWish()">Send to Dad! 🚀</button>
-    <div id="wsent">🎉 Dad got your idea! Can't wait for our next call! 💕</div>
-  </div>
-</div>
-
-<!-- Dad bubble -->
-<div id="dad-bubble">
-  <button class="bubble-close" onclick="closeBubble()">×</button>
-  <div class="bubble-from">💬 A message from Dad</div>
-  <div class="bubble-text" id="bubble-text"></div>
 </div>
 
 <!-- Game modal -->
 <div id="gm">
   <div id="mb">
-    <button id="mc" onclick="closeGame()">✕ Back</button>
+    <button id="mc" type="button">✕ Game Lab</button>
     <div id="mt"></div>
   </div>
   <iframe id="gf" allowfullscreen></iframe>
+  <div id="gm-load"><div class="spin"></div></div>
 </div>
 
 <div id="toast"></div>
+
+<!-- Family chat + Dad notes — bottom-right -->
+<div id="family-chat-backdrop" aria-hidden="true"></div>
+<div id="family-chat-widget" aria-live="polite">
+  <div id="dad-peek" class="dad-peek" hidden>
+    <button type="button" class="dad-peek-close" id="dad-peek-close" aria-label="Dismiss">×</button>
+    <div class="dad-peek-from">💬 A message from Dad</div>
+    <p class="dad-peek-text" id="dad-peek-text"></p>
+    <button type="button" class="dad-peek-reply" id="dad-peek-reply">Reply 💕</button>
+  </div>
+  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad — tell him anything!">💬</button>
+  <span id="family-chat-badge" hidden aria-label="New messages"></span>
+  <div id="family-chat-panel" role="dialog" aria-label="Chat with Dad">
+    <div class="fcw-panel-head">
+      <span class="fcw-panel-title">💬 Chat with Dad</span>
+      <button type="button" class="fcw-panel-close" id="family-chat-close" aria-label="Close chat">×</button>
+    </div>
+    <div id="family-chat-root"></div>
+  </div>
+</div>
 
 <script>
 // ===== EMAILJS — replace these with your values from emailjs.com =====
@@ -334,6 +376,17 @@ const DAD_MESSAGES=[
   "I love you more than all the stars up there. ⭐",
   "Bet you can beat your high score today! 👀",
   "You are my favourite person to make things with. 💕",
+  "No matter how far apart we are, you're always right here in my heart. 💛",
+  "Whenever I see a rainbow, I think of you. 🌈",
+  "If I could hug you through this screen, I'd never let go. 🤗",
+  "Being your dad is the best job I'll ever have. 💼💕",
+  "I believe in you on the easy days AND the hard ones. 🌟",
+  "Tell me everything tonight — I want to hear all of it. 📞",
+  "You'll always be my little star, no matter how big you grow. ⭐",
+  "When you laugh, it's my favourite sound in the whole world. 😄",
+  "You can do hard things, Maya. I've watched you do them. 💪",
+  "Goodnight, sweet Maya — dream the biggest dreams. 🌙",
+  "P.S. I love you. (I'll always sneak that in.) 💌",
 ];
 let taps=0,tapT=null;
 document.getElementById('title').addEventListener('click',()=>{
@@ -350,13 +403,10 @@ document.getElementById('title').addEventListener('click',()=>{
   }
 });
 
-// ===== RANDOM DAD BUBBLE =====
+// ===== DAD NOTES (peek + live chat — family-chat.js) =====
 function showDadBubble(msg){
-  const b=document.getElementById('dad-bubble');
-  document.getElementById('bubble-text').textContent=msg;
-  b.classList.add('show');
+  if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
 }
-function closeBubble(){document.getElementById('dad-bubble').classList.remove('show');}
 
 // Show a random message after 6 seconds on first visit
 setTimeout(()=>{
@@ -365,102 +415,199 @@ setTimeout(()=>{
     "Which game will you play first? 🎮",
     "Dad made this just for you. 💕",
     "You're the best! Have so much fun! 🌟",
+    "Welcome back, superstar! 🌟",
+    "I missed you today, Maya! 💕",
+    "Dad's thinking about you right now. 💭💛",
+    "Ready for an adventure? 🚐",
   ];
   showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
 },6000);
 
 // ===== GAME OF THE WEEK =====
 const GLIST=[
-  {em:'🏙️',title:'City Builder!',desc:'Build a glittering city skyline brick by brick!',file:'skyline-builder.html'},
-  {em:'🏰',title:'Castle Defenders!',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'castle-defenders.html'},
-  {em:'🪅',title:'Piñata Piano!',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'pinata-piano-v2.html'},
-  {em:'👻',title:'Dust Chasers',desc:'Find the invisible dust people lurking in the dark!',file:'dust-chasers.html'},
-  {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'letter-tumble.html'},
+  {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html'},
+  {em:'🐉',title:'LORD! 🐉 Rainbow Dragon',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'games/legend-of-the-rainbow-dragon/index.html'},
+  {em:'💧',title:'Pipe Flow!',desc:'Spin pipes to connect the hose to the garden field!',file:'games/pipe-flow/index.html'},
+  {em:'🍳',title:"Maya's Kitchen!",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'games/mayas-kitchen/index.html'},
+  {em:'🏙️',title:'City Builder!',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html'},
+  {em:'🏰',title:'Castle Defenders!',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders/index.html'},
+  {em:'🪅',title:'Piñata Piano!',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'games/pinata-piano/index.html'},
+  {em:'👻',title:'Dust Chasers!',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'games/dust-chasers/index.html'},
+  {em:'🌈',title:'Spell It!',desc:'Tap falling letters in order to spell the mystery word!',file:'games/spell-it/index.html'},
 ];
 const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
-const wk=Math.floor(Date.now()/1000/60/60/24/7);
-const gw=GLIST[wk%GLIST.length];
+const gw=GLIST[0];
 document.getElementById('ge').textContent=gw.em;
 document.getElementById('gtt').textContent=gw.title;
 document.getElementById('gdt').textContent=gw.desc;
 function gotwPlay(){openGame(gw.file,gw.title);}
 
+// Wire up all play buttons + gotw with pointerdown (no 300ms tap delay on iPad)
+document.getElementById('gotw').addEventListener('pointerdown',function(e){
+  if(e.target.closest('button')||e.pointerType==='mouse')return; // let button handle it; mouse uses click fine
+  gotwPlay();
+});
+document.querySelector('#gotw .gotw-btn').addEventListener('pointerdown',function(e){
+  e.stopPropagation(); gotwPlay();
+});
+document.querySelectorAll('.pb[data-game]').forEach(function(btn){
+  btn.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    openGame(btn.dataset.game, btn.dataset.title);
+  });
+});
+
 // ===== GAME MODAL =====
 const MAYA_PAGE_TITLE=document.title;
-function mayaDirectoryPath(){
+const gm=document.getElementById('gm');
+const gf=document.getElementById('gf');
+const gmLoad=document.getElementById('gm-load');
+
+// Anchor the lab base once at load. The portal is only ever served at the maya
+// root (game folders serve their own index.html), so this stays correct even
+// after we pushState a /maya/games/<slug>/index.html URL when a game opens —
+// resolveGameUrl always builds from this fixed base, never the live path.
+const MAYA_BASE=(function(){
   let base=location.pathname;
   if(!base.endsWith('/')){
     if(/\.html?$/i.test(base))base=base.slice(0,base.lastIndexOf('/')+1);
     else base=base+'/';
   }
   return base;
-}
-function resolveGameUrl(file){
-  return mayaDirectoryPath()+file;
-}
+})();
+// file is the GLIST key, e.g. 'games/pipe-flow/index.html'
+function resolveGameUrl(file){ return MAYA_BASE+file; }
 function pathnameGameFile(){
-  const last=(location.pathname.split('/').filter(Boolean).pop())||'';
-  if(!/\.html?$/i.test(last)||last.toLowerCase()==='index.html')return null;
-  return MAYA_GAME_FILES.has(last)?last:null;
+  let p=location.pathname;
+  if(p.indexOf(MAYA_BASE)===0)p=p.slice(MAYA_BASE.length);
+  return MAYA_GAME_FILES.has(p)?p:null;
+}
+function playParamGameFile(){
+  try{
+    const play=new URLSearchParams(location.search).get('play');
+    if(!play||!MAYA_GAME_FILES.has(play))return null;
+    return play;
+  }catch(e){return null;}
+}
+function activeGameFile(){
+  return pathnameGameFile()||playParamGameFile();
 }
 function titleForGameFile(file){
   const row=GLIST.find(function(g){return g.file===file;});
-  return row?row.title:file.replace(/\.html?$/i,'');
+  return row?row.title:file;
 }
-function syncGameModalIframe(){
-  const gm=document.getElementById('gm');
-  if(!gm.classList.contains('open'))return;
-  const gf=document.getElementById('gf');
-  const mb=document.getElementById('mb');
-  const avail=Math.max(220,window.innerHeight-mb.getBoundingClientRect().height);
-  gf.style.flex='none';
-  gf.style.height=avail+'px';
-}
-function closeGameCore(){
-  const gf=document.getElementById('gf');
-  document.getElementById('gm').classList.remove('open');
-  gf.src='';
-  gf.style.height='';
-  gf.style.flex='';
-  document.body.style.overflow='';
-  document.title=MAYA_PAGE_TITLE;
+function gameIframeUrl(file){
+  var url=resolveGameUrl(file);
+  return url+(url.indexOf('?')>=0?'&':'?')+'v='+Date.now();
 }
 function openGameInModal(file,title){
-  const m=document.getElementById('gm');
-  const gf=document.getElementById('gf');
   document.getElementById('mt').textContent=title;
   document.title=title+' · '+MAYA_PAGE_TITLE;
-  m.classList.add('open');
+  updateModalBackLabel();
+  document.documentElement.style.overflow='hidden';
   document.body.style.overflow='hidden';
-  syncGameModalIframe();
-  gf.src=resolveGameUrl(file);
+  gm.style.visibility='';
+  gmLoad.classList.remove('done');
+  gf.onload=function(){ gmLoad.classList.add('done'); };
+  gf.src=gameIframeUrl(file);
+  gm.classList.add('open');
+}
+var mayaClosingGame=false;
+
+function closeGameCore(){
+  gm.classList.remove('open');
+  gm.style.visibility='';
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  document.title=MAYA_PAGE_TITLE;
+  gf.onload=null;
+  gmLoad.classList.remove('done');
+  function blankIframe(){
+    try{ gf.src='about:blank'; }catch(e){ gf.removeAttribute('src'); }
+  }
+  blankIframe();
+  gm.addEventListener('transitionend',function h(ev){
+    if(ev.target!==gm||ev.propertyName!=='transform')return;
+    gm.removeEventListener('transitionend',h);
+    blankIframe();
+  },{once:true});
+}
+function exitToLab(){
+  mayaClosingGame=true;
+  closeGameCore();
+  history.replaceState(null,'',MAYA_BASE);
+  setTimeout(function(){ mayaClosingGame=false; },150);
 }
 function openGame(file,title){
+  if(gm.classList.contains('open')){
+    closeGameCore();
+  }
   openGameInModal(file,title);
-  history.pushState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+  var url=resolveGameUrl(file);
+  if(history.state&&history.state.mayaIframe&&history.state.file===file){
+    history.replaceState({mayaIframe:true,file:file},'',url);
+  }else{
+    history.pushState({mayaIframe:true,file:file},'',url);
+  }
+}
+function updateModalBackLabel(){
+  const mc=document.getElementById('mc');
+  if(mc)mc.textContent='✕ Game Lab';
 }
 function closeGame(){
-  if(history.state&&history.state.mayaIframe){
-    history.back();
-    return;
-  }
-  closeGameCore();
-  if(pathnameGameFile())history.replaceState(history.state,'',mayaDirectoryPath());
+  exitToLab();
 }
+window.addEventListener('message',function(ev){
+  if(ev.data==='maya:leave-game'||(ev.data&&ev.data.type==='maya:leave-game')){
+    if(gm.classList.contains('open'))exitToLab();
+  }
+});
 function onGameModalPopState(){
-  const file=pathnameGameFile();
-  const gm=document.getElementById('gm');
+  if(mayaClosingGame)return;
+  var file=activeGameFile();
   if(!file){
     if(gm.classList.contains('open'))closeGameCore();
   }else if(!gm.classList.contains('open')){
     openGameInModal(file,titleForGameFile(file));
+    if(!history.state||!history.state.mayaIframe){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
   }
 }
 window.addEventListener('popstate',onGameModalPopState);
-window.addEventListener('resize',syncGameModalIframe,{passive:true});
-if(window.visualViewport){
-  window.visualViewport.addEventListener('resize',syncGameModalIframe,{passive:true});
+
+function syncGameModalFromLocation(){
+  var file=activeGameFile();
+  if(file){
+    if(!gm.classList.contains('open')){
+      openGameInModal(file,titleForGameFile(file));
+    }
+    if(!history.state||!history.state.mayaIframe||history.state.file!==file){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
+    return;
+  }
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  if(gm.classList.contains('open'))closeGameCore();
 }
+function unlockPageScroll(){
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+}
+window.addEventListener('pageshow',unlockPageScroll);
+window.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&!gm.classList.contains('open'))unlockPageScroll();
+});
+syncGameModalFromLocation();
+
+// Close button — always returns to Game Lab (one tap, no trapped navigation)
+function onModalBack(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  exitToLab();
+}
+document.getElementById('mc').addEventListener('pointerdown',onModalBack);
+document.getElementById('mc').addEventListener('click',onModalBack);
 
 // ===== DOODLE PAD =====
 const dc=document.getElementById('dc');
@@ -592,31 +739,6 @@ async function sendDoodle(){
   },4000);
 }
 
-// ===== WISHLIST =====
-async function sendWish(){
-  const val=document.getElementById('winput').value.trim();
-  if(!val)return;
-  const btn=document.getElementById('wsend');
-  btn.disabled=true;btn.textContent='Sending... 🚀';
-  try{
-    emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,{
-      message:val,
-      wish:val,
-      idea:val,
-      from_name:'Maya'
-    });
-  }catch(e){
-    console.log('email err',e);
-    showToast('Could not send — try again');
-  }
-  document.getElementById('winput').value='';
-  document.getElementById('wsend').style.display='none';
-  document.getElementById('wsent').style.display='block';
-  confetti(20);
-  showToast('🚀 Sent to Dad!');
-}
-
 // ===== TOAST =====
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -624,5 +746,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
+<script type="module" src="shared/family-chat.js"></script>
 </body>
 </html>

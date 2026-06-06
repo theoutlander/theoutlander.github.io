@@ -1,0 +1,6 @@
+# Deploy: supabase functions deploy family-chat-auth --project-ref mqmkktxaqmgqbdogozuu
+# Secrets (Dashboard → Edge Functions → family-chat-auth → Secrets):
+#   MAYA_CHAT_PIN, DAD_CHAT_PIN, JWT_SECRET (Project Settings → API → JWT Secret)
+
+[functions.family-chat-auth]
+verify_jwt = false
