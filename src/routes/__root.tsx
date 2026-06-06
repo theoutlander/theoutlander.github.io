@@ -1,3 +1,4 @@
+import '../styles/print.css';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { SiteNav } from '../components/design/SiteNav';
 import { SiteFooter } from '../components/design/SiteFooter';

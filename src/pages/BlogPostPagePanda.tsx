@@ -51,7 +51,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
       {post.cover && (
         <section style={{ padding: "var(--gap-3) 0" }}>
           <div className="ds-blog-cover">
-            <img src={post.cover} alt="" />
+            <img src={post.cover} alt={post.title} />
           </div>
         </section>
       )}

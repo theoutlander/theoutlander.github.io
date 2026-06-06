@@ -1,0 +1,44 @@
+@media print {
+  /* Paper geometry */
+  @page {
+    size: letter;
+    margin: 0.6in 0.75in;
+  }
+
+  /* Hide site chrome */
+  .ds-site-nav-bar,
+  header.ds-site-nav-bar,
+  footer {
+    display: none !important;
+  }
+
+  /* Hide the in-page Download PDF link in the resume header */
+  .ds-page section a[href$=".pdf"] {
+    display: none !important;
+  }
+
+  /* Force black-on-white and neutralize the accent to black */
+  :root {
+    --accent: #000 !important;
+  }
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  /* Remove page padding/margins that waste paper */
+  main { margin: 0 !important; padding: 0 !important; }
+  .ds-page { margin: 0 !important; }
+
+  /* Avoid awkward breaks: keep each role/project block together */
+  .ds-page section > div[style*="grid-template-columns: 12rem"] {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  /* Let section headings stay with their content */
+  h2, h3 { break-after: avoid; page-break-after: avoid; }
+
+  /* Keep link styling subtle in print */
+  a { text-decoration: none !important; color: #000 !important; }
+}

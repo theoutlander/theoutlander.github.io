@@ -84,7 +84,7 @@ export function HomePagePanda({ posts }: HomePageProps) {
                     </a>
                   </h3>
                   <p style={{ color: "var(--ink-2)", fontSize: "0.98rem", margin: 0 }}>{p.excerpt}</p>
-                  <div style={{ marginTop: "1rem" }}>
+                  <div style={{ marginTop: "auto", paddingTop: "1rem" }}>
                     <span className="ds-mono" style={{ color: "var(--ink-3)" }}>
                       {postReadMinutes(p)} min read
                     </span>

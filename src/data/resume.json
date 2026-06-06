@@ -1,5 +1,5 @@
 {
-	"summary": "Nearly three decades building software across search, data, and AI. At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. At the Institute for Disease Modeling I built epidemiological software featured in a Bill Gates TED Talk. At Tableau I led the data connectivity platform. At Google I led Gemini Code Assist from inception to adoption by millions of developers.",
+	"summary": "Principal-level engineer and engineering leader with nearly three decades building software across search, data, and AI. At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. At the Institute for Disease Modeling I built epidemiological software featured in a Bill Gates TED Talk. At Tableau I led the data connectivity platform. At Google I led Gemini Code Assist from inception to adoption by millions of developers. Now at PitchBook I'm leading the creation of a new product on the financial intelligence platform: search over a billion documents, full-stack architecture, and AI features built on LLMs and MCP.",
 	"companyKeyMap": {
 		"Plutonic Consulting": "plutonic",
 		"PitchBook (Morningstar)": "pitchbook",
@@ -107,7 +107,7 @@
 			"co": "Microsoft",
 			"role": "Software Development Engineer",
 			"dates": "Aug 2006 – Aug 2012",
-			"blurb": "Led multiple Bing teams including Bing Together, Task Framework, Ecosystem, Core Answers, Seasonal Answers, Structured Data, Commerce Relevance, and Commerce Data Pipeline. Architected Big Data Validation Framework (Engineering Excellence Award Nominee). Built JS memory profiling tools for Outlook Web Access; developed Naive Bayes sentiment classifiers for Bing Shopping. Co-inventor on US Patent 8,918,354: Intelligent intent detection from social network messages.",
+			"blurb": "Worked as an engineer across multiple Bing teams including Task Framework, Core Answers, Structured Data, Commerce Relevance, and the Commerce Data Pipeline. Architected the Big Data Validation Framework (Engineering Excellence Award Nominee). Built JS memory profiling tools for Outlook Web Access and developed Naive Bayes sentiment classifiers for Bing Shopping. Co-inventor on US Patent 8,918,354: Intelligent intent detection from social network messages.",
 			"tags": ["Big Data", "JavaScript", "Machine Learning", "Outlook Web Access", "Bing"]
 		},
 		{
@@ -217,19 +217,24 @@
 		"Databases & Cloud": [
 			"MongoDB",
 			"Docker",
-			"ElasticSearch",
+			"Elasticsearch",
 			"Neo4J",
 			"PostgreSQL",
 			"Redis",
 			"SQL Server",
 			"AWS",
-			"Google Cloud"
+			"Google Cloud",
+			"Kubernetes"
 		],
-		"AI & Leadership": [
-			"AI-Assisted Development",
-			"Large Language Models",
-			"Team Scaling",
-			"DX"
-		]
+		"Search & AI": [
+			"Search Infrastructure",
+			"RAG",
+			"Vector Search",
+			"AI Agents",
+			"Large Language Models (LLM)",
+			"Model Context Protocol (MCP)",
+			"AI-Assisted Development"
+		],
+		"Leadership": ["Team Scaling", "Developer Experience", "Technical Strategy"]
 	}
 }
