@@ -408,7 +408,8 @@ const generateBaseHTML = (
 	ogImageHeight?: number
 ) => {
 	const siteUrl = "https://nick.karnik.io";
-	const defaultOgImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
+	// Site-wide default OG image fallback; individual pages may override via ogImage.
+	const defaultOgImage = `${siteUrl}/assets/images/og/blog-og.png`;
 	// Ensure og:image is absolute URL
 	const finalOgImage = ogImage
 		? ogImage.startsWith("http")
@@ -867,12 +868,14 @@ export async function renderAllStaticPagesSSR() {
 		cssHref,
 		blogResult.helmet.title + blogResult.helmet.meta + blogResult.helmet.link,
 		`${PERSON.siteUrl}/blog`,
-		`${PERSON.siteUrl}${PERSON.profileImage}`,
+		`${PERSON.siteUrl}/assets/images/og/blog-og.png`,
 		"website",
 		undefined,
 		jsBundle,
 		blogJsonLd,
-		inlineAllPostsScript
+		inlineAllPostsScript,
+		1200,
+		630
 	);
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
@@ -892,12 +895,14 @@ export async function renderAllStaticPagesSSR() {
 			blogsResult.helmet.meta +
 			blogsResult.helmet.link,
 		`${PERSON.siteUrl}/blogs`,
-		`${PERSON.siteUrl}${PERSON.profileImage}`,
+		`${PERSON.siteUrl}/assets/images/og/blog-og.png`,
 		"website",
 		undefined,
 		jsBundle,
 		blogsJsonLd,
-		inlineAllPostsScript
+		inlineAllPostsScript,
+		1200,
+		630
 	);
 	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
 	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
