@@ -201,7 +201,8 @@ export default function Footer() {
 								<span>Maya's Game Lab</span>
 							</a>
 							<a
-								href="/assets/documents/resume-nick-karnik.pdf"
+								href="/resume.pdf"
+								download="Nick_Karnik_Resume.pdf"
 								target="_blank"
 								rel="noopener"
 								className={linkStyle}

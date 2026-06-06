@@ -96,6 +96,7 @@ export function ResumePagePanda() {
             right={
               <a
                 href={resume.pdfHref}
+                download="Nick_Karnik_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => analytics.ctaClick("download_resume_pdf", "resume_header")}

@@ -107,11 +107,10 @@ export const redirects: Redirect[] = [
 		destination: "/rss",
 		statusCode: 308,
 	},
-	{
-		source: "/resume.pdf",
-		destination: "https://nick.karnik.io/resume-nick-karnik.pdf",
-		statusCode: 308,
-	},
+	// Resume PDF now served directly at /resume.pdf (public/resume.pdf).
+	// (A meta-refresh redirect can't work for a .pdf source — GitHub Pages
+	// serves it as application/pdf — so the old /assets/documents path is
+	// simply retired; all in-app links point to /resume.pdf.)
 	// Resume routes now serve actual pages instead of redirecting to PDF
 ];
 
