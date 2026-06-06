@@ -1,5 +1,6 @@
 import React from "react";
 import { Post } from "../types/blog";
+import ShareButtons from "../components/blog/ShareButtons";
 import {
   formatBlogDate,
   formatReadTime,
@@ -74,6 +75,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
             </aside>
           )}
         </div>
+        <ShareButtons title={post.title} url={`/blog/${post.slug}`} />
       </section>
 
       {(prevPost || nextPost) && (

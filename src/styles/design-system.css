@@ -649,8 +649,7 @@ a.ds-plain:hover,
 }
 .ds-blog-cover img {
   width: 100%;
-  max-height: 28rem;
-  object-fit: cover;
+  height: auto;
   display: block;
 }
 .ds-blog-topics {
