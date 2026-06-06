@@ -982,6 +982,13 @@ a.ds-plain:hover,
   margin: 0;
   padding: var(--gap-3) 0;
   border-top: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.ds-review-card figcaption {
+  margin-top: auto;       /* push author to the bottom */
+  padding-top: 1rem;
 }
 .ds-review-card blockquote {
   margin: 0.75rem 0 0;
