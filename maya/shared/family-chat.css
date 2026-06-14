@@ -24,8 +24,12 @@
   touch-action:manipulation;
   -webkit-user-select:none;user-select:none;
   transition:transform .15s,box-shadow .15s;
+  /* iOS Safari promotes the game <iframe> to its own compositing layer; without
+     our own layer, taps on this FAB fall through to the iframe and the chat
+     won't open while a game is on screen. translateZ forces a sibling layer. */
+  transform:translateZ(0);
 }
-#family-chat-fab:active{transform:scale(.94)}
+#family-chat-fab:active{transform:translateZ(0) scale(.94)}
 #family-chat-widget.fcw-panel-open #family-chat-fab{
   opacity:.85;
 }
@@ -55,6 +59,8 @@
   box-shadow:0 10px 36px rgba(0,0,0,.5);
   animation:dad-peek-in .4s cubic-bezier(.34,1.56,.64,1);
   touch-action:manipulation;
+  /* Own layer so its reply button is tappable over a running game iframe. */
+  transform:translateZ(0);
 }
 .dad-peek[hidden]{display:none!important}
 @keyframes dad-peek-in{
@@ -92,6 +98,8 @@
   transition:opacity .2s,visibility .2s;
   touch-action:manipulation;
   -webkit-tap-highlight-color:transparent;
+  /* Own layer so tap-to-close lands here, not on the game iframe underneath. */
+  transform:translateZ(0);
 }
 #family-chat-backdrop.open{
   opacity:1;visibility:visible;
