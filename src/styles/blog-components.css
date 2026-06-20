@@ -10,6 +10,7 @@
   text-align: center;
   font-size: 1rem;
   width: fit-content;
+  min-width: min(24rem, 100%);
   max-width: min(36rem, 100%);
 }
 
