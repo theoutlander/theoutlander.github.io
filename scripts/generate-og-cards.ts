@@ -113,7 +113,7 @@ function cardHtml(post: PostMeta): string {
   }
   .frame {
     height: 100%;
-    padding: 76px 84px 64px 92px;
+    padding: 76px 84px 108px 92px;
     display: flex; flex-direction: column; justify-content: space-between;
   }
   .eyebrow {
