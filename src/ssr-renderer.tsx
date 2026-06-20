@@ -1111,9 +1111,13 @@ export async function renderAllStaticPagesSSR() {
 			}
 		}
 
-		const postDescription =
+		const rawDescription =
 			post.excerpt ||
 			`Read ${post.title} on Nick Karnik's blog about engineering, AI, and technology.`;
+		const postDescription =
+			rawDescription.length <= 125
+				? rawDescription
+				: rawDescription.slice(0, 124).replace(/\s\S*$/, "") + "…";
 
 		// Get image dimensions. Branded cards have known dimensions; otherwise
 		// probe the file (getImageDimensions may return null on non-macOS hosts).

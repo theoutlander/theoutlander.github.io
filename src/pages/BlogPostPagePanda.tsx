@@ -26,7 +26,7 @@ export function BlogPostPagePanda({ post, posts }: BlogPostPageProps) {
   const category = postCategoryLabel(post) || "Essay";
 
   return (
-    <div className="ds-page ds-page-fade" style={{ maxWidth: "70rem" }}>
+    <div className="ds-page ds-page-fade" style={{ maxWidth: "62rem" }}>
       <section style={{ padding: "var(--gap-5) 0 var(--gap-3)" }}>
         <a href="/blog" className="ds-plain" style={{ display: "inline-block", marginBottom: "var(--gap-3)" }}>
           <span className="ds-mono" style={{ color: "var(--ink-3)" }}>← Back to writing</span>

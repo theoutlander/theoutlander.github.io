@@ -31,7 +31,7 @@
   --gap-7: 9rem;
 
   /* widths */
-  --col-prose: 36rem;
+  --col-prose: 42rem;
   --col-wide:  64rem;
   --col-page:  78rem;
 
@@ -233,8 +233,8 @@ a:hover {
 
 .ds-lede {
   font-family: var(--ui);
-  font-size: 1.125rem;
-  line-height: 1.55;
+  font-size: 1.4rem;
+  line-height: 1.5;
   color: var(--ink-2);
   letter-spacing: -0.005em;
 }
@@ -438,7 +438,7 @@ a.ds-plain:hover,
 /* with-margin grid */
 .ds-with-margin {
   display: grid;
-  grid-template-columns: 1fr 12rem;
+  grid-template-columns: minmax(38rem, 42rem) 12rem;
   gap: var(--gap-4);
   align-items: start;
 }
@@ -544,8 +544,8 @@ a.ds-plain:hover,
 /* prose */
 .ds-prose {
   max-width: var(--col-prose);
-  font-size: 1.125rem;
-  line-height: 1.65;
+  font-size: 1.25rem;
+  line-height: 1.7;
 }
 .ds-prose p { margin: 0 0 1.25em; }
 .ds-prose p:first-of-type::first-letter {
@@ -565,7 +565,7 @@ a.ds-plain:hover,
   font-family: var(--serif);
 }
 .ds-prose h2 {
-  font-size: 1.625rem;
+  font-size: 1.85rem;
   margin: 2.25em 0 0.5em;
   font-weight: 500;
   letter-spacing: -0.01em;

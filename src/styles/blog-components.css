@@ -5,9 +5,10 @@
   border: 2px solid var(--ink);
   padding: 1.5rem;
   margin: 2rem 0;
+  max-width: 34rem;
   border-radius: 2px;
   background: var(--paper-2);
-  text-align: center;
+  text-align: left;
 }
 
 .concept-box strong {
