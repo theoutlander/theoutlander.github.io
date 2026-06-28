@@ -3,40 +3,51 @@ import { writeFile, mkdir } from "node:fs/promises";
 const BASE = process.env.SITE_URL || "https://nick.karnik.io";
 
 async function run() {
+	// AI crawlers we explicitly welcome. Usage is permitted with attribution —
+	// see /llms.txt for citation guidance. (All content is all-rights-reserved.)
+	const aiAgents = [
+		// OpenAI
+		"GPTBot",
+		"ChatGPT-User",
+		"OAI-SearchBot",
+		// Anthropic
+		"ClaudeBot",
+		"Claude-Web",
+		"Claude-User",
+		"Claude-SearchBot",
+		"anthropic-ai",
+		// Google / Apple
+		"Google-Extended",
+		"Applebot-Extended",
+		// Perplexity
+		"PerplexityBot",
+		"Perplexity-User",
+		// Others
+		"CCBot",
+		"Amazonbot",
+		"Bytespider",
+		"Meta-ExternalAgent",
+		"cohere-ai",
+		"DuckAssistBot",
+		"YouBot",
+	];
+
+	const aiBlock = aiAgents
+		.map((ua) => `User-agent: ${ua}\nAllow: /`)
+		.join("\n\n");
+
 	const robotsTxt = `User-agent: *
 Allow: /
 
-# Explicitly allow AI crawlers
-User-agent: GPTBot
-Allow: /
+# AI crawlers and assistants are welcome. Content is © Nick Karnik, all
+# rights reserved; reuse with attribution. Citation guidance: ${BASE}/llms.txt
+${aiBlock}
 
-User-agent: ChatGPT-User
-Allow: /
-
-User-agent: CCBot
-Allow: /
-
-User-agent: anthropic-ai
-Allow: /
-
-User-agent: Claude-Web
-Allow: /
-
-User-agent: Google-Extended
-Allow: /
-
-User-agent: PerplexityBot
-Allow: /
-
-User-agent: Applebot-Extended
-Allow: /
+# LLM-friendly index
+# ${BASE}/llms.txt
 
 # Sitemap
 Sitemap: ${BASE}/sitemap.xml
-
-# Disallow admin or private areas (if any)
-# Disallow: /admin/
-# Disallow: /private/
 `;
 
 	await mkdir("dist", { recursive: true });

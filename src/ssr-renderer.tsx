@@ -15,7 +15,7 @@ import { capitalizeFirstLetter } from "./utils/stringUtils";
 import { loadAllBlogPosts, type BlogPost } from "./lib/content-server";
 import { CODEMENTOR_REVIEWS_INLINE_ID } from "./lib/codementor";
 import { CodementorReview } from "./types/codementor";
-import { getAboutPageData, META, PERSON } from "./data/person";
+import { getAboutPageData, META, PERSON, SOCIAL_LINKS } from "./data/person";
 
 // Import our Panda CSS page components
 import { HomePagePanda } from "./pages/HomePagePanda";
@@ -272,16 +272,21 @@ const removeInlineStyles = (html: string) => {
 
 // Generate JSON-LD structured data for Person schema
 const generatePersonJsonLd = (url: string) => {
-	const siteUrl = "https://nick.karnik.io";
+	const siteUrl = PERSON.siteUrl;
 	return {
 		"@context": "https://schema.org",
 		"@type": "Person",
-		name: "Nick Karnik",
+		name: PERSON.name,
 		url: siteUrl,
+		image: `${siteUrl}${PERSON.profileImage}`,
+		// Canonical profiles for entity reconciliation (kept in sync with person.json)
 		sameAs: [
-			"https://twitter.com/theoutlander",
-			"https://github.com/theoutlander",
-			"https://www.linkedin.com/in/nickkarnik",
+			SOCIAL_LINKS.github,
+			SOCIAL_LINKS.linkedin,
+			SOCIAL_LINKS.twitter,
+			SOCIAL_LINKS.youtube,
+			SOCIAL_LINKS.stackoverflow,
+			SOCIAL_LINKS.codementor,
 		],
 		jobTitle: "Engineering Leader & Software Engineer",
 		worksFor: {
@@ -344,7 +349,9 @@ const generateBlogPostJsonLd = (
 	date: string,
 	excerpt: string,
 	image?: string | null,
-	dateModified?: string
+	dateModified?: string,
+	tags?: string[],
+	category?: string
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	const defaultImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
@@ -353,6 +360,12 @@ const generateBlogPostJsonLd = (
 			? image
 			: `${siteUrl}${image}`
 		: defaultImage;
+	const year = (date && new Date(date).getFullYear()) || new Date().getFullYear();
+	const author = {
+		"@type": "Person" as const,
+		name: "Nick Karnik",
+		url: siteUrl,
+	};
 
 	return {
 		"@context": "https://schema.org",
@@ -363,15 +376,20 @@ const generateBlogPostJsonLd = (
 		dateModified: dateModified || date,
 		description: excerpt,
 		image: imageUrl,
+		inLanguage: "en-US",
+		isAccessibleForFree: true,
+		...(category ? { articleSection: category } : {}),
+		...(tags && tags.length ? { keywords: tags.join(", ") } : {}),
 		mainEntityOfPage: {
 			"@type": "WebPage",
 			"@id": url,
 		},
-		author: {
-			"@type": "Person",
-			name: "Nick Karnik",
-			url: siteUrl,
-		},
+		author,
+		// Attribution: all rights reserved, citation requested (no permissive license granted)
+		copyrightYear: year,
+		copyrightHolder: author,
+		copyrightNotice: `© ${year} Nick Karnik. All rights reserved.`,
+		creditText: `Nick Karnik, "${title}", nick.karnik.io. ${url}`,
 		publisher: {
 			"@type": "Organization",
 			name: "Nick Karnik",
@@ -540,12 +558,18 @@ ${JSON.stringify(Array.isArray(jsonLd) ? jsonLd : jsonLd, null, 2)}
 				: ""
 		}
 
-		<!-- RSS Feed -->
+		<!-- Feeds -->
 		<link
 			rel="alternate"
 			type="application/rss+xml"
 			title="RSS"
 			href="${siteUrl}/rss"
+		/>
+		<link
+			rel="alternate"
+			type="application/feed+json"
+			title="JSON Feed"
+			href="${siteUrl}/feed.json"
 		/>
 
 		<!-- Favicon -->
@@ -1147,7 +1171,9 @@ export async function renderAllStaticPagesSSR() {
 			post.date ? new Date(post.date).toISOString() : new Date().toISOString(),
 			postDescription,
 			post.cover,
-			articleData.modifiedTime
+			articleData.modifiedTime,
+			post.tags,
+			post.category ?? undefined
 		);
 		const postInlineScript = buildInlineDataScript(
 			"__POST_DATA__",
@@ -1225,6 +1251,12 @@ function generateRssXml(posts: Post[]) {
       <link>${postUrl}</link>
       <guid isPermaLink="true">${postUrl}</guid>
       <pubDate>${pubDate}</pubDate>
+      <dc:creator><![CDATA[Nick Karnik]]></dc:creator>
+      <dc:rights><![CDATA[© ${
+				post.date ? new Date(post.date).getFullYear() : ""
+			} Nick Karnik. All rights reserved. Cite as: Nick Karnik, "${
+				post.title
+			}", nick.karnik.io. ${postUrl}]]></dc:rights>
       ${post.cover ? `<enclosure url="${post.cover}" type="image/jpeg" />` : ""}
       ${
 				post.tags
@@ -1236,7 +1268,7 @@ function generateRssXml(posts: Post[]) {
 		.join("");
 
 	return `<?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title>Nick Karnik - The Outlander</title>
     <description>Engineering insights, AI tools, and technical writing from Nick Karnik</description>
@@ -1245,6 +1277,7 @@ function generateRssXml(posts: Post[]) {
     <language>en-US</language>
     <managingEditor>nick@karnik.io (Nick Karnik)</managingEditor>
     <webMaster>nick@karnik.io (Nick Karnik)</webMaster>
+    <copyright>© Nick Karnik. All rights reserved. Reuse with attribution; see ${siteUrl}/llms.txt</copyright>
     <lastBuildDate>${new Date().toUTCString()}</lastBuildDate>
     <generator>Custom RSS Generator</generator>
     <image>
