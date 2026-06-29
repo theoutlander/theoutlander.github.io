@@ -1,0 +1,172 @@
+/* ===== Game table layout ===== */
+.table-screen { position: absolute; inset: 0; display: flex; flex-direction: column; }
+
+.table-top { flex: none; padding: 6px 12px 0; }
+.round-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  color: var(--felt-text); padding: 6px 4px;
+}
+.round-bar .rb-trump {
+  display: flex; align-items: center; gap: 8px;
+  background: rgba(0,0,0,.3); border: 1px solid rgba(255,255,255,.16);
+  padding: 7px 14px; border-radius: 999px; font-weight: 800; font-size: 17px;
+}
+.round-bar .rb-trump .lbl { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; opacity: .7; font-weight: 700; }
+
+/* opponents */
+.opps {
+  display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;
+  padding: 8px 6px 0; flex: none;
+}
+.opp { display: flex; flex-direction: column; align-items: center; gap: 3px; width: 64px; }
+.opp-name { font-size: 12px; font-weight: 700; color: var(--felt-text); opacity: .85; max-width: 64px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.opp-name.active { opacity: 1; color: var(--accent-soft); }
+.opp-stat { font-size: 14px; font-weight: 800; color: var(--felt-text); background: rgba(0,0,0,.26); padding: 1px 9px; border-radius: 999px; min-width: 30px; text-align: center; }
+.opp-stat .slash { opacity: .45; margin: 0 1px; }
+.opp-stat .hit { color: #7be0a0; }
+.opp-stat .over { color: #ff8c7a; }
+.opp-thinking { opacity: .6; font-weight: 600; font-size: 12px; }
+
+/* trick zone */
+.trickzone { flex: 1; position: relative; display: flex; align-items: center; justify-content: center; min-height: 150px; }
+.trick-center { position: relative; width: 0; height: 0; }
+.trick-card { position: absolute; left: 0; top: 0; transition: transform .3s cubic-bezier(.2,.8,.2,1); animation: pop .25s ease; }
+.trick-card .card { box-shadow: var(--shadow-lg); }
+.trick-tag {
+  position: absolute; bottom: -8px; left: 50%; transform: translateX(-50%);
+  font-size: 11px; font-weight: 800; color: #1a1407; padding: 2px 8px; border-radius: 999px;
+  white-space: nowrap; box-shadow: var(--shadow-sm);
+}
+.trick-hint { position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); white-space: nowrap; color: var(--felt-text); opacity: .55; font-weight: 700; font-size: 14px; }
+
+/* felt center ornament */
+.felt-mark {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: 200px; height: 200px; border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.07);
+  box-shadow: inset 0 0 60px rgba(0,0,0,.25); pointer-events: none;
+}
+.felt-mark::after {
+  content: '\2756'; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+  font-size: 80px; color: rgba(255,255,255,.04);
+}
+
+/* you bar */
+.you-bar { flex: none; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 2px 14px 4px; color: var(--felt-text); min-height: 46px; }
+.you-status { font-weight: 700; font-size: 14px; background: rgba(0,0,0,.26); padding: 6px 14px; border-radius: 999px; white-space: nowrap; }
+.you-status .em { color: var(--accent-soft); }
+.you-status .warn { color: #ff8c7a; }
+.you-status .ok { color: #7be0a0; }
+
+/* YOUR TURN banner — unmistakable */
+.turn-banner {
+  display: inline-flex; align-items: center; gap: 9px; white-space: nowrap;
+  background: linear-gradient(180deg, var(--accent-soft), var(--accent));
+  color: #3a2a0c; font-weight: 800; font-size: 15px;
+  padding: 9px 20px; border-radius: 999px;
+  box-shadow: 0 0 0 0 rgba(224,182,91,.6); animation: turnpulse 1.5s ease-in-out infinite;
+}
+.turn-banner .turn-sub { font-weight: 700; opacity: .7; }
+.turn-dot { width: 9px; height: 9px; border-radius: 50%; background: #3a2a0c; }
+@keyframes turnpulse {
+  0%,100% { box-shadow: 0 0 0 0 rgba(224,182,91,.55); transform: translateY(0); }
+  50% { box-shadow: 0 0 0 10px rgba(224,182,91,0); transform: translateY(-2px); }
+}
+
+/* hand glow + playable bob when it's your turn */
+.hand-wrap { flex: none; }
+.hand-wrap.your-turn .hand-card.playable { animation: cardbob 1.6s ease-in-out infinite; }
+.hand-wrap.your-turn .hand-card.playable .card { box-shadow: 0 0 0 2px var(--accent), var(--shadow-card); }
+@keyframes cardbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+
+/* hand */
+.hand { flex: none; display: flex; justify-content: center; align-items: flex-end; padding: 6px 10px 16px; min-height: 150px; }
+.hand-card { transition: transform .16s ease, margin .2s ease; will-change: transform; }
+.hand-card.playable { cursor: pointer; }
+.hand-card.playable:hover { transform: translateY(-14px); }
+.hand-card .card { box-shadow: var(--shadow-card); }
+
+/* bid bar — a calm, quiet strip below the hand; tap a number to bid (one tap) */
+.bidbar {
+  flex: none; padding: 12px 14px 14px; background: rgba(255,255,255,.07);
+  border-top: 1px solid rgba(255,255,255,.1);
+  display: flex; flex-direction: column; align-items: center; gap: 10px;
+}
+.bidbar-q { color: var(--felt-text); font-weight: 600; font-size: 15px; opacity: .85; white-space: nowrap; }
+.bidbar-q b { font-weight: 800; opacity: 1; }
+.bidbar-nums { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; }
+.bidnum {
+  min-width: 46px; height: 46px; padding: 0 4px; border-radius: 50%;
+  font-weight: 700; font-size: 19px; font-family: var(--ff-display);
+  background: var(--paper); color: var(--ink);
+  box-shadow: var(--shadow-sm); border: 2px solid transparent;
+  transition: transform .1s, border-color .12s;
+}
+.bidnum:hover { border-color: var(--accent); }
+.bidnum:active { transform: scale(.92); }
+.bidnum.forbidden {
+  background: transparent; color: var(--felt-text);
+  opacity: .35; text-decoration: line-through; pointer-events: none; box-shadow: none;
+}
+
+/* score strip */
+.chat-dot { position: absolute; top: 6px; right: 6px; width: 9px; height: 9px; border-radius: 50%; background: var(--bad); box-shadow: 0 0 0 2px rgba(0,0,0,.3); }
+
+/* ===== video conference mode ===== */
+.video-strip { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; padding: 8px 6px 0; flex: none; }
+.vtile {
+  position: relative; width: 88px; height: 66px; border-radius: 12px; overflow: hidden;
+  background: #11161f; box-shadow: var(--shadow-sm); border: 2px solid transparent;
+}
+.vtile.active { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent), 0 0 14px rgba(224,182,91,.5); }
+.vtile .vfeed { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 26px; color: rgba(255,255,255,.92); }
+.vtile video, .selfview video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
+.vtile .vname { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 4px; padding: 3px 6px;
+  background: linear-gradient(to top, rgba(0,0,0,.7), transparent); font-size: 11px; font-weight: 700; color: #fff; }
+.vtile .vname .vb { margin-left: auto; font-weight: 800; }
+.vtile .vmic { position: absolute; top: 4px; right: 5px; font-size: 11px; }
+.vtile .vlive { position: absolute; top: 6px; left: 6px; width: 7px; height: 7px; border-radius: 50%; background: #57d977; box-shadow: 0 0 6px #57d977; }
+@keyframes vpan { 0%{background-position:0% 50%} 100%{background-position:100% 50%} }
+.vfeed.sim { background-size: 200% 200%; animation: vpan 6s ease-in-out infinite alternate; }
+
+.vtile.self { border-color: rgba(255,255,255,.45); }
+.vcontrols { position: absolute; top: 4px; left: 4px; display: flex; gap: 4px; z-index: 2; }
+.vctrl { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; background: rgba(0,0,0,.55); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+.vctrl.off { background: var(--bad); }
+.icon-btn.on { background: var(--accent); color: #3a2a0c; }
+
+/* score strip */
+.scorestrip {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  width: 100%; padding: 8px 14px; background: rgba(0,0,0,.28);
+  border-top: 1px solid rgba(255,255,255,.1); color: var(--felt-text);
+}
+.ss-item { display: flex; align-items: center; gap: 5px; font-size: 14px; font-weight: 700; }
+.ss-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.ss-name { opacity: .8; }
+.ss-more { font-size: 13px; font-weight: 700; opacity: .7; white-space: nowrap; }
+
+/* scorecard table */
+.sc-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sc-table th, .sc-table td { padding: 6px 4px; text-align: center; }
+.sc-table thead th { position: sticky; top: 0; background: var(--paper); }
+.sc-h { font-size: 11px; font-weight: 700; }
+.sc-r { color: var(--ink-faint); font-weight: 700; }
+.sc-good { color: var(--good); font-weight: 800; }
+.sc-zero { color: var(--ink-faint); }
+.sc-sub { font-size: 10px; color: var(--ink-faint); font-weight: 600; }
+.sc-total td { border-top: 2px solid var(--line); font-weight: 800; font-size: 15px; padding-top: 8px; }
+.sc-total td:first-child { color: var(--ink-faint); }
+
+/* round-end modal rows */
+.re-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.re-row:last-child { border: none; }
+.re-bid { font-size: 13px; font-weight: 700; color: var(--ink-soft); }
+.re-pts { margin-left: auto; font-family: var(--ff-display); font-weight: 700; font-size: 22px; }
+.re-pts.good { color: var(--good); }
+.re-pts.zero { color: var(--ink-faint); }
+
+/* confetti dots for game end */
+.celebrate { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.confetti { position: absolute; width: 9px; height: 14px; top: -20px; animation: fall linear forwards; }
+@keyframes fall { to { transform: translateY(120vh) rotate(640deg); } }

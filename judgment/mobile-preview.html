@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Judgment — Mobile Preview</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: #0b0f0d radial-gradient(140% 120% at 50% -10%, #1a241e, #080b09 70%);
+    font-family: 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+    color: #f3efe2;
+    display: flex; flex-direction: column; align-items: center; gap: 22px;
+    padding: 28px 16px 40px; min-height: 100%;
+  }
+  .head { text-align: center; max-width: 420px; }
+  .head h1 { font-size: 22px; margin: 0 0 4px; letter-spacing: -.01em; }
+  .head p { margin: 0; font-size: 14px; opacity: .7; line-height: 1.5; }
+  .head a { color: #e0b65b; font-weight: 700; text-decoration: none; }
+
+  .stage { display: flex; gap: 36px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+
+  /* phone bezel */
+  .phone {
+    --w: 390px; --h: 844px;
+    width: var(--w); height: var(--h);
+    background: #0b0b0d;
+    border-radius: 52px;
+    padding: 13px;
+    box-shadow: 0 40px 90px rgba(0,0,0,.55), 0 0 0 2px #2a2a2e, inset 0 0 0 2px #000;
+    position: relative;
+    flex: none;
+  }
+  .phone::before { /* dynamic island */
+    content: ''; position: absolute; top: 24px; left: 50%; transform: translateX(-50%);
+    width: 108px; height: 30px; background: #000; border-radius: 18px; z-index: 5;
+  }
+  .screen {
+    width: 100%; height: 100%; border-radius: 40px; overflow: hidden; background: #000;
+    position: relative;
+  }
+  .screen iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+  .label { text-align: center; font-size: 13px; font-weight: 700; opacity: .65; margin-top: 12px; }
+
+  .tip {
+    max-width: 420px; text-align: center; font-size: 13px; opacity: .6; line-height: 1.5;
+  }
+  @media (max-width: 460px) {
+    .phone { --w: 340px; --h: 736px; border-radius: 44px; }
+    .screen { border-radius: 34px; }
+  }
+</style>
+</head>
+<body>
+  <div class="head">
+    <h1>Judgment — mobile preview</h1>
+    <p>This is the real game running at phone size. Tap and play right here, or open <a href="index.html" target="_blank">the full version</a> and add it to your home screen on your phone.</p>
+  </div>
+
+  <div class="stage">
+    <div>
+      <div class="phone"><div class="screen"><iframe src="index.html" title="Judgment portrait" allow="camera; microphone"></iframe></div></div>
+      <div class="label">iPhone · portrait</div>
+    </div>
+  </div>
+
+  <p class="tip">The app is phone-first and also works great on iPad and desktop. On a real device the camera tile in video mode shows your live webcam.</p>
+</body>
+</html>
