@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Maya's Game Lab 🎮</title>
 
 <!-- Google Analytics -->
-<script src="ga-analytics.js" defer></script>
+<script src="shared/ga-analytics.js" defer></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/family-chat.css">
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 :root{
@@ -46,14 +47,6 @@ header{text-align:center;padding:48px 0 36px}
 .heart{color:var(--pink);display:inline-block;animation:hb 1.4s ease-in-out infinite}
 @keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
 .tap-hint{font-size:11px;color:rgba(255,255,255,.18);margin-top:6px;letter-spacing:.08em}
-
-/* Floating Dad message bubble */
-#dad-bubble{position:fixed;bottom:28px;right:20px;max-width:min(280px,80vw);background:linear-gradient(135deg,#2d1260,#1a0a3c);border:1px solid rgba(199,125,255,.3);border-radius:18px 18px 4px 18px;padding:14px 16px 12px;z-index:400;box-shadow:0 8px 32px rgba(0,0,0,.5);animation:bubble-in .4s cubic-bezier(.34,1.56,.64,1);display:none}
-#dad-bubble.show{display:block}
-@keyframes bubble-in{0%{transform:scale(0) translateY(20px);opacity:0}100%{transform:scale(1) translateY(0);opacity:1}}
-.bubble-from{font-size:10px;font-weight:900;color:var(--purple);letter-spacing:.1em;text-transform:uppercase;margin-bottom:5px}
-.bubble-text{font-size:14px;line-height:1.55;color:var(--text)}
-.bubble-close{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--muted);font-size:16px;cursor:pointer;padding:2px 6px;line-height:1}
 
 /* Section heading */
 .sh{display:flex;align-items:center;gap:12px;margin:36px 0 18px}
@@ -105,50 +98,6 @@ header{text-align:center;padding:48px 0 36px}
 .ds{flex:1}
 .cb{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.18);color:#ff7070;font-size:11px;font-weight:900;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;min-height:32px}
 #dc{display:block;width:100%;touch-action:none;cursor:crosshair;background:#0a0718}
-
-/* Wish */
-#ww{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:20px}
-.wi{font-size:13px;color:var(--muted);margin-bottom:14px;line-height:1.6}
-#winput{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.18);border-radius:12px;padding:13px 14px;font-family:'Nunito',sans-serif;font-size:15px;color:var(--text);resize:none;height:76px;outline:none;transition:border-color .15s;-webkit-appearance:none}
-#winput:focus{border-color:rgba(199,125,255,.5)}
-#winput::placeholder{color:var(--muted)}
-#wsend{margin-top:10px;width:100%;padding:14px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:19px;color:#fff;cursor:pointer;transition:transform .12s,box-shadow .12s;box-shadow:0 4px 0 rgba(0,0,0,.35);min-height:50px}
-#wsend:hover{transform:translateY(-2px)}
-#wsend:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-#wsend:disabled{opacity:.5;cursor:not-allowed;transform:none}
-#wsent{display:none;text-align:center;padding:20px;font-family:'Fredoka One',cursive;font-size:20px;color:var(--green)}
-
-/* Family chat */
-#family-chat-wrap{background:var(--card);border:1px solid rgba(199,125,255,.22);border-radius:var(--radius);padding:16px 16px 14px}
-.chat-hint{font-size:13px;color:var(--muted);line-height:1.55;margin-bottom:12px}
-.chat-lock{display:flex;flex-direction:column;gap:10px}
-.chat-lock.shake{animation:chat-shake .35s ease}
-@keyframes chat-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
-.chat-pin-in,.chat-text-in{width:100%;background:rgba(255,255,255,.05);border:2px solid rgba(199,125,255,.2);border-radius:12px;padding:12px 14px;font-family:'Nunito',sans-serif;font-size:16px;color:var(--text);outline:none;min-height:48px;-webkit-appearance:none}
-.chat-pin-in:focus,.chat-text-in:focus{border-color:rgba(199,125,255,.5)}
-.chat-send-btn{width:100%;padding:13px;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:18px;color:#fff;cursor:pointer;min-height:48px;box-shadow:0 3px 0 rgba(0,0,0,.35);touch-action:manipulation}
-.chat-send-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(0,0,0,.35)}
-.chat-send-btn:disabled{opacity:.55}
-.chat-err{font-size:12px;color:#ff7070;font-weight:900}
-.chat-role-row{display:flex;gap:10px}
-.chat-role-btn{flex:1;padding:14px 10px;background:rgba(255,110,180,.12);border:2px solid rgba(255,110,180,.35);border-radius:12px;font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);cursor:pointer;min-height:52px;touch-action:manipulation}
-.chat-role-btn.dad{background:rgba(91,200,255,.1);border-color:rgba(91,200,255,.35)}
-.chat-head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px;font-size:12px;color:var(--muted)}
-.chat-you{flex:1;min-width:120px}
-.chat-link-btn{background:none;border:none;color:var(--purple);font-size:11px;font-weight:900;cursor:pointer;padding:6px 8px;min-height:36px;font-family:'Nunito',sans-serif}
-.chat-log{max-height:min(42vh,320px);overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;gap:8px;padding:8px 4px 12px;margin-bottom:10px;background:rgba(0,0,0,.2);border-radius:12px}
-.chat-empty{text-align:center;font-size:13px;color:var(--muted);padding:24px 8px}
-.chat-bubble{max-width:88%;padding:10px 12px;border-radius:14px;font-size:14px;line-height:1.45}
-.chat-bubble.mine{align-self:flex-end;background:linear-gradient(135deg,rgba(255,110,180,.25),rgba(199,125,255,.2));border:1px solid rgba(255,110,180,.25);border-radius:14px 14px 4px 14px}
-.chat-bubble.theirs{align-self:flex-start;background:rgba(91,200,255,.12);border:1px solid rgba(91,200,255,.2);border-radius:14px 14px 14px 4px}
-.chat-bubble.dad.theirs{background:rgba(199,125,255,.12);border-color:rgba(199,125,255,.25)}
-.chat-who{display:block;font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--purple);margin-bottom:4px}
-.chat-bubble.maya .chat-who{color:var(--pink)}
-.chat-body{display:block;word-break:break-word}
-.chat-time{display:block;font-size:10px;color:var(--muted);margin-top:6px;text-align:right}
-.chat-form{display:flex;gap:8px;align-items:stretch}
-.chat-form .chat-text-in{flex:1}
-.chat-form .chat-send-btn{width:auto;min-width:88px;padding:12px 18px;font-size:16px}
 
 /* Toast */
 #toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
@@ -220,6 +169,17 @@ header{text-align:center;padding:48px 0 36px}
     <button class="gotw-btn">▶ Play!</button>
   </div>
 
+  <!-- SHOP BANNER -->
+  <div class="sh"><h2>🛍️ Maya's Shop</h2><div class="sl"></div></div>
+  <div style="background:linear-gradient(135deg,#2a0840,#1a1060);border:2px solid rgba(199,125,255,0.3);border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px">
+    <div style="font-size:52px;line-height:1">🛍️📚✨</div>
+    <div style="flex:1;min-width:180px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
+      <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
+    </div>
+    <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
+  </div>
+
   <!-- ALL GAMES -->
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
@@ -227,18 +187,36 @@ header{text-align:center;padding:48px 0 36px}
       <div class="ga ga-p5">🌻</div>
       <div class="gb">
         <div class="gt">Garden Work! 🌻</div>
-        <div class="gd">Grow a whole garden! Build beds, plant flowers, fruit &amp; candy, catch butterflies, adopt a pet, shop for decorations, and read a letter from Dad every morning. 🌻</div>
+        <div class="gd">Grow a whole garden! Build beds, plant flowers, fruit &amp; candy, catch butterflies, adopt a pet, shop for decorations, and read a letter from Dad every morning.</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" data-game="games/garden-work-update/index.html" data-title="Garden Work! 🌻">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
+      <div class="ga ga-p6">✨</div>
+      <div class="gb">
+        <div class="gt">Sparkle Duel 2!</div>
+        <div class="gd">Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/sparkle-duel/index.html" data-title="Sparkle Duel 2 ✨">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
       <div class="ga ga-p1">🧵</div>
       <div class="gb">
-        <div class="gt">Sewing Shop! 🧵</div>
-        <div class="gd">Sew &amp; design cute things, then chat with the customers who stroll by — sell to them, haggle, or shoo them out of your shop!</div>
+        <div class="gt">Maya's Sewing Shop!</div>
+        <div class="gd">Sew and design cute things, then chat with customers — sell to them or shoo them out!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/mayas-sewing-shop/index.html" data-title="Maya's Sewing Shop! 🧵">▶ Play Now</button>
+        <button class="pb" data-game="games/mayas-sewing-shop/index.html" data-title="Maya's Sewing Shop 🧵">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🚐</div>
+      <div class="gb">
+        <div class="gt">Maya's Delivery Service!</div>
+        <div class="gd">Drive deliveries, earn coins, and unlock new vans and pets!</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/mayas-delivery-service/index.html" data-title="Maya's Delivery Service 🚐">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -251,12 +229,12 @@ header{text-align:center;padding:48px 0 36px}
       </div>
     </div>
     <div class="gc">
-      <div class="ga ga-p2">🌈</div>
+      <div class="ga ga-p2">💧</div>
       <div class="gb">
-        <div class="gt">Pipe Flow! 🌈</div>
-        <div class="gd">Pip's Rainbow Garden — solve pipe puzzles to grow a garden, collect critters & hats, and keep your daily streak alive!</div>
+        <div class="gt">Pipe Flow!</div>
+        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
         <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 🌈">▶ Play Now</button>
+        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
       </div>
     </div>
     <div class="gc">
@@ -341,27 +319,6 @@ header{text-align:center;padding:48px 0 36px}
     <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
   </div>
 
-  <!-- FAMILY CHAT -->
-  <div class="sh"><h2>💬 Chat with Dad</h2><div class="sl"></div></div>
-  <div id="family-chat-wrap">
-    <div id="family-chat-root"></div>
-  </div>
-
-  <!-- WISHLIST -->
-  <div class="sh"><h2>💌 Send Dad a Game Idea!</h2><div class="sl"></div></div>
-  <div id="ww">
-    <div class="wi">Got an idea for our next game together? Send it to Dad and he'll see it before your next call! 🚀</div>
-    <textarea id="winput" placeholder="A game where a unicorn jumps over rainbows... or where you catch falling stars... or anything you can imagine!"></textarea>
-    <button id="wsend" onclick="sendWish()">Send to Dad! 🚀</button>
-    <div id="wsent">🎉 Dad got your idea! Can't wait for our next call! 💕</div>
-  </div>
-</div>
-
-<!-- Dad bubble -->
-<div id="dad-bubble">
-  <button class="bubble-close" onclick="closeBubble()">×</button>
-  <div class="bubble-from">💬 A message from Dad</div>
-  <div class="bubble-text" id="bubble-text"></div>
 </div>
 
 <!-- Game modal -->
@@ -375,6 +332,26 @@ header{text-align:center;padding:48px 0 36px}
 </div>
 
 <div id="toast"></div>
+
+<!-- Family chat + Dad notes — bottom-right -->
+<div id="family-chat-backdrop" aria-hidden="true"></div>
+<div id="family-chat-widget" aria-live="polite">
+  <div id="dad-peek" class="dad-peek" hidden>
+    <button type="button" class="dad-peek-close" id="dad-peek-close" aria-label="Dismiss">×</button>
+    <div class="dad-peek-from">💬 A message from Dad</div>
+    <p class="dad-peek-text" id="dad-peek-text"></p>
+    <button type="button" class="dad-peek-reply" id="dad-peek-reply">Reply 💕</button>
+  </div>
+  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad — tell him anything!">💬</button>
+  <span id="family-chat-badge" hidden aria-label="New messages"></span>
+  <div id="family-chat-panel" role="dialog" aria-label="Chat with Dad">
+    <div class="fcw-panel-head">
+      <span class="fcw-panel-title">💬 Chat with Dad</span>
+      <button type="button" class="fcw-panel-close" id="family-chat-close" aria-label="Close chat">×</button>
+    </div>
+    <div id="family-chat-root"></div>
+  </div>
+</div>
 
 <script>
 // ===== EMAILJS — replace these with your values from emailjs.com =====
@@ -426,6 +403,17 @@ const DAD_MESSAGES=[
   "I love you more than all the stars up there. ⭐",
   "Bet you can beat your high score today! 👀",
   "You are my favourite person to make things with. 💕",
+  "No matter how far apart we are, you're always right here in my heart. 💛",
+  "Whenever I see a rainbow, I think of you. 🌈",
+  "If I could hug you through this screen, I'd never let go. 🤗",
+  "Being your dad is the best job I'll ever have. 💼💕",
+  "I believe in you on the easy days AND the hard ones. 🌟",
+  "Tell me everything tonight — I want to hear all of it. 📞",
+  "You'll always be my little star, no matter how big you grow. ⭐",
+  "When you laugh, it's my favourite sound in the whole world. 😄",
+  "You can do hard things, Maya. I've watched you do them. 💪",
+  "Goodnight, sweet Maya — dream the biggest dreams. 🌙",
+  "P.S. I love you. (I'll always sneak that in.) 💌",
 ];
 let taps=0,tapT=null;
 document.getElementById('title').addEventListener('click',()=>{
@@ -442,13 +430,10 @@ document.getElementById('title').addEventListener('click',()=>{
   }
 });
 
-// ===== RANDOM DAD BUBBLE =====
+// ===== DAD NOTES (peek + live chat — family-chat.js) =====
 function showDadBubble(msg){
-  const b=document.getElementById('dad-bubble');
-  document.getElementById('bubble-text').textContent=msg;
-  b.classList.add('show');
+  if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
 }
-function closeBubble(){document.getElementById('dad-bubble').classList.remove('show');}
 
 // Show a random message after 6 seconds on first visit
 setTimeout(()=>{
@@ -457,6 +442,10 @@ setTimeout(()=>{
     "Which game will you play first? 🎮",
     "Dad made this just for you. 💕",
     "You're the best! Have so much fun! 🌟",
+    "Welcome back, superstar! 🌟",
+    "I missed you today, Maya! 💕",
+    "Dad's thinking about you right now. 💭💛",
+    "Ready for an adventure? 🚐",
   ];
   showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
 },6000);
@@ -464,9 +453,11 @@ setTimeout(()=>{
 // ===== GAME OF THE WEEK =====
 const GLIST=[
   {em:'🌻',title:"Garden Work! 🌻",desc:"Grow a whole garden! Build beds, plant flowers, fruit & candy, catch butterflies, adopt a pet, shop for decorations, and read a letter from Dad every morning.",file:'games/garden-work-update/index.html'},
-  {em:'🧵',title:"Maya's Sewing Shop! 🧵",desc:"Sew & design cute things, then chat with the customers who stroll by — sell to them, haggle, or shoo them out of your shop!",file:'games/mayas-sewing-shop/index.html'},
-  {em:'🌈',title:'Pipe Flow! 🌈',desc:"Pip's Rainbow Garden — solve pipe puzzles, grow a garden, collect critters, and keep your daily streak!",file:'games/pipe-flow/index.html'},
+  {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html'},
+  {em:'🧵',title:"Maya's Sewing Shop 🧵",desc:'Sew and design cute things, then chat with customers — sell to them or shoo them out!',file:'games/mayas-sewing-shop/index.html'},
+  {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html'},
   {em:'🐉',title:'LORD! 🐉 Rainbow Dragon',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'games/legend-of-the-rainbow-dragon/index.html'},
+  {em:'💧',title:'Pipe Flow!',desc:'Spin pipes to connect the hose to the garden field!',file:'games/pipe-flow/index.html'},
   {em:'🍳',title:"Maya's Kitchen!",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'games/mayas-kitchen/index.html'},
   {em:'🏙️',title:'City Builder!',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html'},
   {em:'🏰',title:'Castle Defenders!',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders/index.html'},
@@ -502,19 +493,24 @@ const gm=document.getElementById('gm');
 const gf=document.getElementById('gf');
 const gmLoad=document.getElementById('gm-load');
 
-function mayaDirectoryPath(){
+// Anchor the lab base once at load. The portal is only ever served at the maya
+// root (game folders serve their own index.html), so this stays correct even
+// after we pushState a /maya/games/<slug>/index.html URL when a game opens —
+// resolveGameUrl always builds from this fixed base, never the live path.
+const MAYA_BASE=(function(){
   let base=location.pathname;
   if(!base.endsWith('/')){
     if(/\.html?$/i.test(base))base=base.slice(0,base.lastIndexOf('/')+1);
     else base=base+'/';
   }
   return base;
-}
-function resolveGameUrl(file){ return mayaDirectoryPath()+file; }
+})();
+// file is the GLIST key, e.g. 'games/pipe-flow/index.html'
+function resolveGameUrl(file){ return MAYA_BASE+file; }
 function pathnameGameFile(){
-  const last=(location.pathname.split('/').filter(Boolean).pop())||'';
-  if(!/\.html?$/i.test(last)||last.toLowerCase()==='index.html')return null;
-  return MAYA_GAME_FILES.has(last)?last:null;
+  let p=location.pathname;
+  if(p.indexOf(MAYA_BASE)===0)p=p.slice(MAYA_BASE.length);
+  return MAYA_GAME_FILES.has(p)?p:null;
 }
 function playParamGameFile(){
   try{
@@ -528,7 +524,7 @@ function activeGameFile(){
 }
 function titleForGameFile(file){
   const row=GLIST.find(function(g){return g.file===file;});
-  return row?row.title:file.replace(/\.html?$/i,'');
+  return row?row.title:file;
 }
 function gameIframeUrl(file){
   var url=resolveGameUrl(file);
@@ -569,7 +565,7 @@ function closeGameCore(){
 function exitToLab(){
   mayaClosingGame=true;
   closeGameCore();
-  history.replaceState(null,'',mayaDirectoryPath());
+  history.replaceState(null,'',MAYA_BASE);
   setTimeout(function(){ mayaClosingGame=false; },150);
 }
 function openGame(file,title){
@@ -773,31 +769,6 @@ async function sendDoodle(){
   },4000);
 }
 
-// ===== WISHLIST =====
-async function sendWish(){
-  const val=document.getElementById('winput').value.trim();
-  if(!val)return;
-  const btn=document.getElementById('wsend');
-  btn.disabled=true;btn.textContent='Sending... 🚀';
-  try{
-    emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,{
-      message:val,
-      wish:val,
-      idea:val,
-      from_name:'Maya'
-    });
-  }catch(e){
-    console.log('email err',e);
-    showToast('Could not send — try again');
-  }
-  document.getElementById('winput').value='';
-  document.getElementById('wsend').style.display='none';
-  document.getElementById('wsent').style.display='block';
-  confetti(20);
-  showToast('🚀 Sent to Dad!');
-}
-
 // ===== TOAST =====
 function showToast(msg){
   const t=document.getElementById('toast');
@@ -805,6 +776,6 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),3000);
 }
 </script>
-<script type="module" src="family-chat.js"></script>
+<script type="module" src="shared/family-chat.js"></script>
 </body>
 </html>
