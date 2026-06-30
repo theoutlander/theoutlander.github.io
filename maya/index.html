@@ -64,6 +64,12 @@ header{text-align:center;padding:48px 0 36px}
 .gotw-desc{font-size:12px;color:var(--muted);line-height:1.5}
 .gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s;touch-action:manipulation;min-height:44px}
 .gotw-btn:active{transform:scale(.94)}
+@media(max-width:560px){
+  #gotw{flex-wrap:wrap}
+  .gotw-em{font-size:40px}
+  .gotw-info{flex:1 1 100%;order:3}
+  .gotw-btn{flex:1 1 100%;order:4;margin-top:4px}
+}
 
 /* Games grid */
 .gg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
@@ -106,7 +112,7 @@ header{text-align:center;padding:48px 0 36px}
 /* Game modal — slide up/down with CSS, no JS height hacks */
 #gm{
   position:fixed;inset:0;z-index:200;
-  display:grid;grid-template-rows:auto 1fr;
+  display:block;
   background:#000;
   transform:translateY(100%);
   transition:transform .3s cubic-bezier(.4,0,.2,1);
@@ -114,27 +120,28 @@ header{text-align:center;padding:48px 0 36px}
   visibility:hidden;
 }
 #gm.open{transform:translateY(0);visibility:visible}
+/* Floating, translucent back button — no bulky top bar */
 #mb{
-  background:#0f0a1e;
-  padding:8px max(14px,env(safe-area-inset-right)) 8px max(14px,env(safe-area-inset-left));
-  display:flex;align-items:center;gap:12px;
-  border-bottom:1px solid var(--border);
-  min-height:54px;
+  position:absolute;top:0;left:0;z-index:5;
+  padding:max(8px,env(safe-area-inset-top)) 10px 10px max(10px,env(safe-area-inset-left));
+  pointer-events:none;
 }
 #mc{
-  background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);
-  color:var(--text);font-size:14px;font-weight:900;
-  padding:8px 18px;border-radius:99px;cursor:pointer;
-  font-family:'Nunito',sans-serif;min-width:44px;min-height:44px;
-  touch-action:manipulation;
-  transition:background .1s;
+  pointer-events:auto;
+  background:rgba(15,10,30,.55);border:1px solid rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:var(--text);font-size:13px;font-weight:900;
+  padding:7px 14px;border-radius:99px;cursor:pointer;
+  font-family:'Nunito',sans-serif;min-height:34px;
+  box-shadow:0 3px 10px rgba(0,0,0,.35);
+  touch-action:manipulation;transition:background .1s;
 }
-#mc:active{background:rgba(255,255,255,.2)}
-#mt{font-family:'Fredoka One',cursive;font-size:17px;color:var(--text);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-#gf{width:100%;height:100%;border:none;background:#0f0a1e;display:block}
+#mc:active{background:rgba(15,10,30,.8)}
+#mt{display:none}
+#gf{position:absolute;inset:0;width:100%;height:100%;border:none;background:#0f0a1e;display:block}
 /* Loading spinner inside the modal */
 #gm-load{
-  position:absolute;inset:54px 0 0;display:flex;align-items:center;justify-content:center;
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
   background:#0f0a1e;z-index:2;transition:opacity .25s;pointer-events:none;
 }
 #gm-load.done{opacity:0}
@@ -187,7 +194,7 @@ header{text-align:center;padding:48px 0 36px}
       <div class="ga ga-p5">🌻</div>
       <div class="gb">
         <div class="gt">Garden Work! 🌻</div>
-        <div class="gd">Grow a whole garden! Build beds, plant flowers, fruit &amp; candy, catch butterflies, adopt a pet, shop for decorations, and read a letter from Dad every morning.</div>
+        <div class="gd">Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻</div>
         <span class="tag tm">Made together 💕</span>
         <button class="pb" data-game="games/garden-work-update/index.html" data-title="Garden Work! 🌻">▶ Play Now</button>
       </div>
@@ -324,7 +331,7 @@ header{text-align:center;padding:48px 0 36px}
 <!-- Game modal -->
 <div id="gm">
   <div id="mb">
-    <button id="mc" type="button">✕ Game Lab</button>
+    <button id="mc" type="button">‹ Back</button>
     <div id="mt"></div>
   </div>
   <iframe id="gf" allowfullscreen></iframe>
@@ -452,7 +459,7 @@ setTimeout(()=>{
 
 // ===== GAME OF THE WEEK =====
 const GLIST=[
-  {em:'🌻',title:"Garden Work! 🌻",desc:"Grow a whole garden! Build beds, plant flowers, fruit & candy, catch butterflies, adopt a pet, shop for decorations, and read a letter from Dad every morning.",file:'games/garden-work-update/index.html'},
+  {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html'},
   {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html'},
   {em:'🧵',title:"Maya's Sewing Shop 🧵",desc:'Sew and design cute things, then chat with customers — sell to them or shoo them out!',file:'games/mayas-sewing-shop/index.html'},
   {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html'},
@@ -532,6 +539,7 @@ function gameIframeUrl(file){
 }
 function openGameInModal(file,title){
   document.getElementById('mt').textContent=title;
+  document.body.classList.add('maya-game-open');
   document.title=title+' · '+MAYA_PAGE_TITLE;
   updateModalBackLabel();
   document.documentElement.style.overflow='hidden';
@@ -546,6 +554,7 @@ var mayaClosingGame=false;
 
 function closeGameCore(){
   gm.classList.remove('open');
+  document.body.classList.remove('maya-game-open');
   gm.style.visibility='';
   document.documentElement.style.overflow='';
   document.body.style.overflow='';
@@ -582,7 +591,7 @@ function openGame(file,title){
 }
 function updateModalBackLabel(){
   const mc=document.getElementById('mc');
-  if(mc)mc.textContent='✕ Game Lab';
+  if(mc)mc.textContent='‹ Back';
 }
 function closeGame(){
   exitToLab();

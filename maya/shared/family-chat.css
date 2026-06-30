@@ -46,6 +46,10 @@
 }
 #family-chat-badge[hidden]{display:none}
 
+/* While a game is open, hide the floating chat so it never covers game controls
+   or pops a note mid-play. Dad's notes still arrive in the game's own mailbox. */
+body.maya-game-open #family-chat-widget{display:none!important}
+
 /* Dad note peek — same corner as chat; tap to open full chat */
 .dad-peek{
   position:absolute;

@@ -395,6 +395,11 @@ function initChatWidget() {
 			pendingDadNote = text;
 			return;
 		}
+		// Never pop a note while a game is open — stash it for when she's back in the Lab.
+		if (document.body.classList.contains('maya-game-open')) {
+			pendingDadNote = text;
+			return;
+		}
 		showPeek(text);
 	}
 

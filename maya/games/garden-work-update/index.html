@@ -4,11 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
 <title>Garden Work 🌻</title>
-<script>window.MAYA_GAME='games/garden-work-update/index.html';</script>
-<script src="../../shared/portal-bridge.js"></script>
+<script src="portal-bridge.js"></script>
 
 <!-- Google Analytics -->
-<script src="../../shared/ga-analytics.js" defer></script>
+<script src="ga-analytics.js" defer></script>
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -112,15 +111,15 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ===== HUD (top) ===== */
 #hud{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;gap:8px;align-items:center;
-  padding:max(8px,env(safe-area-inset-top)) 12px 8px;pointer-events:none}
-.chip{display:flex;align-items:center;gap:6px;background:rgba(28,18,52,.82);border:2px solid rgba(255,255,255,.14);
-  border-radius:99px;padding:7px 14px 7px 11px;font-weight:900;font-size:17px;color:#fff;
-  box-shadow:0 4px 12px rgba(0,0,0,.3);pointer-events:auto;min-height:42px}
-.chip .em{font-size:20px}
+  padding:max(8px,env(safe-area-inset-top)) 12px 8px 76px;pointer-events:none}
+.chip{display:flex;align-items:center;gap:5px;background:rgba(28,18,52,.82);border:2px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:5px 11px 5px 9px;font-weight:900;font-size:14px;color:#fff;white-space:nowrap;flex-shrink:0;
+  box-shadow:0 4px 12px rgba(0,0,0,.3);pointer-events:auto;min-height:34px}
+.chip .em{font-size:16px}
 .chip.day{font-family:'Fredoka One',cursive;font-weight:400;background:rgba(255,154,60,.92);color:#3a1d00;border-color:rgba(255,255,255,.4)}
 .chip.coins{background:rgba(255,225,77,.92);color:#4a3a00;border-color:rgba(255,255,255,.4)}
 .chip.basket{cursor:pointer}
-.chip.basket.empty{opacity:.45}
+.chip.basket.empty{display:none}
 .chip.basket .ct{min-width:14px;text-align:center}
 .grow{flex:1}
 #menuBtn{pointer-events:auto;width:44px;height:44px;border-radius:50%;background:rgba(28,18,52,.82);
@@ -146,12 +145,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 .tray-lbl{width:100%;text-align:center;font-family:'Fredoka One',cursive;font-size:15px;color:var(--yellow);margin-bottom:2px}
 .tray.hidden{display:none}
 .opt{display:flex;flex-direction:column;align-items:center;gap:2px;background:rgba(255,255,255,.07);
-  border:2px solid rgba(255,255,255,.12);border-radius:13px;padding:7px 7px 5px;min-width:60px;min-height:62px;flex:0 0 auto;
+  border:2px solid rgba(255,255,255,.12);border-radius:12px;padding:6px 6px 4px;min-width:52px;min-height:54px;flex:0 0 auto;
   transition:transform .1s,background .12s,border-color .12s}
 .opt:active{transform:scale(.93)}
 .opt.sel{border-color:var(--yellow);background:rgba(255,225,77,.18)}
-.opt .oe{font-size:32px;line-height:1}
-.opt .on{font-size:11px;font-weight:900;color:#fff;opacity:.85}
+.opt .oe{font-size:28px;line-height:1}
+.opt .on{font-size:10px;font-weight:900;color:#fff;opacity:.85}
 .opt.locked{opacity:.4}
 .opt.locked .oe{filter:grayscale(1)}
 
@@ -161,14 +160,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
   box-shadow:0 4px 0 rgba(0,0,0,.3)}
 
 /* Garden Time palette */
-#palette{display:none;gap:9px;align-items:flex-end;justify-content:center;pointer-events:auto;flex-wrap:wrap}
-.pal-btn{display:flex;flex-direction:column;align-items:center;gap:3px;width:76px;min-height:74px;
-  background:rgba(28,18,52,.92);border:3px solid rgba(255,255,255,.16);border-radius:18px;padding:9px 6px 7px;
+#palette{display:none;gap:8px;align-items:flex-end;justify-content:center;pointer-events:auto;flex-wrap:nowrap}
+.pal-btn{display:flex;flex-direction:column;align-items:center;gap:2px;width:62px;min-height:60px;flex:0 0 auto;
+  background:rgba(28,18,52,.92);border:3px solid rgba(255,255,255,.16);border-radius:16px;padding:7px 5px 6px;
   box-shadow:0 5px 14px rgba(0,0,0,.35);transition:transform .1s,border-color .12s,background .12s}
 .pal-btn:active{transform:scale(.9)}
 .pal-btn.active{border-color:var(--yellow);background:rgba(255,225,77,.2)}
-.pal-btn .pe{font-size:34px;line-height:1}
-.pal-btn .pl{font-size:12px;font-weight:900;color:#fff}
+.pal-btn .pe{font-size:27px;line-height:1}
+.pal-btn .pl{font-size:11px;font-weight:900;color:#fff}
 .pal-water{border-color:rgba(91,200,255,.4)}
 .pal-sleep{border-color:rgba(199,125,255,.45)}
 #doneBtn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.3)}
@@ -490,16 +489,18 @@ button{font-family:inherit;cursor:pointer;border:none;background:none;color:inhe
 
 /* ===== Phone-friendly tweaks ===== */
 @media (max-width:560px){
-  #hud{gap:5px;padding-left:8px;padding-right:8px}
-  .chip{padding:5px 11px 5px 9px;font-size:14px;min-height:38px}
-  .chip .em{font-size:17px}
+  #hud{gap:4px;padding-left:68px;padding-right:7px}
+  .chip{padding:4px 9px 4px 8px;font-size:13px;min-height:32px;gap:4px}
+  .chip .em{font-size:15px}
   .chip.lvl .lvl-bar{display:none}
-  .chip.lvl b{font-size:15px}
-  #menuBtn{width:40px;height:40px;font-size:17px}
+  .chip.lvl b{font-size:14px}
+  #menuBtn{width:36px;height:36px;font-size:16px}
   .dock-btn{width:44px;height:44px;border-radius:14px}
   .dock-btn .de{font-size:21px}
   .dock-btn .dl{font-size:8px}
-  .pal-btn{width:66px;min-height:66px;padding:8px 5px 6px}
+  .pal-btn{width:56px;min-height:54px;padding:6px 4px 5px}
+  .pal-btn .pe{font-size:24px}
+  .pal-btn .pl{font-size:10px}
   .pal-btn .pe{font-size:29px}
   #banner{font-size:15px;padding:9px 14px;white-space:normal;max-width:86vw;line-height:1.25}
   .fly-tag{font-size:10px}

@@ -32,7 +32,7 @@
 
   // ---------- LAYOUT / SCALE ----------
   GW.scale=1;
-  GW.baseReserve=function(){ return innerWidth<600 ? 118 : 138; };
+  GW.baseReserve=function(){ return innerWidth<600 ? 102 : 118; };
   function layout(){
     var vw=innerWidth, vh=innerHeight, top=54, bottom=GW.baseReserve();
     var rightRes = vw<600 ? 54 : 0;   // reserve room for the side dock on phones; iPad/desktop use the margin
