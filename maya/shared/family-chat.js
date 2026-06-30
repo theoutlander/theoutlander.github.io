@@ -359,7 +359,10 @@ function initChatWidget() {
 	if (!widget || !fab || !panel || !root) return;
 
 	let unread = 0;
-	let panelOpen = sessionStorage.getItem('maya_chat_panel_open') === '1';
+	// Always start closed — never auto-reopen on page load / game navigation.
+	// Maya must tap the chat button to open it.
+	let panelOpen = false;
+	try { sessionStorage.removeItem('maya_chat_panel_open'); } catch (e) {}
 	let scrollLockY = 0;
 	let appendDadNote = null;
 	let peekTimer = null;
