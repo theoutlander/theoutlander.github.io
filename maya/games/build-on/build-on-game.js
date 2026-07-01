@@ -110,7 +110,7 @@
   }
 
   /* ---------- gesture: quick tap = place/remove, drag = spin/look ---------- */
-  var THRESH=14, active=0, multi=false, gesture=null;
+  var THRESH=18, active=0, multi=false, gesture=null;
   function canvasXY(e){ var r=canvas.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; }
   function pickTarget(e){ var c=canvasXY(e); return BO.scene.resolveTapAt(c.x,c.y); }
   function placementCell(t){
@@ -143,8 +143,8 @@
     if(multi){ if(active===0) multi=false; if(viewMode!=='walk') BO.scene.hideGhost(); return; }
     if(!gesture||gesture.id!==e.pointerId){ if(viewMode!=='walk') BO.scene.hideGhost(); return; }
     var g=gesture; gesture=null; if(viewMode!=='walk') BO.scene.hideGhost();
-    if(g.moved || (performance.now()-g.t0)>700 || !started) return;
-    if(viewMode==='walk') return;
+    if(g.moved || !started) return;
+    if(viewMode==='walk'){ onTapResolved(walkAim); return; }
     onTapResolved(g.target!==undefined ? g.target : pickTarget(e));
   });
   canvas.addEventListener('pointercancel',function(){ active=Math.max(0,active-1); gesture=null; BO.scene.hideGhost(); });
@@ -213,7 +213,7 @@
   }
   function updateSelLabel(){
     var p=BO.piece(curPiece);
-    $('selLabel').textContent = tool==='grab' ? '🗑️ Erase — tap a block to remove' : ('Building with: '+(p?p.name:''));
+    $('selLabel').textContent = tool==='grab' ? '🗑️ Erase — tap a block to remove' : ('👆 Tap to place: '+(p?p.name:''));
   }
 
   /* ---------- tools ---------- */
@@ -240,7 +240,7 @@
     $('toolMode').querySelector('.tl').textContent = 'Walk';
     $('toolMode').classList.toggle('on', m==='walk');
     updateWalkBtn();
-    toast(m==='walk' ? '🚶 Walking! Sticks move & look — tap Walk again to stop' : '🔭 Back to bird\'s-eye view');
+    toast(m==='walk' ? '🚶 Sticks move & look • tap the screen to build!' : '🔭 Back to bird\'s-eye view');
   }
   $('toolMode').addEventListener('click',function(){ setView(viewMode==='walk'?'orbit':'walk'); BO.sfx.click(); });
 
