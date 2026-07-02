@@ -62,7 +62,9 @@ function serializeForInlineScript(data: unknown) {
 }
 
 // Get image dimensions from a local file path
-function getImageDimensions(imagePath: string): { width: number; height: number } | null {
+function getImageDimensions(
+	imagePath: string,
+): { width: number; height: number } | null {
 	try {
 		// Try to use 'file' command first (available on macOS/Linux)
 		const fileOutput = execSync(`file "${imagePath}"`, { encoding: "utf-8" });
@@ -81,7 +83,7 @@ function getImageDimensions(imagePath: string): { width: number; height: number 
 		// Try 'sips' on macOS
 		const sipsOutput = execSync(
 			`sips -g pixelWidth -g pixelHeight "${imagePath}"`,
-			{ encoding: "utf-8" }
+			{ encoding: "utf-8" },
 		);
 		const widthMatch = sipsOutput.match(/pixelWidth:\s*(\d+)/);
 		const heightMatch = sipsOutput.match(/pixelHeight:\s*(\d+)/);
@@ -100,7 +102,7 @@ function getImageDimensions(imagePath: string): { width: number; height: number 
 
 function buildInlineDataScript(id: string, data: unknown) {
 	return `<script id="${id}" type="application/json">${serializeForInlineScript(
-		data
+		data,
 	)}</script>`;
 }
 
@@ -111,26 +113,26 @@ function appendBlogComponentsCss(sourceCss: string): string {
 	try {
 		const designCss = readFileSync(
 			join(process.cwd(), "src", "styles", "design-system.css"),
-			"utf8"
+			"utf8",
 		);
 		sourceCss = `${sourceCss}\n${designCss}`;
 	} catch (error) {
 		console.warn(
 			"⚠️  Could not read src/styles/design-system.css:",
-			error instanceof Error ? error.message : String(error)
+			error instanceof Error ? error.message : String(error),
 		);
 	}
 	// Append blog component styles
 	try {
 		const blogCss = readFileSync(
 			join(process.cwd(), "src", "styles", "blog-components.css"),
-			"utf8"
+			"utf8",
 		);
 		return `${sourceCss}\n${blogCss}`;
 	} catch (error) {
 		console.warn(
 			"⚠️  Could not read src/styles/blog-components.css:",
-			error instanceof Error ? error.message : String(error)
+			error instanceof Error ? error.message : String(error),
 		);
 		return sourceCss;
 	}
@@ -158,7 +160,7 @@ const copyDirectory = (src: string, dest: string) => {
 			} catch (error) {
 				console.warn(
 					`⚠️  Could not copy ${srcPath}:`,
-					error instanceof Error ? error.message : String(error)
+					error instanceof Error ? error.message : String(error),
 				);
 			}
 		}
@@ -168,7 +170,7 @@ const copyDirectory = (src: string, dest: string) => {
 // Generate comprehensive CSS by rendering all pages and collecting all styles
 const generateComprehensiveCSS = async (
 	blogData: Post[],
-	aboutData: AboutData
+	aboutData: AboutData,
 ) => {
 	console.log("🎨 Generating comprehensive CSS...");
 
@@ -176,7 +178,7 @@ const generateComprehensiveCSS = async (
 	let reviewsData: CodementorReview[] = [];
 	try {
 		reviewsData = JSON.parse(
-			readFileSync("public/data/codementor-reviews.json", "utf8")
+			readFileSync("public/data/codementor-reviews.json", "utf8"),
 		) as CodementorReview[];
 	} catch (error) {
 		console.warn("⚠️  Could not load reviews data for CSS generation:", error);
@@ -194,7 +196,11 @@ const generateComprehensiveCSS = async (
 		{ name: "resume", component: ResumePagePanda, props: {} },
 		{ name: "calendar", component: CalendarPagePanda, props: {} },
 		{ name: "kitchen", component: KitchenPagePanda, props: {} },
-		{ name: "reviews", component: ReviewsPagePanda, props: { reviews: reviewsData } },
+		{
+			name: "reviews",
+			component: ReviewsPagePanda,
+			props: { reviews: reviewsData },
+		},
 	];
 	if (RECIPES[0]) {
 		pages.push({
@@ -236,7 +242,7 @@ const generateComprehensiveCSS = async (
 			undefined,
 			undefined,
 			undefined,
-			null
+			null,
 		);
 
 		// Extract CSS from this page
@@ -261,7 +267,7 @@ const generateComprehensiveCSS = async (
 	writeFileSync("dist/styles.css", combinedCSS);
 
 	console.log(
-		`✅ Generated comprehensive CSS file (${combinedCSS.length} characters)`
+		`✅ Generated comprehensive CSS file (${combinedCSS.length} characters)`,
 	);
 };
 
@@ -306,7 +312,7 @@ const generateWebSiteJsonLd = () => {
 		name: "Nick Karnik",
 		url: siteUrl,
 		description:
-			"Engineering leader with 25+ years building software across Google, Microsoft, and startups.",
+			"Engineering leader with nearly three decades across Google, Microsoft, Salesforce, Tableau, and startups.",
 		author: {
 			"@type": "Person",
 			name: "Nick Karnik",
@@ -351,7 +357,7 @@ const generateBlogPostJsonLd = (
 	image?: string | null,
 	dateModified?: string,
 	tags?: string[],
-	category?: string
+	category?: string,
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	const defaultImage = `${siteUrl}/assets/images/profile/nick-karnik.jpeg`;
@@ -360,7 +366,8 @@ const generateBlogPostJsonLd = (
 			? image
 			: `${siteUrl}${image}`
 		: defaultImage;
-	const year = (date && new Date(date).getFullYear()) || new Date().getFullYear();
+	const year =
+		(date && new Date(date).getFullYear()) || new Date().getFullYear();
 	const author = {
 		"@type": "Person" as const,
 		name: "Nick Karnik",
@@ -424,7 +431,7 @@ const generateBaseHTML = (
 	inlineDataScript?: string,
 	ogImageWidth?: number,
 	ogImageHeight?: number,
-	ogTitle?: string
+	ogTitle?: string,
 ) => {
 	const siteUrl = "https://nick.karnik.io";
 	// Site-wide default OG image fallback; individual pages may override via ogImage.
@@ -440,13 +447,13 @@ const generateBaseHTML = (
 	const finalOgType = ogType || "website";
 	const finalCanonicalUrl = canonicalUrl || siteUrl;
 	const facebookAppId = process.env.FACEBOOK_APP_ID;
-	
+
 	// Determine image type from URL
 	const imageType = finalOgImage.endsWith(".png")
 		? "image/png"
 		: finalOgImage.endsWith(".jpg") || finalOgImage.endsWith(".jpeg")
-		? "image/jpeg"
-		: "image/jpeg"; // default
+			? "image/jpeg"
+			: "image/jpeg"; // default
 
 	return `<!DOCTYPE html>
 <html lang="en" data-aesthetic="engineering" data-theme="light" data-density="airy" data-typeface="editorial">
@@ -539,8 +546,8 @@ const generateBaseHTML = (
 						.map(
 							(tag) =>
 								`<meta property="article:tag" content="${capitalizeFirstLetter(
-									tag
-								)}" />`
+									tag,
+								)}" />`,
 						)
 						.join("\n\t\t")
 				: ""
@@ -630,12 +637,16 @@ const SSRNav = () =>
 		{ className: "ds-site-nav", "aria-label": "Main navigation" },
 		React.createElement(
 			"a",
-			{ href: "/", className: "ds-brand-link", "aria-label": "Nick Karnik — home" },
+			{
+				href: "/",
+				className: "ds-brand-link",
+				"aria-label": "Nick Karnik — home",
+			},
 			React.createElement(
 				"span",
 				{ className: "ds-wordmark", style: { fontSize: 20 } },
-				"Nick Karnik"
-			)
+				"Nick Karnik",
+			),
 		),
 		React.createElement(
 			"div",
@@ -645,8 +656,10 @@ const SSRNav = () =>
 				{ href: "/about", label: "About" },
 				{ href: "/resume", label: "Résumé" },
 				{ href: "/reviews", label: "Reviews" },
-			].map((l) => React.createElement("a", { key: l.href, href: l.href }, l.label))
-		)
+			].map((l) =>
+				React.createElement("a", { key: l.href, href: l.href }, l.label),
+			),
+		),
 	);
 
 const SSRFooter = () =>
@@ -670,15 +683,33 @@ const SSRFooter = () =>
 						["https://youtube.com/@nick-karnik", "YouTube"],
 						["https://stackoverflow.com/users/460472/nick", "Stack Overflow"],
 					].map(([href, label]) =>
-						React.createElement("li", { key: href }, React.createElement("a", { href, target: "_blank", rel: "noreferrer" }, label))
-					)
-				)
+						React.createElement(
+							"li",
+							{ key: href },
+							React.createElement(
+								"a",
+								{ href, target: "_blank", rel: "noreferrer" },
+								label,
+							),
+						),
+					),
+				),
 			),
 			React.createElement(
 				"div",
 				null,
 				React.createElement("h4", null, "The Newsletter"),
-				React.createElement("p", { style: { fontSize: "0.95rem", color: "var(--ink-2)", margin: "0 0 0.75rem" } }, "A short letter, once a fortnight.")
+				React.createElement(
+					"p",
+					{
+						style: {
+							fontSize: "0.95rem",
+							color: "var(--ink-2)",
+							margin: "0 0 0.75rem",
+						},
+					},
+					"A short letter, once a fortnight.",
+				),
 			),
 			React.createElement(
 				"div",
@@ -692,30 +723,46 @@ const SSRFooter = () =>
 						["/resume", "Résumé"],
 						["/reviews", "Reviews"],
 					].map(([href, label]) =>
-						React.createElement("li", { key: href }, React.createElement("a", { href }, label))
-					)
-				)
-			)
+						React.createElement(
+							"li",
+							{ key: href },
+							React.createElement("a", { href }, label),
+						),
+					),
+				),
+			),
 		),
 		React.createElement(
 			"div",
 			{ className: "ds-colophon" },
-			React.createElement("span", null, "© MMXXVI · Nick Karnik · All rights reserved"),
-			React.createElement("span", null, "Set in Newsreader & JetBrains Mono")
-		)
+			React.createElement(
+				"span",
+				null,
+				"© MMXXVI · Nick Karnik · All rights reserved",
+			),
+			React.createElement("span", null, "Set in Newsreader & JetBrains Mono"),
+		),
 	);
 
 // Render a page component to HTML string
 const renderPageToHTML = (
 	PageComponent: React.ComponentType<any>,
-	props: any
+	props: any,
 ) => {
 	const element = React.createElement(
 		React.Fragment,
 		null,
-		React.createElement("header", { className: "ds-site-nav-bar" }, React.createElement(SSRNav)),
-		React.createElement("main", null, React.createElement(PageComponent, props)),
-		React.createElement(SSRFooter)
+		React.createElement(
+			"header",
+			{ className: "ds-site-nav-bar" },
+			React.createElement(SSRNav),
+		),
+		React.createElement(
+			"main",
+			null,
+			React.createElement(PageComponent, props),
+		),
+		React.createElement(SSRFooter),
 	);
 	const html = renderToString(element);
 
@@ -743,7 +790,7 @@ function findMainJSBundle(): string | null {
 				file.endsWith(".js") &&
 				(file.startsWith("index-") ||
 					file.startsWith("main-") ||
-					file.includes("main"))
+					file.includes("main")),
 		);
 		return mainJS ? `/assets/${mainJS}` : null;
 	} catch (error) {
@@ -783,7 +830,7 @@ export async function renderAllStaticPagesSSR() {
 		writeFileSync("dist/styles.css", sourceCss);
 	} catch (error) {
 		console.warn(
-			"⚠️  Could not read styled-system CSS, generating comprehensive CSS instead…"
+			"⚠️  Could not read styled-system CSS, generating comprehensive CSS instead…",
 		);
 		await generateComprehensiveCSS(blogData, aboutData);
 		sourceCss = readFileSync("dist/styles.css", "utf8");
@@ -808,9 +855,7 @@ export async function renderAllStaticPagesSSR() {
 	}
 
 	console.log("📁 Copying standalone app folders to dist...");
-	const standaloneFolders = [
-		{ source: "maya", destinations: ["dist/maya"] },
-	];
+	const standaloneFolders = [{ source: "maya", destinations: ["dist/maya"] }];
 	for (const folder of standaloneFolders) {
 		try {
 			for (const destination of folder.destinations) {
@@ -818,12 +863,12 @@ export async function renderAllStaticPagesSSR() {
 				copyDirectory(folder.source, destination);
 			}
 			console.log(
-				`✅ Copied ${folder.source} to ${folder.destinations.join(", ")}`
+				`✅ Copied ${folder.source} to ${folder.destinations.join(", ")}`,
 			);
 		} catch (error) {
 			console.warn(
 				`⚠️  Could not copy standalone folder ${folder.source}:`,
-				error instanceof Error ? error.message : String(error)
+				error instanceof Error ? error.message : String(error),
 			);
 		}
 	}
@@ -852,7 +897,7 @@ export async function renderAllStaticPagesSSR() {
 		} catch (error) {
 			console.warn(
 				`⚠️  Could not copy ${file}:`,
-				error instanceof Error ? error.message : String(error)
+				error instanceof Error ? error.message : String(error),
 			);
 		}
 	}
@@ -877,7 +922,7 @@ export async function renderAllStaticPagesSSR() {
 		undefined,
 		jsBundle,
 		homeJsonLd,
-		inlineAllPostsScript
+		inlineAllPostsScript,
 	);
 	const homeHTML = removeInlineStyles(homeHTMLWithStyles);
 	writeFileSync("dist/index.html", homeHTML);
@@ -903,7 +948,7 @@ export async function renderAllStaticPagesSSR() {
 		inlineAllPostsScript,
 		1200,
 		630,
-		"Nick Karnik | Engineering, Leadership & AI"
+		"Nick Karnik | Engineering, Leadership & AI",
 	);
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
@@ -931,7 +976,7 @@ export async function renderAllStaticPagesSSR() {
 		inlineAllPostsScript,
 		1200,
 		630,
-		"Nick Karnik | Engineering, Leadership & AI"
+		"Nick Karnik | Engineering, Leadership & AI",
 	);
 	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
 	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
@@ -955,7 +1000,7 @@ export async function renderAllStaticPagesSSR() {
 		"profile",
 		undefined,
 		jsBundle,
-		aboutJsonLd
+		aboutJsonLd,
 	);
 	const aboutHTML = removeInlineStyles(aboutHTMLWithStyles);
 	writeFileSync(join(aboutDir, "index.html"), aboutHTML);
@@ -968,7 +1013,7 @@ export async function renderAllStaticPagesSSR() {
 	const resumeJsonLd = generatePersonJsonLd("https://nick.karnik.io/resume");
 	const resumeHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Resume",
-		"Software engineer and engineering leader with 25 years across Google, Microsoft, Tableau, and startups.",
+		"Engineering leader with nearly three decades across Google, Microsoft, Salesforce, Tableau, and startups.",
 		resumeResult.html,
 		cssHref,
 		resumeResult.helmet.title +
@@ -979,7 +1024,7 @@ export async function renderAllStaticPagesSSR() {
 		"profile",
 		undefined,
 		jsBundle,
-		resumeJsonLd
+		resumeJsonLd,
 	);
 	const resumeHTML = removeInlineStyles(resumeHTMLWithStyles);
 	writeFileSync(join(resumeDir, "index.html"), resumeHTML);
@@ -1001,7 +1046,7 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
 	);
 	const calendarHTML = removeInlineStyles(calendarHTMLWithStyles);
 	writeFileSync(join(calendarDir, "index.html"), calendarHTML);
@@ -1023,7 +1068,7 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
 	);
 	const kitchenHTML = removeInlineStyles(kitchenHTMLWithStyles);
 	writeFileSync(join(kitchenDir, "index.html"), kitchenHTML);
@@ -1037,36 +1082,43 @@ export async function renderAllStaticPagesSSR() {
 			recipe.dek,
 			recipeResult.html,
 			cssHref,
-			recipeResult.helmet.title + recipeResult.helmet.meta + recipeResult.helmet.link,
+			recipeResult.helmet.title +
+				recipeResult.helmet.meta +
+				recipeResult.helmet.link,
 			`${PERSON.siteUrl}/kitchen/${recipe.slug}`,
 			`${PERSON.siteUrl}${PERSON.profileImage}`,
 			"article",
 			undefined,
-			jsBundle
+			jsBundle,
 		);
-		writeFileSync(join(recipeDir, "index.html"), removeInlineStyles(recipeHTMLWithStyles));
+		writeFileSync(
+			join(recipeDir, "index.html"),
+			removeInlineStyles(recipeHTMLWithStyles),
+		);
 	}
 
 	// Render reviews page
 	console.log("📄 Rendering reviews page with SSR...");
 	const reviewsDir = join("dist", "reviews");
 	mkdirSync(reviewsDir, { recursive: true });
-	
+
 	// Load reviews data
 	let reviewsData: CodementorReview[] = [];
 	try {
 		reviewsData = JSON.parse(
-			readFileSync("public/data/codementor-reviews.json", "utf8")
+			readFileSync("public/data/codementor-reviews.json", "utf8"),
 		) as CodementorReview[];
 	} catch (error) {
 		console.warn("⚠️  Could not load reviews data:", error);
 	}
-	
-	const reviewsResult = renderPageToHTML(ReviewsPagePanda, { reviews: reviewsData });
+
+	const reviewsResult = renderPageToHTML(ReviewsPagePanda, {
+		reviews: reviewsData,
+	});
 	const reviewsJsonLd = generatePersonJsonLd("https://nick.karnik.io/reviews");
 	const inlineReviewsScript = buildInlineDataScript(
 		CODEMENTOR_REVIEWS_INLINE_ID,
-		reviewsData
+		reviewsData,
 	);
 	const reviewsHTMLWithStyles = generateBaseHTML(
 		"Nick Karnik | Reviews",
@@ -1082,7 +1134,7 @@ export async function renderAllStaticPagesSSR() {
 		undefined,
 		jsBundle,
 		reviewsJsonLd,
-		inlineReviewsScript
+		inlineReviewsScript,
 	);
 	const reviewsHTML = removeInlineStyles(reviewsHTMLWithStyles);
 	writeFileSync(join(reviewsDir, "index.html"), reviewsHTML);
@@ -1100,7 +1152,7 @@ export async function renderAllStaticPagesSSR() {
 			fullPostData = JSON.parse(readFileSync(postDataPath, "utf8"));
 		} catch (error) {
 			console.warn(
-				`⚠️  Could not read post data for ${post.slug}, using basic data`
+				`⚠️  Could not read post data for ${post.slug}, using basic data`,
 			);
 			fullPostData = post;
 		}
@@ -1114,7 +1166,9 @@ export async function renderAllStaticPagesSSR() {
 		//   1. Branded OG card (1200x630) generated by scripts/generate-og-cards.ts
 		//   2. Optimized -og version of the post cover
 		//   3. The raw cover, else the profile image
-		let postOgImage = post.cover || "https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg";
+		let postOgImage =
+			post.cover ||
+			"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg";
 		// Branded card dimensions are fixed, so we can declare them directly
 		// (and avoid the unreliable getImageDimensions on non-macOS CI).
 		let brandedCardDims: { width: number; height: number } | undefined;
@@ -1173,11 +1227,11 @@ export async function renderAllStaticPagesSSR() {
 			post.cover,
 			articleData.modifiedTime,
 			post.tags,
-			post.category ?? undefined
+			post.category ?? undefined,
 		);
 		const postInlineScript = buildInlineDataScript(
 			"__POST_DATA__",
-			fullPostData
+			fullPostData,
 		);
 		const postHTMLWithStyles = generateBaseHTML(
 			`${post.title} - Nick Karnik`,
@@ -1193,7 +1247,7 @@ export async function renderAllStaticPagesSSR() {
 			postJsonLd,
 			postInlineScript,
 			ogImageWidth,
-			ogImageHeight
+			ogImageHeight,
 		);
 		const postHTML = removeInlineStyles(postHTMLWithStyles);
 		writeFileSync(join(postDir, "index.html"), postHTML);
@@ -1214,7 +1268,7 @@ export async function renderAllStaticPagesSSR() {
 		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
 		"website",
 		undefined,
-		jsBundle
+		jsBundle,
 	);
 	const notFoundHTML = removeInlineStyles(notFoundHTMLWithStyles);
 	writeFileSync("dist/404.html", notFoundHTML);

@@ -24,7 +24,7 @@
 	},
 	"heroLede": "Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.",
 	"stats": [
-		{ "n": "25+", "l": "Years in software" },
+		{ "n": "28+", "l": "Years in software" },
 		{ "n": "1M+", "l": "Developers reached" },
 		{ "n": "100+", "l": "Developers trained" },
 		{ "n": "1", "l": "US patent granted" }
@@ -49,7 +49,7 @@
 	],
 	"about": {
 		"title": "About",
-		"html": "\n\t<p>Nearly three decades of building software. Search engines, disease models, data platforms, AI tools. Not linear, not planned, all of it real.</p>\n\t<p>At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. I co-invented a patent on intent detection. At the Institute for Disease Modeling I built software that ended up in a Bill Gates TED Talk. At Tableau I led the data connectivity platform. At Google I led Gemini Code Assist from inception to millions of developers.</p>\n\t<p>I cook seriously, make cocktails, travel when I can, and build games with my three kids.</p>\n\t<p>Still figuring out what comes next and building it anyway.</p>\n"
+		"html": "\n\t<p>Nearly three decades of building software. Search engines, disease models, data platforms, AI tools. Not linear, not planned, all of it real.</p>\n\t<p>At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. I co-invented a patent on intent detection. At the Institute for Disease Modeling I built software that ended up in a Bill Gates TED Talk. At Tableau I led the data connectivity platform, work that continued after Salesforce acquired the company. At Google I led Gemini Code Assist from inception to millions of developers.</p>\n\t<p>I cook seriously, make cocktails, travel when I can, and build games with my three kids.</p>\n\t<p>Still figuring out what comes next and building it anyway.</p>\n"
 	},
 	"aboutShort": "I'm Nick Karnik. Lead Software Development Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Nearly three decades building software.",
 	"aboutSiteDescription": "This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.",
@@ -66,7 +66,7 @@
 		},
 		"resume": {
 			"title": "Nick Karnik | Résumé",
-			"description": "Software engineer and engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau, Salesforce, and earlier startups."
+			"description": "Engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau, Salesforce, and earlier startups."
 		},
 		"blog": {
 			"title": "Nick Karnik | Blog",

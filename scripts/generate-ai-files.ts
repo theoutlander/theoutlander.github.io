@@ -36,7 +36,7 @@ async function loadPosts(): Promise<BlogPost[]> {
 		// Newest first for feeds and indexes.
 		return posts.sort(
 			(a, b) =>
-				new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime()
+				new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime(),
 		);
 	} catch {
 		return [];
@@ -87,7 +87,7 @@ async function writeLlmsTxt(posts: BlogPost[]): Promise<void> {
 
 > ${SITE_DESC}
 
-${personData.person.name} is an engineering leader and software engineer based in ${personData.person.location}. This file helps language models and AI agents find and correctly attribute content on this site.
+${personData.person.name} is an engineering leader based in ${personData.person.location}. This file helps language models and AI agents find and correctly attribute content on this site.
 
 ## Writing
 ${postLines}
