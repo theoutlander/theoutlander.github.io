@@ -1,7 +1,7 @@
 /* Online lobby (host / join), chat & emotes.
-   STUBBED for the prototype: no real network. Designed so Claude Code can wire
-   each state to a server-authoritative room keyed by the share code.
-*/
+   Wired to the server-authoritative Room over WebSocket (game/net.js). The
+   visual design is unchanged from the prototype — only the simulated joiners
+   were replaced with real lobby state from the server. */
 (function () {
   const e = React.createElement;
   const { Avatar, TopBar } = window.JUI;
@@ -14,148 +14,164 @@
     return s;
   }
 
-  /* ---------- HOST + LOBBY ---------- */
-  function HostScreen({ go, start, roster }) {
+  /* ---------- HOST: share a code; host starts when ready ---------- */
+  function HostScreen({ go, startOnline, roster }) {
     const you = roster.find((r) => r.you) || { name: 'You', color: PLAYER_COLORS[0], avatar: AVATARS[0] };
-    const [name, setName] = React.useState(you.name === 'You' ? '' : you.name);
-    const [phase, setPhase] = React.useState('name'); // name | lobby
+    const [name, setName] = React.useState(you.name && you.name !== 'You' ? you.name : '');
     const [code] = React.useState(makeCode);
-    const [seats, setSeats] = React.useState([]);
-    const [bots, setBots] = React.useState(false);
+    const [lobby, setLobby] = React.useState(null);
     const [copied, setCopied] = React.useState(false);
-    const url = 'nicksgames.app/play/' + code;
+    const [err, setErr] = React.useState('');
+    const connRef = React.useRef(null);
+    const handedOff = React.useRef(false);
 
-    function create() {
-      if (!name.trim()) return;
-      setSeats([{ id: 'host', name: name.trim(), color: you.color || PLAYER_COLORS[0], avatar: you.avatar || AVATARS[0], host: true, ready: true }]);
-      setPhase('lobby');
-      window.JSound && window.JSound.bid();
-    }
-
-    // demo only: simulate family members joining over time
     React.useEffect(() => {
-      if (phase !== 'lobby') return;
-      const joiners = ['Mom', 'Dad', 'Priya'];
-      const timers = joiners.map((nm, i) => setTimeout(() => {
-        setSeats((s) => s.length < 6 ? s.concat([{
-          id: 'j' + i, name: nm, color: PLAYER_COLORS[(i + 1) % PLAYER_COLORS.length],
-          avatar: AVATARS[(i + 1) % AVATARS.length], ready: Math.random() > 0.4,
-        }]) : s);
-      }, 1500 + i * 1800));
-      return () => timers.forEach(clearTimeout);
-    }, [phase]);
+      const conn = window.JNet.open(code, {
+        name: (name || 'Host'), color: you.color || PLAYER_COLORS[0], avatar: you.avatar || AVATARS[0],
+      }, {
+        onLobby: (m) => setLobby(m),
+        onState: () => { if (!handedOff.current) { handedOff.current = true; startOnline(conn); } },
+        onError: (msg) => setErr(msg),
+      });
+      connRef.current = conn;
+      return () => { if (!handedOff.current) conn.close(); };
+    }, []); // open once
+
+    // push name edits to the server (same token → server just renames the seat)
+    React.useEffect(() => {
+      const c = connRef.current;
+      if (c && name.trim()) c.send({ t: 'join', token: window.JNet.token(), name: name.trim(), color: you.color, avatar: you.avatar });
+    }, [name]);
+
+    const seats = lobby ? lobby.seats : [];
+    const size = lobby ? lobby.size : 4;
+    const botsEnabled = lobby ? lobby.botsEnabled : false;
+    const url = location.host + '/play/' + code;
+    const canStart = botsEnabled ? seats.length >= 1 : seats.length >= 3;
 
     function copy() {
-      try { navigator.clipboard.writeText('https://' + url); } catch (err) {}
+      try { navigator.clipboard.writeText(location.origin + '/play/' + code); } catch (err) {}
       setCopied(true); window.JSound && window.JSound.click();
       setTimeout(() => setCopied(false), 1800);
     }
 
-    function begin() {
-      // prototype: launch a local game using the lobby seats (remote players act as bots here)
-      const players = seats.map((s, i) => Object.assign({}, s, { isBot: i !== 0 }));
-      start(players, { startCards: 7, scoring: 'classic' });
+    const chips = [];
+    for (let i = 0; i < Math.max(size, seats.length); i++) {
+      chips.push(i < seats.length ? { kind: i === 0 ? 'host' : 'in', p: seats[i] } : { kind: 'wait' });
     }
 
-    if (phase === 'name') {
-      return e('div', { className: 'screen' },
-        e(TopBar, { title: 'Host a game', onBack: () => go('home') }),
-        e('div', { className: 'scroll pad' },
-          e('p', { className: 'on-felt', style: { opacity: .8, marginTop: 0 } }, 'Start a private table and share the link. Family taps it, types a name, and they\u2019re in \u2014 no account needed.'),
-          e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7 } }, 'Your name'),
-          e('input', { className: 'text-input', placeholder: 'e.g. Nick', value: name, maxLength: 16, onChange: (ev) => setName(ev.target.value) }),
-          e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 18 }, disabled: !name.trim(), onClick: create }, 'Create table')
-        )
-      );
-    }
-
-    const canStart = seats.length >= 3 && seats.every((s) => s.ready);
     return e('div', { className: 'screen' },
-      e(TopBar, { title: 'Your table', onBack: () => go('home'), sub: seats.length + ' joined' }),
+      e(TopBar, { title: 'Start a game', onBack: () => go('home') }),
       e('div', { className: 'scroll pad' },
-        e('div', { className: 'on-felt tiny', style: { opacity: .7, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', textAlign: 'center' } }, 'Room code'),
-        e('div', { className: 'code-box' }, e('span', { className: 'code-text' }, code)),
-        e('div', { className: 'link-row' },
-          e('input', { value: url, readOnly: true }),
-          e('button', { className: 'btn btn-primary', style: { minHeight: 42, padding: '10px 16px' }, onClick: copy }, copied ? 'Copied \u2713' : 'Copy')
+        e('p', { className: 'host-intro' }, 'Name yourself, pick the table size, then share the code — everyone hops in from the link.'),
+        err ? e('div', { className: 'lobby-status', style: { color: 'var(--bad)', marginTop: 0 } }, err) : null,
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 2 } }, 'Your name'),
+        e('input', { className: 'text-input', placeholder: 'Your name', value: name, maxLength: 16, onChange: (ev) => setName(ev.target.value) }),
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 18 } }, 'How many players?'),
+        e('div', { className: 'numpick' },
+          [4, 5, 6].map((nN) => e('button', {
+            key: nN, className: 'numbtn' + (nN === size ? ' on' : ''),
+            onClick: () => { connRef.current && connRef.current.setSize(nN); window.JSound && window.JSound.click(); },
+          }, nN))
         ),
-        e('div', { className: 'row', style: { gap: 10, margin: '10px 0 18px' } },
-          e('button', { className: 'btn btn-ghost grow', onClick: copy }, '\uD83D\uDD17 Share link'),
-          e('button', { className: 'btn btn-ghost grow', onClick: () => window.JSound && window.JSound.click() }, '\u2709 Invite')
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 18 } }, 'Invite'),
+        e('div', { className: 'invite-box' },
+          e('span', { className: 'invite-code' }, code),
+          e('button', { className: 'btn btn-ghost invite-copy', onClick: copy }, copied ? 'Copied ✓' : '🔗 Copy link')
         ),
-
-        e('div', { className: 'on-felt', style: { fontWeight: 800, marginBottom: 10 } }, 'At the table'),
-        e('div', { className: 'col', style: { gap: 8 } },
-          seats.map((s) => e('div', { key: s.id, className: 'lobby-seat' },
-            e(Avatar, { player: s, size: 40 }),
-            e('div', { className: 'col', style: { alignItems: 'flex-start' } },
-              e('div', { style: { fontWeight: 700, color: 'var(--felt-text)' } }, s.name, s.host ? e('span', { className: 'you-tag' }, 'host') : null),
-              e('div', { className: 'tiny', style: { color: 'var(--felt-text)', opacity: .6 } }, s.ready ? 'Ready' : 'Getting ready\u2026')
-            ),
-            e('span', { className: 'ready-dot ' + (s.ready ? 'on' : 'off') })
-          )),
-          Array.from({ length: Math.max(0, 4 - seats.length) }).map((_, i) =>
-            e('div', { key: 'empty' + i, className: 'lobby-seat empty' },
-              e('div', { className: 'avatar', style: { width: 40, height: 40, background: 'rgba(255,255,255,.12)', color: 'var(--felt-text)' } }, '?'),
-              e('div', { className: 'tiny', style: { color: 'var(--felt-text)', opacity: .6 } }, bots ? 'Will fill with a bot' : 'Waiting for a player\u2026')
-            )
-          )
-        ),
-
-        e('div', { className: 'set-row', style: { marginTop: 14, borderTop: 'none', background: 'rgba(0,0,0,.2)', borderRadius: 14, padding: '12px 14px' } },
+        e('div', { className: 'set-line', style: { marginTop: 18 } },
           e('div', { className: 'col grow', style: { alignItems: 'flex-start' } },
-            e('div', { className: 'set-label' }, 'Add bots to empty seats'),
-            e('div', { className: 'tiny', style: { color: 'var(--felt-text)', opacity: .6 } }, 'Off by default \u2014 great for practice with the grandparents')
-          ),
-          e('button', { className: 'toggle ' + (bots ? 'on' : ''), onClick: () => { setBots(!bots); window.JSound && window.JSound.click(); } })
+            e('div', { className: 'set-title' }, 'Fill empty seats with bots'),
+            e('div', { className: 'set-sub' }, 'Start without waiting for a full table')),
+          e('button', { className: 'toggle ' + (botsEnabled ? 'on' : ''), onClick: () => connRef.current && connRef.current.setBots(!botsEnabled) })),
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 18 } }, 'At the table (' + seats.length + ' of ' + size + ')'),
+        e('div', { className: 'join-progress' }, e('div', { className: 'join-progress-fill', style: { width: (100 * Math.min(seats.length, size) / size) + '%' } })),
+        e('div', { className: 'lobby-chips' },
+          chips.map((c, i) => c.kind === 'wait'
+            ? e('div', { key: 'w' + i, className: 'mini-seat wait' }, e('span', { className: 'ms-q' }, '…'), e('span', { className: 'ms-name' }, 'open'))
+            : e('div', { key: i, className: 'mini-seat in' + (c.p.connected === false ? ' wait' : '') },
+                e(Avatar, { player: c.p, size: 38 }),
+                e('span', { className: 'ms-name' }, i === 0 ? 'You' : c.p.name)))
         ),
-
-        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 16 }, disabled: !canStart && !bots,
-          onClick: begin }, canStart || bots ? 'Start game \u2192' : 'Waiting for everyone to be ready\u2026'),
-        e('p', { className: 'on-felt tiny', style: { opacity: .55, textAlign: 'center', marginTop: 10 } },
-          'Demo: tap Start to play this table vs. the engine. Online, only the host sees this button.')
+        e('button', {
+          className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 20 }, disabled: !canStart,
+          onClick: () => { connRef.current && connRef.current.start(); window.JSound && window.JSound.bid(); },
+        }, canStart ? 'Start game' : 'Waiting for players…'),
+        e('div', { className: 'lobby-status' }, botsEnabled ? 'Empty seats will be filled with bots.' : 'Share the code — start once everyone has joined.')
       )
     );
   }
 
-  /* ---------- JOIN ---------- */
-  function JoinScreen({ go }) {
-    const [code, setCode] = React.useState('');
+  /* ---------- JOIN: enter name + code, seat by name, wait for host ---------- */
+  function JoinScreen({ go, startOnline, initialCode }) {
+    const [val, setVal] = React.useState(initialCode || '');
     const [name, setName] = React.useState('');
+    const [lobby, setLobby] = React.useState(null);
     const [joined, setJoined] = React.useState(false);
+    const [err, setErr] = React.useState('');
+    const connRef = React.useRef(null);
+    const handedOff = React.useRef(false);
+
+    function extractCode(v) {
+      let t = String(v).trim();
+      if (t.indexOf('/') >= 0) t = t.split('/').filter(Boolean).pop() || '';
+      t = t.toUpperCase().replace(/[^ABCDEFGHJKLMNPQRSTUVWXYZ23456789]/g, '');
+      return t.slice(0, 8);
+    }
+    const code = extractCode(val);
+
+    React.useEffect(() => () => { if (connRef.current && !handedOff.current) connRef.current.close(); }, []);
+
+    function joinGame() {
+      if (!code || !name.trim()) return;
+      setErr('');
+      const conn = window.JNet.open(code, { name: name.trim(), color: PLAYER_COLORS[2], avatar: AVATARS[2] }, {
+        onWelcome: () => setJoined(true),
+        onLobby: (m) => setLobby(m),
+        onState: () => { if (!handedOff.current) { handedOff.current = true; startOnline(conn); } },
+        onError: (msg) => setErr(msg),
+      });
+      connRef.current = conn;
+      window.JSound && window.JSound.bid();
+    }
+
     if (joined) {
+      const seats = lobby ? lobby.seats : [];
+      const size = lobby ? lobby.size : (seats.length || 4);
+      const mySeat = lobby ? lobby.you.seat : 0;
+      const chips = [];
+      for (let i = 0; i < Math.max(size, seats.length); i++) chips.push(i < seats.length ? { kind: 'in', p: seats[i] } : { kind: 'wait' });
       return e('div', { className: 'screen' },
-        e(TopBar, { title: 'Joining\u2026', onBack: () => go('home') }),
-        e('div', { className: 'col center grow pad', style: { gap: 16 } },
-          e('div', { className: 'spinner' }),
-          e('div', { className: 'on-felt', style: { fontWeight: 700, fontSize: 18 } }, 'Waiting for the host to start\u2026'),
-          e('div', { className: 'on-felt tiny', style: { opacity: .65, textAlign: 'center' } }, 'You\u2019re in room ', e('b', null, code.toUpperCase()), '. Hang tight \u2014 ', e('b', null, name), ' is at the table.'),
-          e('div', { className: 'lobby-seat', style: { marginTop: 8 } },
-            e(Avatar, { player: { name: name || '?', color: PLAYER_COLORS[2], avatar: AVATARS[2] }, size: 40 }),
-            e('div', { style: { fontWeight: 700, color: 'var(--felt-text)' } }, name || 'You'),
-            e('span', { className: 'ready-dot on' }))
+        e(TopBar, { title: 'At the table', onBack: () => { if (connRef.current) connRef.current.close(); go('home'); } }),
+        e('div', { className: 'scroll pad', style: { textAlign: 'center' } },
+          e('div', { className: 'on-felt', style: { fontWeight: 800, fontSize: 22, marginTop: 8 } }, 'You’re in!'),
+          e('div', { className: 'on-felt tiny', style: { opacity: .7, marginBottom: 18 } }, 'Room ', e('b', null, code)),
+          err ? e('div', { className: 'lobby-status', style: { color: 'var(--bad)' } }, err) : null,
+          e('div', { className: 'lobby-chips', style: { justifyContent: 'center' } },
+            chips.map((c, i) => c.kind === 'wait'
+              ? e('div', { key: 'w' + i, className: 'mini-seat wait' }, e('span', { className: 'ms-q' }, '…'), e('span', { className: 'ms-name' }, 'open'))
+              : e('div', { key: i, className: 'mini-seat in' + (c.p.connected === false ? ' wait' : '') }, e(Avatar, { player: c.p, size: 38 }), e('span', { className: 'ms-name' }, i === mySeat ? 'You' : c.p.name)))),
+          e('div', { className: 'lobby-status' }, 'Waiting for the host to start…')
         )
       );
     }
     return e('div', { className: 'screen' },
       e(TopBar, { title: 'Join a game', onBack: () => go('home') }),
       e('div', { className: 'scroll pad' },
-        e('p', { className: 'on-felt', style: { opacity: .8, marginTop: 0 } }, 'Got a link or code from your family? Drop in here.'),
-        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7 } }, 'Room code'),
-        e('input', { className: 'text-input', placeholder: 'ABCDE', value: code, maxLength: 5,
-          style: { textTransform: 'uppercase', letterSpacing: '.2em', fontFamily: 'var(--ff-display)', fontSize: 24, textAlign: 'center' },
-          onChange: (ev) => setCode(ev.target.value.toUpperCase()) }),
-        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7 } }, 'Your name'),
-        e('input', { className: 'text-input', placeholder: 'e.g. Grandma', value: name, maxLength: 16, onChange: (ev) => setName(ev.target.value) }),
-        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 18 }, disabled: code.length < 4 || !name.trim(),
-          onClick: () => { setJoined(true); window.JSound && window.JSound.bid(); } }, 'Join table')
+        err ? e('div', { className: 'lobby-status', style: { color: 'var(--bad)', marginTop: 0 } }, err) : null,
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 2 } }, 'Your name'),
+        e('input', { className: 'text-input', placeholder: 'Your name', value: name, maxLength: 16, onChange: (ev) => setName(ev.target.value) }),
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 18 } }, 'Game code'),
+        e('input', { className: 'code-input', placeholder: '· · · · ·', value: val, autoCapitalize: 'characters', autoCorrect: 'off', spellCheck: false, onChange: (ev) => setVal(ev.target.value) }),
+        e('div', { className: 'join-hint' }, code ? e('span', null, 'Joining room ', e('b', { style: { letterSpacing: '.12em' } }, code)) : 'Tap the invite link a friend sent, or type their code here.'),
+        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 18 }, disabled: !code || !name.trim(), onClick: joinGame }, 'Join game')
       )
     );
   }
 
-  /* ---------- CHAT ---------- */
+  /* ---------- CHAT (unchanged; local echo — not wired to a button yet) ---------- */
   const SEED_CHAT = [
-    { who: 'Mom', me: false, text: 'Good luck everyone \uD83D\uDE18' },
+    { who: 'Mom', me: false, text: 'Good luck everyone 😘' },
     { who: 'Dad', me: false, text: 'Nick always overbids haha' },
   ];
   function ChatPanel({ onClose, players }) {
@@ -171,17 +187,17 @@
     return e('div', { className: 'chat-panel' },
       e('div', { className: 'row between pad', style: { borderBottom: '1px solid var(--line)', flex: 'none' } },
         e('h3', { style: { fontSize: 20 } }, 'Table chat'),
-        e('button', { className: 'icon-btn', style: { color: 'var(--ink)', background: 'var(--paper-2)' }, onClick: onClose }, '\u2715')),
+        e('button', { className: 'icon-btn', style: { color: 'var(--ink)', background: 'var(--paper-2)' }, onClick: onClose }, '✕')),
       e('div', { className: 'chat-msgs', ref: endRef },
         msgs.map((m, i) => e('div', { key: i, className: 'chat-msg ' + (m.me ? 'me' : 'them') },
           m.me ? null : e('div', { className: 'who' }, m.who), m.text))
       ),
       e('div', { className: 'emote-row' },
-        ['\uD83D\uDC4F', '\uD83D\uDE02', '\uD83D\uDE2D', '\uD83D\uDD25', '\uD83C\uDFAF', '\uD83D\uDE08'].map((em) =>
+        ['👏', '😂', '😭', '🔥', '🎯', '😈'].map((em) =>
           e('button', { key: em, className: 'emote', onClick: () => send(em) }, em))
       ),
       e('div', { className: 'chat-input' },
-        e('input', { className: 'text-input', placeholder: 'Say something\u2026', value: text,
+        e('input', { className: 'text-input', placeholder: 'Say something…', value: text,
           onChange: (ev) => setText(ev.target.value), onKeyDown: (ev) => ev.key === 'Enter' && send() }),
         e('button', { className: 'btn btn-primary', style: { minHeight: 50, padding: '0 20px' }, onClick: () => send() }, 'Send'))
     );

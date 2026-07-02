@@ -23,3 +23,7 @@ supabase/.temp/project-ref
 supabase/.temp/rest-version
 supabase/.temp/storage-migration
 supabase/.temp/storage-version
+
+# Judgment local dev state (wrangler/miniflare)
+.judgment-state/
+judgment/server/.wrangler/

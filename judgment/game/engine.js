@@ -1,4 +1,4 @@
-/* Judgment / Oh Hell — pure game engine + controller.
+/* Judgment / Oh Hell, pure game engine + controller.
    Seat 0 is always the human. Bots are seats 1..n-1.
    House rules (per Nick): trump is RANDOM each round, dealing & first bid
    start LEFT of the dealer, dealer rotates clockwise. Classic Oh Hell scoring:
@@ -9,7 +9,7 @@
   const SUITS = ['spades', 'hearts', 'diamonds', 'clubs'];
   const RANKS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; // 11=J 12=Q 13=K 14=A
   const RANK_LABEL = { 11: 'J', 12: 'Q', 13: 'K', 14: 'A' };
-  const SUIT_SYMBOL = { spades: '\u2660', hearts: '\u2665', diamonds: '\u2666', clubs: '\u2663' };
+  const SUIT_SYMBOL = { spades: '♠', hearts: '♥', diamonds: '♦', clubs: '♣' };
   const SUIT_COLOR = { spades: 'black', clubs: 'black', hearts: 'red', diamonds: 'red' };
 
   function rankLabel(r) { return RANK_LABEL[r] || String(r); }

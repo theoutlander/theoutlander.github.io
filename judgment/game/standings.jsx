@@ -21,31 +21,42 @@
 
   function StandingsScreen({ go, history }) {
     const [tab, setTab] = React.useState('board');
-    const board = aggregate(history);
+    // Prefer the server (D1) leaderboard/history; fall back to local sample data
+    // when the API isn't reachable (e.g. opened as a plain static file).
+    const [srvBoard, setSrvBoard] = React.useState(null);
+    const [srvHist, setSrvHist] = React.useState(null);
+    React.useEffect(() => {
+      let ok = true;
+      fetch('/api/leaderboard').then((r) => r.ok ? r.json() : null).then((d) => { if (ok && d && d.board) setSrvBoard(d.board); }).catch(() => {});
+      fetch('/api/history').then((r) => r.ok ? r.json() : null).then((d) => { if (ok && d && d.history) setSrvHist(d.history); }).catch(() => {});
+      return () => { ok = false; };
+    }, []);
+    const board = srvBoard || aggregate(history);
+    const hist = srvHist || history;
     return e('div', { className: 'screen' },
       e(TopBar, { title: 'Standings', onBack: () => go('home') }),
       e('div', { className: 'seg-wrap' },
-        e(Segmented, { value: tab, options: [{ value: 'board', label: '\uD83C\uDFC6 Leaderboard' }, { value: 'history', label: '\uD83D\uDD52 History' }], onChange: setTab })),
+        e(Segmented, { value: tab, options: [{ value: 'board', label: '🏆 Leaderboard' }, { value: 'history', label: '🕒 History' }], onChange: setTab })),
       e('div', { className: 'scroll pad', style: { paddingTop: 6 } },
         tab === 'board'
           ? (board.length === 0
               ? e('div', { className: 'empty-note' }, 'No games yet. Finish a game and save it to start the leaderboard.')
               : board.map((p, i) => e('div', { key: p.name, className: 'lb-row' },
-                  e('div', { className: 'lb-rank ' + (i === 0 ? 'gold' : '') }, i === 0 ? '\uD83E\uDD47' : '#' + (i + 1)),
+                  e('div', { className: 'lb-rank ' + (i === 0 ? 'gold' : '') }, i === 0 ? '🥇' : '#' + (i + 1)),
                   e(Avatar, { player: p, size: 44 }),
                   e('div', { className: 'col', style: { alignItems: 'flex-start' } },
                     e('div', { style: { fontWeight: 800, fontSize: 17 } }, p.name),
-                    e('div', { className: 'lb-sub' }, p.wins + (p.wins === 1 ? ' win' : ' wins') + ' \u00b7 ' + p.games + ' played' + (p.bidsTotal ? ' \u00b7 ' + Math.round(100 * p.bidsHit / p.bidsTotal) + '% bids' : ''))
+                    e('div', { className: 'lb-sub' }, p.wins + (p.wins === 1 ? ' win' : ' wins') + ' · ' + p.games + ' played' + (p.bidsTotal ? ' · ' + Math.round(100 * p.bidsHit / p.bidsTotal) + '% bids' : ''))
                   ),
                   e('div', { className: 'lb-stat' },
                     e('div', { className: 'lb-pts' }, p.points),
                     e('div', { className: 'lb-sub' }, 'points'))
                 )))
-          : (history.length === 0
+          : (hist.length === 0
               ? e('div', { className: 'empty-note' }, 'No past games yet.')
-              : history.slice().reverse().map((g, i) => e('div', { key: i, className: 'hist-card' },
+              : hist.slice().reverse().map((g, i) => e('div', { key: i, className: 'hist-card' },
                   e('div', { className: 'hist-top' },
-                    e('div', { className: 'hist-win' }, '\uD83C\uDFC6 ' + g.players.find((p) => p.place === 1).name),
+                    e('div', { className: 'hist-win' }, '🏆 ' + g.players.find((p) => p.place === 1).name),
                     e('div', { className: 'hist-date' }, g.date)),
                   e('div', { className: 'hist-players' },
                     g.players.slice().sort((a, b) => a.place - b.place).map((p, k) =>
@@ -58,79 +69,63 @@
   /* ---------- How to play ---------- */
   function HowToScreen({ go }) {
     const steps = [
-      ['Get your cards', 'Each round everyone is dealt the same number of cards. It starts at 7, drops one per round down to 1, then climbs back up. A trump suit is picked at random each round \u2014 trumps beat everything.'],
-      ['Make your call', 'Each round (a \u201chand\u201d) is one card from every player \u2014 highest card takes it. Before playing, predict exactly how many hands you\u2019ll win. Bidding starts left of the dealer. The last bidder can\u2019t make the bids add up to the number of cards \u2014 so someone always has to miss.'],
-      ['Play it out', 'Follow the led suit if you can. If you can\u2019t, play a trump to win it or throw off a low card. Highest trump wins; otherwise highest card of the led suit.'],
-      ['Hit your number', 'Score only if you win exactly as many hands as you called: 10 + your bid. One too many or too few and you get nothing for the round.'],
-      ['Win the game', 'Add up every round. Highest total when the cards run out wins. Save the result to the family leaderboard.'],
+      ['Deal', 'Everyone gets the same number of cards.'],
+      ['Hukum', 'One random suit beats all others.'],
+      ['Call', 'Guess how many hands you will win.'],
+      ['Play', 'Highest Hukum wins, else highest of the led suit.'],
+      ['Score', 'Nail your guess: 10 + bid. Miss: zero.'],
     ];
     return e('div', { className: 'screen' },
       e(TopBar, { title: 'How to play', onBack: () => go('home') }),
       e('div', { className: 'scroll pad' },
-        e('div', { className: 'card-surface pad', style: { marginBottom: 16 } },
-          e('div', { className: 'row', style: { gap: 10, justifyContent: 'center', marginBottom: 8 } },
-            ['\u2660', '\u2665', '\u2666', '\u2663'].map((s, i) => e('span', { key: i, style: { fontSize: 26, color: i % 2 ? '#c0362c' : '#23201c' } }, s))),
-          e('p', { style: { margin: 0, textAlign: 'center', fontWeight: 600, color: 'var(--ink-soft)' } },
-            'Judgment is all about one thing: call your hands exactly right. Not the most \u2014 the exact number.')
-        ),
-        steps.map((s, i) => e('div', { key: i, className: 'howto-step' },
+        e('p', { className: 'on-felt', style: { textAlign: 'center', fontWeight: 600, margin: '2px 0 16px', opacity: .85 } },
+          'Win exactly the number of hands you call.'),
+        steps.map((s, i) => e('div', { key: i, className: 'howto-step compact' },
           e('div', { className: 'howto-num' }, i + 1),
           e('div', { className: 'howto-body' }, e('h4', null, s[0]), e('p', null, s[1]))
         )),
-        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 6 }, onClick: () => go('setup') }, 'Try a quick game \u2192')
+        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 10 }, onClick: () => go('setup') }, 'Try a quick game')
       )
     );
   }
 
-  /* ---------- Settings ---------- */
-  function SettingsScreen({ go, settings, setSettings }) {
+  /* ---------- Settings: fits one screen, no scroll ---------- */
+  function SettingsScreen({ go, settings, setSettings, onBack }) {
     const set = (k, v) => { setSettings(Object.assign({}, settings, { [k]: v })); window.JSound && window.JSound.click(); };
+    const sample = [{ rank: 14, suit: 'spades' }, { rank: 13, suit: 'hearts' }, { rank: 12, suit: 'diamonds' }];
     return e('div', { className: 'screen' },
-      e(TopBar, { title: 'Settings', onBack: () => go('home') }),
-      e('div', { className: 'scroll pad' },
-        // table theme
-        e('div', { className: 'set-group' },
-          e('div', { className: 'set-label', style: { marginBottom: 12 } }, 'Table'),
-          e('div', { className: 'back-pick' },
-            Object.keys(TABLES).map((k) => e('button', {
-              key: k, className: 'theme-swatch' + (settings.table === k ? ' on' : ''),
-              style: { background: 'radial-gradient(120% 120% at 30% 20%,' + TABLES[k].feltA + ',' + TABLES[k].feltB + ')' },
-              onClick: () => { set('table', k); window.JThemes.applyTable(k); }, title: TABLES[k].name,
-            }))
-          )
+      e(TopBar, { title: 'Settings', onBack: onBack || (() => go('home')) }),
+      e('div', { className: 'settings-page' },
+        e('div', { className: 'set-card' },
+          e('div', { className: 'set-h' }, 'Table'),
+          e('div', { className: 'pick-row' }, Object.keys(TABLES).map((k) => e('button', {
+            key: k, className: 'pick' + (settings.table === k ? ' on' : ''),
+            onClick: () => { set('table', k); window.JThemes.applyTable(k); },
+          },
+            e('span', { className: 'pick-felt', style: { background: 'radial-gradient(120% 120% at 30% 24%,' + TABLES[k].feltA + ',' + TABLES[k].feltB + ')' } },
+              settings.table === k ? e('span', { className: 'pick-check' }, '✓') : null),
+            e('span', { className: 'pick-name' }, TABLES[k].name)
+          )))
         ),
-        // card back
-        e('div', { className: 'set-group' },
-          e('div', { className: 'set-label', style: { marginBottom: 12 } }, 'Card back'),
-          e('div', { className: 'back-pick', style: { alignItems: 'center' } },
-            Object.keys(BACKS).map((k) => e('div', { key: k, onClick: () => set('back', k),
-              style: { borderRadius: 10, padding: 3, border: '2px solid ' + (settings.back === k ? 'var(--accent)' : 'transparent') } },
-              e(Card, { faceDown: true, width: 44, back: BACKS[k] })))
-          )
-        ),
-        // face style
-        e('div', { className: 'set-group' },
-          e('div', { className: 'set-label', style: { marginBottom: 12 } }, 'Card faces'),
-          e(Segmented, { value: settings.faceStyle,
-            options: [{ value: 'modern', label: 'Clean' }, { value: 'pips', label: 'Pips' }],
-            onChange: (v) => set('faceStyle', v) }),
-          e('div', { className: 'row center', style: { gap: 12, marginTop: 14 } },
-            e(Card, { card: { rank: 9, suit: 'hearts' }, width: 60, faceStyle: settings.faceStyle }),
-            e(Card, { card: { rank: 14, suit: 'spades' }, width: 60, faceStyle: settings.faceStyle }),
-            e(Card, { card: { rank: 13, suit: 'diamonds' }, width: 60, faceStyle: settings.faceStyle }))
-        ),
-        // sound
-        e('div', { className: 'set-group' },
-          e('div', { className: 'set-row', style: { paddingTop: 0 } },
-            e('div', { className: 'set-label grow' }, 'Sound effects'),
+        // toggles combined into one card to save height
+        e('div', { className: 'set-card' },
+          e('div', { className: 'set-line' },
+            e('div', { className: 'col grow', style: { alignItems: 'flex-start' } },
+              e('div', { className: 'set-title' }, 'Easy Mode'),
+              e('div', { className: 'set-sub' }, 'Bigger cards & text, calmer motion — easier to see')),
+            e('button', { className: 'toggle ' + (settings.easyView ? 'on' : ''), onClick: () => set('easyView', !settings.easyView) })),
+          e('div', { className: 'set-div' }),
+          e('div', { className: 'set-line' },
+            e('div', { className: 'col grow', style: { alignItems: 'flex-start' } },
+              e('div', { className: 'set-title' }, 'Sound'),
+              e('div', { className: 'set-sub' }, 'Shuffles, chimes and little cheers')),
             e('button', { className: 'toggle ' + (settings.sound ? 'on' : ''), onClick: () => { const v = !settings.sound; set('sound', v); window.JSound.enabled = v; } })),
-          settings.sound ? e('div', { className: 'set-row' },
-            e('div', { className: 'set-label grow' }, 'Volume'),
-            e('input', { type: 'range', min: 0, max: 1, step: 0.05, defaultValue: settings.volume,
-              onChange: (ev) => { window.JSound.setVolume(parseFloat(ev.target.value)); setSettings(Object.assign({}, settings, { volume: parseFloat(ev.target.value) })); },
-              style: { width: 150, accentColor: 'var(--accent)' } })) : null
+          settings.sound ? e('div', { className: 'set-line vol' },
+            e('span', { className: 'set-sub' }, 'Volume'),
+            e('input', { type: 'range', min: 0, max: 1, step: 0.05, defaultValue: settings.volume, className: 'vol-slider',
+              onChange: (ev) => { window.JSound.setVolume(parseFloat(ev.target.value)); setSettings(Object.assign({}, settings, { volume: parseFloat(ev.target.value) })); } })) : null
         ),
-        e('p', { className: 'on-felt tiny', style: { opacity: .5, textAlign: 'center' } }, 'Judgment \u00b7 a family project')
+        e('p', { className: 'on-felt tiny', style: { opacity: .45, textAlign: 'center', margin: 'auto 0 0' } }, 'Judgment · Nick’s Games')
       )
     );
   }

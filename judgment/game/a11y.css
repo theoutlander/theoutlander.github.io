@@ -1,0 +1,42 @@
+/* ===== Accessibility: Easy View ===== */
+
+/* Easy View, bigger, higher-contrast, calmer motion */
+.frame.a11y-easy {
+  --card-red: #c8261b;
+  --card-black: #14110d;
+}
+/* darken the felt so the white cards pop (dark themes); light themes keep it airy */
+.frame.a11y-easy::before {
+  content: ''; position: absolute; inset: 0; background: rgba(0,0,0,.24);
+  pointer-events: none; z-index: 0;
+}
+
+/* bigger, bolder game text */
+body.theme-light .frame.a11y-easy::before { background: rgba(0,0,0,.05); }
+.frame.a11y-easy .turn-pill { font-size: 16px; padding: 9px 16px; }
+.frame.a11y-easy .turn-dot2 { width: 12px; height: 12px; }
+.frame.a11y-easy .progress-pill { font-size: 15px; }
+.frame.a11y-easy .trump-line { font-size: 17px; padding: 9px 14px; }
+.frame.a11y-easy .trump-line .tl-ic { font-size: 24px; }
+.frame.a11y-easy .trump-line .tl-hint { display: none; }   /* less clutter */
+.frame.a11y-easy .sb-label { font-size: 11px; }
+.frame.a11y-easy .sb-name { font-size: 14px; }
+.frame.a11y-easy .sb-tot { font-size: 20px; }
+.frame.a11y-easy .opp-name { font-size: 13px; }
+.frame.a11y-easy .opp-stat { font-size: 16px; }
+.frame.a11y-easy .bidnum { min-width: 54px; height: 54px; font-size: 23px; }
+.frame.a11y-easy .bidbar-q { font-size: 17px; }
+
+/* larger, higher-contrast rank index on the cards themselves */
+.frame.a11y-easy .card .corner .r { font-size: calc(var(--cardw, 64px) * 0.46); }
+.frame.a11y-easy .card .corner .s { font-size: calc(var(--cardw, 64px) * 0.30); }
+.frame.a11y-easy .card { border: 1.5px solid rgba(0,0,0,.2); }
+
+/* calmer motion, no pulsing/bobbing, but keep a clear static highlight */
+.frame.a11y-easy .turn-pill.you { animation: none; box-shadow: 0 0 0 3px rgba(224,182,91,.55); }
+.frame.a11y-easy .hand-wrap.your-turn .hand-card.playable { animation: none; }
+.frame.a11y-easy .hand-wrap.your-turn .hand-card.playable .card { box-shadow: 0 0 0 3px var(--accent), var(--shadow-card); }
+.frame.a11y-easy .active-glow { animation: none; box-shadow: 0 0 0 3px var(--accent); }
+
+/* stronger trump marker on your cards */
+.frame.a11y-easy .hand-card.is-trump .card::before { width: 6px; }

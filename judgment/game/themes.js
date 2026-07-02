@@ -4,67 +4,89 @@
 (function () {
   // Table / felt themes ------------------------------------------------------
   const TABLES = {
+    fresh: {
+      name: 'Fresh', light: true, swatch: 'linear-gradient(135deg,#f2f8ff,#c4dbf2)',
+      feltA: '#f4f9ff', feltB: '#d5e6f6', feltC: '#b7cfe8', rail: '#9db6d4', railB: '#c4d8ec',
+      accent: '#e09a1c', accentSoft: '#f2c655', feltText: '#26344f',
+    },
+    linen: {
+      name: 'Linen', light: true, swatch: 'linear-gradient(135deg,#fbf5e9,#e6d4b4)',
+      feltA: '#fbf6ec', feltB: '#efe1c8', feltC: '#e0cda6', rail: '#c4ab82', railB: '#e2d3b4',
+      accent: '#bf7a12', accentSoft: '#dfa63c', feltText: '#3a3220',
+    },
+    sky: {
+      name: 'Sky', light: true, swatch: 'linear-gradient(135deg,#e8f5ff,#a9d4f2)',
+      feltA: '#ecf6ff', feltB: '#c6e2f7', feltC: '#a3ccef', rail: '#84aecf', railB: '#bcd8ee',
+      accent: '#d9821a', accentSoft: '#f0ab4c', feltText: '#1f3a55',
+    },
+    aurora: {
+      name: 'Aurora', swatch: 'linear-gradient(135deg,#22ccb6,#7a5cf0)',
+      feltA: '#22ccb6', feltB: '#7357e6', feltC: '#463488', rail: '#160f2e', railB: '#241a48',
+      accent: '#ffd24a', accentSoft: '#ffe7a0', feltText: '#f6f4ff',
+    },
     emerald: {
-      name: 'Emerald', swatch: '#1f6b4f',
-      feltA: '#1f6b4f', feltB: '#0c3325', rail: '#1c130c', railB: '#2a1d12',
-      accent: '#e0b65b', accentSoft: '#f0d79a', feltText: '#f3efe2',
+      name: 'Emerald', swatch: 'linear-gradient(135deg,#1ad889,#0e8f66)',
+      feltA: '#1ad889', feltB: '#12986c', feltC: '#0a5a41', rail: '#0a2a1e', railB: '#123f30',
+      accent: '#ffcf4d', accentSoft: '#ffe6a0', feltText: '#f4fdf8',
+    },
+    sunset: {
+      name: 'Sunset', swatch: 'linear-gradient(135deg,#ff8672,#c23f84)',
+      feltA: '#ff8672', feltB: '#cc4589', feltC: '#7a2a5c', rail: '#2e0f26', railB: '#451a38',
+      accent: '#ffe15c', accentSoft: '#fff0ad', feltText: '#fff4f4',
     },
     sapphire: {
-      name: 'Sapphire', swatch: '#2660a8',
-      feltA: '#22577f', feltB: '#0c2440', rail: '#10182a', railB: '#1d2942',
-      accent: '#d8c06a', accentSoft: '#eedf9f', feltText: '#eef3f8',
+      name: 'Sapphire', swatch: 'linear-gradient(135deg,#54b4ff,#2f6bd0)',
+      feltA: '#54b4ff', feltB: '#3470c8', feltC: '#1d4590', rail: '#0c1630', railB: '#1b2b52',
+      accent: '#ffd24a', accentSoft: '#ffe7a0', feltText: '#f2f8ff',
     },
-    wine: {
-      name: 'Claret', swatch: '#9e3145',
-      feltA: '#8a2a3c', feltB: '#3c1018', rail: '#26120f', railB: '#3a1c18',
-      accent: '#e6c068', accentSoft: '#f3dfa6', feltText: '#f6ece9',
+    orchid: {
+      name: 'Orchid', swatch: 'linear-gradient(135deg,#c574ff,#7d46d8)',
+      feltA: '#c574ff', feltB: '#8a4fe0', feltC: '#4e2f92', rail: '#1c1030', railB: '#2c1a4a',
+      accent: '#ffd66b', accentSoft: '#ffe9ac', feltText: '#faf4ff',
     },
-    midnight: {
-      name: 'Midnight', swatch: '#2c3142',
-      feltA: '#2f3548', feltB: '#14161f', rail: '#0c0d12', railB: '#1c1f2b',
-      accent: '#c9a14a', accentSoft: '#e6cf8f', feltText: '#eceef4',
-    },
-    walnut: {
-      name: 'Walnut', swatch: '#7b4a26',
-      feltA: '#3a5d4a', feltB: '#1d3328', rail: '#3b2412', railB: '#5a3a1f',
-      accent: '#e8b964', accentSoft: '#f4dca0', feltText: '#f1ece0',
+    onyx: {
+      name: 'Slate', swatch: 'linear-gradient(135deg,#6a7aa0,#2c3650)',
+      feltA: '#6a7aa0', feltB: '#454f6e', feltC: '#28304a', rail: '#0a0c12', railB: '#1a1e2a',
+      accent: '#ffd66b', accentSoft: '#ffe9ac', feltText: '#f2f5fc',
     },
   };
 
   // Card back styles ---------------------------------------------------------
   // rendered via CSS background built from these stops.
   const BACKS = {
-    classic: { name: 'Royal', c1: '#b3361f', c2: '#7e2113', ink: '#f4dca0' },
-    azure: { name: 'Azure', c1: '#2c5f96', c2: '#1a3a63', ink: '#dbe8f5' },
-    forest: { name: 'Forest', c1: '#2f7053', c2: '#194632', ink: '#e8d79a' },
-    plum: { name: 'Plum', c1: '#6c3b76', c2: '#3f2147', ink: '#ecd6f0' },
-    ink: { name: 'Ink', c1: '#33384a', c2: '#1a1d28', ink: '#c8a24c' },
+    classic: { name: 'Crimson', c1: '#d1402c', c2: '#8a1f15', ink: '#ffdf9a' },
+    azure: { name: 'Azure', c1: '#3a86d0', c2: '#1c4a86', ink: '#e2eefb' },
+    forest: { name: 'Jade', c1: '#26a878', c2: '#12503a', ink: '#f2e6a8' },
+    plum: { name: 'Orchid', c1: '#9a5bd0', c2: '#4e2c74', ink: '#f2ddfb' },
+    ink: { name: 'Slate', c1: '#3d4660', c2: '#20242f', ink: '#e6c268' },
   };
 
-  // Friendly, distinct player colors ----------------------------------------
+  // Friendly, distinct player colors (bright, modern, high-contrast on felt) --
   const PLAYER_COLORS = [
-    '#e0b65b', // gold (you, by default)
-    '#5fa8d3', // sky
-    '#e08a5f', // coral
-    '#8bbf6e', // sage
-    '#c987d8', // orchid
-    '#e2697f', // rose
-    '#6ec3b4', // teal
-    '#b9a06a', // sand
+    '#ffc94d', // gold (you, by default)
+    '#4fc3f7', // bright sky
+    '#ff8a5c', // coral
+    '#8ce16a', // lime
+    '#c98bff', // violet
+    '#ff6f91', // pink
+    '#3fd9c4', // turquoise
+    '#ffd86b', // amber
   ];
 
-  const AVATARS = ['\u265B', '\u2660', '\u2665', '\u2666', '\u2663', '\u2654', '\u2657', '\u2658', '\u2616', '\u269C'];
+  const AVATARS = ['♛', '♠', '♥', '♦', '♣', '♔', '♗', '♘', '☖', '⚜'];
 
   function applyTable(key) {
-    const t = TABLES[key] || TABLES.emerald;
+    const t = TABLES[key] || TABLES.aurora;
     const r = document.documentElement.style;
     r.setProperty('--felt-a', t.feltA);
     r.setProperty('--felt-b', t.feltB);
+    r.setProperty('--felt-c', t.feltC || t.feltB);
     r.setProperty('--rail', t.rail);
     r.setProperty('--rail-b', t.railB);
     r.setProperty('--accent', t.accent);
     r.setProperty('--accent-soft', t.accentSoft);
     r.setProperty('--felt-text', t.feltText);
+    document.body.classList.toggle('theme-light', !!t.light);
   }
 
   window.JThemes = { TABLES, BACKS, PLAYER_COLORS, AVATARS, applyTable };

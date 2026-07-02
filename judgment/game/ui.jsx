@@ -3,14 +3,16 @@
   const { SUIT_SYMBOL, SUIT_COLOR } = window.JEngine;
   const e = React.createElement;
 
-  function Avatar({ player, size = 44, ring, dim }) {
+  function Avatar({ player, size = 44, ring, dim, initials }) {
     const s = size;
-    const fs = Math.round(s * 0.46);
-    const glyph = player.avatar || (player.name ? player.name[0].toUpperCase() : '?');
+    const fs = Math.round(s * (initials ? 0.42 : 0.46));
+    const glyph = (initials || !player.avatar)
+      ? (player.name ? player.name[0].toUpperCase() : '?')
+      : player.avatar;
     return e('div', {
       className: 'avatar' + (ring ? ' active-glow' : ''),
       style: {
-        width: s, height: s, fontSize: fs,
+        width: s, height: s, fontSize: fs, fontWeight: initials ? 800 : 700,
         background: 'radial-gradient(120% 120% at 30% 20%, ' + tint(player.color, 0.22) + ', ' + player.color + ')',
         opacity: dim ? 0.55 : 1,
         border: '2px solid rgba(255,255,255,.5)',
@@ -40,7 +42,7 @@
 
   function TopBar({ title, onBack, right, sub }) {
     return e('div', { className: 'row', style: { padding: '8px 14px', gap: 10, minHeight: 56, flex: 'none' } },
-      onBack ? e('button', { className: 'icon-btn', onClick: onBack, 'aria-label': 'Back' }, '\u2190') : e('div', { style: { width: 46 } }),
+      onBack ? e('button', { className: 'icon-btn', onClick: onBack, 'aria-label': 'Back' }, '←') : e('div', { style: { width: 46 } }),
       e('div', { className: 'col grow', style: { alignItems: 'center' } },
         e('div', { className: 'on-felt', style: { fontFamily: 'var(--ff-display)', fontWeight: 700, fontSize: 19 } }, title),
         sub ? e('div', { className: 'on-felt tiny', style: { opacity: .7 } }, sub) : null
@@ -77,7 +79,7 @@
     const inc = () => value < max && onChange(value + 1);
     const bad = forbidden != null && value === forbidden;
     return e('div', { className: 'row', style: { gap: 16, justifyContent: 'center' } },
-      e('button', { className: 'step-btn', onClick: dec, disabled: value <= min }, '\u2212'),
+      e('button', { className: 'step-btn', onClick: dec, disabled: value <= min }, '−'),
       e('div', { className: 'col center', style: { width: 96 } },
         e('div', { style: {
           fontFamily: 'var(--ff-display)', fontWeight: 700, fontSize: 56, lineHeight: 1,

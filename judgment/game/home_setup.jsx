@@ -7,12 +7,12 @@
   function Wordmark({ size = 1 }) {
     return e('div', { className: 'col center', style: { gap: 6 } },
       e('div', { className: 'row', style: { gap: 10, fontSize: 18 * size } },
-        e('span', { style: { color: '#ff7a6e' } }, '\u2665'),
-        e('span', { style: { color: 'var(--felt-text)' } }, '\u2660'),
-        e('span', { style: { color: '#ff7a6e' } }, '\u2666'),
-        e('span', { style: { color: 'var(--felt-text)' } }, '\u2663')
+        e('span', { style: { color: '#ff7a6e' } }, '♥'),
+        e('span', { style: { color: 'var(--felt-text)' } }, '♠'),
+        e('span', { style: { color: '#ff7a6e' } }, '♦'),
+        e('span', { style: { color: 'var(--felt-text)' } }, '♣')
       ),
-      e('h1', { className: 'on-felt', style: { fontSize: 52 * size, letterSpacing: '-.02em', lineHeight: .95 } }, 'Judgment'),
+      e('h1', { className: 'on-felt', style: { fontSize: 46 * size, letterSpacing: '-.02em', lineHeight: .95 } }, 'Judgment'),
       e('div', { className: 'eyebrow on-felt', style: { opacity: .7 } }, 'The hand you call is the hand you make')
     );
   }
@@ -27,87 +27,81 @@
     );
   }
 
+  function FanHero() {
+    const Card = window.Card;
+    const cards = [
+      { rank: 14, suit: 'hearts' },
+      { rank: 13, suit: 'spades' },
+      { rank: 12, suit: 'diamonds' },
+      { rank: 11, suit: 'clubs' },
+      { rank: 10, suit: 'hearts' },
+    ];
+    const n = cards.length;
+    return e('div', { className: 'home-fan', 'aria-hidden': 'true' },
+      cards.map((c, i) => {
+        const t = i - (n - 1) / 2;
+        const angle = t * 11;
+        return e('div', {
+          key: i, className: 'fan-card',
+          style: { transform: 'translateX(-50%) rotate(' + angle + 'deg)', zIndex: i },
+        }, e(Card, { card: c, width: 82, faceStyle: 'modern' }));
+      })
+    );
+  }
+
   function HomeScreen({ go, roster }) {
-    return e('div', { className: 'screen' },
-      e('div', { className: 'scroll' },
+    return e('div', { className: 'screen home-screen' },
+      e('div', { className: 'home-inner' },
         e('div', { className: 'safe-top' }),
-        e('div', { className: 'col center', style: { padding: '46px 20px 26px' } }, e(Wordmark, null)),
-        e('div', { className: 'pad', style: { paddingTop: 4, display: 'flex', flexDirection: 'column', gap: 12 } },
-          e('button', { className: 'btn btn-primary btn-block btn-lg', onClick: () => go('setup') },
-            '\u25B6  Play now'),
-          e('div', { className: 'row', style: { gap: 12 } },
-            e('button', { className: 'btn btn-ghost grow', onClick: () => go('host') }, 'Host online'),
-            e('button', { className: 'btn btn-ghost grow', onClick: () => go('join') }, 'Join with code')
-          ),
-          e('div', { style: { height: 6 } }),
-          e('div', { className: 'tiles' },
-            e(HomeTile, { icon: '\uD83D\uDCD6', label: 'How to play', sub: '2 min read', onClick: () => go('howto') }),
-            e(HomeTile, { icon: '\u2699\uFE0F', label: 'Settings', sub: 'Themes & sound', onClick: () => go('settings') })
+        e('div', { className: 'home-spacer' }),
+        e('div', { className: 'home-center' },
+          e('div', { className: 'col center', style: { padding: '0 22px' } }, e(Wordmark, null)),
+          e('div', { className: 'home-actions' },
+            e('button', { className: 'btn btn-primary btn-block btn-lg', onClick: () => go('host') }, 'Start a game'),
+            e('button', { className: 'btn btn-outline btn-block btn-lg', onClick: () => go('join') }, 'Join a game'),
+            e('div', { className: 'home-foot' },
+              e('button', { className: 'foot-link', onClick: () => go('setup') }, 'Practice alone'),
+              e('span', { className: 'foot-sep' }, '·'),
+              e('button', { className: 'foot-link', onClick: () => go('howto') }, 'How to play'),
+              e('span', { className: 'foot-sep' }, '·'),
+              e('button', { className: 'foot-link', onClick: () => go('standings') }, 'Leaderboard'),
+              e('span', { className: 'foot-sep' }, '·'),
+              e('button', { className: 'foot-link', onClick: () => go('settings') }, 'Settings'))
           )
-        )
+        ),
+        e('div', { className: 'home-spacer' }),
+        e(FanHero, null)
       )
     );
   }
 
-  /* ---------- Setup (local game vs bots) ---------- */
+  /* ---------- Setup (practice alone vs bots) ---------- */
   function SetupScreen({ go, roster, start, settings }) {
-    const defaultSeats = () => {
+    const [size, setSize] = React.useState(4);
+    function begin() {
       const you = roster.find((r) => r.you) || { id: 'you', name: 'You', color: PLAYER_COLORS[0], avatar: AVATARS[0], you: true };
       const seats = [you];
-      while (seats.length < 4) {
+      const botNames = ['Sam', 'Maya', 'Arjun', 'Priya', 'Leo', 'Nina', 'Omar'];
+      while (seats.length < size) {
         const i = seats.length;
-        seats.push({ id: 'bot' + i, name: 'Bot ' + i, color: PLAYER_COLORS[i % PLAYER_COLORS.length], avatar: AVATARS[i % AVATARS.length], isBot: true });
+        seats.push({ id: 'bot' + i, name: botNames[i - 1] || ('Bot ' + i), color: PLAYER_COLORS[i % PLAYER_COLORS.length], avatar: AVATARS[i % AVATARS.length], isBot: true });
       }
-      return seats;
-    };
-    const [seats, setSeats] = React.useState(defaultSeats);
-
-    function addSeat() {
-      if (seats.length >= 8) return;
-      const i = seats.length;
-      setSeats(seats.concat([{ id: 'bot' + Date.now(), name: 'Bot ' + i, color: PLAYER_COLORS[i % PLAYER_COLORS.length], avatar: AVATARS[i % AVATARS.length], isBot: true }]));
-      window.JSound && window.JSound.click();
+      const maxCards = Math.floor(52 / size);
+      start(seats, { startCards: maxCards, scoring: 'classic', faceStyle: settings.faceStyle });
     }
-    function removeSeat() {
-      if (seats.length > 3) setSeats(seats.slice(0, -1));
-      window.JSound && window.JSound.click();
-    }
-
-    const maxCards = Math.floor(52 / seats.length);
-    const rounds = window.JEngine.buildSchedule(seats.length, maxCards).length;
-
     return e('div', { className: 'screen' },
-      e(TopBar, { title: 'New game', onBack: () => go('home') }),
-      e('div', { className: 'scroll pad', style: { paddingTop: 10, display: 'flex', flexDirection: 'column' } },
-
-        // simple: how many players
-        e('div', { className: 'col center', style: { gap: 6, marginTop: 18 } },
-          e('div', { className: 'on-felt', style: { fontWeight: 800, fontSize: 19, whiteSpace: 'nowrap' } }, 'How many players?'),
-          e('div', { className: 'on-felt tiny', style: { opacity: .65, textAlign: 'center', maxWidth: 280 } },
-            'It\u2019s just you vs. friendly bots for now \u2014 great for learning the game.')
+      e(TopBar, { title: 'Practice alone', onBack: () => go('home') }),
+      e('div', { className: 'scroll pad' },
+        e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 8 } }, 'How many players?'),
+        e('div', { className: 'numpick' },
+          [4, 5, 6].map((nN) => e('button', {
+            key: nN, className: 'numbtn' + (nN === size ? ' on' : ''),
+            onClick: () => { setSize(nN); window.JSound && window.JSound.click(); },
+          }, nN))
         ),
-
-        // big stepper
-        e('div', { className: 'row center', style: { gap: 22, margin: '24px 0 18px' } },
-          e('button', { className: 'step-btn', onClick: removeSeat, disabled: seats.length <= 3 }, '\u2212'),
-          e('div', { className: 'col center', style: { width: 70 } },
-            e('div', { style: { fontFamily: 'var(--ff-display)', fontWeight: 700, fontSize: 56, lineHeight: 1, color: 'var(--felt-text)' } }, seats.length),
-            e('div', { className: 'on-felt tiny', style: { opacity: .6 } }, 'players')
-          ),
-          e('button', { className: 'step-btn', onClick: addSeat, disabled: seats.length >= 8 }, '+')
-        ),
-
-        // full-deck format note
-        e('div', { className: 'setup-block', style: { textAlign: 'center' } },
-          e('div', { className: 'on-felt', style: { fontWeight: 800, fontSize: 15, marginBottom: 4 } }, 'Full deck \u00b7 ', e('b', null, rounds), ' rounds'),
-          e('p', { className: 'on-felt tiny', style: { opacity: .65, margin: 0 } },
-            'Deal all the cards (', e('b', null, maxCards), ' each), count down to 1, then back up. Trump is random each round. Hit your bid exactly for ', e('b', null, '10 + your bid'), '.')
-        ),
-
-        e('button', {
-          className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 4 },
-          onClick: () => start(seats, { startCards: maxCards, scoring: 'classic', faceStyle: settings.faceStyle }),
-        }, '\u25B6  Start game')
+        e('p', { className: 'on-felt tiny', style: { opacity: .6, textAlign: 'center', marginTop: 14 } },
+          'You play against ', e('b', null, size - 1), ' practice opponents.'),
+        e('button', { className: 'btn btn-primary btn-block btn-lg', style: { marginTop: 18 }, onClick: begin }, '▶  Start game')
       )
     );
   }
@@ -128,7 +122,7 @@
       e('div', { className: 'scroll pad' },
         e('p', { className: 'on-felt tiny', style: { opacity: .7, marginTop: 0, marginBottom: 14 } },
           'Save everyone who plays. Pick them into games and track them on the leaderboard. (Syncs to your database once Claude Code wires it up.)'),
-        roster.length === 0 ? e('div', { className: 'on-felt', style: { opacity: .6, textAlign: 'center', padding: 30 } }, 'No players yet \u2014 tap + to add your family.') : null,
+        roster.length === 0 ? e('div', { className: 'on-felt', style: { opacity: .6, textAlign: 'center', padding: 30 } }, 'No players yet, tap + to add your family.') : null,
         e('div', { className: 'col', style: { gap: 10 } },
           roster.map((r, i) => e('button', { key: r.id, className: 'roster-row', onClick: () => setEditing(i) },
             e(Avatar, { player: r, size: 46 }),
@@ -136,7 +130,7 @@
               e('div', { style: { fontWeight: 700, fontSize: 17 } }, r.name, r.you ? e('span', { className: 'you-tag' }, 'you') : null),
               e('div', { className: 'tiny muted' }, 'Tap to edit')
             ),
-            e('span', { style: { color: 'var(--ink-faint)' } }, '\u203A')
+            e('span', { style: { color: 'var(--ink-faint)' } }, '›')
           ))
         )
       ),
