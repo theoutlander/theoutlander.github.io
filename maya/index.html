@@ -451,21 +451,6 @@ function showDadBubble(msg){
   if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
 }
 
-// Show a random message after 6 seconds on first visit
-setTimeout(()=>{
-  const msgs=[
-    "Hey Maya! 👋 So happy you're here!",
-    "Which game will you play first? 🎮",
-    "Dad made this just for you. 💕",
-    "You're the best! Have so much fun! 🌟",
-    "Welcome back, superstar! 🌟",
-    "I missed you today, Maya! 💕",
-    "Dad's thinking about you right now. 💭💛",
-    "Ready for an adventure? 🚐",
-  ];
-  showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
-},6000);
-
 // ===== GAME OF THE WEEK =====
 const GLIST=[
   {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html'},
