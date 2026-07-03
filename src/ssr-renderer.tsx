@@ -23,7 +23,6 @@ import { BlogPagePanda } from "./pages/BlogPagePanda";
 import { AboutPagePanda } from "./pages/AboutPagePanda";
 import { ResumePagePanda } from "./pages/ResumePagePanda";
 import { BlogPostPagePanda } from "./pages/BlogPostPagePanda";
-import { NotFoundPagePanda } from "./pages/NotFoundPagePanda";
 import { CalendarPagePanda } from "./pages/CalendarPagePanda";
 import { KitchenPagePanda } from "./pages/KitchenPagePanda";
 import { RecipePagePanda } from "./pages/RecipePagePanda";
@@ -1253,25 +1252,9 @@ export async function renderAllStaticPagesSSR() {
 		writeFileSync(join(postDir, "index.html"), postHTML);
 	}
 
-	// Render 404 page
-	console.log("📄 Rendering 404 page with SSR...");
-	const notFoundResult = renderPageToHTML(NotFoundPagePanda, {});
-	const notFoundHTMLWithStyles = generateBaseHTML(
-		"404 - Page Not Found - Nick Karnik",
-		"The page you're looking for doesn't exist. Return to the homepage or explore the blog.",
-		notFoundResult.html,
-		cssHref,
-		notFoundResult.helmet.title +
-			notFoundResult.helmet.meta +
-			notFoundResult.helmet.link,
-		"https://nick.karnik.io/404",
-		"https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg",
-		"website",
-		undefined,
-		jsBundle,
-	);
-	const notFoundHTML = removeInlineStyles(notFoundHTMLWithStyles);
-	writeFileSync("dist/404.html", notFoundHTML);
+	// 404 page: served from the hand-authored, self-contained public/404.html
+	// (copied to dist/ above). Its route list is injected at the end of the build
+	// by scripts/inject-404-routes.ts — we intentionally do NOT SSR-render it here.
 
 	// Generate RSS feed
 	console.log("📄 Generating RSS feed...");
