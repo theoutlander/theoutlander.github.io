@@ -1,17 +1,11 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { BlogPostData } from "../src/types/blog";
+import { STATIC_ROUTES } from "./site-routes";
 
 const BASE = process.env.SITE_URL || "https://nick.karnik.io";
 
 async function run() {
-	const baseRoutes = [
-		{ path: "/", priority: "1.0", changefreq: "weekly" },
-		{ path: "/blog", priority: "0.9", changefreq: "weekly" },
-		{ path: "/about", priority: "0.8", changefreq: "monthly" },
-		{ path: "/resume", priority: "0.8", changefreq: "monthly" },
-		{ path: "/reviews", priority: "0.7", changefreq: "monthly" },
-		{ path: "/calendar", priority: "0.5", changefreq: "yearly" },
-	];
+	const baseRoutes = STATIC_ROUTES;
 
 	let posts: BlogPostData[] = [];
 	try {
