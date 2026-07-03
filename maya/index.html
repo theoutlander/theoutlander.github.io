@@ -191,6 +191,15 @@ header{text-align:center;padding:48px 0 36px}
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
     <div class="gc">
+      <div class="ga ga-p6">🏛️</div>
+      <div class="gb">
+        <div class="gt">Maya's Sewing Museum!</div>
+        <div class="gd">Walk through Maya's museum, peek at everything she sewed, and sell to visitors who fall in love! 🏛️</div>
+        <span class="tag tm">Made together 💕</span>
+        <button class="pb" data-game="games/mayas-sewing-museum/index.html" data-title="Maya's Sewing Museum 🏛️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
       <div class="ga ga-p4">🧱</div>
       <div class="gb">
         <div class="gt">Build On! 🧱</div>
@@ -451,8 +460,24 @@ function showDadBubble(msg){
   if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
 }
 
+// Show a random message after 6 seconds on first visit
+setTimeout(()=>{
+  const msgs=[
+    "Hey Maya! 👋 So happy you're here!",
+    "Which game will you play first? 🎮",
+    "Dad made this just for you. 💕",
+    "You're the best! Have so much fun! 🌟",
+    "Welcome back, superstar! 🌟",
+    "I missed you today, Maya! 💕",
+    "Dad's thinking about you right now. 💭💛",
+    "Ready for an adventure? 🚐",
+  ];
+  showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
+},6000);
+
 // ===== GAME OF THE WEEK =====
 const GLIST=[
+  {em:'🏛️',title:"Maya's Sewing Museum 🏛️",desc:"Walk through three rooms of things Maya sewed, peek at every exhibit, and sell to visitors who fall in love!",file:'games/mayas-sewing-museum/index.html'},
   {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html'},
   {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html'},
   {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html'},
