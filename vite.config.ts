@@ -20,6 +20,7 @@ export default defineConfig({
 		blogPlugin(),
 		staticFolderDevPlugin("/maya", path.join(__dirname, "maya")),
 		staticFolderDevPlugin("/lab", path.join(__dirname, "lab")),
+		staticFolderDevPlugin("/judgement", path.join(__dirname, "judgment")),
 	],
 	server: {
 		host: true, // Listen on all network interfaces

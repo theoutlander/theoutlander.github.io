@@ -137,12 +137,16 @@ function appendBlogComponentsCss(sourceCss: string): string {
 	}
 }
 
-const copyDirectory = (src: string, dest: string) => {
+const copyDirectory = (src: string, dest: string, ignore?: Set<string>) => {
 	const items = readdirSync(src);
 
 	for (const item of items) {
 		// Skip system files and hidden files
 		if (item.startsWith(".") || item === "Thumbs.db") {
+			continue;
+		}
+		// Skip top-level entries listed in the source root's .assetsignore
+		if (ignore?.has(item)) {
 			continue;
 		}
 
@@ -163,6 +167,20 @@ const copyDirectory = (src: string, dest: string) => {
 				);
 			}
 		}
+	}
+};
+
+const readAssetsIgnore = (src: string): Set<string> | undefined => {
+	try {
+		const raw = readFileSync(join(src, ".assetsignore"), "utf-8");
+		return new Set(
+			raw
+				.split("\n")
+				.map((line) => line.trim().replace(/\/$/, ""))
+				.filter(Boolean),
+		);
+	} catch {
+		return undefined;
 	}
 };
 
@@ -857,12 +875,14 @@ export async function renderAllStaticPagesSSR() {
 	const standaloneFolders = [
 		{ source: "maya", destinations: ["dist/maya"] },
 		{ source: "lab", destinations: ["dist/lab"] },
+		{ source: "judgment", destinations: ["dist/judgement"] },
 	];
 	for (const folder of standaloneFolders) {
 		try {
+			const ignore = readAssetsIgnore(folder.source);
 			for (const destination of folder.destinations) {
 				mkdirSync(destination, { recursive: true });
-				copyDirectory(folder.source, destination);
+				copyDirectory(folder.source, destination, ignore);
 			}
 			console.log(
 				`✅ Copied ${folder.source} to ${folder.destinations.join(", ")}`,
