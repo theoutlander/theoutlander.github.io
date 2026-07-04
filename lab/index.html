@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-aesthetic="engineering" data-theme="light" data-density="airy" data-typeface="editorial">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,53 +9,126 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
+  :root {
+    --paper: oklch(0.985 0.003 250);
+    --ink: oklch(0.18 0.012 250);
+    --ink-2: oklch(0.38 0.012 250);
+    --ink-3: oklch(0.58 0.012 250);
+    --rule: oklch(0.88 0.005 250);
+    --accent: oklch(0.55 0.16 145);
+    --serif: 'Newsreader', 'Source Serif 4', Georgia, serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+    --col-page: 78rem;
+  }
   *{box-sizing:border-box}
-  body{margin:0}
-  ::selection{background:#e7c3b2}
+  body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--serif);-webkit-font-smoothing:antialiased;min-height:100vh}
+  ::selection{background:color-mix(in oklch, var(--accent) 30%, transparent)}
+
+  .nav-bar{position:sticky;top:0;z-index:100;width:100%;background:color-mix(in oklch, var(--paper) 92%, transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
+  .nav{display:flex;align-items:center;max-width:var(--col-page);width:100%;margin:0 auto;padding:1.5rem 2.5rem}
+  .wordmark{font-family:var(--serif);font-style:italic;letter-spacing:-.02em;line-height:1;font-weight:400;white-space:nowrap;font-size:24px;color:inherit;text-decoration:none}
+  .nav-links{margin-left:auto;display:flex;gap:1.5rem;align-items:baseline}
+  .nav-links a{font-family:var(--mono);color:var(--ink-2);text-decoration:none;position:relative;padding-bottom:.2em;transition:color 140ms;text-transform:uppercase;letter-spacing:.16em;font-size:.78rem}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-links a.active{color:var(--ink)}
+  .nav-links a.active::after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:1px;background:var(--accent)}
+
   .entry{display:flex;gap:18px;align-items:flex-start;margin:0 -16px;padding:24px 16px;border-radius:14px;text-decoration:none;color:inherit;transition:background .12s}
-  .entry:hover{background:#f3efe6}
+  .entry:hover{background:color-mix(in oklch, var(--accent) 6%, transparent)}
+
+  .site-footer{margin-top:6rem;border-top:2px solid var(--ink);padding:2.5rem 2.5rem 1.5rem}
+  .footer-row{max-width:var(--col-page);margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:2.5rem;align-items:start}
+  .footer-row ul{list-style:none;margin:0;padding:0}
+  .footer-row li{margin-bottom:.4rem;font-size:.95rem}
+  .footer-row li a{color:var(--ink-2);text-decoration:none;border-bottom:1px solid transparent;transition:color 140ms,border-color 140ms}
+  .footer-row li a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .colophon{max-width:var(--col-page);margin:2.5rem auto 0;border-top:1px solid var(--rule);padding-top:1rem;display:flex;justify-content:space-between;font-family:var(--mono);font-size:.72rem;color:var(--ink-3);text-transform:uppercase;letter-spacing:.14em}
+  @media (max-width:720px){
+    .footer-row{grid-template-columns:1fr}
+    .colophon{flex-direction:column;gap:.5rem}
+  }
 </style>
 </head>
-<body style="background:#fbfaf8;color:#2a2520;font-family:'Newsreader',system-ui,serif;-webkit-font-smoothing:antialiased;min-height:100vh">
+<body>
+  <div class="nav-bar">
+    <nav class="nav" aria-label="Main navigation">
+      <a href="/" class="wordmark">Nick Karnik</a>
+      <div class="nav-links">
+        <a href="/lab" class="active">Lab</a>
+        <a href="/blog">Writing</a>
+        <a href="/about">About</a>
+        <a href="/resume">Résumé</a>
+        <a href="/reviews">Reviews</a>
+      </div>
+    </nav>
+  </div>
+
   <div style="max-width:720px;margin:0 auto;padding:72px 26px 96px">
 
-    <a href="../" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#6f665a;font-weight:600;text-decoration:none">&larr; nick.karnik.io</a>
-
-    <h1 style="font-family:'Newsreader',serif;font-weight:600;font-size:clamp(40px,7vw,58px);line-height:1.02;letter-spacing:-.02em;margin:26px 0 0">Lab</h1>
-    <p style="font-size:17.5px;line-height:1.6;color:#4f483f;max-width:52ch;margin:16px 0 0">Interactive experiments and things to learn &mdash; small tools built to be played with, not just read.</p>
+    <h1 style="font-family:var(--serif);font-weight:600;font-size:clamp(40px,7vw,58px);line-height:1.02;letter-spacing:-.02em;margin:0">Lab</h1>
+    <p style="font-size:17.5px;line-height:1.6;color:var(--ink-2);max-width:52ch;margin:16px 0 0">Interactive experiments and things to learn &mdash; small tools built to be played with, not just read.</p>
 
     <div style="display:flex;flex-direction:column;margin-top:46px">
 
-      <div style="height:1px;background:#e8e4db"></div>
+      <div style="height:1px;background:var(--rule)"></div>
       <a href="guitar/" class="entry">
-        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;border-radius:50%;background:#b3582f;box-shadow:inset 0 0 0 3px #fbfaf8, inset 0 0 0 4px #b3582f"></span>
+        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;border-radius:50%;background:var(--accent);box-shadow:inset 0 0 0 3px var(--paper), inset 0 0 0 4px var(--accent)"></span>
         <span style="flex:1;min-width:0;display:block">
-          <span style="display:block;font-family:'Newsreader',serif;font-size:24px;font-weight:600;line-height:1.15">Guitar</span>
-          <span style="display:block;font-size:15.5px;line-height:1.55;color:#6f665a;margin-top:5px">A hands-on primer: tune up, learn six chords, play a song &mdash; and hear all of it.</span>
+          <span style="display:block;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.15">Guitar</span>
+          <span style="display:block;font-size:15.5px;line-height:1.55;color:var(--ink-2);margin-top:5px">A hands-on primer: tune up, learn six chords, play a song &mdash; and hear all of it.</span>
         </span>
       </a>
 
-      <div style="height:1px;background:#e8e4db"></div>
+      <div style="height:1px;background:var(--rule)"></div>
       <a href="hand/" class="entry">
-        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;border-radius:6px;border:2.5px solid #b3582f"></span>
+        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;border-radius:6px;border:2.5px solid var(--accent)"></span>
         <span style="flex:1;min-width:0;display:block">
-          <span style="display:block;font-family:'Newsreader',serif;font-size:24px;font-weight:600;line-height:1.15">Robotic Hand</span>
-          <span style="display:block;font-size:15.5px;line-height:1.55;color:#6f665a;margin-top:5px">An articulated hand you can pose and drive, joint by joint.</span>
+          <span style="display:block;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.15">Robotic Hand</span>
+          <span style="display:block;font-size:15.5px;line-height:1.55;color:var(--ink-2);margin-top:5px">An articulated hand you can pose and drive, joint by joint.</span>
         </span>
       </a>
 
-      <div style="height:1px;background:#e8e4db"></div>
+      <div style="height:1px;background:var(--rule)"></div>
       <a href="trig/" class="entry">
-        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;background:#b3582f;clip-path:polygon(50% 6%, 96% 92%, 4% 92%)"></span>
+        <span style="width:22px;height:22px;flex:0 0 auto;margin-top:5px;background:var(--accent);clip-path:polygon(50% 6%, 96% 92%, 4% 92%)"></span>
         <span style="flex:1;min-width:0;display:block">
-          <span style="display:block;font-family:'Newsreader',serif;font-size:24px;font-weight:600;line-height:1.15">Trigonometry</span>
-          <span style="display:block;font-size:15.5px;line-height:1.55;color:#6f665a;margin-top:5px">The unit circle, sine, and cosine &mdash; draggable until they click.</span>
+          <span style="display:block;font-family:var(--serif);font-size:24px;font-weight:600;line-height:1.15">Trigonometry</span>
+          <span style="display:block;font-size:15.5px;line-height:1.55;color:var(--ink-2);margin-top:5px">The unit circle, sine, and cosine &mdash; draggable until they click.</span>
         </span>
       </a>
 
-      <div style="height:1px;background:#e8e4db"></div>
+      <div style="height:1px;background:var(--rule)"></div>
     </div>
 
   </div>
+
+  <footer class="site-footer">
+    <div class="footer-row">
+      <div>
+        <span class="wordmark" style="font-size:20px">Nick Karnik</span>
+        <div style="margin-top:1.25rem">
+          <a href="mailto:nick@karnik.io" style="font-family:var(--mono);font-size:.78rem;color:var(--ink-2);letter-spacing:.04em;text-decoration:none">nick@karnik.io</a>
+        </div>
+        <div style="margin-top:.5rem">
+          <span style="font-family:var(--mono);color:var(--ink-3);font-size:.72rem">Seattle, WA</span>
+        </div>
+      </div>
+      <div>
+        <ul>
+          <li><a href="https://github.com/theoutlander" target="_blank" rel="noreferrer">GitHub</a></li>
+          <li><a href="https://linkedin.com/in/theoutlander" target="_blank" rel="noreferrer">LinkedIn</a></li>
+          <li><a href="https://x.com/theoutlander" target="_blank" rel="noreferrer">Twitter</a></li>
+          <li><a href="https://youtube.com/@nick-karnik" target="_blank" rel="noreferrer">YouTube</a></li>
+          <li><a href="https://stackoverflow.com/users/460472/nick" target="_blank" rel="noreferrer">Stack Overflow</a></li>
+          <li><a href="https://www.codementor.io/@theoutlander" target="_blank" rel="noreferrer">Codementor</a></li>
+          <li><a href="https://maya.karnik.io" target="_blank" rel="noreferrer">Maya's Game Lab</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="colophon">
+      <span>© MMXXVI · Nick Karnik · All rights reserved</span>
+      <span>Set in Newsreader &amp; JetBrains Mono · Printed on cream</span>
+    </div>
+  </footer>
 </body>
 </html>
