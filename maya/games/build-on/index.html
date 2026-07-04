@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<script src="portal-bridge.js"></script>
+<script src="ga-analytics.js" defer></script>
 <title>Build On 🧱</title>
 
 <script src="portal-bridge.js"></script>
@@ -128,7 +130,7 @@ body.grab-mode #view{cursor:grab}
 .seed-opt .sn{font-size:11px;font-weight:900;color:#fff}
 
 /* ===== Toast ===== */
-#toast{position:fixed;left:50%;bottom:150px;transform:translateX(-50%) translateY(12px);z-index:30;
+#toast{position:fixed;left:50%;top:74px;bottom:auto;transform:translateX(-50%) translateY(-12px);z-index:30;
   background:rgba(20,12,44,.95);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:11px 18px;
   color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;visibility:hidden;
   transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
@@ -163,7 +165,10 @@ body.walking #joystick{display:block}
 #lookknob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,#a9d4f0);box-shadow:0 5px 14px rgba(0,0,0,.45);pointer-events:none}
 body.walking #lookstick{display:block}
 .stick-cap{position:absolute;left:50%;top:-20px;transform:translateX(-50%);font-family:'Fredoka One',cursive;font-size:12px;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.55);pointer-events:none;white-space:nowrap}
-body.walking #tabs,body.walking #palette,body.walking #selLabel{display:none}
+body.walking #selLabel{display:none}
+body.walking #tray{bottom:calc(150px + env(safe-area-inset-bottom))}
+body.walking #tabs{max-width:min(64vw,480px);overflow-x:auto;flex-wrap:nowrap}
+body.walking #palette{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-height:none;max-width:min(64vw,480px)}
 #buildBtn{display:none;pointer-events:auto;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 40% 34%,#8affce,#33cf94);color:#06351f;font-size:32px;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
 #buildBtn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
 body.walking #buildBtn{display:flex}
@@ -181,6 +186,20 @@ body.rainy #rainLayer{display:block}
 #rainLayer i{position:absolute;top:-14%;width:2px;border-radius:2px;background:linear-gradient(rgba(190,228,255,0),rgba(190,228,255,.9));animation:raindrop linear infinite}
 @keyframes raindrop{to{transform:translateY(122vh)}}
 .tool.on#toolMode{border-color:var(--blue);background:rgba(91,200,255,.24);box-shadow:0 5px 16px rgba(0,0,0,.32),0 0 0 2px rgba(91,200,255,.6)}
+
+/* ===== Monsters (mobs) ===== */
+#petBtn.on{border-color:#7bd86b;background:rgba(123,216,107,.24);box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px rgba(123,216,107,.55)}
+#monsterBtn.on{border-color:#ff6b8a;background:rgba(255,107,138,.26);box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px rgba(255,107,138,.6)}
+.chip.hearts{gap:0;font-size:15px;letter-spacing:1px;padding:6px 12px}
+.chip.hearts #heartsRow{line-height:1}
+#hurtFx{position:fixed;inset:0;z-index:16;pointer-events:none;box-shadow:inset 0 0 100px 34px rgba(255,42,64,0);transition:box-shadow .14s ease-out}
+#hurtFx.flash{box-shadow:inset 0 0 130px 50px rgba(255,42,64,.6)}
+#bonkBtn{display:none;position:fixed;z-index:22;right:calc(28px + env(safe-area-inset-right));bottom:calc(158px + env(safe-area-inset-bottom));width:66px;height:66px;border-radius:50%;background:radial-gradient(circle at 40% 34%,#ffb3c1,#ff5470);color:#3a0012;font-size:30px;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+#bonkBtn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+body.walking.monsters-on #bonkBtn{display:flex}
+#fightHint{display:none;position:fixed;z-index:23;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%);background:rgba(255,107,138,.96);color:#3a0012;font-weight:800;font-size:14px;padding:8px 16px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.28);white-space:nowrap;pointer-events:none}
+body.monsters-on #fightHint.show{display:block;animation:hintPulse 1.3s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
 
 @media (max-width:560px){
   .chip{font-size:13px;min-height:33px;padding:5px 11px 5px 9px}
@@ -207,6 +226,9 @@ body.rainy #rainLayer{display:block}
   <div class="chip day"><span class="em">☀️</span><span id="dayNum">Day 1</span></div>
   <button class="icon-btn hasnew" id="todayBtn" title="Today's pieces">📦</button>
   <button class="icon-btn" id="worldBtn" title="World: time, weather, ground, sky">🌍</button>
+  <button class="icon-btn" id="petBtn" title="Animals — roaming wildlife on/off">🐾</button>
+  <button class="icon-btn" id="monsterBtn" title="Monster time — summon or send home">👾</button>
+  <div class="chip hearts" id="heartsChip" style="display:none"><span id="heartsRow">❤️❤️❤️❤️❤️</span></div>
   <div class="grow"></div>
   <button class="icon-btn" id="undoBtn" title="Undo" style="display:none">↩</button>
   <button class="icon-btn" id="menuBtn" title="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
@@ -217,6 +239,7 @@ body.rainy #rainLayer{display:block}
   <button class="tool" id="toolMode"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/><path d="M9.6 6.4L12 4l2.4 2.4M9.6 17.6L12 20l2.4-2.4M6.4 9.6L4 12l2.4 2.4M17.6 9.6L20 12l-2.4 2.4"/></svg></span><span class="tl">Walk</span></button>
   <button class="tool on" id="toolBuild"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span><span class="tl">Build</span></button>
   <button class="tool" id="toolGrab"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/></svg></span><span class="tl">Erase</span></button>
+  <button class="tool" id="toolRotate"><span class="te" style="font-size:26px">↻</span><span class="tl">Turn</span></button>
   <button class="tool" id="toolRecenter"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="2.4"/></svg></span><span class="tl">Reset</span></button>
 </div>
 
@@ -230,9 +253,12 @@ body.rainy #rainLayer{display:block}
 
 <!-- Walk controls: left = move, right = look -->
 <div id="weather-tint"></div>
+<div id="hurtFx"></div>
+<div id="fightHint">👊 Tap a monster to bonk it!</div>
 <div id="rainLayer"></div>
 <div id="reticle"></div>
 <button id="jumpBtn" title="Jump">🦘</button>
+<button id="bonkBtn" title="Bonk a monster!">👊</button>
 <div id="joystick"><div class="stick-cap">Move</div><div id="joyknob"></div></div>
 <div id="lookstick"><div class="stick-cap">Look</div><div id="lookknob"></div></div>
 
@@ -256,12 +282,13 @@ body.rainy #rainLayer{display:block}
       <div class="size-seg" id="sizeSeg">
         <div class="size-lbl">🌍 Build area size</div>
         <div class="size-opts">
-          <button data-half="10">Cozy</button>
-          <button data-half="14">Big</button>
-          <button data-half="19">Huge</button>
-          <button data-half="25">Giant</button>
+          <button data-half="14">Cozy</button>
+          <button data-half="20">Big</button>
+          <button data-half="28">Huge</button>
+          <button data-half="40">Giant</button>
         </div>
       </div>
+      <div class="menu-btn" style="gap:14px"><span class="me">🔊</span><input type="range" id="volSlider" min="0" max="100" value="62" style="flex:1;height:8px;accent-color:#5dffb0;cursor:pointer"></div>
       <button class="menu-btn" id="muteBtn"><span class="me">🔊</span><span id="muteLbl">Sound: On</span></button>
       <button class="menu-btn" id="labBtn"><span class="me">🏡</span>Back to Game Lab</button>
       <button class="menu-btn danger" id="resetBtn"><span class="me">🔄</span>Start a brand new world</button>
@@ -302,8 +329,10 @@ body.rainy #rainLayer{display:block}
 </div>
 
 <script src="https://cdn.babylonjs.com/babylon.js"></script>
-<script src="build-on-data.js"></script>
-<script src="build-on-scene.js"></script>
-<script src="build-on-game.js"></script>
+<script src="build-on-data.js?v=20260704"></script>
+<script src="build-on-scene.js?v=20260704"></script>
+<script src="build-on-mobs.js?v=20260704"></script>
+<script src="build-on-critters.js?v=20260704"></script>
+<script src="build-on-game.js?v=20260704"></script>
 </body>
 </html>
