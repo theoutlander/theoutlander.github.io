@@ -750,6 +750,7 @@ a.ds-plain:hover,
 .ds-site-nav {
   display: flex;
   align-items: center;
+  gap: 1.5rem;
   max-width: var(--col-page);
   width: 100%;
   margin: 0 auto;
@@ -761,13 +762,20 @@ a.ds-plain:hover,
   gap: 0.6rem;
   text-decoration: none;
   color: inherit;
+  flex: none;
 }
 .ds-site-nav .ds-links {
   margin-left: auto;
   display: flex;
   gap: var(--gap-3);
   align-items: baseline;
+  min-width: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
 }
+.ds-site-nav .ds-links::-webkit-scrollbar { display: none; }
+.ds-site-nav .ds-links a { flex: none; }
 .ds-site-nav .ds-links a {
   font-family: var(--mono);
   font-size: 0.82rem;
@@ -795,6 +803,8 @@ a.ds-plain:hover,
 @media (max-width: 720px) {
   .ds-site-nav .ds-links {
     gap: 1rem;
+    -webkit-mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
+    mask-image: linear-gradient(to right, black calc(100% - 28px), transparent 100%);
   }
   .ds-site-nav .ds-links a {
     font-size: 0.72rem;

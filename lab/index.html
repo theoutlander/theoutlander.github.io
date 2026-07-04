@@ -25,10 +25,11 @@
   ::selection{background:color-mix(in oklch, var(--accent) 30%, transparent)}
 
   .nav-bar{position:sticky;top:0;z-index:100;width:100%;background:color-mix(in oklch, var(--paper) 92%, transparent);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border-bottom:1px solid var(--rule)}
-  .nav{display:flex;align-items:center;max-width:var(--col-page);width:100%;margin:0 auto;padding:1.5rem 2.5rem}
-  .wordmark{font-family:var(--serif);font-style:italic;letter-spacing:-.02em;line-height:1;font-weight:400;white-space:nowrap;font-size:24px;color:inherit;text-decoration:none}
-  .nav-links{margin-left:auto;display:flex;gap:1.5rem;align-items:baseline}
-  .nav-links a{font-family:var(--mono);color:var(--ink-2);text-decoration:none;position:relative;padding-bottom:.2em;transition:color 140ms;text-transform:uppercase;letter-spacing:.16em;font-size:.78rem}
+  .nav{display:flex;align-items:center;gap:1.5rem;max-width:var(--col-page);width:100%;margin:0 auto;padding:1.5rem 2.5rem}
+  .wordmark{font-family:var(--serif);font-style:italic;letter-spacing:-.02em;line-height:1;font-weight:400;white-space:nowrap;font-size:24px;color:inherit;text-decoration:none;flex:none}
+  .nav-links{margin-left:auto;display:flex;gap:1.5rem;align-items:baseline;min-width:0;overflow-x:auto;overflow-y:hidden;scrollbar-width:none}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a{flex:none;font-family:var(--mono);color:var(--ink-2);text-decoration:none;position:relative;padding-bottom:.2em;transition:color 140ms;text-transform:uppercase;letter-spacing:.16em;font-size:.78rem}
   .nav-links a:hover{color:var(--ink)}
   .nav-links a.active{color:var(--ink)}
   .nav-links a.active::after{content:"";position:absolute;bottom:-1px;left:0;right:0;height:1px;background:var(--accent)}
@@ -46,6 +47,7 @@
   @media (max-width:720px){
     .footer-row{grid-template-columns:1fr}
     .colophon{flex-direction:column;gap:.5rem}
+    .nav-links{-webkit-mask-image:linear-gradient(to right, black calc(100% - 28px), transparent 100%);mask-image:linear-gradient(to right, black calc(100% - 28px), transparent 100%)}
   }
 </style>
 </head>
@@ -126,7 +128,7 @@
       </div>
     </div>
     <div class="colophon">
-      <span>© MMXXVI · Nick Karnik · All rights reserved</span>
+      <span>© 2026 · Nick Karnik · All rights reserved</span>
       <span>Set in Newsreader &amp; JetBrains Mono · Printed on cream</span>
     </div>
   </footer>
