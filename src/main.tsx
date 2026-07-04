@@ -20,7 +20,9 @@ const router = createRouter({
 
 // Track page views after navigation completes (not on preload)
 router.subscribe("onResolved", (event) => {
-	const pathname = event.toLocation.pathname;
+	// Strip a trailing slash so "/blog" and "/blog/" report as the same GA path
+	const rawPathname = event.toLocation.pathname;
+	const pathname = rawPathname.length > 1 ? rawPathname.replace(/\/+$/, "") : rawPathname;
 	const search = event.toLocation.search ? `?${event.toLocation.search}` : '';
 	analytics.pageView(pathname + search, document.title);
 });

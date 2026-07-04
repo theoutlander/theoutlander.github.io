@@ -19,8 +19,9 @@
 
 		window.gtag('js', new Date());
 		window.gtag('config', MEASUREMENT_ID, { send_page_view: false });
+		var path = window.location.pathname;
 		window.gtag('event', 'page_view', {
-			page_path: window.location.pathname,
+			page_path: path.length > 1 ? path.replace(/\/+$/, '') : path,
 			page_title: document.title,
 			page_location: window.location.href,
 			site_area: 'lab',

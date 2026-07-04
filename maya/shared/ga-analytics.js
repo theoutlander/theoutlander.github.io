@@ -14,14 +14,25 @@
 		return '/maya' + pathname;
 	}
 
+	function stripTrailingSlash(path) {
+		// '/maya/' is the deliberate canonical root path; leave it alone
+		if (path.length <= 1 || path === '/maya/') return path;
+		return path.replace(/\/+$/, '');
+	}
+
 	function mayaPagePath() {
 		var path = window.location.pathname;
+		var resolved;
 		if (window.location.hostname === 'maya.karnik.io') {
-			return canonicalMayaPath(path);
+			resolved = canonicalMayaPath(path);
+		} else if (path.indexOf('/maya') === 0) {
+			resolved = path;
+		} else if (/\.html$/i.test(path)) {
+			resolved = canonicalMayaPath(path);
+		} else {
+			resolved = path;
 		}
-		if (path.indexOf('/maya') === 0) return path;
-		if (/\.html$/i.test(path)) return canonicalMayaPath(path);
-		return path;
+		return stripTrailingSlash(resolved);
 	}
 
 	function trackMayaPageView() {

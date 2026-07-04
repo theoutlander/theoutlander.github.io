@@ -1014,8 +1014,8 @@ export async function renderAllStaticPagesSSR() {
 	const resumeResult = renderPageToHTML(ResumePagePanda, {});
 	const resumeJsonLd = generatePersonJsonLd("https://nick.karnik.io/resume");
 	const resumeHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Resume",
-		"Engineering leader with nearly three decades across Google, Microsoft, Salesforce, Tableau, and startups.",
+		META.resume.title,
+		META.resume.description,
 		resumeResult.html,
 		cssHref,
 		resumeResult.helmet.title +
@@ -1037,8 +1037,8 @@ export async function renderAllStaticPagesSSR() {
 	mkdirSync(calendarDir, { recursive: true });
 	const calendarResult = renderPageToHTML(CalendarPagePanda, {});
 	const calendarHTMLWithStyles = generateBaseHTML(
-		"Schedule time with Nick Karnik",
-		"Book time with Nick directly via Google Calendar appointments.",
+		META.calendar.title,
+		META.calendar.description,
 		calendarResult.html,
 		cssHref,
 		calendarResult.helmet.title +
@@ -1059,8 +1059,8 @@ export async function renderAllStaticPagesSSR() {
 	mkdirSync(kitchenDir, { recursive: true });
 	const kitchenResult = renderPageToHTML(KitchenPagePanda, {});
 	const kitchenHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Kitchen",
-		"Recipes, cocktails, and things I cook.",
+		META.kitchen.title,
+		META.kitchen.description,
 		kitchenResult.html,
 		cssHref,
 		kitchenResult.helmet.title +
@@ -1123,8 +1123,8 @@ export async function renderAllStaticPagesSSR() {
 		reviewsData,
 	);
 	const reviewsHTMLWithStyles = generateBaseHTML(
-		"Nick Karnik | Reviews",
-		"Reviews from people I have worked with and mentored over the years.",
+		META.reviews.title,
+		META.reviews.description,
 		reviewsResult.html,
 		cssHref,
 		reviewsResult.helmet.title +
