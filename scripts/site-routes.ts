@@ -27,6 +27,11 @@ export const STATIC_ROUTES: StaticRoute[] = [
 	{ path: "/about", label: "about", nav: true, priority: "0.8", changefreq: "monthly" },
 	{ path: "/resume", label: "résumé", nav: true, priority: "0.8", changefreq: "monthly" },
 	{ path: "/reviews", label: "reviews", nav: true, priority: "0.7", changefreq: "monthly" },
+	{ path: "/lab/", label: "lab", nav: true, priority: "0.8", changefreq: "monthly" },
 	// Utility page: reachable + indexed, but kept out of the 404 nav to keep it focused on content.
 	{ path: "/calendar", label: "calendar", nav: false, priority: "0.5", changefreq: "yearly" },
+	// Individual lab projects: indexed, but kept out of the 404 nav — /lab/ is the entry point.
+	{ path: "/lab/guitar/", label: "guitar", nav: false, priority: "0.6", changefreq: "monthly" },
+	{ path: "/lab/hand/", label: "hand lab", nav: false, priority: "0.6", changefreq: "monthly" },
+	{ path: "/lab/trig/", label: "trigonometry", nav: false, priority: "0.6", changefreq: "monthly" },
 ];
