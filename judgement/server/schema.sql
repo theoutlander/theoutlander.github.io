@@ -1,6 +1,6 @@
--- Judgment leaderboard / history schema (D1 / SQLite).
--- Apply locally:  npx wrangler d1 execute judgment --local  --file=server/schema.sql
--- Apply remote:   npx wrangler d1 execute judgment --remote --file=server/schema.sql
+-- Judgement leaderboard / history schema (D1 / SQLite).
+-- Apply locally:  npx wrangler d1 execute judgement --local  --file=server/schema.sql
+-- Apply remote:   npx wrangler d1 execute judgement --remote --file=server/schema.sql
 
 CREATE TABLE IF NOT EXISTS players (
   id          TEXT PRIMARY KEY,          -- client reconnect token (humans only)

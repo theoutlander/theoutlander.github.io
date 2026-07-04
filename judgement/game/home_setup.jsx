@@ -12,7 +12,7 @@
         e('span', { style: { color: '#ff7a6e' } }, '♦'),
         e('span', { style: { color: 'var(--felt-text)' } }, '♣')
       ),
-      e('h1', { className: 'on-felt', style: { fontSize: 46 * size, letterSpacing: '-.02em', lineHeight: .95 } }, 'Judgment'),
+      e('h1', { className: 'on-felt', style: { fontSize: 46 * size, letterSpacing: '-.02em', lineHeight: .95 } }, 'Judgement'),
       e('div', { className: 'eyebrow on-felt', style: { opacity: .7 } }, 'The hand you call is the hand you make')
     );
   }

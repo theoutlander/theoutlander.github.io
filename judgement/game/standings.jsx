@@ -125,7 +125,7 @@
             e('input', { type: 'range', min: 0, max: 1, step: 0.05, defaultValue: settings.volume, className: 'vol-slider',
               onChange: (ev) => { window.JSound.setVolume(parseFloat(ev.target.value)); setSettings(Object.assign({}, settings, { volume: parseFloat(ev.target.value) })); } })) : null
         ),
-        e('p', { className: 'on-felt tiny', style: { opacity: .45, textAlign: 'center', margin: 'auto 0 0' } }, 'Judgment · Nick’s Games')
+        e('p', { className: 'on-felt tiny', style: { opacity: .45, textAlign: 'center', margin: 'auto 0 0' } }, 'Judgement · Nick’s Games')
       )
     );
   }

@@ -8,8 +8,8 @@
   const { PLAYER_COLORS, AVATARS } = window.JThemes;
 
   const LS = {
-    get(k, d) { try { const v = localStorage.getItem('judgment.' + k); return v ? JSON.parse(v) : d; } catch (err) { return d; } },
-    set(k, v) { try { localStorage.setItem('judgment.' + k, JSON.stringify(v)); } catch (err) {} },
+    get(k, d) { try { const v = localStorage.getItem('judgement.' + k); return v ? JSON.parse(v) : d; } catch (err) { return d; } },
+    set(k, v) { try { localStorage.setItem('judgement.' + k, JSON.stringify(v)); } catch (err) {} },
   };
 
   const DEFAULT_ROSTER = [

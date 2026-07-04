@@ -1,6 +1,6 @@
-# Judgment — multiplayer backend (Cloudflare)
+# Judgement — multiplayer backend (Cloudflare)
 
-Real-time multiplayer for the Judgment prototype, on Cloudflare's **free tier**.
+Real-time multiplayer for the Judgement prototype, on Cloudflare's **free tier**.
 The design/UI is unchanged; this wires a server-authoritative backend behind it.
 
 ## Architecture
@@ -32,7 +32,7 @@ auto-played after `TURN_MS`; a disconnected player's seat gets a longer
 ## Local development
 
 ```bash
-cd judgment/server
+cd judgement/server
 npm install                 # installs wrangler v4
 npm run db:local            # create the local D1 and apply schema.sql
 npm run dev                 # http://127.0.0.1:8788  (serves client + WS + API)
@@ -44,8 +44,8 @@ paste the invite link / code into "Join a game" in the other (or open the
 table.
 
 > The dev/db scripts intentionally run wrangler from the repo root with
-> `--persist-to .judgment-state`. wrangler's working `.wrangler` dir must stay
-> **outside** the served `judgment/` folder, or its writes trip the asset
+> `--persist-to .judgement-state`. wrangler's working `.wrangler` dir must stay
+> **outside** the served `judgement/` folder, or its writes trip the asset
 > file-watcher into an endless reload loop that drops every WebSocket.
 
 ### Tests (server must be running)
@@ -63,9 +63,9 @@ Timing is env-overridable for fast tests, e.g.
 ## Deploy (requires your Cloudflare login — do these yourself)
 
 ```bash
-cd judgment/server
+cd judgement/server
 npx wrangler login                       # opens the browser; creates/uses your account
-npx wrangler d1 create judgment          # prints a database_id
+npx wrangler d1 create judgement          # prints a database_id
 #   → paste that id into wrangler.toml  (database_id = "…")
 npm run db:remote                        # apply schema.sql to the remote D1
 npm run deploy                           # publishes the Worker + static assets
@@ -73,8 +73,8 @@ npm run deploy                           # publishes the Worker + static assets
 
 Durable Objects on the free plan require the **SQLite** class flavor — already
 set in `wrangler.toml` as `new_sqlite_classes = ["Room"]`. After deploy the game
-lives at `https://judgment.<your-subdomain>.workers.dev/` (or attach a custom
-domain like `judgment.karnik.io` in the Cloudflare dashboard). Share links are
+lives at `https://judgement.<your-subdomain>.workers.dev/` (or attach a custom
+domain like `judgement.karnik.io` in the Cloudflare dashboard). Share links are
 `https://YOURHOST/play/CODE`.
 
 ## WebSocket message contract

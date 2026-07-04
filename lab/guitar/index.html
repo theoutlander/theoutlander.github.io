@@ -61,7 +61,11 @@ document.addEventListener('DOMContentLoaded', async function() {
   function setStatus(msg) { if (loading) loading.textContent = msg; }
 
   // Error sink persists across replaceWith since it's on window, not the DOM.
+  // Only meant to surface failures in the unpack process itself — once that
+  // succeeds, unrelated post-load errors (e.g. Cloudflare's injected bot-check
+  // script) shouldn't be shown as if they were bundle failures.
   window.addEventListener('error', function(e) {
+    if (window.__bundleUnpacked) return;
     var p = document.body || document.documentElement;
     var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
     d.id = '__bundler_err';
@@ -160,6 +164,7 @@ document.addEventListener('DOMContentLoaded', async function() {
     // preserve ordering (React before ReactDOM before Babel before text/babel).
     const doc = new DOMParser().parseFromString(template, 'text/html');
     document.documentElement.replaceWith(doc.documentElement);
+    window.__bundleUnpacked = true;
     const dead = Array.from(document.scripts);
     for (const old of dead) {
       const s = document.createElement('script');

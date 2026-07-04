@@ -8,7 +8,7 @@ self-contained pieces (explainers, tutorials, toys, experiments). The first entr
 ## About these files — deploy as-is, do NOT rebuild in React
 Unlike a normal design handoff, the `trig/` folder here is **finished, production-intended
 static HTML**, not a design reference to recreate. It is deliberately built with no framework
-and no build step, following the same pattern as the existing `/maya` and `/judgment` folders
+and no build step, following the same pattern as the existing `/maya` and `/judgement` folders
 in this repo: a self-contained directory of HTML + JS that deploys verbatim.
 
 Do not port it to React/TanStack/Panda. The whole point of the /lab pattern is that each
@@ -28,7 +28,7 @@ don't build one now unless asked.
 
 ## Integration tasks for Claude Code
 
-1. **Find how /maya and /judgment reach the deployed site** (check `vite.config.ts`,
+1. **Find how /maya and /judgement reach the deployed site** (check `vite.config.ts`,
    `scripts/deploy.sh`, and `scripts/generate-static-pages.ts` / `render-static-pages.ts`).
    Static root folders may be copied into `dist/` at build time or served via the
    `public/` convention. Wire `/lab` the same way — do not invent a new mechanism.

@@ -16,14 +16,14 @@
   // get their own token automatically.
   function token() {
     try {
-      let t = sessionStorage.getItem('judgment.token');
-      if (!t) { t = 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('judgment.token', t); }
+      let t = sessionStorage.getItem('judgement.token');
+      if (!t) { t = 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36); sessionStorage.setItem('judgement.token', t); }
       return t;
     } catch (e) { return 'u_' + Math.random().toString(36).slice(2); }
   }
 
   function wsUrl(code) {
-    if (window.JUDGMENT_WS) return window.JUDGMENT_WS + (window.JUDGMENT_WS.indexOf('?') >= 0 ? '&' : '?') + 'code=' + code;
+    if (window.JUDGEMENT_WS) return window.JUDGEMENT_WS + (window.JUDGEMENT_WS.indexOf('?') >= 0 ? '&' : '?') + 'code=' + code;
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     return proto + '//' + location.host + '/ws?code=' + code;
   }

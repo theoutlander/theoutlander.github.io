@@ -1,0 +1,20 @@
+{
+  "name": "judgement-server",
+  "private": true,
+  "type": "module",
+  "comment": "dev/db run wrangler from the repo root with state OUTSIDE judgement/ — otherwise wrangler's .wrangler tmp dir lands inside the watched assets dir and triggers a reload loop that drops WebSockets.",
+  "scripts": {
+    "dev": "cd ../.. && wrangler dev --config judgement/server/wrangler.toml --persist-to .judgement-state --port 8788",
+    "deploy": "wrangler deploy",
+    "db:local": "cd ../.. && wrangler d1 execute judgement --config judgement/server/wrangler.toml --local --persist-to .judgement-state --file judgement/server/schema.sql",
+    "db:remote": "wrangler d1 execute judgement --remote --file schema.sql",
+    "fuzz": "node fuzz.js",
+    "test:ws": "node wstest.mjs",
+    "test:game": "node wstest2.mjs",
+    "test:timeout": "node wstest3.mjs",
+    "test:reconnect": "node wstest4.mjs"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

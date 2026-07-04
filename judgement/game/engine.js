@@ -1,4 +1,4 @@
-/* Judgment / Oh Hell, pure game engine + controller.
+/* Judgement / Oh Hell, pure game engine + controller.
    Seat 0 is always the human. Bots are seats 1..n-1.
    House rules (per Nick): trump is RANDOM each round, dealing & first bid
    start LEFT of the dealer, dealer rotates clockwise. Classic Oh Hell scoring:

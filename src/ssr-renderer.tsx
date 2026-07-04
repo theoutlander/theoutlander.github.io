@@ -875,7 +875,7 @@ export async function renderAllStaticPagesSSR() {
 	const standaloneFolders = [
 		{ source: "maya", destinations: ["dist/maya"] },
 		{ source: "lab", destinations: ["dist/lab"] },
-		{ source: "judgment", destinations: ["dist/judgement"] },
+		{ source: "judgement", destinations: ["dist/judgement"] },
 	];
 	for (const folder of standaloneFolders) {
 		try {
@@ -975,33 +975,9 @@ export async function renderAllStaticPagesSSR() {
 	const blogHTML = removeInlineStyles(blogHTMLWithStyles);
 	writeFileSync(join(blogDir, "index.html"), blogHTML);
 
-	// Render blogs index page (plural)
-	console.log("📄 Rendering blogs index page with SSR...");
-	const blogsDir = join("dist", "blogs");
-	mkdirSync(blogsDir, { recursive: true });
-	const blogsResult = renderPageToHTML(BlogPagePanda, { posts: blogData });
-	const blogsJsonLd = generateBlogJsonLd();
-	const blogsHTMLWithStyles = generateBaseHTML(
-		META.blog.title,
-		META.blog.description,
-		blogsResult.html,
-		cssHref,
-		blogsResult.helmet.title +
-			blogsResult.helmet.meta +
-			blogsResult.helmet.link,
-		`${PERSON.siteUrl}/blogs`,
-		`${PERSON.siteUrl}/assets/images/og/blog-og.png`,
-		"website",
-		undefined,
-		jsBundle,
-		blogsJsonLd,
-		inlineAllPostsScript,
-		1200,
-		630,
-		"Nick Karnik | Engineering, Leadership & AI",
-	);
-	const blogsHTML = removeInlineStyles(blogsHTMLWithStyles);
-	writeFileSync(join(blogsDir, "index.html"), blogsHTML);
+	// Note: "/blogs" (plural) is intentionally NOT rendered here — it's a pure
+	// redirect to "/blog" (see src/redirects.ts), and generate-redirect-html.ts
+	// writes its stub after this script runs, overwriting anything placed here.
 
 	// Render about page
 	console.log("📄 Rendering about page with SSR...");

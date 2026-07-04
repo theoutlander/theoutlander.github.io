@@ -1,4 +1,4 @@
-/* The game table, the heart of Judgment. Phone-first. */
+/* The game table, the heart of Judgement. Phone-first. */
 (function () {
   const e = React.createElement;
   const { Avatar, SuitBadge } = window.JUI;

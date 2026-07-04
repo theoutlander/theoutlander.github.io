@@ -1,8 +1,8 @@
-name = "judgment"
+name = "judgement"
 main = "worker.js"
 compatibility_date = "2024-11-01"
 
-# Serve the static client (index.html, game/*) from the judgment/ root.
+# Serve the static client (index.html, game/*) from the judgement/ root.
 # not_found_handling defaults to "none" so unmatched paths run worker.js
 # (keeps /ws and /api/* from being swallowed by the asset server).
 [assets]
@@ -19,9 +19,9 @@ class_name = "Room"
 tag = "v1"
 new_sqlite_classes = ["Room"]
 
-# D1 leaderboard. Create with:  npx wrangler d1 create judgment
+# D1 leaderboard. Create with:  npx wrangler d1 create judgement
 # then paste the returned database_id below (and keep binding = "DB").
 [[d1_databases]]
 binding = "DB"
-database_name = "judgment"
-database_id = "00000000-0000-0000-0000-000000000000"  # local dev placeholder; replace with real id from `wrangler d1 create judgment` before deploy
+database_name = "judgement"
+database_id = "00000000-0000-0000-0000-000000000000"  # local dev placeholder; replace with real id from `wrangler d1 create judgement` before deploy

@@ -24,6 +24,6 @@ supabase/.temp/rest-version
 supabase/.temp/storage-migration
 supabase/.temp/storage-version
 
-# Judgment local dev state (wrangler/miniflare)
-.judgment-state/
-judgment/server/.wrangler/
+# Judgement local dev state (wrangler/miniflare)
+.judgement-state/
+judgement/server/.wrangler/

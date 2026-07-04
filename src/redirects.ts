@@ -12,6 +12,11 @@ export const redirects: Redirect[] = [
 		destination: "/blog",
 		statusCode: 301,
 	},
+	{
+		source: "/judgment",
+		destination: "/judgement",
+		statusCode: 301,
+	},
 	// Social Media
 	{
 		source: "/youtube",

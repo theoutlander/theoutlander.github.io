@@ -1,7 +1,7 @@
-# Judgment, Build & Handoff Notes (for Claude Code)
+# Judgement, Build & Handoff Notes (for Claude Code)
 
 This repo is a **high-fidelity, fully-playable design prototype** of the card game
-**Judgment** (a.k.a. Oh Hell / Kachufool). It runs the complete game **locally vs. bots**
+**Judgement** (a.k.a. Oh Hell / Kachufool). It runs the complete game **locally vs. bots**
 so the experience can be felt instantly. Your job: take this exact look, feel, and rule
 engine and make it **real-time multiplayer** with shareable links and a database.
 
@@ -13,7 +13,7 @@ backend behind it.
 ## What's here
 
 ```
-Judgment.html            # entry; loads everything in order
+Judgement.html            # entry; loads everything in order
 game/
   engine.js              # ✅ PURE RULES ENGINE, port this to the server (see below)
   sound.js               # Web Audio SFX (no asset files)
@@ -154,8 +154,8 @@ Both toggles are the first thing in Settings ("Easier to see"). Keep these promi
   / `app.jsx`. The lobby shows ready-dots, host badge, empty-seat states, and the bot toggle.
 
 ## Mobile
-`Judgment Mobile Preview.html` wraps the app in a phone bezel for quick visual testing. The app
-itself is responsive/phone-first (centers to a 480px column on desktop), deploy `Judgment.html`
+`Judgement Mobile Preview.html` wraps the app in a phone bezel for quick visual testing. The app
+itself is responsive/phone-first (centers to a 480px column on desktop), deploy `Judgement.html`
 directly; the preview file is just a convenience.
 
 ## Known stubs / not done

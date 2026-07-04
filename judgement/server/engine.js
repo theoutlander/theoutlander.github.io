@@ -1,4 +1,4 @@
-/* Judgment / Oh Hell — PURE RULES, server (ESM) port of game/engine.js.
+/* Judgement / Oh Hell — PURE RULES, server (ESM) port of game/engine.js.
    These are the exact fuzz-tested rules from the client engine, with zero
    browser/DOM/sound dependencies so they run in a Cloudflare Worker / Durable
    Object. The round/turn *orchestration* (broadcasts, timers, bots) lives in

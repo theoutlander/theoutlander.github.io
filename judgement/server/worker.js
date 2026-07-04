@@ -1,4 +1,4 @@
-/* Judgment multiplayer Worker.
+/* Judgement multiplayer Worker.
    - Serves the static client (index.html, game/*) via the ASSETS binding.
    - /ws?code=CODE  -> upgrades to the Room Durable Object for that invite code.
    - /play/CODE     -> serves index.html (client reads the code from the path).
