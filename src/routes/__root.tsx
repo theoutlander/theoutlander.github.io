@@ -2,6 +2,7 @@ import '../styles/print.css';
 import { createRootRoute, Outlet } from '@tanstack/react-router';
 import { SiteNav } from '../components/design/SiteNav';
 import { SiteFooter } from '../components/design/SiteFooter';
+import { NotFoundView } from '../components/design/NotFoundView';
 
 export const Route = createRootRoute({
   component: () => (
@@ -15,4 +16,5 @@ export const Route = createRootRoute({
       <SiteFooter />
     </>
   ),
+  notFoundComponent: NotFoundView,
 });
