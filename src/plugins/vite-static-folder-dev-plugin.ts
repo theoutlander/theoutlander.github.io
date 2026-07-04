@@ -22,14 +22,15 @@ const MIME: Record<string, string> = {
 };
 
 /**
- * Serves repo-root `maya/` at `/maya` during `vite` dev. Production copies `maya` → `dist/maya`
- * in the SSR script; that folder is not under `public/`, so without this, `/maya` 404s locally.
+ * Serves a repo-root folder (e.g. `maya/`, `lab/`) at a matching URL prefix during `vite` dev.
+ * Production copies these folders into `dist/` in the SSR script; they're not under `public/`,
+ * so without this, their routes 404 locally.
  */
-export function mayaDevPlugin(mayaRoot: string): Plugin {
-	const root = path.resolve(mayaRoot);
+export function staticFolderDevPlugin(mountPath: string, folderRoot: string): Plugin {
+	const root = path.resolve(folderRoot);
 
 	return {
-		name: "maya-dev-static",
+		name: `static-folder-dev${mountPath}`,
 		configureServer(server) {
 			server.middlewares.use((req, res, next) => {
 				const raw = req.url?.split("?")[0] ?? "";
@@ -39,12 +40,12 @@ export function mayaDevPlugin(mayaRoot: string): Plugin {
 				} catch {
 					return next();
 				}
-				if (!pathname.startsWith("/maya")) return next();
+				if (!pathname.startsWith(mountPath)) return next();
 
-				let rel = pathname.slice("/maya".length);
-				// Redirect bare /maya → /maya/ so relative links resolve correctly
+				let rel = pathname.slice(mountPath.length);
+				// Redirect bare mount → mount/ so relative links resolve correctly
 				if (rel === "") {
-					res.writeHead(301, { Location: "/maya/" });
+					res.writeHead(301, { Location: `${mountPath}/` });
 					res.end();
 					return;
 				}

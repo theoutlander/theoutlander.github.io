@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import { redirectPlugin } from "./src/plugins/vite-redirect-plugin";
 import { blogPlugin } from "./src/plugins/vite-blog-plugin";
-import { mayaDevPlugin } from "./src/plugins/vite-maya-dev-plugin";
+import { staticFolderDevPlugin } from "./src/plugins/vite-static-folder-dev-plugin";
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -18,7 +18,8 @@ export default defineConfig({
 		TanStackRouterVite(),
 		redirectPlugin(),
 		blogPlugin(),
-		mayaDevPlugin(path.join(__dirname, "maya")),
+		staticFolderDevPlugin("/maya", path.join(__dirname, "maya")),
+		staticFolderDevPlugin("/lab", path.join(__dirname, "lab")),
 	],
 	server: {
 		host: true, // Listen on all network interfaces

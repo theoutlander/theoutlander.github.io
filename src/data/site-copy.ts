@@ -8,6 +8,7 @@ export type SiteCopy = typeof siteCopyData;
 export const COPY = siteCopyData;
 
 export const NAV_LINKS = [
+	{ href: "/lab", label: COPY.nav.lab },
 	{ href: "/blog", label: COPY.nav.writing },
 	{ href: "/about", label: COPY.nav.about },
 	{ href: "/resume", label: COPY.nav.resume },

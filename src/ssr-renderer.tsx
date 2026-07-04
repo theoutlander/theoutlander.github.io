@@ -854,7 +854,10 @@ export async function renderAllStaticPagesSSR() {
 	}
 
 	console.log("📁 Copying standalone app folders to dist...");
-	const standaloneFolders = [{ source: "maya", destinations: ["dist/maya"] }];
+	const standaloneFolders = [
+		{ source: "maya", destinations: ["dist/maya"] },
+		{ source: "lab", destinations: ["dist/lab"] },
+	];
 	for (const folder of standaloneFolders) {
 		try {
 			for (const destination of folder.destinations) {
