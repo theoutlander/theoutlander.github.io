@@ -2,6 +2,8 @@
 (function(){
   var BO=window.BO;
   var canvas=document.getElementById('view');
+  var isTouchDevice=matchMedia('(pointer: coarse)').matches;
+  document.body.classList.toggle('no-touch', !isTouchDevice);   // hide on-screen sticks when there's a real mouse+keyboard
   var state=null, occ=new Map(), curPiece=null, tool='build', started=false, placedStack=[], placeRot=0;
   var buildOcc=new Map(), buildings=[], buildSeq=0;
   var hearts=5, maxHearts=5, invuln=0, regenT=0, playerAlive=true;
@@ -167,7 +169,37 @@
     if(!cell || cell.x<-BO.HALF||cell.x>BO.HALF||cell.z<-BO.HALF||cell.z>BO.HALF||cell.y<0||cell.y>BO.MAXY){ BO.scene.hideGhost(); return; }
     var p=BO.piece(curPiece); BO.scene.showGhostAt(cell, (p&&p.color)||'#f2e9ff', placeRot);
   }
+  /* ---------- desktop mouse-look (pointer lock) — click the canvas to look around, like other 3D games ---------- */
+  var mouseLocked=false, LOOK_SENS=0.0028;
+  canvas.addEventListener('contextmenu',function(e){ e.preventDefault(); });   // no browser menu on right-click
+  document.addEventListener('pointerlockchange',function(){
+    mouseLocked = (document.pointerLockElement===canvas);
+    if(!mouseLocked) gesture=null;   // dropping lock (e.g. Esc) shouldn't leave a stale drag in progress
+  });
+  canvas.addEventListener('mousemove',function(e){
+    if(!mouseLocked || viewMode!=='walk') return;
+    BO.scene.walkLook((e.movementX||0)*LOOK_SENS, (e.movementY||0)*LOOK_SENS);
+  });
+  /* left-click breaks whatever's at the crosshair; right-click places/uses it — Minecraft's convention */
+  function breakAt(r){
+    if(!r) return;
+    if(r.type==='mob'){ BO.mobs.hit(r.mob); return; }
+    if(r.type==='critter'){ if(r.critter.isPet) removePet(r.critter); return; }
+    if(r.type==='structure'){ removeStructure(r.root); return; }
+    if(r.type==='block'||r.type==='pot'||r.type==='friend'){ removeBlock(r.root); return; }
+  }
+  function useAt(r){
+    if(!r) return;
+    if(r.type==='crate'){ openToday(); return; }
+    if(r.type==='pot'){ handlePotTap(r.root); return; }
+    if(r.type==='friend'){ BO.scene.petFriend(r.root); BO.sfx.pop(); toast('💗 Aww!'); return; }
+    if(r.type==='critter'){ BO.critters.pet(r.critter); return; }
+    if(r.type==='ground'){ handleGroundTap(r.cell); return; }
+    if(r.type==='block'){ tryPlace(r.place); return; }
+  }
+
   canvas.addEventListener('pointerdown',function(e){
+    if(started && viewMode==='walk' && e.pointerType==='mouse' && !mouseLocked){ canvas.requestPointerLock(); return; }   // first click just captures the mouse
     try{ canvas.setPointerCapture(e.pointerId); }catch(_){}
     active++;
     if(active>1){ multi=true; gesture=null; BO.scene.hideGhost(); return; }
@@ -193,7 +225,16 @@
     if(!gesture||gesture.id!==e.pointerId){ if(viewMode!=='walk') BO.scene.hideGhost(); return; }
     var g=gesture; gesture=null; if(viewMode!=='walk') BO.scene.hideGhost();
     if(g.moved || !started) return;
-    if(viewMode==='walk'){ onTapResolved(walkAim); return; }
+    if(viewMode==='walk'){
+      if(e.pointerType==='mouse' && mouseLocked){
+        // recompute fresh at the moment of the click rather than trusting the once-per-frame cached walkAim —
+        // keeps clicks accurate to the crosshair even if a frame was dropped
+        var rr=canvas.getBoundingClientRect(); var aim=BO.scene.resolveTapAt(rr.width/2, rr.height/2);
+        if(e.button===2) useAt(aim); else if(e.button===0) breakAt(aim);
+        return;
+      }
+      onTapResolved(walkAim); return;
+    }
     onTapResolved(g.target!==undefined ? g.target : pickTarget(e));
   });
   canvas.addEventListener('pointercancel',function(){ active=Math.max(0,active-1); gesture=null; BO.scene.hideGhost(); });
@@ -297,7 +338,7 @@
     updateWalkBtn();
     updateMonsterUI();
     resetSticks();
-    toast(m==='walk' ? '🚶 Sticks move & look • tap the screen to build!' : '🔭 Back to bird\'s-eye view');
+    toast(m==='walk' ? (isTouchDevice ? '🚶 Sticks move & look • tap the screen to build!' : '🖱️ Click to look around • left-click break, right-click place • Esc for menu') : '🔭 Back to bird\'s-eye view');
   }
   $('toolMode').addEventListener('click',function(){ setView(viewMode==='walk'?'orbit':'walk'); BO.sfx.click(); });
 
