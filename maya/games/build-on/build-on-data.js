@@ -175,6 +175,7 @@
     hurt(){ tone(420,0,0.13,'triangle',0.16,170); tone(210,0.02,0.12,'sine',0.1); },
     poofMob(){ [700,900,1200].forEach(function(f,i){ tone(f,i*0.05,0.14,'triangle',0.13); }); noise(0,0.12,0.09,1100); },
     monstersOn(){ [220,175,140].forEach(function(f,i){ tone(f,i*0.09,0.22,'sawtooth',0.12); }); },
+    growl(){ tone(70,0,0.36,'sawtooth',0.13,46); tone(54,0.04,0.32,'square',0.09,40); noise(0,0.3,0.05,300); },
     monstersOff(){ [523,659,880].forEach(function(f,i){ tone(f,i*0.06,0.2,'triangle',0.12); }); },
     critter(){ tone(1046,0,0.07,'sine',0.09,1400); tone(1568,0.05,0.07,'sine',0.05); }
   };

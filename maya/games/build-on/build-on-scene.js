@@ -89,7 +89,7 @@
     camera.lowerRadiusLimit=10; camera.upperRadiusLimit=130;
     camera.lowerBetaLimit=0.18; camera.upperBetaLimit=1.48;
     camera.panningSensibility=0; camera.wheelPrecision=14; camera.pinchPrecision=20;
-    camera.inertia=0;
+    camera.inertia=0.6;   // smooth glide while dragging; the spin governor still stops it dead on release (no coast)
 
     scene.collisionsEnabled=true;
     walkCam=new BABYLON.UniversalCamera('walk',new BABYLON.Vector3(0,1.6,-(HALF-1)),scene);

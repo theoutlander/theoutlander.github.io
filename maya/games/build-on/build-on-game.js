@@ -176,11 +176,17 @@
     if(started && tool==='build' && viewMode!=='walk'){ gesture.target=pickTarget(e); ghostFor(gesture.target); }
   });
   canvas.addEventListener('pointermove',function(e){
-    if(!gesture||gesture.id!==e.pointerId) return;
+    if(!gesture||gesture.id!==e.pointerId){
+      // hover preview: with no button held, keep the landing box under the mouse cursor
+      // (desktop only — touch has no hover, so it stays tap-to-place there)
+      if(e.pointerType!=='touch' && started && tool==='build' && viewMode!=='walk'){ ghostFor(pickTarget(e)); }
+      return;
+    }
     if(!gesture.moved && Math.hypot(e.clientX-gesture.x0,e.clientY-gesture.y0)>THRESH){ gesture.moved=true; BO.scene.hideGhost(); }
     if(viewMode==='walk' && gesture.moved){ BO.scene.walkLook((e.clientX-gesture.lx)*0.005,(e.clientY-gesture.ly)*0.005); }
     gesture.lx=e.clientX; gesture.ly=e.clientY;
   });
+  canvas.addEventListener('pointerleave',function(){ if(!gesture && viewMode!=='walk') BO.scene.hideGhost(); });
   canvas.addEventListener('pointerup',function(e){
     active=Math.max(0,active-1);
     if(multi){ if(active===0) multi=false; if(viewMode!=='walk') BO.scene.hideGhost(); return; }
