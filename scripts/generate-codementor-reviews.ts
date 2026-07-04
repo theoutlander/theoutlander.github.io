@@ -66,7 +66,7 @@ async function generateCodementorReviews() {
     console.log('Generating Codementor reviews data...');
 
     // Read the raw reviews data
-    const rawDataPath = join(process.cwd(), 'data', 'codementor-reviews-raw.json');
+    const rawDataPath = join(process.cwd(), 'content', 'codementor-reviews-raw.json');
     const rawData = JSON.parse(readFileSync(rawDataPath, 'utf-8'));
     const rawReviews: RawReview[] = rawData.reviews;
 

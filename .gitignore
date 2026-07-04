@@ -26,4 +26,4 @@ supabase/.temp/storage-version
 
 # Judgement local dev state (wrangler/miniflare)
 .judgement-state/
-judgement/server/.wrangler/
+projects/judgement/server/.wrangler/

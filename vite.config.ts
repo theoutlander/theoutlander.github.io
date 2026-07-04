@@ -18,9 +18,9 @@ export default defineConfig({
 		TanStackRouterVite(),
 		redirectPlugin(),
 		blogPlugin(),
-		staticFolderDevPlugin("/maya", path.join(__dirname, "maya")),
-		staticFolderDevPlugin("/lab", path.join(__dirname, "lab")),
-		staticFolderDevPlugin("/judgement", path.join(__dirname, "judgement")),
+		staticFolderDevPlugin("/maya", path.join(__dirname, "projects/maya")),
+		staticFolderDevPlugin("/lab", path.join(__dirname, "projects/lab")),
+		staticFolderDevPlugin("/judgement", path.join(__dirname, "projects/judgement")),
 	],
 	server: {
 		host: true, // Listen on all network interfaces
