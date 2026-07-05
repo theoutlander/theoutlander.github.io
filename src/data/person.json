@@ -20,7 +20,7 @@
 	},
 	"currently": {
 		"label": "Currently · May 2026",
-		"description": "Lead Software Development Engineer at PitchBook. Building a new search and AI product on the financial intelligence platform. Making games with my three kids. Always something cooking."
+		"description": "Lead Software Development Engineer at PitchBook (Morningstar). Building a new search and AI product on the financial intelligence platform. Making games with my three kids. Always something cooking."
 	},
 	"heroLede": "Nearly three decades of building software across search engines, disease models, data platforms, and AI tools. Serious about cooking, cocktails, travel, and building games with my three kids. Still figuring out what comes next and building it anyway.",
 	"stats": [
@@ -44,14 +44,14 @@
 		},
 		{
 			"t": "Engineering Leadership",
-			"d": "Led teams at Google, Microsoft, Tableau, and T-Mobile. Hired and scaled engineering organizations."
+			"d": "Led and hired teams at Google, Microsoft, Tableau (Salesforce), and T-Mobile. Now a hands-on tech lead building product at PitchBook (Morningstar)."
 		}
 	],
 	"about": {
 		"title": "About",
 		"html": "\n\t<p>Nearly three decades of building software. Search engines, disease models, data platforms, AI tools. Not linear, not planned, all of it real.</p>\n\t<p>At Microsoft I spent six years on Bing search building relevance systems, data pipelines, and ML classifiers. I co-invented a patent on intent detection. At the Institute for Disease Modeling I built software that ended up in a Bill Gates TED Talk. At Tableau I led the data connectivity platform, work that continued after Salesforce acquired the company. At Google I led Gemini Code Assist from inception to millions of developers.</p>\n\t<p>I cook seriously, make cocktails, travel when I can, and build games with my three kids.</p>\n\t<p>Still figuring out what comes next and building it anyway.</p>\n"
 	},
-	"aboutShort": "I'm Nick Karnik. Lead Software Development Engineer at PitchBook. Previously Google, Microsoft, Tableau, Salesforce. Nearly three decades building software.",
+	"aboutShort": "I'm Nick Karnik. Lead Software Development Engineer at PitchBook (Morningstar). Previously Google, Microsoft, Tableau (Salesforce). Nearly three decades building software.",
 	"aboutSiteDescription": "This site is where I write down what I'm learning. The essays mostly cover engineering, leadership, and the practice of shipping software. The résumé is here too, formatted to read rather than scan. Recipes live in The Kitchen — a side project I treat with the same rigor as my day job.",
 	"aboutWorkDescription": "Developer tooling, data platforms, and software at scale.",
 	"aboutOutsideWork": "Cooking, mostly. I keep a versioned recipe log because I think the discipline of writing things down applies as well to dinner as it does to software.",
@@ -66,7 +66,7 @@
 		},
 		"resume": {
 			"title": "Nick Karnik | Résumé",
-			"description": "Engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau, Salesforce, and earlier startups."
+			"description": "Engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau (Salesforce), and earlier startups."
 		},
 		"blog": {
 			"title": "Nick Karnik | Blog",
