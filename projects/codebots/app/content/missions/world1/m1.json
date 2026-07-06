@@ -1,0 +1,36 @@
+{
+  "id": "w1m1",
+  "world": 1,
+  "index": 1,
+  "teaches": "sequencing",
+  "arena": {
+    "cols": 9,
+    "rows": 6,
+    "cells": [
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","mud","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","mud","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor"]
+    ],
+    "crates": [
+      { "x": 3, "y": 4 }, { "x": 4, "y": 4 }, { "x": 5, "y": 4 }, { "x": 7, "y": 3 }
+    ],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "beacon": { "x": 7, "y": 1 }
+  },
+  "start": { "pos": { "x": 0, "y": 4 }, "facing": "E" },
+  "parLines": 6,
+  "starterCode": "// Wake up! forward(1) rolls 1 square.\nforward(1)",
+  "hints": [
+    "Count squares before the crates.",
+    "forward(2), then face north — which turn is that?",
+    "forward(2) left()"
+  ],
+  "briefing": "Rise and shine, Sparkplug. The pirates parked crates all over Dock 1. Roll to the beacon — the long way if you must, the smart way if you can.",
+  "authorSolution": "forward(2); left(); forward(3); right(); forward(5); honk();",
+  "bonusStar": { "kind": "honkOnBeacon" }
+}

@@ -876,6 +876,9 @@ export async function renderAllStaticPagesSSR() {
 		{ source: "projects/maya", destinations: ["dist/maya"] },
 		{ source: "projects/lab", destinations: ["dist/lab"] },
 		{ source: "projects/judgement", destinations: ["dist/judgement"] },
+		// Copy the BUILT bundle, not the source tree — codebots/app has its own Vite build,
+		// TypeScript sources, node_modules, and the design-system/spec files that must NOT ship.
+		{ source: "projects/codebots/app/dist", destinations: ["dist/codebots"] },
 	];
 	for (const folder of standaloneFolders) {
 		try {

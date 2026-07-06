@@ -30,6 +30,9 @@ export default defineConfig({
       '**/.{idea,git,cache,output,temp}/**',
       '**/{karma,rollup,webpack,vite,vitest,jest,ava,babel,nyc,cypress,tsup,build}.config.*',
       '**/*.e2e.test.{js,mjs,cjs,ts,mts,cts,jsx,tsx}',
+      // Standalone sub-apps under projects/ own their own vitest runner and node env.
+      // Running their tests here (jsdom, root setup, coverage instrumentation) breaks them.
+      'projects/**',
     ],
   },
 });
