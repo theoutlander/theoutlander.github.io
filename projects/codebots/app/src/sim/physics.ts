@@ -1,24 +1,33 @@
-import { cellAt, inBounds, stepFacing } from "./arena";
-import type { Arena, BotState, Facing, Vec2 } from "./types";
+import { stepFacing } from "./arena";
+import type { BotState, Facing, Vec2 } from "./types";
 
-function isBlocked(arena: Arena, pos: { x: number; y: number }): boolean {
-  if (!inBounds(arena, pos)) return true;
-  if (cellAt(arena, pos) === "wall") return true;
-  return arena.crates.some((c) => c.x === pos.x && c.y === pos.y);
+/**
+ * The movable world as physics sees it — decoupled from the Arena so runtime-mutable things
+ * (honk-gates opening) and hazards (pits, mud) are just predicates. The engine builds this with
+ * closures over the live gate state, so a gate that opens mid-run immediately stops blocking.
+ */
+export interface MoveWorld {
+  /** wall / crate / tank / closed-gate cell / out of bounds */
+  isBlocked(pos: Vec2): boolean;
+  /** a pit: entering it is a fall (−40 + tow), not a step */
+  isPit(pos: Vec2): boolean;
+  /** mud costs 2 ticks to cross instead of 1 */
+  isMud(pos: Vec2): boolean;
 }
 
 export interface MoveResult {
   state: BotState;
   ticksSpent: number;
-  /** the squares actually entered, in order, with each square's tick cost (mud = 2, else 1) */
+  /** squares actually entered, in order, each with its tick cost */
   path: { to: Vec2; cost: number }[];
-  /** true if the move stopped early because the next square was a wall/crate/edge */
+  /** stopped early against a wall/crate/tank/gate/edge */
   bumped: boolean;
+  /** stopped early at a pit's edge (−40 applied) */
+  fell: boolean;
 }
 
-/** Moves up to `squares` in `facing`, stopping at the first obstacle. Mud costs 2 ticks/sq. */
 export function resolveMove(
-  arena: Arena,
+  world: MoveWorld,
   state: BotState,
   facing: Facing,
   squares: number,
@@ -29,11 +38,18 @@ export function resolveMove(
   let score = state.score;
   let armor = state.armor;
   let bumped = false;
+  let fell = false;
   const path: { to: Vec2; cost: number }[] = [];
 
   for (let i = 0; i < squares; i++) {
     const next = stepFacing(pos, facing);
-    if (isBlocked(arena, next)) {
+    if (world.isPit(next)) {
+      // The pit guards the way — the bot lurches to the edge and is towed back. −40, no crossing.
+      score -= 40;
+      fell = true;
+      break;
+    }
+    if (world.isBlocked(next)) {
       score -= 15;
       armor = Math.max(0, armor - 8);
       bumps += 1;
@@ -41,15 +57,16 @@ export function resolveMove(
       break;
     }
     pos = next;
-    const cost = cellAt(arena, pos) === "mud" ? 2 : 1;
+    const cost = world.isMud(next) ? 2 : 1;
     ticksSpent += cost;
     path.push({ to: pos, cost });
   }
 
   return {
     state: { ...state, pos, facing, bumps, score, armor },
-    ticksSpent: ticksSpent || 1, // a blocked attempt still costs the tick it took to try
+    ticksSpent: ticksSpent || 1, // a blocked/fallen attempt still costs the tick it took to try
     path,
     bumped,
+    fell,
   };
 }

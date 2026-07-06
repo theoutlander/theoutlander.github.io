@@ -13,6 +13,7 @@ export type SimEvent =
   | { tick: number; type: "move"; from: Vec2; to: Vec2; facing: Facing; cost: number }
   | { tick: number; type: "turn"; facing: Facing }
   | { tick: number; type: "bump"; at: Vec2 }
+  | { tick: number; type: "fall"; at: Vec2 }
   | { tick: number; type: "honk"; at: Vec2 }
   | { tick: number; type: "gateOpen"; pad: Vec2; gateCells: Vec2[] }
   | { tick: number; type: "coin"; at: Vec2 }

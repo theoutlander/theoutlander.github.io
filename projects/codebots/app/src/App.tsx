@@ -43,8 +43,8 @@ export function App() {
   }
 
   return (
-    <div style={{ minHeight: "100%", display: "flex", flexDirection: "column" }}>
-      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 20px", borderBottom: "var(--border)" }}>
+    <div style={{ height: "100vh", display: "flex", flexDirection: "column", overflow: "hidden" }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 14, padding: "13px 20px", borderBottom: "var(--border)", flex: "none" }}>
         <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, letterSpacing: "-.5px" }}>
           CODE<span style={{ color: "var(--amber)" }}>BOTS</span>
         </div>
@@ -59,19 +59,21 @@ export function App() {
         <Coin count={coins} />
       </div>
 
-      {screen.name === "map" || !mission ? (
-        <CampaignMap missions={WORLD1} save={save} onPick={openMission} />
-      ) : (
-        <MissionScreen
-          key={mission.id}
-          mission={mission}
-          paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
-          onCoins={setCoins}
-          onExit={toMap}
-          onNext={nextMission}
-          hasNext={screen.index + 1 < WORLD1.length}
-        />
-      )}
+      <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "map" || !mission ? "auto" : "hidden" }}>
+        {screen.name === "map" || !mission ? (
+          <CampaignMap missions={WORLD1} save={save} onPick={openMission} />
+        ) : (
+          <MissionScreen
+            key={mission.id}
+            mission={mission}
+            paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
+            onCoins={setCoins}
+            onExit={toMap}
+            onNext={nextMission}
+            hasNext={screen.index + 1 < WORLD1.length}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -153,9 +153,19 @@ export function MissionScreen({
   const col: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 12 };
 
   return (
-    <div style={{ display: "flex", gap: 14, padding: "16px 20px", alignItems: "flex-start" }}>
+    <div
+      style={{
+        display: "flex",
+        gap: 14,
+        padding: "14px 20px",
+        alignItems: "stretch",
+        height: "100%",
+        boxSizing: "border-box",
+        overflow: "hidden",
+      }}
+    >
       {/* LEFT: briefing, commands, hint */}
-      <div style={{ ...col, width: 240, flex: "none" }}>
+      <div style={{ ...col, width: 240, flex: "none", overflowY: "auto" }}>
         <Button variant="ghost" size="sm" onClick={onExit}>
           ← MISSION MAP
         </Button>
@@ -184,14 +194,16 @@ export function MissionScreen({
         </Button>
       </div>
 
-      {/* CENTER: HUD + arena */}
+      {/* CENTER: HUD + arena. The arena box fills the remaining space; Phaser FIT centers the grid
+          inside it so the whole thing always stays within the screen. */}
       <div style={{ ...col, flex: 1, minWidth: 0 }}>
         <Hud score={hud.score} armor={hud.armor} />
         <div
           ref={arenaHost}
           style={{
+            flex: 1,
+            minHeight: 0,
             width: "100%",
-            aspectRatio: `${mission.arena.cols} / ${mission.arena.rows}`,
             background: "var(--surface-arena)",
             border: "var(--border)",
             borderRadius: "var(--radius-xl)",
@@ -201,9 +213,9 @@ export function MissionScreen({
       </div>
 
       {/* RIGHT: editor + controls + radio */}
-      <div style={{ ...col, width: 340, flex: "none" }}>
-        <Panel label="YOUR PROGRAM">
-          <div style={{ border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
+      <div style={{ ...col, width: 380, flex: "none", minHeight: 0 }}>
+        <Panel label="YOUR PROGRAM" style={{ flex: 1, minHeight: 0 }}>
+          <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
             <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
           </div>
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>

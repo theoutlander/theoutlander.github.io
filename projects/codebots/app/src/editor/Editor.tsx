@@ -97,5 +97,5 @@ export function Editor({
     viewRef.current?.dispatch({ effects: setErrorLine.of(errorLine ?? null) });
   }, [errorLine]);
 
-  return <div ref={hostRef} style={{ borderRadius: 8, overflow: "hidden" }} />;
+  return <div ref={hostRef} style={{ borderRadius: 8, overflow: "hidden", height: "100%" }} />;
 }
