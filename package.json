@@ -46,7 +46,7 @@
 		"baseline-browser-mapping": "^2.10.42",
 		"concurrently": "^10.0.3",
 		"jsdom": "^27.0.0",
-		"puppeteer": "^24.36.0",
+		"puppeteer": "^25.2.1",
 		"tsx": "^4.23.0",
 		"typescript": "~5.9.3",
 		"vite": "^5.4.20",
