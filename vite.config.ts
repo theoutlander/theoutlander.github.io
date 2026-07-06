@@ -21,6 +21,10 @@ export default defineConfig({
 		staticFolderDevPlugin("/maya", path.join(__dirname, "projects/maya")),
 		staticFolderDevPlugin("/lab", path.join(__dirname, "projects/lab")),
 		staticFolderDevPlugin("/judgement", path.join(__dirname, "projects/judgement")),
+		staticFolderDevPlugin(
+			"/codebots",
+			path.join(__dirname, "projects/codebots/app/dist"),
+		),
 	],
 	server: {
 		host: true, // Listen on all network interfaces
