@@ -26,6 +26,7 @@ export const MissionSchema = z.object({
   id: z.string(),
   world: z.number().int().min(1).max(8),
   index: z.number().int().min(1).max(6),
+  title: z.string(),
   teaches: z.string(),
   arena: ArenaSchema,
   start: z.object({ pos: Vec2Schema, facing: FacingSchema }),

@@ -8,6 +8,8 @@ export interface MissionResult {
   stars: number;
   coinsEarned: number;
   newlyUnlocked: string | null;
+  lines: number;
+  par: number;
 }
 
 /** MISSION CLEAR moment — stars, coins, any new unlock, and a way forward. Loud and celebratory
@@ -16,10 +18,12 @@ export function ResultOverlay({
   result,
   onRetry,
   onContinue,
+  continueLabel = "CONTINUE →",
 }: {
   result: MissionResult;
   onRetry: () => void;
   onContinue: () => void;
+  continueLabel?: string;
 }) {
   return (
     <div
@@ -51,6 +55,11 @@ export function ResultOverlay({
           <span>earned</span>
           <Coin count={result.coinsEarned} />
         </div>
+        {/* The "can you do better?" nudge — on the code-quality axis (lines), not a timer. */}
+        <div style={{ fontSize: "var(--text-sm)", color: result.lines <= result.par ? "var(--green)" : "var(--text-dim)" }}>
+          YOU: {result.lines} {result.lines === 1 ? "line" : "lines"} · PAR: {result.par}
+          {result.lines > result.par ? " — can you do it in fewer lines?" : ""}
+        </div>
         {result.newlyUnlocked ? (
           <div
             style={{
@@ -70,7 +79,7 @@ export function ResultOverlay({
           <Button variant="ghost" onClick={onRetry}>
             RETRY
           </Button>
-          <Button onClick={onContinue}>CONTINUE →</Button>
+          <Button onClick={onContinue}>{continueLabel}</Button>
         </div>
       </Panel>
     </div>

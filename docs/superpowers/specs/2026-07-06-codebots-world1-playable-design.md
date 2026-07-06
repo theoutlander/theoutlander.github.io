@@ -37,6 +37,19 @@ view, a CodeMirror 6 editor, Web-Worker-sandboxed kid code, and Howler.js + jsfx
   a deployed static site can't have the kid edit the served file and reload). We read a bundled
   default `bot.json` for paint now; the Bot Maker editor comes later.
 
+## Product decisions (confirmed by owner, 2026-07-06)
+
+- **Phaser arena/bot reconciliation: APPROVED.** Drawing the bot + arena in Phaser vector
+  graphics (rather than the DOM `BotAvatar` divs) is signed off by the product owner.
+- **M5 = a new authored practice mission** (combine `back()` + honk-gates + mud); the real remix
+  (kid-authored maze-building) is parked as a **v2 goal**, not built now.
+- **Villain visuals wanted:** the design project will define Captain Sprocket's tank (M6 boss)
+  and later Cogbeard; reproduced in the design system's geometric language.
+- **Result screen shows a "lines vs par" nudge** ("YOU: n lines · PAR: m") — the "can you do
+  better?" hook, kept on the code-quality axis (not a squares/moves counter, not a timer).
+- **Ghosts / time-trials deferred to after World 1** (their World 2 unlock), and will bring the
+  tick-clock playback with them.
+
 ## Design-system reconciliation (needs design-project sign-off at review)
 
 The design system states: *"the bot IS the mascot… drawn in divs… never redraw it differently;

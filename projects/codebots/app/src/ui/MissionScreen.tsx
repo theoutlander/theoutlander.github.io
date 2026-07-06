@@ -11,6 +11,7 @@ import { mountArena, type MountedArena } from "../view/mountArena";
 import { SandboxClient } from "../sandbox/sandboxClient";
 import { Sfx } from "../sound/sfx";
 import { loadSave, saveSave, recordResult } from "../state/save";
+import { countCodeLines } from "../sandbox/lines";
 
 const W1_COMMANDS = [
   { sig: "forward(n)", desc: "roll forward n squares" },
@@ -22,10 +23,16 @@ export function MissionScreen({
   mission,
   paint,
   onCoins,
+  onExit,
+  onNext,
+  hasNext,
 }: {
   mission: Mission;
   paint: { bodyColor: number; domeColor: number };
   onCoins: (total: number) => void;
+  onExit: () => void;
+  onNext: () => void;
+  hasNext: boolean;
 }) {
   const arenaHost = useRef<HTMLDivElement>(null);
   const arena = useRef<MountedArena | null>(null);
@@ -120,7 +127,13 @@ export function MissionScreen({
     );
     saveSave(next);
     onCoins(next.coins);
-    setResult({ stars, coinsEarned, newlyUnlocked });
+    setResult({
+      stars,
+      coinsEarned,
+      newlyUnlocked,
+      lines: countCodeLines(code),
+      par: mission.parLines,
+    });
   }
 
   function stop() {
@@ -143,6 +156,9 @@ export function MissionScreen({
     <div style={{ display: "flex", gap: 14, padding: "16px 20px", alignItems: "flex-start" }}>
       {/* LEFT: briefing, commands, hint */}
       <div style={{ ...col, width: 240, flex: "none" }}>
+        <Button variant="ghost" size="sm" onClick={onExit}>
+          ← MISSION MAP
+        </Button>
         <Panel label="BRIEFING">
           <div style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)", color: "var(--text-body)" }}>
             {mission.briefing}
@@ -211,11 +227,16 @@ export function MissionScreen({
       {result ? (
         <ResultOverlay
           result={result}
+          continueLabel={hasNext ? "NEXT MISSION →" : "MISSION MAP →"}
           onRetry={() => {
             setResult(null);
             stop();
           }}
-          onContinue={() => setResult(null)}
+          onContinue={() => {
+            setResult(null);
+            if (hasNext) onNext();
+            else onExit();
+          }}
         />
       ) : null}
     </div>
