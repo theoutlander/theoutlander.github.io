@@ -1,0 +1,15 @@
+<!-- @dsCard group="Components" viewport="700x200" subtitle="Meters (score/armor/speed/charge) · status chips · coins · stars" name="HUD" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css"><style>body{margin:0;background:var(--bg);font-family:var(--font-mono);color:var(--ink);padding:14px 18px;display:flex;flex-direction:column;gap:11px}.m{display:flex;align-items:center;gap:10px}.lbl{font-size:10px;letter-spacing:2px;color:var(--text-dim);font-weight:700;width:58px}.bar{flex:1;height:8px;border-radius:4px;background:var(--surface-inset);overflow:hidden}.v{font-size:10px;font-weight:700;width:38px;text-align:right}.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.sc{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;background:var(--surface-deep);border-radius:999px;padding:3px 9px}.d{width:7px;height:7px;border-radius:50%;animation:cbBlink 1s infinite}</style></head><body>
+<div class="m"><span class="lbl">SCORE</span><div class="bar"><div style="width:70%;height:100%;background:var(--amber)"></div></div><span class="v" style="color:var(--amber)">140</span></div>
+<div class="m"><span class="lbl">ARMOR</span><div class="bar"><div style="width:61%;height:100%;background:var(--green)"></div></div><span class="v" style="color:var(--green)">61%</span></div>
+<div class="m"><span class="lbl">SPEED</span><div class="bar"><div style="width:45%;height:100%;background:var(--cyan)"></div></div><span class="v" style="color:var(--cyan)">4.5</span></div>
+<div class="m"><span class="lbl">CHARGE</span><div class="bar"><div style="width:25%;height:100%;background:var(--red)"></div></div><span class="v" style="color:var(--red)">25%</span></div>
+<div class="row">
+<span class="sc" style="color:var(--fx-fire);border:1.5px solid var(--fx-fire)"><span class="d" style="background:var(--fx-fire)"></span>ON FIRE</span>
+<span class="sc" style="color:var(--fx-ice);border:1.5px solid var(--fx-ice)"><span class="d" style="background:var(--fx-ice)"></span>FROZEN</span>
+<span class="sc" style="color:var(--fx-vine);border:1.5px solid var(--fx-vine)"><span class="d" style="background:var(--fx-vine)"></span>TANGLED</span>
+<span class="sc" style="color:var(--amber);border:1.5px solid var(--amber)"><span class="d" style="background:var(--amber)"></span>RECHARGING</span>
+<span style="display:inline-flex;align-items:center;gap:6px"><span style="width:18px;height:18px;border-radius:5px;background:var(--amber);border:2px solid rgba(0,0,0,.35);box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--on-amber)">C</span><span style="font-size:11px;color:var(--amber);font-weight:700">&#215;12</span></span>
+<span style="color:var(--amber);font-size:16px">&#9733;&#9733;<span style="color:var(--line-strong)">&#9733;</span></span><span style="font-size:10px;color:var(--amber);font-weight:700">13/15</span>
+</div>
+</body></html>

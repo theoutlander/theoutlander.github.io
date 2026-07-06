@@ -1,0 +1,33 @@
+/* CodeBots spacing, radii, borders, sizing. */
+:root {
+  /* spacing (4px base) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+
+  /* radii */
+  --radius-sm: 7px;    /* inline chips, small tags */
+  --radius-md: 9px;    /* buttons, inputs */
+  --radius-lg: 12px;   /* cards, panels */
+  --radius-xl: 14px;   /* arena, big panels */
+  --radius-pill: 999px;
+
+  /* borders — the 2px border is a brand signature */
+  --border-w: 2px;
+  --border-w-thin: 1.5px;
+  --border: var(--border-w) solid var(--line);
+  --border-dashed: var(--border-w) dashed var(--line-strong); /* locked / future / hint */
+
+  /* game grid */
+  --cell: 52px;        /* mission arena cell */
+  --cell-battle: 22px; /* big battle sector cell */
+
+  /* kid ergonomics */
+  --hit-target: 44px;  /* minimum tappable size */
+  --text-floor: 11px;  /* smallest legible UI text; never smaller */
+}

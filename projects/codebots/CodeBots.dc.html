@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#0D1A33}
+textarea:focus{outline:none}
+@keyframes ccPulse{0%{transform:scale(.4);opacity:.9}100%{transform:scale(2.1);opacity:0}}
+@keyframes ccBlink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes ccShake{0%,100%{transform:translate(0,0)}20%{transform:translate(-4px,1px)}40%{transform:translate(4px,-1px)}60%{transform:translate(-3px,0)}80%{transform:translate(2px,1px)}}
+@keyframes ccFall{0%{transform:translateY(-40px) rotate(0deg);opacity:1}75%{opacity:1}100%{transform:translateY(70vh) rotate(340deg);opacity:0}}
+@keyframes ccPop{0%{transform:scale(.85);opacity:0}100%{transform:scale(1);opacity:1}}
+</style>
+</helmet>
+<div style="min-height:100vh;font-family:'IBM Plex Mono',monospace;color:var(--ink,#EAF2FF);background:var(--bg,#0D1A33);--bg:{{ thBg }};--panel:{{ thPanel }};--line:{{ thLine }};--ink:{{ thInk }};--dim:{{ thDim }};--acc:{{ thAcc }};--acc2:{{ thAcc2 }};--arena:{{ thArena }};--grid:{{ thGrid }};--crate:{{ thCrate }};--good:{{ thGood }};--bad:{{ thBad }};--tank:{{ tankCol }};--tank2:{{ tankCol2 }}">
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+    <div data-screen-label="Home" style="min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:44px;padding:48px 24px;box-sizing:border-box">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:16px">
+        <div onClick="{{ shufflePaint }}" style="position:relative;width:68px;height:46px;cursor:pointer">
+          <div style="position:absolute;left:8px;right:8px;top:0;height:9px;background:var(--dim,#8FA7CD);border-radius:5px"></div>
+          <div style="position:absolute;left:8px;right:8px;bottom:0;height:9px;background:var(--dim,#8FA7CD);border-radius:5px"></div>
+          <div style="position:absolute;left:6px;right:10px;top:8px;bottom:8px;background:var(--tank,#FFB454);border:2px solid rgba(0,0,0,.3);border-radius:8px;box-sizing:border-box"></div>
+          <div style="position:absolute;right:-8px;top:50%;width:24px;height:7px;margin-top:-3.5px;background:var(--tank,#FFB454);border:2px solid rgba(0,0,0,.3);border-radius:4px;box-sizing:border-box"></div>
+          <div style="position:absolute;left:50%;top:50%;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:var(--tank2,#FFB454);border:3px solid rgba(0,0,0,.35);box-sizing:border-box"></div>
+        </div>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(46px,7vw,72px);letter-spacing:-2px;line-height:1">CODE<span style="color:var(--acc,#FFB454)">BOTS</span></div>
+        <div style="color:var(--dim,#8FA7CD);font-size:14px;text-align:center">// learn to code &#8594; command your tank &#8594; win the arena</div>
+        <div style="display:flex;align-items:center;gap:10px;font-size:11.5px;letter-spacing:1px">
+          <span style="color:var(--acc,#FFB454);font-weight:700">PILOT: {{ playerName }}</span>
+          <span style="color:var(--dim,#8FA7CD)">&#183;</span>
+          <span style="color:var(--acc2,#5FD4FF);font-weight:700">BOT: {{ botName }}</span>
+        </div>
+        <div style="font-size:10px;color:var(--dim,#8FA7CD);opacity:.75;text-align:center">your colors &amp; names live in bot.json &#8212; edit &amp; save to repaint &#183; click your bot to shuffle the paintbox</div>
+        <div style="display:flex;gap:22px;font-size:11px;letter-spacing:1px;color:var(--dim,#8FA7CD);opacity:.85">
+          <div><span style="color:var(--acc,#FFB454);font-weight:700">1</span> READ THE BRIEFING</div>
+          <div><span style="color:var(--acc,#FFB454);font-weight:700">2</span> WRITE COMMANDS</div>
+          <div><span style="color:var(--acc,#FFB454);font-weight:700">3</span> RUN &amp; WATCH</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center;max-width:1100px">
+        <sc-for list="{{ cards }}" as="c" hint-placeholder-count="4">
+          <div onClick="{{ c.onClick }}" style="width:228px;border:2px solid var(--line,rgba(146,180,240,.28));border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--panel,#13234A);cursor:pointer;opacity:{{ c.opacity }};transition:transform .15s,border-color .15s" style-hover="transform:translateY(-3px);border-color:var(--acc,#FFB454)">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;gap:8px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:30px;line-height:1">{{ c.num }}</div>
+              <div style="font-size:9.5px;letter-spacing:1.5px;font-weight:700;color:{{ c.stColor }};border:1.5px solid {{ c.stColor }};padding:3px 9px;border-radius:99px;white-space:nowrap">{{ c.status }}</div>
+            </div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;letter-spacing:.5px">{{ c.name }}</div>
+            <div style="font-size:11.5px;line-height:1.6;color:var(--dim,#8FA7CD)">{{ c.desc }}</div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="color:var(--dim,#8FA7CD);font-size:11px;opacity:.7">training grounds v0.1 &#183; battle mode is in the workshop</div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isMission }}" hint-placeholder-val="{{ false }}">
+    <div data-screen-label="Mission {{ mNum }}" style="min-height:100vh;display:flex;flex-direction:column">
+
+      <div style="display:flex;align-items:center;gap:16px;padding:12px 18px;border-bottom:2px solid var(--line,rgba(146,180,240,.28))">
+        <button onClick="{{ goHome }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;padding:8px 12px;background:transparent;border:2px solid var(--line,rgba(146,180,240,.28));border-radius:8px;color:var(--ink,#EAF2FF);cursor:pointer" style-hover="border-color:var(--acc,#FFB454)">&#8592; MISSIONS</button>
+        <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;letter-spacing:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">MISSION {{ mNum }} &#8212; {{ mName }}</div>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:10.5px;letter-spacing:2px;font-weight:700;color:{{ lampColor }}">
+          <div style="width:10px;height:10px;border-radius:50%;background:{{ lampColor }};animation:{{ lampAnim }}"></div>
+          {{ lampText }}
+        </div>
+      </div>
+
+      <div style="display:flex;flex-wrap:wrap;gap:14px;padding:14px 16px 22px;flex:1;align-items:flex-start">
+
+        <div style="width:238px;flex:none;display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--panel,#13234A);border:2px solid var(--line,rgba(146,180,240,.28));border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--dim,#8FA7CD);font-weight:700">BRIEFING</div>
+            <div style="font-size:13px;line-height:1.65">{{ mBrief }}</div>
+          </div>
+          <div style="background:var(--panel,#13234A);border:2px solid var(--line,rgba(146,180,240,.28));border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:4px">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--dim,#8FA7CD);font-weight:700;padding-bottom:4px">COMMANDS</div>
+            <sc-for list="{{ mCmds }}" as="cm" hint-placeholder-count="2">
+              <div style="display:flex;flex-direction:column;gap:3px;padding:8px 0;border-top:1px dashed var(--line,rgba(146,180,240,.28))">
+                <div style="font-size:13px;font-weight:700;color:var(--acc,#FFB454)">{{ cm.sig }}</div>
+                <div style="font-size:11.5px;line-height:1.5;color:var(--dim,#8FA7CD)">{{ cm.desc }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hintOpen }}" hint-placeholder-val="{{ false }}">
+            <div style="background:var(--panel,#13234A);border:2px dashed var(--acc2,#5FD4FF);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:8px">
+              <div style="font-size:10px;letter-spacing:2px;color:var(--acc2,#5FD4FF);font-weight:700">HINT</div>
+              <div style="font-size:12.5px;line-height:1.65">{{ mHint }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ hintClosed }}" hint-placeholder-val="{{ true }}">
+            <button onClick="{{ toggleHint }}" style="font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;padding:10px;background:transparent;border:2px dashed var(--line,rgba(146,180,240,.28));border-radius:12px;color:var(--dim,#8FA7CD);cursor:pointer" style-hover="border-color:var(--acc2,#5FD4FF);color:var(--acc2,#5FD4FF)">NEED A HINT?</button>
+          </sc-if>
+        </div>
+
+        <div style="flex:1 1 400px;min-width:360px;display:flex;padding-top:26px;overflow:auto">
+          <div style="position:relative;margin:0 auto">
+            <sc-if value="{{ showCoords }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <sc-for list="{{ colLabels }}" as="cl" hint-placeholder-count="0">
+                  <div style="position:absolute;top:-20px;left:{{ cl.left }}px;width:52px;text-align:center;font-size:10px;color:var(--dim,#8FA7CD)">{{ cl.t }}</div>
+                </sc-for>
+                <sc-for list="{{ rowLabels }}" as="rl" hint-placeholder-count="0">
+                  <div style="position:absolute;left:-20px;top:{{ rl.top }}px;height:52px;display:flex;align-items:center;font-size:10px;color:var(--dim,#8FA7CD)">{{ rl.t }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="position:relative;width:{{ arenaW }}px;height:{{ arenaH }}px;background:var(--arena,#0A1F45);border:2px solid var(--line,rgba(146,180,240,.28));border-radius:10px;overflow:hidden;box-sizing:content-box;background-image:repeating-linear-gradient(0deg,var(--grid,rgba(120,170,255,.16)) 0px,var(--grid,rgba(120,170,255,.16)) 1px,transparent 1px,transparent 52px),repeating-linear-gradient(90deg,var(--grid,rgba(120,170,255,.16)) 0px,var(--grid,rgba(120,170,255,.16)) 1px,transparent 1px,transparent 52px)">
+              <div style="position:absolute;left:{{ startLeft }}px;top:{{ startTop }}px;width:52px;height:52px;display:flex;align-items:center;justify-content:center">
+                <div style="width:38px;height:38px;border:2px dashed var(--dim,#8FA7CD);border-radius:50%;opacity:.45"></div>
+              </div>
+              <div style="position:absolute;left:{{ goalLeft }}px;top:{{ goalTop }}px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;z-index:1">
+                <div style="position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:2px solid var(--acc2,#5FD4FF);animation:ccPulse 1.6s ease-out infinite"></div>
+                <div style="position:absolute;width:15px;height:15px;background:var(--acc2,#5FD4FF);border-radius:3px"></div>
+                <div style="position:absolute;width:15px;height:15px;background:var(--acc2,#5FD4FF);border-radius:3px;transform:rotate(45deg)"></div>
+              </div>
+              <sc-for list="{{ crates }}" as="cr" hint-placeholder-count="0">
+                <div style="position:absolute;left:{{ cr.left }}px;top:{{ cr.top }}px;width:52px;height:52px;padding:7px;box-sizing:border-box;z-index:1">
+                  <div style="position:relative;width:100%;height:100%;border:2px solid var(--crate,#7FA8E0);border-radius:5px;background:rgba(127,168,224,.10);overflow:hidden;box-sizing:border-box">
+                    <div style="position:absolute;left:-20%;top:50%;width:140%;height:2px;background:var(--crate,#7FA8E0);transform:rotate(45deg)"></div>
+                    <div style="position:absolute;left:-20%;top:50%;width:140%;height:2px;background:var(--crate,#7FA8E0);transform:rotate(-45deg)"></div>
+                  </div>
+                </div>
+              </sc-for>
+              <sc-if value="{{ hasShot }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:0;top:0;width:10px;height:10px;border-radius:50%;background:var(--acc,#FFB454);box-shadow:0 0 10px var(--acc,#FFB454);z-index:2;transform:{{ shotTransform }};transition:{{ shotTransition }}"></div>
+              </sc-if>
+              <sc-if value="{{ hasBlast }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute;left:{{ blastLeft }}px;top:{{ blastTop }}px;width:52px;height:52px;display:flex;align-items:center;justify-content:center;z-index:4">
+                  <div style="width:34px;height:34px;border-radius:50%;border:3px solid var(--acc,#FFB454);animation:ccPulse .35s ease-out"></div>
+                </div>
+              </sc-if>
+              <div style="position:absolute;left:0;top:0;width:52px;height:52px;z-index:3;transform:{{ tankTransform }};transition:{{ tankTransition }};will-change:transform">
+                <div style="position:absolute;inset:0;animation:{{ tankAnim }}">
+                  <div style="position:absolute;left:8px;right:8px;top:6px;height:8px;background:var(--dim,#8FA7CD);border-radius:4px"></div>
+                  <div style="position:absolute;left:8px;right:8px;bottom:6px;height:8px;background:var(--dim,#8FA7CD);border-radius:4px"></div>
+                  <div style="position:absolute;left:10px;right:12px;top:13px;bottom:13px;background:var(--tank,#FFB454);border:2px solid rgba(0,0,0,.3);border-radius:6px;box-sizing:border-box"></div>
+                  <div style="position:absolute;right:-1px;top:50%;width:19px;height:6px;margin-top:-3px;background:var(--tank,#FFB454);border:2px solid rgba(0,0,0,.3);border-radius:3px;box-sizing:border-box"></div>
+                  <div style="position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--tank2,#FFB454);border:2px solid rgba(0,0,0,.35);box-sizing:border-box"></div>
+                </div>
+              </div>
+            </div>
+            <sc-if value="{{ isCrashed }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);max-width:90%;background:var(--panel,#13234A);border:2px solid var(--bad,#FF6B7A);border-radius:10px;padding:10px 16px;font-size:12px;line-height:1.5;color:var(--ink,#EAF2FF);white-space:nowrap;z-index:5">{{ crashMsg }}</div>
+            </sc-if>
+            <sc-if value="{{ hasNotice }}" hint-placeholder-val="{{ false }}">
+              <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);max-width:90%;background:var(--panel,#13234A);border:2px solid var(--acc2,#5FD4FF);border-radius:10px;padding:10px 16px;font-size:12px;line-height:1.5;color:var(--ink,#EAF2FF);z-index:5">{{ notice }}</div>
+            </sc-if>
+          </div>
+        </div>
+
+        <div style="width:332px;flex:none;display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--panel,#13234A);border:2px solid var(--line,rgba(146,180,240,.28));border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:12px">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--dim,#8FA7CD);font-weight:700">YOUR PROGRAM</div>
+            <div style="display:flex;border:2px solid var(--line,rgba(146,180,240,.28));border-radius:8px;overflow:hidden;background:rgba(0,0,0,.15)">
+              <div ref="{{ gutterRef }}" style="width:34px;flex:none;height:288px;overflow:hidden;padding:10px 0;box-sizing:border-box;text-align:right;border-right:1px solid var(--line,rgba(146,180,240,.28))">
+                <sc-for list="{{ gutterNums }}" as="g" hint-placeholder-count="3">
+                  <div style="height:22px;font-size:10.5px;line-height:22px;color:var(--dim,#8FA7CD);padding-right:8px;opacity:.7">{{ g }}</div>
+                </sc-for>
+              </div>
+              <sc-if value="{{ notRunning }}" hint-placeholder-val="{{ true }}">
+                <textarea value="{{ codeValue }}" onChange="{{ onCode }}" onScroll="{{ onEdScroll }}" spellCheck="{{ false }}" wrap="off" style="flex:1;height:288px;padding:10px 12px;box-sizing:border-box;background:transparent;border:none;color:var(--ink,#EAF2FF);font-family:'IBM Plex Mono',monospace;font-size:13px;line-height:22px;resize:none;white-space:pre;overflow:auto"></textarea>
+              </sc-if>
+              <sc-if value="{{ isRunning }}" hint-placeholder-val="{{ false }}">
+                <div onScroll="{{ onEdScroll }}" style="flex:1;height:288px;padding:10px 12px;box-sizing:border-box;overflow:auto;font-size:13px;line-height:22px;font-family:'IBM Plex Mono',monospace">
+                  <sc-for list="{{ runLines }}" as="ln" hint-placeholder-count="0">
+                    <div style="white-space:pre;height:22px;background:{{ ln.bg }};color:{{ ln.color }};margin:0 -8px;padding:0 8px;border-radius:3px">{{ ln.text }}</div>
+                  </sc-for>
+                </div>
+              </sc-if>
+            </div>
+            <sc-if value="{{ hasPE }}" hint-placeholder-val="{{ false }}">
+              <div style="border:2px solid var(--bad,#FF6B7A);background:rgba(255,107,122,.08);border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.55"><span style="color:var(--bad,#FF6B7A);font-weight:700">LINE {{ peLine }}</span> &#8212; {{ peMsg }}</div>
+            </sc-if>
+            <div style="display:flex;gap:10px">
+              <button onClick="{{ runOrStop }}" style="flex:1;padding:12px;background:var(--acc,#FFB454);color:#1A1206;font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:14px;letter-spacing:2px;border:2px solid rgba(0,0,0,.25);border-radius:9px;cursor:pointer" style-hover="filter:brightness(1.08)">{{ runBtnLabel }}</button>
+              <button onClick="{{ resetRun }}" style="padding:12px 18px;background:transparent;color:var(--ink,#EAF2FF);font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:13px;letter-spacing:1.5px;border:2px solid var(--line,rgba(146,180,240,.28));border-radius:9px;cursor:pointer" style-hover="border-color:var(--acc,#FFB454)">RESET</button>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="font-size:9.5px;letter-spacing:1.5px;color:var(--dim,#8FA7CD);font-weight:700">SPEED</div>
+              <input type="range" min="1" max="5" step="1" value="{{ speed }}" onChange="{{ onSpeed }}" style="flex:1;accent-color:var(--acc,#FFB454)">
+              <div style="font-size:10px;letter-spacing:1px;color:var(--acc,#FFB454);font-weight:700;width:52px;text-align:right">{{ speedLabel }}</div>
+            </div>
+          </div>
+          <div style="background:var(--panel,#13234A);border:2px solid var(--line,rgba(146,180,240,.28));border-radius:12px;padding:14px 18px;display:flex;flex-direction:column;gap:8px">
+            <div style="font-size:10px;letter-spacing:2px;color:var(--dim,#8FA7CD);font-weight:700">TANK RADIO</div>
+            <div ref="{{ logRef }}" style="height:120px;overflow:auto;font-size:11.5px;line-height:1.75;color:var(--dim,#8FA7CD)">
+              <sc-for list="{{ logs }}" as="lg" hint-placeholder-count="2">
+                <div style="white-space:pre-wrap">{{ lg }}</div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ isWon }}" hint-placeholder-val="{{ false }}">
+        <div style="position:fixed;inset:0;background:rgba(5,10,24,.62);display:flex;align-items:center;justify-content:center;z-index:50">
+          <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+            <sc-for list="{{ confetti }}" as="cf" hint-placeholder-count="0">
+              <div style="position:absolute;top:0;left:{{ cf.left }};width:10px;height:10px;background:{{ cf.color }};animation:ccFall {{ cf.dur }} ease-in {{ cf.delay }} both"></div>
+            </sc-for>
+          </div>
+          <div style="background:var(--panel,#13234A);border:2px solid var(--acc,#FFB454);border-radius:16px;padding:38px 46px;display:flex;flex-direction:column;align-items:center;gap:14px;animation:ccPop .25s ease-out;max-width:440px;text-align:center">
+            <div style="font-size:10px;letter-spacing:3px;color:var(--good,#6FE3A5);font-weight:700">&#9733; MISSION {{ mNum }} CLEAR &#9733;</div>
+            <div style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:32px;letter-spacing:-.5px;line-height:1.1">BEACON REACHED</div>
+            <div style="font-size:12.5px;color:var(--dim,#8FA7CD)">{{ winStats }}</div>
+            <sc-if value="{{ hasTease }}" hint-placeholder-val="{{ false }}">
+              <div style="font-size:12px;line-height:1.6;color:var(--acc2,#5FD4FF);border:2px dashed var(--acc2,#5FD4FF);border-radius:10px;padding:10px 14px">Training complete, commander. Next up: BATTLE MODE &#8212; program your tank to fight your friends. It&#39;s still in the workshop.</div>
+            </sc-if>
+            <div style="display:flex;gap:10px;padding-top:6px">
+              <button onClick="{{ onReplay }}" style="padding:12px 18px;background:transparent;color:var(--ink,#EAF2FF);font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;border:2px solid var(--line,rgba(146,180,240,.28));border-radius:9px;cursor:pointer" style-hover="border-color:var(--acc,#FFB454)">REPLAY</button>
+              <button onClick="{{ onNext }}" style="padding:12px 22px;background:var(--acc,#FFB454);color:#1A1206;font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:12px;letter-spacing:1.5px;border:2px solid rgba(0,0,0,.25);border-radius:9px;cursor:pointer" style-hover="filter:brightness(1.08)">{{ nextLabel }}</button>
+            </div>
+          </div>
+        </div>
+      </sc-if>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div style="position:fixed;bottom:26px;left:50%;transform:translateX(-50%);background:var(--panel,#13234A);border:2px solid var(--acc,#FFB454);border-radius:10px;padding:11px 18px;font-size:12.5px;z-index:60;box-shadow:0 6px 24px rgba(0,0,0,.35)">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;theme&quot;: { &quot;editor&quot;: &quot;enum&quot;, &quot;options&quot;: [&quot;blueprint&quot;, &quot;paper&quot;], &quot;default&quot;: &quot;blueprint&quot;, &quot;tsType&quot;: &quot;'blueprint' | 'paper'&quot;, &quot;section&quot;: &quot;Look&quot; },
+  &quot;tankColor&quot;: { &quot;editor&quot;: &quot;color&quot;, &quot;options&quot;: [&quot;#FFB454&quot;, &quot;#5FD4FF&quot;, &quot;#FF7A9C&quot;, &quot;#8BE98B&quot;], &quot;default&quot;: &quot;#FFB454&quot;, &quot;tsType&quot;: &quot;string&quot;, &quot;section&quot;: &quot;Look&quot; },
+  &quot;showCoords&quot;: { &quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: false, &quot;tsType&quot;: &quot;boolean&quot;, &quot;section&quot;: &quot;Arena&quot; }
+}">
+class Component extends DCLogic {
+  constructor(props) {
+    super(props);
+    let saved = {};
+    try { saved = JSON.parse(localStorage.getItem('codebots-v1') || '{}') || {}; } catch (e) { saved = {}; }
+    this.state = {
+      screen: 'home',
+      completed: saved.completed || {},
+      code: saved.code || {},
+      runState: 'idle',
+      tank: { x: 0, y: 0, dirDeg: 0 },
+      crates: [],
+      shot: null,
+      blast: null,
+      activeLine: -1,
+      log: [],
+      speed: 3,
+      toast: '',
+      crashMsg: '',
+      notice: '',
+      parseError: null,
+      hintOpen: false,
+      snap: true,
+      winStats: '',
+      confetti: [],
+      bot: null,
+      cyc: null,
+    };
+    this.timer = null;
+    this.steps = [];
+    this.idx = 0;
+    this._moves = 0;
+  }
+
+  missionsDef() {
+    if (this._md) return this._md;
+    this._md = {
+      m1: {
+        id: 'm1', num: '01', name: 'FIRST ROLL', cols: 9, rows: 5,
+        start: { x: 0, y: 2, dir: 0 }, goal: { x: 8, y: 2 },
+        crates: [{ x: 2, y: 0 }, { x: 6, y: 4 }, { x: 7, y: 0 }],
+        brief: 'Your tank is parked 8 squares west of the beacon. Drive onto it.',
+        cmds: [{ sig: 'forward(n)', desc: 'roll forward n squares' }],
+        hint: 'Count the squares between the start pad and the beacon. One forward(...) command can cover the whole distance.',
+        starter: '// Drive to the beacon.\n// forward(1) rolls 1 square.\n\nforward(1)',
+        desc: 'Make your tank move.',
+      },
+      m2: {
+        id: 'm2', num: '02', name: 'THE CORNER', cols: 9, rows: 6,
+        start: { x: 0, y: 4, dir: 0 }, goal: { x: 5, y: 1 },
+        crates: [{ x: 6, y: 4 }, { x: 7, y: 4 }, { x: 5, y: 0 }, { x: 2, y: 2 }, { x: 8, y: 1 }],
+        brief: 'The beacon is around a corner, and crates block the straight road. Drive east, then head north.',
+        cmds: [{ sig: 'forward(n)', desc: 'roll forward n squares' }, { sig: 'left()', desc: 'turn 90\u00B0 left (no move)' }, { sig: 'right()', desc: 'turn 90\u00B0 right (no move)' }],
+        hint: 'forward(5) gets you under the beacon. Then left() spins the tank to face up \u2014 and one more forward(...) finishes it.',
+        starter: '// New commands: left() and right()\n// Turns spin the tank in place.\n\nforward(1)',
+        desc: 'Master the 90\u00B0 turn.',
+      },
+      m3: {
+        id: 'm3', num: '03', name: 'LOOP-DE-LOOP', cols: 9, rows: 8,
+        start: { x: 0, y: 7, dir: 0 }, goal: { x: 8, y: 1 },
+        crates: [{ x: 3, y: 7 }, { x: 3, y: 6 }, { x: 5, y: 5 }, { x: 5, y: 4 }, { x: 7, y: 3 }, { x: 7, y: 2 }, { x: 7, y: 1 }],
+        brief: 'A staircase of 3 identical zig-zags leads up \u2014 and one last crate guards the beacon. Smash it.',
+        cmds: [{ sig: 'repeat n { ... }', desc: 'run the lines inside n times' }, { sig: 'fire()', desc: 'blast the first crate ahead' }, { sig: 'forward / left / right', desc: 'you know these!' }],
+        hint: 'One zig-zag is: forward(2) left() forward(2) right(). Wrap those 4 lines in repeat 3 { }. Then fire() and forward(2).',
+        starter: '// New: repeat and fire()\n// repeat 3 {\n//   ...commands...\n// }\n\nforward(2)',
+        desc: 'Loops: write less, do more.',
+      },
+    };
+    return this._md;
+  }
+
+  mission() { return this.missionsDef()[this.state.screen]; }
+  codeFor(id) { const c = this.state.code[id]; return c === undefined ? this.missionsDef()[id].starter : c; }
+  stepMs() { return [760, 500, 320, 180, 95][this.state.speed - 1]; }
+  crateAt(x, y) { return this.state.crates.some((c) => c.x === x && c.y === y); }
+
+  themes() {
+    return {
+      blueprint: { bg: '#0D1A33', panel: '#13234A', line: 'rgba(146,180,240,.28)', ink: '#EAF2FF', dim: '#8FA7CD', acc: '#FFB454', acc2: '#5FD4FF', arena: '#0A1F45', grid: 'rgba(120,170,255,.16)', crate: '#7FA8E0', good: '#6FE3A5', bad: '#FF6B7A' },
+      paper: { bg: '#F2EDDF', panel: '#FBF8EE', line: 'rgba(45,58,92,.30)', ink: '#232C43', dim: '#6F7890', acc: '#E8622C', acc2: '#2E6BD6', arena: '#FBF9F0', grid: 'rgba(70,110,200,.20)', crate: '#8A93AC', good: '#2F9E63', bad: '#D4374F' },
+    };
+  }
+
+  persist() {
+    try { localStorage.setItem('codebots-v1', JSON.stringify({ completed: this.state.completed, code: this.state.code })); } catch (e) {}
+  }
+
+  pushLog(s) { this.setState((x) => ({ log: [...x.log.slice(-30), s] })); }
+
+  showToast = (msg) => {
+    clearTimeout(this._tt);
+    this.setState({ toast: msg });
+    this._tt = setTimeout(() => this.setState({ toast: '' }), 2400);
+  };
+
+  openMission = (id) => {
+    clearTimeout(this.timer);
+    const m = this.missionsDef()[id];
+    this.setState({
+      screen: id, runState: 'idle', snap: true,
+      tank: { x: m.start.x, y: m.start.y, dirDeg: m.start.dir },
+      crates: m.crates.map((c) => ({ ...c })),
+      shot: null, blast: null, activeLine: -1, crashMsg: '', notice: '', parseError: null, hintOpen: false,
+      log: ['> tank online. awaiting program.'],
+    });
+    this.timer = setTimeout(() => this.setState({ snap: false }), 60);
+  };
+
+  goHome = () => { clearTimeout(this.timer); this.setState({ screen: 'home', runState: 'idle', shot: null, blast: null }); };
+  toggleHint = () => this.setState((s) => ({ hintOpen: !s.hintOpen }));
+  onCode = (e) => { const v = e.target.value; this.setState((s) => ({ code: { ...s.code, [s.screen]: v } }), () => this.persist()); };
+  onSpeed = (e) => this.setState({ speed: parseInt(e.target.value, 10) });
+  onEdScroll = (e) => { if (this.gutterEl) this.gutterEl.scrollTop = e.target.scrollTop; };
+  gutterRef = (el) => { this.gutterEl = el; };
+  logRef = (el) => { this.logEl = el; };
+
+  componentDidMount() {
+    fetch('./bot.json').then((r) => r.json()).then((b) => { if (b && typeof b === 'object') this.setState({ bot: b }); }).catch(() => {}).then(() => this.shufflePaint());
+  }
+
+  paintboxDefault() {
+    return { BUMBLEBEE: '#FFD95C', TANGERINE: '#FF9E4A', 'CHERRY POP': '#FF6B6B', BUBBLEGUM: '#FF8BB3', 'GRAPE SODA': '#B48CFF', SKYBLAST: '#7FB2FF', LAGOON: '#5FD4FF', 'SEA MINT': '#7FE8C0', SLIME: '#A8E85C', 'PEACH FUZZ': '#F2B8A0', CLOUD: '#EAF2FF', MIDNIGHT: '#3D5A99' };
+  }
+
+  paintbox() { return Object.assign({}, this.paintboxDefault(), (this.state.bot && this.state.bot.paintbox) || {}); }
+
+  resolvePaint(v, fb) {
+    if (!v || typeof v !== 'string') return fb;
+    const s = v.trim();
+    if (s.charAt(0) === '#') return s;
+    const box = this.paintbox();
+    const key = Object.keys(box).find((k) => k.toLowerCase() === s.toLowerCase());
+    return key ? box[key] : fb;
+  }
+
+  shufflePaint = () => {
+    if (this._cycOn) return;
+    const box = this.paintbox();
+    const cols = Object.keys(box).map((k) => box[k]);
+    if (cols.length === 0) return;
+    this._cycOn = true;
+    const run = (i) => {
+      if (i >= 14) { this.setState({ cyc: null }); this._cycOn = false; return; }
+      const a = cols[Math.floor(Math.random() * cols.length)];
+      const b = cols[Math.floor(Math.random() * cols.length)];
+      this.setState({ cyc: { body: a, dome: b } });
+      this._cycT = setTimeout(() => run(i + 1), 55 + i * i * 1.6);
+    };
+    run(0);
+  };
+
+  componentDidUpdate() { if (this.logEl) this.logEl.scrollTop = this.logEl.scrollHeight; }
+  componentWillUnmount() { clearTimeout(this.timer); clearTimeout(this._tt); clearTimeout(this._cycT); }
+
+  lev(a, b) {
+    const m = a.length, n = b.length;
+    const D = [];
+    for (let i = 0; i <= m; i++) { D.push([i]); for (let j = 1; j <= n; j++) D[i][j] = 0; }
+    for (let j = 0; j <= n; j++) D[0][j] = j;
+    for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+      D[i][j] = Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    return D[m][n];
+  }
+  nearest(w, list) { let best = null, bd = 3; for (const c of list) { const d = this.lev(w, c); if (d < bd) { bd = d; best = c; } } return best; }
+  perr(line, msg) { return { error: { line: line + 1, msg } }; }
+
+  parse(code) {
+    const KNOWN = ['forward', 'move', 'left', 'right', 'turn', 'fire', 'repeat'];
+    const lines = code.split('\n');
+    const root = []; const stack = [{ body: root, line: 0 }];
+    const cur = () => stack[stack.length - 1].body;
+    for (let i = 0; i < lines.length; i++) {
+      let s = lines[i];
+      const ci = s.indexOf('//'); if (ci > -1) s = s.slice(0, ci);
+      s = s.trim().replace(/;+$/, '').trim();
+      if (!s) continue;
+      let m = s.match(/^repeat\s*\(?\s*(\d+)\s*\)?\s*(\{)?$/i);
+      if (m) {
+        if (!m[2]) return this.perr(i, 'repeat needs a { at the end of the line: repeat ' + m[1] + ' {');
+        const n = parseInt(m[1], 10);
+        if (n < 1 || n > 50) return this.perr(i, 'repeat count must be between 1 and 50');
+        const blk = { op: 'repeat', n, body: [], line: i };
+        cur().push(blk); stack.push(blk);
+        continue;
+      }
+      if (s === '}') {
+        if (stack.length === 1) return this.perr(i, "there's a } here with no repeat { to close");
+        stack.pop(); continue;
+      }
+      m = s.match(/^([A-Za-z_]+)\s*(?:\(\s*([^()]*)\s*\))?$/);
+      if (!m) {
+        const m2 = s.match(/^([A-Za-z_]+)\s+(\S.*)$/);
+        if (m2 && KNOWN.indexOf(m2[1].toLowerCase()) > -1) return this.perr(i, m2[1] + ' needs parentheses, like: ' + m2[1].toLowerCase() + '(' + m2[2] + ')');
+        return this.perr(i, "I can't read this line. Commands look like: forward(3)");
+      }
+      const name = m[1].toLowerCase();
+      const arg = (m[2] || '').trim().replace(/^["']|["']$/g, '').toLowerCase();
+      if (name === 'forward' || name === 'move') {
+        const n = arg === '' ? 1 : parseInt(arg, 10);
+        if (isNaN(n) || n < 1 || n > 50) return this.perr(i, 'forward needs a number from 1 to 50, like forward(3)');
+        cur().push({ op: 'fwd', n, line: i });
+      } else if (name === 'left' || name === 'right') {
+        cur().push({ op: name, line: i });
+      } else if (name === 'turn') {
+        if (arg !== 'left' && arg !== 'right') return this.perr(i, 'turn needs a direction: turn("left") or turn("right")');
+        cur().push({ op: arg, line: i });
+      } else if (name === 'fire') {
+        cur().push({ op: 'fire', line: i });
+      } else if (name === 'repeat') {
+        return this.perr(i, 'repeat looks like this: repeat 3 {');
+      } else {
+        const sug = this.nearest(name, KNOWN);
+        return this.perr(i, "I don't know '" + name + "'" + (sug ? ' \u2014 did you mean ' + sug + '?' : '. Check the COMMANDS list.'));
+      }
+    }
+    if (stack.length > 1) return this.perr(stack[stack.length - 1].line, 'a repeat { is missing its closing }');
+    const steps = [];
+    const emit = (body) => {
+      for (const it of body) {
+        if (steps.length > 420) return;
+        if (it.op === 'repeat') { for (let k = 0; k < it.n; k++) emit(it.body); }
+        else if (it.op === 'fwd') { for (let k = 0; k < it.n; k++) steps.push({ op: 'step', line: it.line }); }
+        else steps.push({ op: it.op, line: it.line });
+      }
+    };
+    emit(root);
+    if (steps.length === 0) return this.perr(0, 'your program is empty \u2014 try forward(3)');
+    if (steps.length > 420) return this.perr(0, 'whoa, that program is over 420 moves. Make it smaller!');
+    return { steps };
+  }
+
+  run = () => {
+    if (this.state.runState === 'running') {
+      clearTimeout(this.timer);
+      this.setState({ runState: 'idle', activeLine: -1 });
+      this.pushLog('> program stopped');
+      return;
+    }
+    const m = this.mission();
+    const r = this.parse(this.codeFor(m.id));
+    if (r.error) {
+      this.setState({ parseError: r.error, notice: '', crashMsg: '' });
+      this.pushLog('! error on line ' + r.error.line + ' \u2014 ' + r.error.msg);
+      return;
+    }
+    clearTimeout(this.timer);
+    this.steps = r.steps; this.idx = 0; this._moves = 0;
+    this.setState({
+      snap: true, runState: 'running',
+      tank: { x: m.start.x, y: m.start.y, dirDeg: m.start.dir },
+      crates: m.crates.map((c) => ({ ...c })),
+      shot: null, blast: null, parseError: null, crashMsg: '', notice: '', activeLine: -1,
+    });
+    this.pushLog('> program uploaded \u2014 ' + r.steps.length + ' steps');
+    this.timer = setTimeout(() => { this.setState({ snap: false }); this.tick(); }, 90);
+  };
+
+  resetRun = () => {
+    clearTimeout(this.timer);
+    const m = this.mission();
+    this.setState({
+      snap: true, runState: 'idle',
+      tank: { x: m.start.x, y: m.start.y, dirDeg: m.start.dir },
+      crates: m.crates.map((c) => ({ ...c })),
+      shot: null, blast: null, activeLine: -1, crashMsg: '', notice: '', parseError: null,
+    });
+    this.pushLog('> tank back on the start pad');
+    this.timer = setTimeout(() => this.setState({ snap: false }), 60);
+  };
+
+  tick() {
+    if (this.state.runState !== 'running') return;
+    if (this.idx >= this.steps.length) {
+      this.setState({ runState: 'idle', activeLine: -1, notice: "Program finished, but the tank isn't on the beacon yet. Add more commands and RUN again!" });
+      this.pushLog('> program ended \u2014 beacon not reached');
+      return;
+    }
+    const st = this.steps[this.idx++];
+    const ms = this.stepMs();
+    this._moves++;
+    const t = this.state.tank;
+    const m = this.mission();
+    this.setState({ activeLine: st.line });
+    if (st.op === 'step') {
+      const d = ((t.dirDeg % 360) + 360) % 360;
+      const dx = d === 0 ? 1 : d === 180 ? -1 : 0;
+      const dy = d === 90 ? 1 : d === 270 ? -1 : 0;
+      const nx = t.x + dx, ny = t.y + dy;
+      const blocked = (nx < 0 || ny < 0 || nx >= m.cols || ny >= m.rows) ? 'wall' : (this.crateAt(nx, ny) ? 'crate' : null);
+      if (blocked) {
+        const extra = blocked === 'crate' && m.id === 'm3' ? ' fire() smashes crates!' : '';
+        this.setState({ runState: 'crashed', crashMsg: 'CLUNK! Your tank hit ' + (blocked === 'wall' ? 'the wall' : 'a crate') + ' on line ' + (st.line + 1) + '. Fix the program and RUN again.' + extra });
+        this.pushLog('! CRASH on line ' + (st.line + 1));
+        return;
+      }
+      this.setState({ tank: { ...t, x: nx, y: ny } });
+      if (nx === m.goal.x && ny === m.goal.y) {
+        this.timer = setTimeout(() => this.winNow(), ms + 80);
+        return;
+      }
+      this.timer = setTimeout(() => this.tick(), ms + 30);
+    } else if (st.op === 'left' || st.op === 'right') {
+      this.setState({ tank: { ...t, dirDeg: t.dirDeg + (st.op === 'left' ? -90 : 90) } });
+      this.timer = setTimeout(() => this.tick(), ms * 0.8 + 30);
+    } else if (st.op === 'fire') {
+      this.doFire();
+    }
+  }
+
+  doFire() {
+    const t = this.state.tank, m = this.mission();
+    const d = ((t.dirDeg % 360) + 360) % 360;
+    const dx = d === 0 ? 1 : d === 180 ? -1 : 0;
+    const dy = d === 90 ? 1 : d === 270 ? -1 : 0;
+    let cx = t.x + dx, cy = t.y + dy, target = null;
+    while (cx >= 0 && cy >= 0 && cx < m.cols && cy < m.rows) {
+      if (this.crateAt(cx, cy)) { target = { x: cx, y: cy }; break; }
+      cx += dx; cy += dy;
+    }
+    const end = target || { x: cx, y: cy };
+    const dist = Math.abs(end.x - t.x) + Math.abs(end.y - t.y);
+    const flight = Math.max(130, dist * 75);
+    this.pushLog('> FIRE!');
+    this.setState({ shot: { fx: t.x, fy: t.y, tx: end.x, ty: end.y, fly: false, flight } });
+    this.timer = setTimeout(() => {
+      this.setState((s) => ({ shot: s.shot ? { ...s.shot, fly: true } : null }));
+      this.timer = setTimeout(() => {
+        if (target) {
+          this.setState((s) => ({ crates: s.crates.filter((c) => !(c.x === target.x && c.y === target.y)), blast: target, shot: null }));
+          this.pushLog('  BLAM! crate destroyed');
+          this.timer = setTimeout(() => { this.setState({ blast: null }); this.tick(); }, 320);
+        } else {
+          this.setState({ shot: null });
+          this.pushLog('  the shot zipped off the field');
+          this.timer = setTimeout(() => this.tick(), 120);
+        }
+      }, flight + 40);
+    }, 30);
+  }
+
+  winNow() {
+    const m = this.mission();
+    const lines = this.codeFor(m.id).split('\n').filter((l) => { const c = l.split('//')[0].trim(); return c.length > 0; }).length;
+    const colors = ['var(--acc)', 'var(--acc2)', 'var(--good)'];
+    const confetti = [];
+    for (let i = 0; i < 18; i++) {
+      confetti.push({
+        left: (3 + Math.random() * 92).toFixed(1) + '%',
+        color: colors[i % 3],
+        dur: (0.9 + Math.random() * 0.9).toFixed(2) + 's',
+        delay: (Math.random() * 0.5).toFixed(2) + 's',
+      });
+    }
+    this.setState((s) => ({
+      runState: 'won', activeLine: -1,
+      completed: { ...s.completed, [m.id]: true },
+      winStats: this._moves + (this._moves === 1 ? ' move' : ' moves') + ' \u00B7 ' + lines + (lines === 1 ? ' line' : ' lines') + ' of code',
+      confetti,
+    }), () => this.persist());
+    this.pushLog('* BEACON REACHED \u2014 mission complete');
+  }
+
+  nextMission = () => {
+    const cur = this.mission().id;
+    if (cur === 'm1') this.openMission('m2');
+    else if (cur === 'm2') this.openMission('m3');
+    else this.goHome();
+  };
+
+  buildCards() {
+    const defs = ['m1', 'm2', 'm3'].map((id) => this.missionsDef()[id]);
+    const done = this.state.completed;
+    const cards = defs.map((m, i) => {
+      const unlocked = i === 0 || !!done[defs[i - 1].id];
+      const isDone = !!done[m.id];
+      return {
+        num: m.num, name: m.name, desc: m.desc,
+        status: isDone ? '\u2713 CLEAR' : unlocked ? 'READY' : 'LOCKED',
+        stColor: isDone ? 'var(--good)' : unlocked ? 'var(--acc)' : 'var(--dim)',
+        opacity: unlocked ? 1 : 0.55,
+        onClick: unlocked ? () => this.openMission(m.id) : () => this.showToast('Finish Mission ' + defs[i - 1].num + ' to unlock this one, cadet.'),
+      };
+    });
+    const allDone = defs.every((m) => !!done[m.id]);
+    cards.push({
+      num: 'VS', name: 'BATTLE MODE', desc: 'Program your tank to fight your friends\u2019 tanks. Winner takes the arena.',
+      status: 'SOON', stColor: 'var(--acc2)', opacity: allDone ? 1 : 0.55,
+      onClick: () => this.showToast(allDone ? 'You\u2019re battle-ready! Battle mode is still in the workshop \u2014 coming soon.' : 'Finish all 3 training missions first, cadet.'),
+    });
+    return cards;
+  }
+
+  renderVals() {
+    const th = this.themes()[this.props.theme === 'paper' ? 'paper' : 'blueprint'];
+    const s = this.state;
+    const isHome = s.screen === 'home';
+    const C = 52;
+    const bot = s.bot || {};
+    const paint = bot.paint || {};
+    let bodyCol = this.resolvePaint(paint.body, this.props.tankColor || '#FFB454');
+    let domeCol = this.resolvePaint(paint.dome, bodyCol);
+    if (s.cyc) { bodyCol = s.cyc.body; domeCol = s.cyc.dome; }
+    const vals = {
+      thBg: th.bg, thPanel: th.panel, thLine: th.line, thInk: th.ink, thDim: th.dim,
+      thAcc: th.acc, thAcc2: th.acc2, thArena: th.arena, thGrid: th.grid, thCrate: th.crate,
+      thGood: th.good, thBad: th.bad,
+      tankCol: bodyCol,
+      tankCol2: domeCol,
+      playerName: bot.playerName || 'CADET', botName: bot.botName || 'YOUR BOT',
+      shufflePaint: this.shufflePaint,
+      isHome, isMission: !isHome,
+      hasToast: !!s.toast, toast: s.toast,
+      cards: this.buildCards(),
+    };
+    if (isHome) return vals;
+    const m = this.mission();
+    const lamp = s.runState === 'running' ? { c: 'var(--acc2)', t: 'RUNNING', a: 'ccBlink 1s infinite' }
+      : s.runState === 'crashed' ? { c: 'var(--bad)', t: 'CRASHED', a: 'none' }
+      : s.runState === 'won' ? { c: 'var(--good)', t: 'COMPLETE', a: 'none' }
+      : { c: 'var(--dim)', t: 'IDLE', a: 'none' };
+    const codeValue = this.codeFor(m.id);
+    const codeLines = codeValue.split('\n');
+    const t = s.tank;
+    const shot = s.shot;
+    const sx = shot ? (shot.fly ? shot.tx : shot.fx) : 0;
+    const sy = shot ? (shot.fly ? shot.ty : shot.fy) : 0;
+    Object.assign(vals, {
+      mNum: m.num, mName: m.name, mBrief: m.brief, mCmds: m.cmds, mHint: m.hint,
+      hintOpen: s.hintOpen, hintClosed: !s.hintOpen, toggleHint: this.toggleHint,
+      goHome: this.goHome,
+      lampColor: lamp.c, lampText: lamp.t, lampAnim: lamp.a,
+      arenaW: m.cols * C, arenaH: m.rows * C,
+      startLeft: m.start.x * C, startTop: m.start.y * C,
+      goalLeft: m.goal.x * C, goalTop: m.goal.y * C,
+      crates: s.crates.map((c) => ({ left: c.x * C, top: c.y * C })),
+      showCoords: !!this.props.showCoords,
+      colLabels: Array.from({ length: m.cols }, (_, i) => ({ left: i * C, t: String(i) })),
+      rowLabels: Array.from({ length: m.rows }, (_, i) => ({ top: i * C, t: String(i) })),
+      tankTransform: 'translate(' + t.x * C + 'px,' + t.y * C + 'px) rotate(' + t.dirDeg + 'deg)',
+      tankTransition: s.snap ? 'none' : 'transform ' + this.stepMs() + 'ms cubic-bezier(.4,.1,.5,.9)',
+      tankAnim: s.runState === 'crashed' ? 'ccShake .45s' : 'none',
+      hasShot: !!shot,
+      shotTransform: 'translate(' + (sx * C + 21) + 'px,' + (sy * C + 21) + 'px)',
+      shotTransition: shot && shot.fly ? 'transform ' + shot.flight + 'ms linear' : 'none',
+      hasBlast: !!s.blast,
+      blastLeft: s.blast ? s.blast.x * C : 0, blastTop: s.blast ? s.blast.y * C : 0,
+      isCrashed: s.runState === 'crashed', crashMsg: s.crashMsg,
+      hasNotice: !!s.notice, notice: s.notice,
+      codeValue, onCode: this.onCode, onEdScroll: this.onEdScroll,
+      gutterRef: this.gutterRef, logRef: this.logRef,
+      gutterNums: codeLines.map((_, i) => String(i + 1)),
+      isRunning: s.runState === 'running', notRunning: s.runState !== 'running',
+      runLines: codeLines.map((tx, i) => ({
+        text: tx === '' ? ' ' : tx,
+        bg: i === s.activeLine ? 'rgba(255,180,84,.28)' : 'transparent',
+        color: i === s.activeLine ? th.ink : th.dim,
+      })),
+      runBtnLabel: s.runState === 'running' ? '\u25A0 STOP' : '\u25B6 RUN',
+      runOrStop: this.run, resetRun: this.resetRun,
+      speed: s.speed, onSpeed: this.onSpeed,
+      speedLabel: ['TURTLE', 'SLOW', 'CRUISE', 'FAST', 'ROCKET'][s.speed - 1],
+      hasPE: !!s.parseError,
+      peLine: s.parseError ? s.parseError.line : 0,
+      peMsg: s.parseError ? s.parseError.msg : '',
+      logs: s.log,
+      isWon: s.runState === 'won', winStats: s.winStats, confetti: s.confetti,
+      hasTease: s.runState === 'won' && m.id === 'm3',
+      onNext: this.nextMission, onReplay: this.resetRun,
+      nextLabel: m.id === 'm3' ? 'BACK TO MISSIONS' : 'NEXT MISSION \u2192',
+    });
+    return vals;
+  }
+}
+</script>
+</body>
+</html>

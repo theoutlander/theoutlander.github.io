@@ -1,0 +1,85 @@
+<!-- @dsCard group="CodeBots Game" viewport="1280x760" subtitle="HQ + Mission screen — the core loop, recreated from the live prototype" name="Game screens" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css">
+<style>
+body{margin:0;background:var(--bg);font-family:var(--font-mono);color:var(--ink)}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:1px;border-radius:999px;padding:4px 11px;white-space:nowrap}
+.panel{background:var(--surface-panel);border:2px solid var(--line);border-radius:12px;padding:14px 16px}
+.lbl{font-size:10px;letter-spacing:2px;color:var(--text-dim);font-weight:700}
+.btn{font-family:var(--font-mono);font-weight:700;letter-spacing:1.5px;border-radius:9px;cursor:pointer;white-space:nowrap}
+.door{flex:1;background:var(--surface-panel);border:2px solid var(--line);border-radius:13px;padding:20px;cursor:pointer;transition:transform .15s,border-color .15s}
+.door:hover{transform:translateY(-3px);border-color:var(--amber)}
+</style></head><body>
+
+<div style="display:flex;align-items:center;gap:14px;padding:13px 20px;border-bottom:2px solid var(--line)">
+  <div style="font-family:var(--font-display);font-weight:700;font-size:18px;letter-spacing:-.5px">CODE<span style="color:var(--amber)">BOTS</span></div>
+  <span class="chip" style="color:var(--text-dim);border:1.5px solid var(--line)">PILOT: CADET ASHA</span>
+  <span class="chip" style="color:var(--cyan);border:1.5px solid rgba(95,212,255,.5)">BOT: SPARKPLUG</span>
+  <div style="flex:1"></div>
+  <span class="chip" style="color:var(--amber);border:1.5px solid rgba(255,180,84,.5)">&#9733; 13</span>
+  <span class="chip" style="color:var(--amber);border:1.5px solid rgba(255,180,84,.5)"><span style="width:14px;height:14px;border-radius:4px;background:var(--amber);border:2px solid rgba(0,0,0,.35);box-sizing:border-box;display:inline-flex;align-items:center;justify-content:center;font-size:8px;color:var(--on-amber)">C</span>&#215;12</span>
+  <button class="btn" id="tgl" style="background:transparent;color:var(--ink);border:2px solid var(--line);padding:8px 12px;font-size:10px" onclick="var m=document.getElementById('mission'),h=document.getElementById('hq');var showM=m.style.display==='none';m.style.display=showM?'flex':'none';h.style.display=showM?'none':'flex';this.textContent=showM?'&#8592; HQ VIEW':'MISSION VIEW &#8594;'">MISSION VIEW &#8594;</button>
+</div>
+
+<div id="hq" style="display:flex;gap:14px;padding:22px">
+  <div class="door"><div style="font-family:var(--font-display);font-weight:700;font-size:19px;margin-bottom:6px">CAMPAIGN</div><div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:10px">World 2 &#183; mission 3 of 5 &#8212; the Rust Pirates await.</div><span class="chip" style="color:var(--amber);border:1.5px solid var(--amber)">CONTINUE &#8594;</span></div>
+  <div class="door"><div style="font-family:var(--font-display);font-weight:700;font-size:19px;margin-bottom:6px">GARAGE</div><div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:10px">Spend C-coins on unlocked blueprints. Weight is destiny.</div><span class="chip" style="color:var(--cyan);border:1.5px solid var(--cyan)">1 NEW BLUEPRINT</span></div>
+  <div class="door"><div style="font-family:var(--font-display);font-weight:700;font-size:19px;margin-bottom:6px">BOT MAKER</div><div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:10px">Name it, paint it &#8212; the color lab writes bot.json.</div><span class="chip" style="color:var(--text-dim);border:1.5px solid var(--line)">PAINT &amp; NAME</span></div>
+  <div class="door" style="opacity:.72;border-style:dashed"><div style="font-family:var(--font-display);font-weight:700;font-size:19px;margin-bottom:6px">PLAY</div><div style="font-size:11px;color:var(--text-dim);line-height:1.6;margin-bottom:10px">Time trials vs your ghost &#183; treasure runs. Duels in v1.5.</div><span class="chip" style="color:var(--text-dim);border:1.5px dashed var(--line-strong)">TRIALS OPEN</span></div>
+</div>
+
+<div id="mission" style="display:none;gap:14px;padding:16px 20px;align-items:flex-start">
+  <div style="width:225px;flex:none;display:flex;flex-direction:column;gap:12px">
+    <div class="panel"><div class="lbl" style="margin-bottom:6px">BRIEFING</div><div style="font-size:12px;line-height:1.65;color:var(--text-body)">The beacon is around the corner &#8212; crates block the straight road. Drive east, then head north.</div></div>
+    <div class="panel"><div class="lbl" style="margin-bottom:2px">COMMANDS</div>
+      <div style="padding:7px 0;border-top:1px dashed var(--line)"><div style="font-size:12px;font-weight:700;color:var(--amber)">forward(n)</div><div style="font-size:10.5px;color:var(--text-dim)">roll forward n squares</div></div>
+      <div style="padding:7px 0;border-top:1px dashed var(--line)"><div style="font-size:12px;font-weight:700;color:var(--amber)">left() / right()</div><div style="font-size:10.5px;color:var(--text-dim)">turn 90&#176; in place</div></div>
+    </div>
+    <button class="btn" style="background:transparent;color:var(--text-dim);border:2px dashed var(--line-strong);padding:10px;font-size:10.5px">NEED A HINT?</button>
+  </div>
+
+  <div style="flex:1;display:flex;flex-direction:column;gap:10px;min-width:0">
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <div class="panel" style="flex:1;min-width:180px;padding:8px 12px;display:flex;align-items:center;gap:8px"><span class="lbl">ARMOR</span><div style="flex:1;height:8px;border-radius:4px;background:var(--surface-inset)"><div style="width:86%;height:100%;border-radius:4px;background:var(--green)"></div></div><span style="font-size:10px;color:var(--green);font-weight:700">86%</span></div>
+      <div class="panel" style="flex:1;min-width:180px;padding:8px 12px;display:flex;align-items:center;gap:8px"><span class="lbl">CHARGE</span><div style="flex:1;height:8px;border-radius:4px;background:var(--surface-inset)"><div style="width:55%;height:100%;border-radius:4px;background:var(--amber)"></div></div><span style="font-size:10px;color:var(--amber);font-weight:700">55%</span></div>
+      <div class="panel" style="flex:1;min-width:180px;padding:8px 12px;display:flex;align-items:center;gap:8px"><span class="lbl">SCORE</span><div style="flex:1;height:8px;border-radius:4px;background:var(--surface-inset)"><div style="width:40%;height:100%;border-radius:4px;background:var(--amber)"></div></div><span style="font-size:10px;color:var(--amber);font-weight:700">120</span></div>
+    </div>
+    <div style="position:relative;height:340px;background:var(--surface-arena);border:2px solid var(--line);border-radius:10px;overflow:hidden;background-image:repeating-linear-gradient(0deg,var(--grid-line) 0px,var(--grid-line) 1px,transparent 1px,transparent 52px),repeating-linear-gradient(90deg,var(--grid-line) 0px,var(--grid-line) 1px,transparent 1px,transparent 52px)">
+      <div style="position:absolute;left:290px;top:80px;width:40px;height:40px"><div style="position:absolute;left:50%;top:50%;width:40px;height:40px;margin:-20px 0 0 -20px;border-radius:50%;border:2px solid var(--cyan);animation:cbPulse 1.6s ease-out infinite"></div><div style="position:absolute;left:50%;top:50%;width:15px;height:15px;margin:-7px 0 0 -7px;background:var(--cyan);border-radius:3px;transform:rotate(45deg)"></div></div>
+      <div style="position:absolute;left:160px;top:130px;width:52px;height:52px;padding:7px;box-sizing:border-box"><div style="position:relative;width:100%;height:100%;border:2px solid var(--crate);border-radius:5px;background:rgba(127,168,224,.1);overflow:hidden"><div style="position:absolute;left:-20%;top:50%;width:140%;height:2px;background:var(--crate);transform:rotate(45deg)"></div><div style="position:absolute;left:-20%;top:50%;width:140%;height:2px;background:var(--crate);transform:rotate(-45deg)"></div></div></div>
+      <div style="position:absolute;left:380px;top:190px;width:90px;height:26px;background:var(--steel);border:2px solid var(--steel-edge);border-radius:3px;box-sizing:border-box"></div>
+      <div style="position:absolute;left:60px;top:200px;width:52px;height:52px">
+        <div style="position:absolute;left:8px;right:8px;top:6px;height:8px;background:var(--text-dim);border-radius:4px"></div>
+        <div style="position:absolute;left:8px;right:8px;bottom:6px;height:8px;background:var(--text-dim);border-radius:4px"></div>
+        <div style="position:absolute;left:10px;right:12px;top:13px;bottom:13px;background:var(--paint-bubblegum);border:2px solid rgba(0,0,0,.3);border-radius:6px;box-sizing:border-box"></div>
+        <div style="position:absolute;right:-1px;top:50%;width:19px;height:6px;margin-top:-3px;background:var(--paint-bubblegum);border:2px solid rgba(0,0,0,.3);border-radius:3px;box-sizing:border-box"></div>
+        <div style="position:absolute;left:50%;top:50%;width:18px;height:18px;margin:-9px 0 0 -9px;border-radius:50%;background:var(--paint-lagoon);border:2px solid rgba(0,0,0,.35);box-sizing:border-box"></div>
+      </div>
+      <div style="position:absolute;left:118px;top:196px;font-size:11px;font-weight:700;color:var(--green);animation:cbFloatUp 1.6s ease-out infinite">+25</div>
+    </div>
+  </div>
+
+  <div style="width:330px;flex:none;display:flex;flex-direction:column;gap:12px">
+    <div class="panel" style="display:flex;flex-direction:column;gap:10px">
+      <div class="lbl">YOUR PROGRAM</div>
+      <div style="border:2px solid var(--line);border-radius:8px;background:var(--surface-inset);padding:10px 12px;font-size:13px;line-height:22px;color:var(--text-body)">
+        <div><span style="color:var(--text-dim)">// around the corner</span></div>
+        <div>forward(<span style="color:var(--amber)">5</span>)</div>
+        <div style="background:rgba(255,180,84,.28);margin:0 -8px;padding:0 8px;border-radius:3px;color:var(--ink)">left()</div>
+        <div>forward(<span style="color:var(--amber)">3</span>)</div>
+        <div><span style="color:var(--cyan)">when</span> bumped { back(<span style="color:var(--amber)">2</span>) }</div>
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn" style="flex:1;background:var(--amber);color:var(--on-amber);border:2px solid rgba(0,0,0,.25);padding:12px;font-size:13px">&#9632; STOP</button>
+        <button class="btn" style="background:transparent;color:var(--ink);border:2px solid var(--line);padding:12px 16px;font-size:12px">RESET</button>
+      </div>
+    </div>
+    <div class="panel"><div class="lbl" style="margin-bottom:6px">TANK RADIO</div>
+      <div style="font-size:11px;line-height:1.75;color:var(--text-dim)">
+        <div>&gt; program uploaded &#8212; 9 steps</div>
+        <div>&gt; rolling east&#8230;</div>
+        <div style="color:var(--green)">&gt; +25 &#8212; crate smashed</div>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>

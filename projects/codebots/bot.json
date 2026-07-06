@@ -1,0 +1,25 @@
+{
+  "_hello": "THIS FILE IS YOUR BOT! Change anything, save, and reload the game.",
+  "_how": "paint.body and paint.dome take a paintbox color name OR any hex code like #FF8BB3",
+  "playerName": "CADET ASHA",
+  "botName": "SPARKPLUG",
+  "paint": {
+    "body": "BUBBLEGUM",
+    "dome": "LAGOON"
+  },
+  "paintbox": {
+    "BUMBLEBEE": "#FFD95C",
+    "TANGERINE": "#FF9E4A",
+    "CHERRY POP": "#FF6B6B",
+    "BUBBLEGUM": "#FF8BB3",
+    "GRAPE SODA": "#B48CFF",
+    "SKYBLAST": "#7FB2FF",
+    "LAGOON": "#5FD4FF",
+    "SEA MINT": "#7FE8C0",
+    "SLIME": "#A8E85C",
+    "PEACH FUZZ": "#F2B8A0",
+    "CLOUD": "#EAF2FF",
+    "MIDNIGHT": "#3D5A99",
+    "MY CUSTOM COLOR": "#FFB454"
+  }
+}

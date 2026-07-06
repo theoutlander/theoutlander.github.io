@@ -1,0 +1,22 @@
+<!-- @dsCard group="Components" viewport="700x210" subtitle="Button (primary/ghost/quiet) · Chip colors · Panel states · Toast" name="Core" -->
+<!DOCTYPE html><html><head><meta charset="utf-8"><link rel="stylesheet" href="../../styles.css"><style>body{margin:0;background:var(--bg);font-family:var(--font-mono);color:var(--ink);padding:14px 18px;display:flex;flex-direction:column;gap:12px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.btn{font-weight:700;letter-spacing:1.5px;border-radius:9px;cursor:pointer;font-family:var(--font-mono)}</style></head><body>
+<div class="row">
+<button class="btn" style="background:var(--amber);color:var(--on-amber);border:2px solid rgba(0,0,0,.25);padding:12px 18px;font-size:13px">&#9654; RUN</button>
+<button class="btn" style="background:transparent;color:var(--ink);border:2px solid var(--line);padding:12px 18px;font-size:13px">RESET</button>
+<button class="btn" style="background:transparent;color:var(--text-dim);border:2px dashed var(--line-strong);padding:12px 18px;font-size:13px">NEED A HINT?</button>
+<button class="btn" style="background:var(--amber);color:var(--on-amber);border:2px solid rgba(0,0,0,.25);padding:8px 12px;font-size:11px;opacity:.55;cursor:not-allowed">DISABLED</button>
+</div>
+<div class="row" style="font-size:10px;font-weight:700;letter-spacing:1px">
+<span style="color:var(--green);border:1.5px solid var(--green);border-radius:999px;padding:3px 9px">&#10003; CLEAR</span>
+<span style="color:var(--amber);border:1.5px solid var(--amber);border-radius:999px;padding:3px 9px">READY</span>
+<span style="color:var(--cyan);border:1.5px solid var(--cyan);border-radius:999px;padding:3px 9px">NEXT UNLOCK</span>
+<span style="color:var(--text-dim);border:1.5px dashed var(--text-dim);border-radius:999px;padding:3px 9px">LOCKED</span>
+<span style="color:var(--pink);border:1.5px solid var(--pink);border-radius:999px;padding:3px 9px">HAZARD</span>
+</div>
+<div class="row" style="align-items:stretch">
+<div style="flex:1;background:var(--surface-panel);border:2px solid var(--line);border-radius:12px;padding:10px 14px"><div style="font-size:10px;letter-spacing:2px;color:var(--text-dim);font-weight:700;margin-bottom:4px">BRIEFING</div><div style="font-size:11px;color:var(--text-body)">Panel — the base card.</div></div>
+<div style="flex:1;background:var(--surface-panel);border:2px solid var(--amber);border-radius:12px;padding:10px 14px;box-shadow:var(--glow-amber)"><div style="font-size:10px;letter-spacing:2px;color:var(--amber);font-weight:700;margin-bottom:4px">ACTIVE</div><div style="font-size:11px;color:var(--text-body)">Amber + glow.</div></div>
+<div style="flex:1;background:var(--surface-panel);border:2px dashed var(--line-strong);border-radius:12px;padding:10px 14px;opacity:.62"><div style="font-size:10px;letter-spacing:2px;color:var(--text-dim);font-weight:700;margin-bottom:4px">LOCKED</div><div style="font-size:11px;color:var(--text-body)">Dashed + reason.</div></div>
+<div style="align-self:center;background:var(--surface-panel);border:2px solid var(--amber);border-radius:9px;padding:11px 18px;font-size:12px;box-shadow:var(--shadow-pop)">Toast — "Finish Mission 01 first, cadet."</div>
+</div>
+</body></html>

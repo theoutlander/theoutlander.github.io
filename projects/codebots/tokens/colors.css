@@ -1,0 +1,74 @@
+/* CodeBots colors. Default theme = BLUEPRINT (dark navy game UI).
+   PAPER theme is for documents/print surfaces only. */
+:root {
+  /* -- blueprint surfaces -- */
+  --bg: #0D1A33;
+  --surface-panel: #13234A;
+  --surface-deep: #0F1D3D;
+  --surface-arena: #0A1F45;
+  --surface-inset: rgba(0, 0, 0, 0.22);
+
+  /* -- lines & grid -- */
+  --line: rgba(146, 180, 240, 0.28);
+  --line-strong: rgba(146, 180, 240, 0.4);
+  --grid-line: rgba(120, 170, 255, 0.14);
+
+  /* -- text -- */
+  --ink: #EAF2FF;
+  --text-body: #B9C9E6;
+  --text-dim: #8FA7CD;
+  --on-amber: #1A1206;
+
+  /* -- brand accents -- */
+  --amber: #FFB454;   /* primary accent: actions, unlocks, score */
+  --cyan: #5FD4FF;    /* secondary accent: info, beacons, next-up */
+  --green: #6FE3A5;   /* success, earning, ready */
+  --red: #FF6B7A;     /* errors, crashes */
+  --pink: #FF7A9C;    /* hazards, penalties, player 3 */
+
+  /* -- semantic aliases -- */
+  --accent: var(--amber);
+  --accent-2: var(--cyan);
+  --success: var(--green);
+  --danger: var(--red);
+  --warning: var(--amber);
+
+  /* -- arena furniture -- */
+  --steel: #41598C;
+  --steel-edge: #2B3F6B;
+  --crate: #7FA8E0;
+
+  /* -- element effects (ammo & statuses) -- */
+  --fx-fire: #FF7A5C;
+  --fx-ice: #9FE8FF;
+  --fx-water: #7FB2FF;
+  --fx-vine: #8BE98B;
+  --fx-gust: #C9D6EE;
+
+  /* -- the paintbox (bot paint; kid-extendable, style-only, never UI) -- */
+  --paint-bumblebee: #FFD95C;
+  --paint-tangerine: #FF9E4A;
+  --paint-cherry-pop: #FF6B6B;
+  --paint-bubblegum: #FF8BB3;
+  --paint-grape-soda: #B48CFF;
+  --paint-skyblast: #7FB2FF;
+  --paint-lagoon: #5FD4FF;
+  --paint-sea-mint: #7FE8C0;
+  --paint-slime: #A8E85C;
+  --paint-peach-fuzz: #F2B8A0;
+  --paint-cloud: #EAF2FF;
+  --paint-midnight: #3D5A99;
+
+  /* -- paper theme (documents, specs, print) -- */
+  --paper-bg: #E3E0D5;
+  --paper-sheet: #FBF8EE;
+  --paper-tint: #F1EDE0;
+  --paper-ink: #232C43;
+  --paper-body: #3D4A6B;
+  --paper-dim: #6F7890;
+  --paper-line: rgba(45, 58, 92, 0.3);
+  --paper-accent: #E8622C;
+  --paper-blue: #2E6BD6;
+  --paper-green: #2F9E63;
+  --paper-red: #D4374F;
+}
