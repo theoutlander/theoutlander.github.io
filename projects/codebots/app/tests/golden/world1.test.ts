@@ -39,11 +39,14 @@ describe("World 1 Mission 1 — golden replay", () => {
       "turn",                    // right -> E
       "move", "move", "move", "move", "move", // forward(5) -> (3,1)..(7,1) = beacon
       "clear",                   // objective met on arrival
+      "score",                   // +100 objective points awarded on clear
       "honk",                    // bonus flourish on the beacon
     ]);
 
     const clear = events.find((e) => e.type === "clear");
     expect(clear).toMatchObject({ type: "clear", at: mission.arena.beacon });
+    const score = events.find((e) => e.type === "score");
+    expect(score).toMatchObject({ type: "score", delta: 100, total: 100 });
     expect(events.at(-1)).toMatchObject({ type: "honk", at: mission.arena.beacon });
     // No bumps on the author's clean route.
     expect(types).not.toContain("bump");
