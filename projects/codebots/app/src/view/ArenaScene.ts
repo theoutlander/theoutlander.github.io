@@ -17,6 +17,9 @@ export interface ArenaSceneData {
   mission: Mission;
   bodyColor: number;
   domeColor: number;
+  /** supersample factor: the canvas is rendered `ss`× the grid size and downscaled, so the
+   *  vector art stays crisp instead of upscaling a low-res buffer. */
+  ss: number;
 }
 
 /**
@@ -30,6 +33,7 @@ export class ArenaScene extends Phaser.Scene {
   private domeColor = 0x5fd4ff;
   private bot!: Phaser.GameObjects.Container;
   private playing = false;
+  private ss = 1;
 
   constructor() {
     super("arena");
@@ -39,9 +43,14 @@ export class ArenaScene extends Phaser.Scene {
     this.mission = data.mission;
     this.bodyColor = data.bodyColor;
     this.domeColor = data.domeColor;
+    this.ss = data.ss;
   }
 
   create() {
+    // Draw in grid units, then zoom the camera by the supersample factor so the whole grid fills
+    // the ss×-resolution canvas. FIT then downscales it into the panel — crisp at any size.
+    this.cameras.main.setZoom(this.ss);
+    this.cameras.main.centerOn((this.mission.arena.cols * CELL) / 2, (this.mission.arena.rows * CELL) / 2);
     drawArena(this, this.mission.arena);
     drawBeacon(this, this.mission.arena.beacon);
     this.bot = createBot(this, this.bodyColor, this.domeColor);
@@ -176,6 +185,7 @@ export class ArenaScene extends Phaser.Scene {
       fontStyle: "bold",
       color,
     });
+    txt.setResolution(this.ss * 2); // keep floater text sharp under camera zoom
     txt.setOrigin(0.5, 0.5).setDepth(30);
     this.tweens.add({
       targets: txt,

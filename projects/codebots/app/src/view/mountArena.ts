@@ -23,8 +23,11 @@ export function mountArena(
   mission: Mission,
   paint: { bodyColor: number; domeColor: number },
 ): Promise<MountedArena> {
-  const width = mission.arena.cols * CELL;
-  const height = mission.arena.rows * CELL;
+  // Supersample: render at ss× the grid resolution and let FIT downscale into the panel, so the
+  // vector art is crisp on normal and retina displays instead of upscaling a low-res buffer.
+  const ss = Math.min(3, Math.max(2, Math.ceil(window.devicePixelRatio || 1) + 1));
+  const width = mission.arena.cols * CELL * ss;
+  const height = mission.arena.rows * CELL * ss;
 
   return new Promise((resolve) => {
     const game = new Phaser.Game({
@@ -33,6 +36,7 @@ export function mountArena(
       width,
       height,
       transparent: true,
+      render: { antialias: true, roundPixels: false },
       scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
       callbacks: {
         postBoot: () => {
@@ -45,6 +49,7 @@ export function mountArena(
             mission,
             bodyColor: paint.bodyColor,
             domeColor: paint.domeColor,
+            ss,
           });
         },
       },
