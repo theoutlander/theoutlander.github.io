@@ -25,6 +25,30 @@ describe("World 1 Mission 1 — golden replay", () => {
     expect(countCodeLines(mission.authorSolution)).toBeLessThanOrEqual(mission.parLines);
   });
 
+  it("emits the expected event log (the view's sole input) for the author solution", () => {
+    const mission = loadMission();
+    const { events } = runInSandbox(mission, mission.authorSolution);
+
+    // forward(2): 2 moves; left; forward(3): 3 moves; right; forward(5): 5 moves -> the last
+    // move lands on the beacon, so `clear` fires on arrival, then the celebratory honk plays.
+    const types = events.map((e) => e.type);
+    expect(types).toEqual([
+      "move", "move",            // forward(2) -> (1,4),(2,4)
+      "turn",                    // left -> N
+      "move", "move", "move",    // forward(3) -> (2,3),(2,2),(2,1)
+      "turn",                    // right -> E
+      "move", "move", "move", "move", "move", // forward(5) -> (3,1)..(7,1) = beacon
+      "clear",                   // objective met on arrival
+      "honk",                    // bonus flourish on the beacon
+    ]);
+
+    const clear = events.find((e) => e.type === "clear");
+    expect(clear).toMatchObject({ type: "clear", at: mission.arena.beacon });
+    expect(events.at(-1)).toMatchObject({ type: "honk", at: mission.arena.beacon });
+    // No bumps on the author's clean route.
+    expect(types).not.toContain("bump");
+  });
+
   it("withholds the honkOnBeacon bonus when the honk isn't on the beacon", () => {
     const mission = loadMission();
     // Honk at the very start (on the spawn pad, not the beacon), then drive the winning route.
