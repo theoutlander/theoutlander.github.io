@@ -9,10 +9,12 @@
     "test": "vitest run"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild"]
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
   },
-  "dependencies": {},
   "devDependencies": {
+    "@types/estree": "^1.0.9",
     "acorn": "^8.15.0",
     "astring": "^1.9.0",
     "typescript": "^5.9.0",
