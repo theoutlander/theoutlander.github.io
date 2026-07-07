@@ -46,7 +46,14 @@ function Tank() {
   );
 }
 function Chest() {
-  return <div style={{ ...sq, background: "var(--amber)", border: "2px solid #6b4a1f" }} />;
+  // mini version of the arena chest: brown base, amber lid, ink lock
+  return (
+    <div style={{ ...sq }}>
+      <div style={{ position: "absolute", left: 1, right: 1, bottom: 2, height: 11, background: "#6b4a1f", borderRadius: 3, border: "1.5px solid rgba(0,0,0,.35)" }} />
+      <div style={{ position: "absolute", left: 1, right: 1, top: 2, height: 8, background: "var(--amber)", borderRadius: 3, border: "1.5px solid rgba(0,0,0,.35)" }} />
+      <div style={{ position: "absolute", left: "50%", top: 8, width: 4, height: 5, marginLeft: -2, background: "var(--ink)", borderRadius: 1 }} />
+    </div>
+  );
 }
 function Beacon() {
   return <div style={{ ...sq, borderRadius: 3, transform: "rotate(45deg)", background: "var(--cyan)" }} />;
