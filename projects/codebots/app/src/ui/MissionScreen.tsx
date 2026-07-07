@@ -254,10 +254,10 @@ export function MissionScreen({
           arena full-size; a RUN button stays in the collapsed strip so you can still run it. */}
       {codeOpen ? (
       <div style={{ ...col, width: briefOpen ? 460 : 540, flex: "none", minHeight: 0 }}>
+        <Button variant="ghost" size="sm" onClick={() => setCodeOpen(false)}>
+          HIDE CODE ▶
+        </Button>
         <Panel label="YOUR PROGRAM" style={{ flex: 1, minHeight: 0 }}>
-          <Button variant="ghost" size="sm" onClick={() => setCodeOpen(false)}>
-            HIDE CODE ▶
-          </Button>
           <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
             <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
           </div>
