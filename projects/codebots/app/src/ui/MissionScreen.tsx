@@ -6,6 +6,7 @@ import { Button } from "./components/Button";
 import { Hud } from "./Hud";
 import { TankRadio, type RadioLine } from "./TankRadio";
 import { ArenaKey } from "./ArenaKey";
+import { commandsFor } from "../content/commandDocs";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -14,11 +15,6 @@ import { Sfx } from "../sound/sfx";
 import { loadSave, saveSave, recordResult } from "../state/save";
 import { countCodeLines } from "../sandbox/lines";
 
-const W1_COMMANDS = [
-  { sig: "forward(n)", desc: "roll forward n squares" },
-  { sig: "left() / right()", desc: "turn 90° in place" },
-  { sig: "honk()", desc: "sound the AIR HORN" },
-];
 
 export function MissionScreen({
   mission,
@@ -190,9 +186,26 @@ export function MissionScreen({
           </div>
         </Panel>
         <Panel label="COMMANDS">
-          {W1_COMMANDS.map((cmd) => (
+          {commandsFor(mission.index).map((cmd) => (
             <div key={cmd.sig} style={{ padding: "7px 0", borderTop: "1px dashed var(--line)" }}>
-              <div style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--amber)" }}>{cmd.sig}</div>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                <span style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--amber)" }}>{cmd.sig}</span>
+                {cmd.since === mission.index ? (
+                  <span
+                    style={{
+                      fontSize: "var(--text-2xs)",
+                      fontWeight: 700,
+                      color: "var(--green)",
+                      border: "1.5px solid var(--green)",
+                      borderRadius: "var(--radius-pill)",
+                      padding: "1px 6px",
+                      letterSpacing: "1px",
+                    }}
+                  >
+                    NEW
+                  </span>
+                ) : null}
+              </div>
               <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>{cmd.desc}</div>
             </div>
           ))}
