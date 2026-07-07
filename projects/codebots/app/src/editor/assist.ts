@@ -6,16 +6,26 @@ import {
   type CompletionResult,
 } from "@codemirror/autocomplete";
 import { suggestCommand } from "../sandbox/errors";
+import { apiForWorld } from "../sandbox/api";
 
-/** The real command names (for lint) — game-availability is a separate rule; syntactically these
- *  are the words the game knows. `repeat` is a keyword form (`repeat n { }`), not a call. */
-const KNOWN_CALLS = ["forward", "back", "left", "right", "honk"];
-const KNOWN = new Set(KNOWN_CALLS);
-const CALL_OK = new Set([...KNOWN_CALLS, "for", "if", "while"]); // things allowed before "("
+/** Control-flow words that may legally appear before "(" (or as keywords) — never "unknown". */
+const CONTROL = ["for", "if", "else", "while", "function", "repeat"];
 
-/** Scan for `name(` where name isn't a known command, ignoring line comments. Regex-based (not a
- *  parser) so it works live while the code is half-typed or contains `repeat` sugar. */
-export function scanUnknownCalls(doc: string): { from: number; to: number; name: string }[] {
+/** Kid-declared function names in the doc, so a call to one isn't squiggled as a typo (World 4). */
+function userFnNames(doc: string): string[] {
+  const out: string[] = [];
+  const re = /function\s+([A-Za-z_]\w*)/g;
+  let m: RegExpExecArray | null;
+  while ((m = re.exec(doc)) !== null) out.push(m[1]);
+  return out;
+}
+
+/** Scan for `name(` where name isn't allowed, ignoring line comments. Regex-based (not a parser)
+ *  so it works live while the code is half-typed or contains `repeat` sugar. */
+export function scanUnknownCalls(
+  doc: string,
+  allowed: Set<string>,
+): { from: number; to: number; name: string }[] {
   const out: { from: number; to: number; name: string }[] = [];
   const re = /([A-Za-z_]\w*)\s*\(/g;
   let offset = 0;
@@ -25,7 +35,7 @@ export function scanUnknownCalls(doc: string): { from: number; to: number; name:
     let m: RegExpExecArray | null;
     while ((m = re.exec(code)) !== null) {
       const name = m[1];
-      if (CALL_OK.has(name)) continue;
+      if (allowed.has(name)) continue;
       const from = offset + m.index;
       out.push({ from, to: from + name.length, name });
     }
@@ -34,21 +44,25 @@ export function scanUnknownCalls(doc: string): { from: number; to: number; name:
   return out;
 }
 
-/** Live red squiggles under unknown commands, with a kid-worded "did you mean" message. */
-export const codebotsLinter = linter((view) => {
-  const doc = view.state.doc.toString();
-  return scanUnknownCalls(doc).map<Diagnostic>((u) => {
-    const guess = suggestCommand(u.name, KNOWN_CALLS);
-    return {
-      from: u.from,
-      to: u.to,
-      severity: "error",
-      message: guess
-        ? `I don't know "${u.name}". Did you mean ${guess}()?`
-        : `I don't know "${u.name}". Check the COMMANDS list on the left.`,
-    };
+/** Live red squiggles under unknown commands for a given world, with a "did you mean" message. */
+export function makeCodebotsLinter(world: number) {
+  const api = apiForWorld(world);
+  return linter((view) => {
+    const doc = view.state.doc.toString();
+    const allowed = new Set([...api, ...CONTROL, ...userFnNames(doc)]);
+    return scanUnknownCalls(doc, allowed).map<Diagnostic>((u) => {
+      const guess = suggestCommand(u.name, api);
+      return {
+        from: u.from,
+        to: u.to,
+        severity: "error",
+        message: guess
+          ? `I don't know "${u.name}". Did you mean ${guess}()?`
+          : `I don't know "${u.name}". Check the COMMANDS list on the left.`,
+      };
+    });
   });
-});
+}
 
 interface CmdInfo {
   label: string;
@@ -58,15 +72,29 @@ interface CmdInfo {
   sig: string;
   desc: string;
   example: string;
+  /** first world this is offered in (offered in that world and all later ones) */
+  world: number;
 }
 
 const CMDS: CmdInfo[] = [
-  { label: "forward", type: "function", apply: "forward(", detail: "(n)", sig: "forward(n)", desc: "Roll forward n squares.", example: "forward(3)" },
-  { label: "back", type: "function", apply: "back(", detail: "(n)", sig: "back(n)", desc: "Reverse n squares without turning.", example: "back(2)" },
-  { label: "left", type: "function", apply: "left()", detail: "(n?)", sig: "left(n?)", desc: "Turn 90° left. Pass a number to turn that many times.", example: "left()  ·  left(2)" },
-  { label: "right", type: "function", apply: "right()", detail: "(n?)", sig: "right(n?)", desc: "Turn 90° right. Pass a number to turn that many times.", example: "right()  ·  right(2)" },
-  { label: "honk", type: "function", apply: "honk()", detail: "(n?)", sig: "honk(n?)", desc: "Sound the AIR HORN — and open a gate if you're on its pad. Pass a number to honk that many times.", example: "honk()  ·  honk(3)" },
-  { label: "repeat", type: "keyword", apply: "repeat 3 {\n  \n}", detail: "n { }", sig: "repeat n { … }", desc: "Do the moves inside the braces n times.", example: "repeat 4 { forward(1) right() }" },
+  // World 1
+  { label: "forward", type: "function", apply: "forward(", detail: "(n)", sig: "forward(n)", desc: "Roll forward n squares.", example: "forward(3)", world: 1 },
+  { label: "back", type: "function", apply: "back(", detail: "(n)", sig: "back(n)", desc: "Reverse n squares without turning.", example: "back(2)", world: 1 },
+  { label: "left", type: "function", apply: "left()", detail: "(n?)", sig: "left(n?)", desc: "Turn 90° left. Pass a number to turn that many times.", example: "left()  ·  left(2)", world: 1 },
+  { label: "right", type: "function", apply: "right()", detail: "(n?)", sig: "right(n?)", desc: "Turn 90° right. Pass a number to turn that many times.", example: "right()  ·  right(2)", world: 1 },
+  { label: "honk", type: "function", apply: "honk()", detail: "(n?)", sig: "honk(n?)", desc: "Sound the AIR HORN — and open a gate if you're on its pad.", example: "honk()  ·  honk(3)", world: 1 },
+  { label: "repeat", type: "keyword", apply: "repeat 3 {\n  \n}", detail: "n { }", sig: "repeat n { … }", desc: "Do the moves inside the braces n times.", example: "repeat 4 { forward(1) right() }", world: 1 },
+  // World 2 — sensors, decisions, blaster
+  { label: "blocked", type: "function", apply: "blocked()", detail: "→ yes/no", sig: "blocked()", desc: "Is something right in front of you? Gives back yes or no — use it in an if.", example: "if (blocked()) { right() }", world: 2 },
+  { label: "targetAhead", type: "function", apply: "targetAhead()", detail: "→ yes/no", sig: "targetAhead()", desc: "Is a barrel one square ahead? Use it to decide when to shoot.", example: "if (targetAhead()) { shoot() }", world: 2 },
+  { label: "atBeacon", type: "function", apply: "atBeacon()", detail: "→ yes/no", sig: "atBeacon()", desc: "Are you standing on the goal yet?", example: "while (!atBeacon()) { forward(1) }", world: 2 },
+  { label: "shoot", type: "function", apply: "shoot()", detail: "()", sig: "shoot()", desc: "Fire the blaster straight ahead. Smashes a barrel in your way.", example: "shoot()", world: 2 },
+  { label: "if", type: "keyword", apply: "if () {\n  \n}", detail: "( ) { }", sig: "if ( … ) { }", desc: "Only run the moves inside when the test is true.", example: "if (blocked()) { right() }", world: 2 },
+  { label: "else", type: "keyword", apply: "else {\n  \n}", detail: "{ }", sig: "else { }", desc: "What to do when the if test was NOT true.", example: "if (blocked()) { right() } else { forward(1) }", world: 2 },
+  // World 3 — while
+  { label: "while", type: "keyword", apply: "while () {\n  \n}", detail: "( ) { }", sig: "while ( … ) { }", desc: "Keep repeating the moves WHILE the test stays true.", example: "while (!atBeacon()) { forward(1) }", world: 3 },
+  // World 4 — functions
+  { label: "function", type: "keyword", apply: "function name() {\n  \n}", detail: "name() { }", sig: "function name() { }", desc: "Make your OWN command out of other commands, then call it by name.", example: "function spin() { right(2) }\nspin()", world: 4 },
 ];
 
 /** A formatted info card for the completion tooltip: signature, description, example. */
@@ -82,26 +110,26 @@ function infoCard(c: CmdInfo): () => HTMLElement {
     desc.style.cssText = "color:#B9C9E6;font-size:11px;margin-bottom:6px";
     const ex = document.createElement("div");
     ex.textContent = c.example;
-    ex.style.cssText = "color:#5FD4FF;font-size:11px;background:rgba(0,0,0,.25);padding:3px 6px;border-radius:4px";
+    ex.style.cssText = "color:#5FD4FF;font-size:11px;background:rgba(0,0,0,.25);padding:3px 6px;border-radius:4px;white-space:pre-wrap";
     wrap.append(sig, desc, ex);
     return wrap;
   };
 }
 
-const OPTIONS: Completion[] = CMDS.map((c) => ({
-  label: c.label,
-  type: c.type,
-  apply: c.apply,
-  detail: c.detail,
-  info: infoCard(c),
-}));
-
-function complete(ctx: CompletionContext): CompletionResult | null {
-  const word = ctx.matchBefore(/\w*/);
-  if (!word) return null;
-  if (word.from === word.to && !ctx.explicit) return null;
-  return { from: word.from, options: OPTIONS };
+/** Autocomplete offering only the CodeBots commands taught by this world (not every JS global). */
+export function makeCodebotsAutocomplete(world: number) {
+  const options: Completion[] = CMDS.filter((c) => c.world <= world).map((c) => ({
+    label: c.label,
+    type: c.type,
+    apply: c.apply,
+    detail: c.detail,
+    info: infoCard(c),
+  }));
+  function complete(ctx: CompletionContext): CompletionResult | null {
+    const word = ctx.matchBefore(/\w*/);
+    if (!word) return null;
+    if (word.from === word.to && !ctx.explicit) return null;
+    return { from: word.from, options };
+  }
+  return autocompletion({ override: [complete], activateOnTyping: true });
 }
-
-/** Autocomplete offering only the CodeBots commands (not every JS global). */
-export const codebotsAutocomplete = autocompletion({ override: [complete], activateOnTyping: true });

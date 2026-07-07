@@ -63,6 +63,15 @@ function Chest() {
     </div>
   );
 }
+function Barrel() {
+  // coppery drum with two hoops — the shootable target
+  return (
+    <div style={{ ...sq, background: "rgba(255,107,122,.85)", border: "2px solid rgba(0,0,0,.3)" }}>
+      <div style={{ position: "absolute", left: 1, right: 1, top: 5, height: 2, background: "var(--ink)", opacity: 0.55 }} />
+      <div style={{ position: "absolute", left: 1, right: 1, bottom: 5, height: 2, background: "var(--ink)", opacity: 0.55 }} />
+    </div>
+  );
+}
 function Beacon() {
   return <div style={{ ...sq, borderRadius: 3, transform: "rotate(45deg)", background: "var(--cyan)" }} />;
 }
@@ -84,6 +93,7 @@ export function ArenaKey({ arena }: { arena: Arena }) {
     desc: "your goal — reach it",
   });
   if (arena.crates.length) entries.push({ icon: <Crate />, name: "CRATE", desc: "blocks you — go around" });
+  if ((arena.targets ?? []).length) entries.push({ icon: <Barrel />, name: "BARREL", desc: "shoot() it to clear the way" });
   if (cells.includes("wall")) entries.push({ icon: <Steel />, name: "STEEL", desc: "a solid wall" });
   if (cells.includes("mud")) entries.push({ icon: <Mud />, name: "MUD", desc: "slows you down" });
   if (cells.includes("pit")) entries.push({ icon: <Pit />, name: "PIT", desc: "don't fall in! −40" });

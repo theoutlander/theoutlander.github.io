@@ -3,7 +3,7 @@ import type { Mission } from "../sim/engine";
 import type { SimEvent } from "../sim/events";
 import type { Facing } from "../sim/types";
 import { createBot, facingRotation } from "./botGraphics";
-import { CELL, cellCenter, drawArena, drawBeacon, drawGates, drawObstacles } from "./furniture";
+import { CELL, cellCenter, drawArena, drawBeacon, drawGates, drawObstacles, drawTargets } from "./furniture";
 
 const BOT_SCALE = 0.34;
 
@@ -35,6 +35,7 @@ export class ArenaScene extends Phaser.Scene {
   private playing = false;
   private ss = 1;
   private gateBarriers = new Map<string, Phaser.GameObjects.Container>();
+  private targets = new Map<string, Phaser.GameObjects.Container>();
 
   constructor() {
     super("arena");
@@ -54,6 +55,7 @@ export class ArenaScene extends Phaser.Scene {
     this.cameras.main.centerOn((this.mission.arena.cols * CELL) / 2, (this.mission.arena.rows * CELL) / 2);
     drawArena(this, this.mission.arena);
     this.gateBarriers = drawGates(this, this.mission.arena);
+    this.targets = drawTargets(this, this.mission.arena);
     drawObstacles(this, this.mission.arena);
     drawBeacon(this, this.mission.arena.beacon, this.mission.arena.beaconStyle ?? "beacon");
     this.bot = createBot(this, this.bodyColor, this.domeColor);
@@ -69,6 +71,11 @@ export class ArenaScene extends Phaser.Scene {
     for (const barrier of this.gateBarriers.values()) {
       barrier.setAlpha(1);
       barrier.setScale(1);
+    }
+    for (const t of this.targets.values()) {
+      t.setAlpha(1);
+      t.setScale(1);
+      t.setVisible(true);
     }
   }
 
@@ -198,6 +205,31 @@ export class ArenaScene extends Phaser.Scene {
         }
         break;
       }
+      case "shoot": {
+        this.bolt(ev.from, ev.facing, ev.hit);
+        this.time.delayedCall(200, done);
+        break;
+      }
+      case "targetDestroyed": {
+        const barrel = this.targets.get(`${ev.at.x},${ev.at.y}`);
+        if (barrel) {
+          this.burst(ev.at, 0xff6b7a);
+          this.tweens.add({
+            targets: barrel,
+            scale: 1.5,
+            alpha: 0,
+            duration: 200,
+            ease: "Back.easeIn",
+            onComplete: () => {
+              barrel.setVisible(false);
+              done();
+            },
+          });
+        } else {
+          this.time.delayedCall(30, done);
+        }
+        break;
+      }
       case "score": {
         this.floater(ev.at, ev.delta);
         this.time.delayedCall(60, done);
@@ -235,6 +267,63 @@ export class ArenaScene extends Phaser.Scene {
       ease: "Quad.easeOut",
       onComplete: () => c.destroy(),
     });
+  }
+
+  /** A blaster bolt streaking from the bot to the barrel it hits (or off past the last cell). */
+  private bolt(from: { x: number; y: number }, facing: Facing, hit: { x: number; y: number } | null): void {
+    const delta: Record<Facing, { x: number; y: number }> = {
+      N: { x: 0, y: -1 }, E: { x: 1, y: 0 }, S: { x: 0, y: 1 }, W: { x: -1, y: 0 },
+    };
+    const d = delta[facing];
+    const start = cellCenter(from);
+    const end = hit ? cellCenter(hit) : cellCenter({ x: from.x + d.x * 4, y: from.y + d.y * 4 });
+
+    // muzzle flash
+    const flash = this.add.graphics();
+    flash.fillStyle(0xffe08a, 1);
+    flash.fillCircle(0, 0, 6);
+    const fc = this.add.container(start.x + d.x * 12, start.y + d.y * 12, [flash]);
+    fc.setDepth(21);
+    this.tweens.add({ targets: fc, scale: { from: 1, to: 0 }, alpha: 0, duration: 160, onComplete: () => fc.destroy() });
+
+    // bolt
+    const g = this.add.graphics();
+    g.fillStyle(0xff6b7a, 1);
+    g.fillCircle(0, 0, 5);
+    g.fillStyle(0xffe08a, 0.9);
+    g.fillCircle(0, 0, 2);
+    const c = this.add.container(start.x, start.y, [g]);
+    c.setDepth(22);
+    this.tweens.add({
+      targets: c,
+      x: end.x,
+      y: end.y,
+      duration: 150,
+      ease: "Quad.easeIn",
+      onComplete: () => c.destroy(),
+    });
+  }
+
+  /** A quick particle burst where a barrel is destroyed. */
+  private burst(at: { x: number; y: number }, color: number): void {
+    const { x, y } = cellCenter(at);
+    for (let i = 0; i < 6; i++) {
+      const shard = this.add.graphics();
+      shard.fillStyle(color, 1);
+      shard.fillRect(-2, -2, 4, 4);
+      const c = this.add.container(x, y, [shard]);
+      c.setDepth(23);
+      const ang = (i / 6) * Math.PI * 2;
+      this.tweens.add({
+        targets: c,
+        x: x + Math.cos(ang) * 22,
+        y: y + Math.sin(ang) * 22,
+        alpha: 0,
+        duration: 300,
+        ease: "Quad.easeOut",
+        onComplete: () => c.destroy(),
+      });
+    }
   }
 
   private ripple(at: { x: number; y: number }, color: number): void {

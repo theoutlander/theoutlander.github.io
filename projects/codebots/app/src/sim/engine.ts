@@ -1,6 +1,6 @@
 import { executeCommand } from "./commands";
 import { recordTrace } from "./trace";
-import { cellAt, inBounds } from "./arena";
+import { cellAt, inBounds, stepFacing } from "./arena";
 import type { MoveWorld } from "./physics";
 import type { Command, BotState, TraceEntry, Arena, Vec2, Facing, GateSpec } from "./types";
 import type { SimEvent } from "./events";
@@ -53,6 +53,7 @@ export function createSim(mission: Mission): Sim {
   const log: SimEvent[] = [];
 
   const OBJECTIVE_POINTS = 100; // PRODUCT_SPEC §6: completing the objective is +100
+  const SHOOT_RANGE = 5; // squares a shot travels before fizzling
 
   // Static blockers (never change): crates + villain obstacles like Sprocket's tank.
   const staticBlocked = new Set<string>();
@@ -62,11 +63,15 @@ export function createSim(mission: Mission): Sim {
   // Gates are mutable — honking on a pad opens one. The world reads their live state.
   const gates: GateSpec[] = arena.gates.map((g) => ({ ...g, gateCells: [...g.gateCells] }));
 
+  // Targets are mutable — shoot() destroys them, so the blocker check reads this live set.
+  const targets = new Set<string>((arena.targets ?? []).map(key));
+
   const world: MoveWorld = {
     isBlocked(p) {
       if (!inBounds(arena, p)) return true;
       if (cellAt(arena, p) === "wall") return true;
       if (staticBlocked.has(key(p))) return true;
+      if (targets.has(key(p))) return true; // a standing barrel blocks until shot
       // a closed gate cell blocks; open ones are passable
       return gates.some((g) => !g.open && g.gateCells.some((c) => c.x === p.x && c.y === p.y));
     },
@@ -82,6 +87,50 @@ export function createSim(mission: Mission): Sim {
     return true;
   }
 
+  // A cell blocks forward progress if you'd bump, fall, or splash entering it.
+  function stopsProgress(p: Vec2): boolean {
+    return world.isBlocked(p) || world.isPit(p) || world.isWater(p);
+  }
+
+  /** Sensors: read live state, return a value, never mutate the world. */
+  function sense(name: string): boolean {
+    const ahead = stepFacing(state.pos, state.facing);
+    switch (name) {
+      case "blocked":
+        return stopsProgress(ahead);
+      case "targetAhead":
+        return targets.has(key(ahead));
+      case "atBeacon":
+        return atBeacon(state);
+      default:
+        return false;
+    }
+  }
+
+  /** shoot(): fire a bolt in the facing direction. Destroys the first barrel in range; a shot
+   *  that meets a wall/edge (or nothing) first is a defined miss — never a crash. */
+  function fire(): void {
+    tick += 1;
+    let p = state.pos;
+    let hit: Vec2 | null = null;
+    for (let i = 0; i < SHOOT_RANGE; i++) {
+      p = stepFacing(p, state.facing);
+      if (!inBounds(arena, p)) break;
+      if (targets.has(key(p))) {
+        hit = p;
+        targets.delete(key(p));
+        break;
+      }
+      // a wall/crate/tank/closed-gate stops the bolt short of any target behind it
+      if (world.isBlocked(p)) break;
+    }
+    log.push({ tick, type: "shoot", from: state.pos, facing: state.facing, hit });
+    if (hit) {
+      log.push({ tick, type: "targetDestroyed", at: hit });
+      trace.push(recordTrace(arena, state, tick));
+    }
+  }
+
   /** If the bot just satisfied the beacon at `at`, emit `clear` and return the objective points. */
   function maybeClear(at: Vec2): number {
     if (!cleared && atBeacon(state)) {
@@ -94,6 +143,15 @@ export function createSim(mission: Mission): Sim {
 
   return {
     execute(cmd: Command) {
+      // Sensors return a value from live state (the driver feeds it back into the generator).
+      if (cmd.name === "blocked" || cmd.name === "targetAhead" || cmd.name === "atBeacon") {
+        return sense(cmd.name);
+      }
+      if (cmd.name === "shoot") {
+        fire();
+        return undefined;
+      }
+
       const before = state;
       const { state: next, ticksSpent, outcome } = executeCommand(world, before, cmd);
       let objective = 0;

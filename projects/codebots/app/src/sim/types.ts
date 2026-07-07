@@ -28,6 +28,8 @@ export interface Arena {
   chests: { id: string; pos: Vec2 }[];
   gates: GateSpec[];
   obstacles?: Obstacle[];
+  /** breakable barrels: block the bot, destroyed by shoot() (World 2+). Absent = none. */
+  targets?: Vec2[];
   beacon: Vec2;
   /** if set, arriving at the beacon also requires this facing (W1M3 rule) */
   beaconRequiresFacing?: Facing;
@@ -66,8 +68,14 @@ export interface SimResult {
 export type CommandName =
   | "forward" | "back" | "left" | "right" | "boost"
   | "honk" | "grab" | "drop" | "fire" | "dropChaff"
-  | "grapple" | "mortar"
+  | "grapple" | "mortar" | "shoot"
+  // sensors (queries — return a value, no state change): World 2+
+  | "blocked" | "atBeacon" | "targetAhead"
   | "radar" | "touch" | "position" | "heading" | "status"
   | "coins" | "carrying";
+
+/** Sensor names: calls that return a value from live state rather than acting on the world. */
+export const SENSORS = ["blocked", "atBeacon", "targetAhead"] as const;
+export type SensorName = (typeof SENSORS)[number];
 
 export interface Command { name: CommandName; args: number[]; }

@@ -1,10 +1,10 @@
-import { desugarRepeat, toGeneratorSource, findUnknownCalls } from "./transform";
+import { desugarRepeat, toGeneratorSource, findUnknownCalls, collectFunctionNames } from "./transform";
 import { createSim, type Mission } from "../sim/engine";
 import { SandboxError, LintError, unknownCommandMessage } from "./errors";
 import { countCodeLines } from "./lines";
+import { apiForWorld } from "./api";
 import type { Command } from "../sim/types";
 
-const W1_API = ["forward", "back", "left", "right", "honk"];
 const MAX_STEPS = 5000;
 
 interface RunFacts {
@@ -28,17 +28,21 @@ function computeStars(mission: Mission, source: string, cleared: boolean, facts:
 
 export function runInSandbox(mission: Mission, source: string) {
   const desugared = desugarRepeat(source);
+  const api = apiForWorld(mission.world);
 
   // Lint for misspelled commands BEFORE running, so we can point at the exact line + word and
   // suggest a fix (a typo like `forwrd(1)` is valid JS, so it would otherwise only fail at
-  // runtime with no line info). Errors never cost points.
-  const unknown = findUnknownCalls(desugared, W1_API);
+  // runtime with no line info). Errors never cost points. The kid's own function names are known
+  // too, so calling a function they defined isn't mistaken for a typo.
+  const userFns = collectFunctionNames(desugared);
+  const known = [...api, ...userFns];
+  const unknown = findUnknownCalls(desugared, known);
   if (unknown.length > 0) {
     const u = unknown[0];
-    throw new LintError(u.line, unknownCommandMessage(u.name, u.line, W1_API));
+    throw new LintError(u.line, unknownCommandMessage(u.name, u.line, api));
   }
 
-  const generatorSource = toGeneratorSource(desugared, W1_API);
+  const generatorSource = toGeneratorSource(desugared, api);
   const compiled = new Function(
     "__call",
     `${generatorSource}\nreturn __main;`,

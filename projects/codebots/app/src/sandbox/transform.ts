@@ -1,6 +1,6 @@
 import { parse } from "acorn";
 import { generate } from "astring";
-import type { Node, ExpressionStatement, CallExpression, Identifier } from "estree";
+import type { Node, CallExpression, Identifier } from "estree";
 
 /** Textually rewrites `repeat <expr> { <body> }` to a `for` loop. Brace-matched, not regex,
  *  so nested `{ }` in the body (from if/else, later worlds) don't break the scan. */
@@ -39,63 +39,141 @@ export function desugarRepeat(source: string): string {
   return out;
 }
 
-/** Parses (already repeat-desugared) source and rewrites top-level calls to known API names
- *  into `yield __call(name, [args])` inside a `function* __main() { ... }` wrapper. */
+// The keys of an estree node that hold child nodes vary by type; we walk them generically and
+// skip location bookkeeping so we never treat `{ line, column }` objects as AST nodes.
+const SKIP_KEYS = new Set(["loc", "start", "end", "range"]);
+
+function isNode(v: unknown): v is Node & Record<string, unknown> {
+  return !!v && typeof v === "object" && typeof (v as { type?: unknown }).type === "string";
+}
+
+/** Visit every node in the tree (pre-order), read-only. */
+function visit(node: unknown, fn: (n: Node & Record<string, unknown>) => void): void {
+  if (Array.isArray(node)) {
+    node.forEach((c) => visit(c, fn));
+    return;
+  }
+  if (!isNode(node)) return;
+  fn(node);
+  for (const key of Object.keys(node)) {
+    if (SKIP_KEYS.has(key)) continue;
+    visit((node as Record<string, unknown>)[key], fn);
+  }
+}
+
+/** Names of every function the kid declared (top-level or nested) — so calls to them are known
+ *  (not linted as typos) and get turned into `yield*` delegations. */
+export function collectFunctionNames(source: string): string[] {
+  let ast: unknown;
+  try {
+    ast = parse(source, { ecmaVersion: 2022 });
+  } catch {
+    return [];
+  }
+  const names = new Set<string>();
+  visit(ast, (n) => {
+    if (n.type === "FunctionDeclaration") {
+      const id = (n as { id?: Identifier }).id;
+      if (id) names.add(id.name);
+    }
+  });
+  return [...names];
+}
+
+/** Wrap an API call as `yield __call(name, [args])`; a user-function call as `yield* fn(args)`.
+ *  Everything else is returned unchanged. The call's own arguments must already be rewritten. */
+function wrapCall(
+  node: Node & Record<string, unknown>,
+  api: Set<string>,
+  userFns: Set<string>,
+): Node {
+  if (node.type !== "CallExpression") return node;
+  const call = node as unknown as CallExpression;
+  if (call.callee.type !== "Identifier") return node;
+  const name = (call.callee as Identifier).name;
+
+  if (api.has(name)) {
+    return {
+      type: "YieldExpression",
+      delegate: false,
+      argument: {
+        type: "CallExpression",
+        callee: { type: "Identifier", name: "__call" },
+        arguments: [
+          { type: "Literal", value: name },
+          { type: "ArrayExpression", elements: call.arguments },
+        ],
+        optional: false,
+      },
+    } as unknown as Node;
+  }
+  if (userFns.has(name)) {
+    // Delegate into the (now generator) user function so its commands stream out of __main.
+    return { type: "YieldExpression", delegate: true, argument: call } as unknown as Node;
+  }
+  return node;
+}
+
+/** In-place: rewrite every API/user call anywhere in the tree (expression OR statement position)
+ *  into a yield, post-order so nested calls (e.g. in `if (a() && b())`) are handled first. */
+function rewriteCalls(node: unknown, api: Set<string>, userFns: Set<string>): void {
+  if (!isNode(node) && !Array.isArray(node)) return;
+  const obj = node as Record<string, unknown>;
+  for (const key of Object.keys(obj)) {
+    if (SKIP_KEYS.has(key)) continue;
+    const val = obj[key];
+    if (Array.isArray(val)) {
+      for (let i = 0; i < val.length; i++) {
+        const child = val[i];
+        if (isNode(child)) {
+          rewriteCalls(child, api, userFns); // children first
+          val[i] = wrapCall(child, api, userFns);
+        }
+      }
+    } else if (isNode(val)) {
+      rewriteCalls(val, api, userFns);
+      obj[key] = wrapCall(val, api, userFns);
+    }
+  }
+}
+
+/**
+ * Parse (already repeat-desugared) source and produce a runnable generator program. Every call to
+ * a known API name becomes `yield __call(name, [args])`; every user `function` becomes a generator
+ * and calls to it become `yield*`. The driver steps the resulting `__main` generator, feeding each
+ * command's result (a sensor's boolean, or undefined for actions) back in via `gen.next(result)`.
+ */
 export function toGeneratorSource(source: string, apiNames: string[]): string {
   const ast = parse(source, { ecmaVersion: 2022 }) as unknown as { body: Node[] };
-  const known = new Set(apiNames);
-
-  function isKnownCall(stmt: Node): stmt is ExpressionStatement {
-    if (stmt.type !== "ExpressionStatement") return false;
-    const expr = (stmt as ExpressionStatement).expression as CallExpression;
-    return expr.type === "CallExpression" && expr.callee.type === "Identifier" &&
-      known.has((expr.callee as Identifier).name);
-  }
-
-  function transformStatement(stmt: Node): Node {
-    if (isKnownCall(stmt)) {
-      const expr = (stmt as ExpressionStatement).expression as CallExpression;
-      const name = (expr.callee as Identifier).name;
-      return {
-        type: "ExpressionStatement",
-        expression: {
-          type: "YieldExpression",
-          delegate: false,
-          argument: {
-            type: "CallExpression",
-            callee: { type: "Identifier", name: "__call" },
-            arguments: [
-              { type: "Literal", value: name },
-              { type: "ArrayExpression", elements: expr.arguments },
-            ],
-            optional: false,
-          },
-        },
-      } as unknown as Node;
+  const api = new Set(apiNames);
+  const userFns = new Set<string>();
+  visit(ast, (n) => {
+    if (n.type === "FunctionDeclaration") {
+      const id = (n as { id?: Identifier }).id;
+      if (id) userFns.add(id.name);
     }
-    if ((stmt as { body?: Node }).body && Array.isArray((stmt as { body: unknown }).body)) {
-      const withBody = stmt as unknown as { body: Node[] };
-      return { ...stmt, body: withBody.body.map(transformStatement) } as Node;
-    }
-    // ForStatement's body is a single statement/block, not an array — recurse into it too.
-    const forLike = stmt as unknown as { body?: Node };
-    if (forLike.body && !Array.isArray(forLike.body)) {
-      return { ...stmt, body: transformStatement(forLike.body) } as Node;
-    }
-    return stmt;
-  }
+  });
 
-  const transformedBody = ast.body.map(transformStatement);
+  rewriteCalls(ast, api, userFns);
+  // Make every kid-declared function a generator so its yielded commands propagate through `yield*`.
+  visit(ast, (n) => {
+    if (n.type === "FunctionDeclaration") (n as { generator?: boolean }).generator = true;
+  });
+
+  // Hoist user functions ahead of __main (both live in the compiled Function's scope, so __main
+  // can delegate into them); everything else becomes __main's body.
+  const fnDecls = ast.body.filter((s) => s.type === "FunctionDeclaration");
+  const rest = ast.body.filter((s) => s.type !== "FunctionDeclaration");
   const mainFn = {
     type: "FunctionDeclaration",
     id: { type: "Identifier", name: "__main" },
     generator: true,
     async: false,
     params: [],
-    body: { type: "BlockStatement", body: transformedBody },
+    body: { type: "BlockStatement", body: rest },
   };
-
-  return generate(mainFn as unknown as Node);
+  const program = { type: "Program", body: [...fnDecls, mainFn], sourceType: "script" };
+  return generate(program as unknown as Node);
 }
 
 /**

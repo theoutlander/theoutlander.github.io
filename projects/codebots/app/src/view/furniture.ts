@@ -138,6 +138,32 @@ export function drawGates(scene: Phaser.Scene, arena: Arena): Map<string, Phaser
   return map;
 }
 
+/** Breakable barrels (shoot targets): a coppery drum with hoops, distinct from the blue crates so
+ *  it reads as "destroy me". Returns a map from cell-key to each barrel container so the scene can
+ *  pop the right one on a targetDestroyed event. */
+export function drawTargets(scene: Phaser.Scene, arena: Arena): Map<string, Phaser.GameObjects.Container> {
+  const map = new Map<string, Phaser.GameObjects.Container>();
+  for (const t of arena.targets ?? []) {
+    const { x, y } = cellCenter(t);
+    const g = scene.add.graphics();
+    const pad = 9;
+    const w = CELL - pad * 2;
+    const h = CELL - pad * 2;
+    g.fillStyle(COLORS.red, 0.9);
+    g.fillRoundedRect(-w / 2, -h / 2, w, h, 6);
+    g.lineStyle(2, 0x000000, 0.3);
+    g.strokeRoundedRect(-w / 2, -h / 2, w, h, 6);
+    // hoops
+    g.lineStyle(2, COLORS.ink, 0.55);
+    g.lineBetween(-w / 2 + 2, -h / 4, w / 2 - 2, -h / 4);
+    g.lineBetween(-w / 2 + 2, h / 4, w / 2 - 2, h / 4);
+    const c = scene.add.container(x, y, [g]);
+    c.setDepth(6);
+    map.set(gateKey(t), c);
+  }
+  return map;
+}
+
 /** Villain obstacles — Sprocket's parked tank. Geometric placeholder in the design-system
  *  language (steel body, red barrel/dome), pending real villain art from the design project. */
 export function drawObstacles(scene: Phaser.Scene, arena: Arena): void {

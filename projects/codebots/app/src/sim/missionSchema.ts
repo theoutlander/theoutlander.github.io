@@ -19,6 +19,7 @@ export const ArenaSchema = z.object({
     open: z.boolean(),
   })),
   obstacles: z.array(z.object({ kind: z.literal("tank"), pos: Vec2Schema })).optional(),
+  targets: z.array(Vec2Schema).optional(),
   beacon: Vec2Schema,
   beaconRequiresFacing: FacingSchema.optional(),
   beaconStyle: z.enum(["beacon", "chest"]).optional(),

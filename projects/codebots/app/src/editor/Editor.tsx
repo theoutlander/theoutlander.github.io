@@ -4,7 +4,7 @@ import { EditorView, keymap, lineNumbers, Decoration, type DecorationSet } from 
 import { history, historyKeymap, defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import { codebotsTheme, codebotsHighlight } from "./theme";
-import { codebotsLinter, codebotsAutocomplete } from "./assist";
+import { makeCodebotsLinter, makeCodebotsAutocomplete } from "./assist";
 import { acceptCompletion } from "@codemirror/autocomplete";
 
 // A single-line highlight for the line an error points at. Errors never cost points — this is
@@ -36,11 +36,14 @@ export function Editor({
   onChange,
   onRun,
   errorLine,
+  world = 1,
 }: {
   value: string;
   onChange: (v: string) => void;
   onRun?: () => void;
   errorLine?: number | null;
+  /** which world's command vocabulary the autocomplete + linter should know */
+  world?: number;
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -59,8 +62,8 @@ export function Editor({
         javascript(),
         codebotsTheme,
         codebotsHighlight,
-        codebotsAutocomplete,
-        codebotsLinter,
+        makeCodebotsAutocomplete(world),
+        makeCodebotsLinter(world),
         errorLineField,
         keymap.of([
           {

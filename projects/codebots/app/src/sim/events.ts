@@ -18,5 +18,7 @@ export type SimEvent =
   | { tick: number; type: "honk"; at: Vec2; seq?: number }
   | { tick: number; type: "gateOpen"; pad: Vec2; gateCells: Vec2[] }
   | { tick: number; type: "coin"; at: Vec2 }
+  | { tick: number; type: "shoot"; from: Vec2; facing: Facing; hit: Vec2 | null }
+  | { tick: number; type: "targetDestroyed"; at: Vec2 }
   | { tick: number; type: "score"; delta: number; total: number; at: Vec2 }
   | { tick: number; type: "clear"; at: Vec2 };

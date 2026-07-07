@@ -102,6 +102,14 @@ export class Sfx {
     this.tone(880, 0.06, "square", 0.08);
     this.tone(1320, 0.09, "square", 0.07, 0.05);
   }
+  private shoot(): void {
+    this.tone(1200, 0.14, "square", 0.08, 0, 260); // pew — descending zap
+    this.noise(0.06, 0.05, 3000, 0.01);
+  }
+  private smash(): void {
+    this.noise(0.22, 0.16, 1400); // barrel bursts
+    this.tone(160, 0.2, "square", 0.09, 0, 70);
+  }
 
   /** Map a sim event to its sound. Unknown/silent events do nothing. */
   play(ev: SimEvent): void {
@@ -115,6 +123,8 @@ export class Sfx {
       case "splash": this.splash(); break;
       case "gateOpen": this.gate(); break;
       case "coin": this.coin(); break;
+      case "shoot": this.shoot(); break;
+      case "targetDestroyed": this.smash(); break;
       case "clear": this.win(); break;
       default: break; // score — no dedicated sound
     }

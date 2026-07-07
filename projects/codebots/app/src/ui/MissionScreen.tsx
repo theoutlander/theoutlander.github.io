@@ -6,7 +6,7 @@ import { Button } from "./components/Button";
 import { Hud } from "./Hud";
 import { TankRadio, type RadioLine } from "./TankRadio";
 import { ArenaKey } from "./ArenaKey";
-import { commandsFor } from "../content/commandDocs";
+import { commandsFor, isNewOn } from "../content/commandDocs";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -124,6 +124,8 @@ export function MissionScreen({
         if (ev.type === "fall") addRadio("WHOA! that's a pit — −40. steer around it", "error");
         if (ev.type === "splash") addRadio("SPLASH! that's water — you can't cross it", "info");
         if (ev.type === "gateOpen") addRadio("gate open!", "info");
+        if (ev.type === "shoot") addRadio(ev.hit ? "PEW! direct hit" : "pew — missed, nothing there", ev.hit ? "info" : "dim");
+        if (ev.type === "targetDestroyed") addRadio("barrel smashed — path clear!", "success");
         if (ev.type === "honk") addRadio("HONK!", "info");
         if (ev.type === "clear") addRadio("★ beacon reached!", "success");
       },
@@ -201,11 +203,11 @@ export function MissionScreen({
           </div>
         </Panel>
         <Panel label="COMMANDS">
-          {commandsFor(mission.index).map((cmd) => (
+          {commandsFor(mission.world, mission.index).map((cmd) => (
             <div key={cmd.sig} style={{ padding: "7px 0", borderTop: "1px dashed var(--line)" }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 <span style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--amber)" }}>{cmd.sig}</span>
-                {cmd.since === mission.index ? (
+                {isNewOn(cmd, mission.world, mission.index) ? (
                   <span
                     style={{
                       fontSize: "var(--text-2xs)",
@@ -286,7 +288,7 @@ export function MissionScreen({
         </Button>
         <Panel label="YOUR PROGRAM" style={{ flex: 1, minHeight: 0 }}>
           <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
-            <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
+            <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} world={mission.world} />
           </div>
           {errorMsg ? (
             <div
