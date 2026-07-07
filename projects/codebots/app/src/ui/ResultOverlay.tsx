@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Panel } from "./components/Panel";
 import { Button } from "./components/Button";
 import { Stars } from "./components/Stars";
@@ -13,17 +13,75 @@ export interface MissionResult {
   cutscene?: string;
 }
 
+type Rating = "fun" | "ok" | "meh";
+
+/** A geometric face (happy / ok / sad) — the design system bans literal emoji, so we draw it. */
+function Face({ mood, color }: { mood: Rating; color: string }) {
+  const eye: React.CSSProperties = { position: "absolute", top: 12, width: 4, height: 4, borderRadius: "50%", background: color };
+  return (
+    <div style={{ width: 36, height: 36, borderRadius: "50%", border: `2px solid ${color}`, position: "relative" }}>
+      <div style={{ ...eye, left: 9 }} />
+      <div style={{ ...eye, right: 9 }} />
+      {mood === "fun" && (
+        <div style={{ position: "absolute", left: 9, right: 9, bottom: 8, height: 7, borderBottom: `2px solid ${color}`, borderRadius: "0 0 12px 12px" }} />
+      )}
+      {mood === "ok" && (
+        <div style={{ position: "absolute", left: 11, right: 11, bottom: 12, height: 2, background: color, borderRadius: 2 }} />
+      )}
+      {mood === "meh" && (
+        <div style={{ position: "absolute", left: 9, right: 9, bottom: 10, height: 7, borderTop: `2px solid ${color}`, borderRadius: "12px 12px 0 0" }} />
+      )}
+    </div>
+  );
+}
+
+function FeedbackRow({ onRate }: { onRate: (r: Rating) => void }) {
+  const [rated, setRated] = useState<Rating | null>(null);
+  const faces: { mood: Rating; color: string; label: string }[] = [
+    { mood: "fun", color: "var(--green)", label: "FUN!" },
+    { mood: "ok", color: "var(--amber)", label: "OK" },
+    { mood: "meh", color: "var(--red)", label: "MEH" },
+  ];
+  if (rated) {
+    return <div style={{ fontSize: "var(--text-sm)", color: "var(--green)", fontWeight: 700 }}>thanks! ★</div>;
+  }
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+      <div style={{ fontSize: "var(--text-2xs)", letterSpacing: "var(--label-tracking)", color: "var(--text-dim)", fontWeight: 700 }}>
+        WAS THIS FUN?
+      </div>
+      <div style={{ display: "flex", gap: 16 }}>
+        {faces.map((f) => (
+          <button
+            key={f.mood}
+            onClick={() => {
+              setRated(f.mood);
+              onRate(f.mood);
+            }}
+            style={{ all: "unset", cursor: "pointer", display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}
+          >
+            <Face mood={f.mood} color={f.color} />
+            <span style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", fontWeight: 700, letterSpacing: "1px" }}>{f.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /** MISSION CLEAR moment — stars, coins, any new unlock, and a way forward. Loud and celebratory
  *  per the design system (pop + confetti energy), no numbers the kid hasn't felt. */
 export function ResultOverlay({
   result,
   onRetry,
   onContinue,
+  onFeedback,
   continueLabel = "CONTINUE →",
 }: {
   result: MissionResult;
   onRetry: () => void;
   onContinue: () => void;
+  onFeedback?: (rating: Rating) => void;
   continueLabel?: string;
 }) {
   return (
@@ -81,6 +139,7 @@ export function ResultOverlay({
             {result.cutscene}
           </div>
         ) : null}
+        {onFeedback ? <FeedbackRow onRate={onFeedback} /> : null}
         <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
           <Button variant="ghost" onClick={onRetry}>
             RETRY

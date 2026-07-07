@@ -30,6 +30,9 @@ export const analytics = {
   levelClear(level: number, stars: number, lines: number, par: number) {
     track("cb_level_clear", { level, stars, lines, par, under_par: lines <= par });
   },
+  feedback(level: number, rating: "fun" | "ok" | "meh") {
+    track("cb_feedback", { level, rating });
+  },
   hintUsed(level: number, hint: number) {
     track("cb_hint_used", { level, hint });
   },

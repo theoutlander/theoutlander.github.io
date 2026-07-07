@@ -334,6 +334,7 @@ export function MissionScreen({
       {result ? (
         <ResultOverlay
           result={result}
+          onFeedback={(rating) => analytics.feedback(mission.index, rating)}
           continueLabel={hasNext ? "NEXT LEVEL →" : "BACK TO MAP →"}
           onRetry={() => {
             analytics.levelRetry(mission.index);
