@@ -33,6 +33,11 @@ export const analytics = {
   feedback(level: number, rating: "fun" | "ok" | "meh") {
     track("cb_feedback", { level, rating });
   },
+  botSaved(playerName: string, botName: string) {
+    track("cb_bot_saved", { bot: botName });
+    // a personalized pilot name becomes the player identity (default names stay generic)
+    gtag()?.("set", "user_properties", { player: playerName || "guest" });
+  },
   hintUsed(level: number, hint: number) {
     track("cb_hint_used", { level, hint });
   },
