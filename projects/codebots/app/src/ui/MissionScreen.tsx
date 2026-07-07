@@ -336,6 +336,7 @@ export function MissionScreen({
           result={result}
           continueLabel={hasNext ? "NEXT LEVEL →" : "BACK TO MAP →"}
           onRetry={() => {
+            analytics.levelRetry(mission.index);
             setResult(null);
             stop();
           }}

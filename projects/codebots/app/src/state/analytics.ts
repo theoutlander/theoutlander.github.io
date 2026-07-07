@@ -11,8 +11,15 @@ function gtag(): ((...args: unknown[]) => void) | null {
 }
 
 export const analytics = {
+  /** top of the funnel: someone opened the game (the map) */
+  gameOpen() {
+    track("cb_game_open");
+  },
   levelOpen(level: number, title: string) {
     track("cb_level_open", { level, title });
+  },
+  levelRetry(level: number) {
+    track("cb_level_retry", { level });
   },
   run(level: number, lines: number) {
     track("cb_run", { level, lines });

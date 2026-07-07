@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Chip } from "./ui/components/Chip";
 import { Coin } from "./ui/components/Coin";
 import { MissionScreen } from "./ui/MissionScreen";
@@ -18,6 +18,10 @@ export function App() {
   const bot = loadBotIdentity();
   const [screen, setScreen] = useState<Screen>({ name: "map" });
   const [coins, setCoins] = useState(() => loadSave().coins);
+
+  useEffect(() => {
+    analytics.gameOpen(); // fires once when the game loads — top of the level funnel
+  }, []);
   // bump to re-read the save after a mission clears (unlocks next dot on the map)
   const [, force] = useState(0);
   const save = loadSave();
