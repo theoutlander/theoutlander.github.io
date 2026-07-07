@@ -21,8 +21,12 @@ export const analytics = {
   levelRetry(level: number) {
     track("cb_level_retry", { level });
   },
-  run(level: number, lines: number) {
-    track("cb_run", { level, lines });
+  run(level: number, lines: number, commands: string) {
+    track("cb_run", { level, lines, commands });
+  },
+  /** fired once when a kid keeps failing a level — a "this level is too hard" signal */
+  stuck(level: number, fails: number) {
+    track("cb_stuck", { level, fails });
   },
   runError(level: number, message: string) {
     track("cb_run_error", { level, message });

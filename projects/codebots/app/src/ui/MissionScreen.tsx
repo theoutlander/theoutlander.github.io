@@ -36,6 +36,12 @@ export function MissionScreen({
   const arena = useRef<MountedArena | null>(null);
   const client = useRef<SandboxClient | null>(null);
   const sfx = useRef<Sfx | null>(null);
+  const fails = useRef(0); // consecutive non-clearing runs on this level
+
+  function bumpFails() {
+    fails.current += 1;
+    if (fails.current === 4) analytics.stuck(mission.index, fails.current);
+  }
 
   const [code, setCode] = useState(mission.starterCode);
   const [hud, setHud] = useState({ score: 0, armor: 100 });
@@ -87,12 +93,16 @@ export function MissionScreen({
     setHud({ score: 0, armor: 100 });
     setRadio([{ text: "program uploaded — rolling…", tone: "dim" }]);
     a.scene.reset();
-    analytics.run(mission.index, countCodeLines(code));
+    const usedCmds = ["forward", "back", "left", "right", "honk", "repeat"]
+      .filter((c) => new RegExp(`\\b${c}\\b`).test(code))
+      .join(",");
+    analytics.run(mission.index, countCodeLines(code), usedCmds);
 
     const res = await c.run(code, mission);
     if (!res.ok) {
       // Errors never cost points — point at the line, suggest a fix, keep going.
       analytics.runError(mission.index, res.error.message);
+      bumpFails();
       setErrorLine(res.error.line);
       setErrorMsg(res.error.message);
       addRadio(res.error.message, "error");
@@ -120,7 +130,10 @@ export function MissionScreen({
       onDone: () => {
         setRunning(false);
         if (res.run.cleared) finish(res.run.stars);
-        else addRadio("didn't reach the beacon — try a different route", "dim");
+        else {
+          bumpFails();
+          addRadio("didn't reach the beacon — try a different route", "dim");
+        }
       },
     });
   }
@@ -135,6 +148,7 @@ export function MissionScreen({
     );
     saveSave(next);
     onCoins(next.coins);
+    fails.current = 0;
     analytics.levelClear(mission.index, stars, countCodeLines(code), mission.parLines);
     setResult({
       stars,
