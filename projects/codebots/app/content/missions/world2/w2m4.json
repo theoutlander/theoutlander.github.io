@@ -59,9 +59,9 @@
   "parLines": 6,
   "starterCode": "// atBeacon() is yes/no: are you standing on the goal yet?\n",
   "hints": [
-    "Roll forward again and again, and each time check if you're there.",
-    "When atBeacon() is true, celebrate with a honk().",
-    "repeat 6 { forward(1) if (atBeacon()) { honk() } }"
+    "You don't know which step lands you on the goal — so check after every step.",
+    "After each forward, ask if (atBeacon()) and honk() when it's true.",
+    "Loop 'forward, then check' enough times to cover the whole lane."
   ],
   "briefing": "Learn to KNOW when you've arrived. Roll forward, and each step ask atBeacon(). When it's yes, sound the horn right on the goal.",
   "authorSolution": "repeat 6 {\n  forward(1)\n  if (atBeacon()) {\n    honk()\n  }\n}",

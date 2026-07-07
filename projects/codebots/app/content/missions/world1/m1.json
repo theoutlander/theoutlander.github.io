@@ -111,14 +111,17 @@
   "parLines": 6,
   "starterCode": "// Wake up! forward(1) rolls 1 square.\nforward(1)",
   "hints": [
-    "Count squares before the crates.",
-    "forward(2), then face north — which turn is that?",
-    "forward(2) left()"
+    "Count the open squares before you reach the crates.",
+    "Roll to the last clear square, then face north — which turn points you up?",
+    "Once you're past the crates, turn back east and roll to the beacon."
   ],
   "briefing": "Rise and shine, Sparkplug. The pirates parked crates all over Dock 1. Roll to the beacon — the long way if you must, the smart way if you can.",
   "authorSolution": "forward(2); left(); forward(3); right(); forward(5); honk();",
   "bonusStar": {
     "kind": "honkOnBeacon"
   },
-  "unlock": { "part": "AIR HORN", "cost": 0 }
+  "unlock": {
+    "part": "AIR HORN",
+    "cost": 0
+  }
 }

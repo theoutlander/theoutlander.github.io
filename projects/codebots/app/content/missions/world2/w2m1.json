@@ -79,9 +79,9 @@
   "parLines": 12,
   "starterCode": "// New gadget: blocked() tells you if something's in the way.\n// Roll up to the wall, then go around it.\nforward(3)\n",
   "hints": [
-    "Roll forward until you're right in front of the wall, then ask blocked().",
-    "Inside if (blocked()) { }, turn, drive around the wall, and turn back.",
-    "forward(3); if (blocked()) { left(); forward(1); right(); forward(2); right(); forward(1); left() }; forward(2)"
+    "Roll up until you're right in front of the wall — that's when blocked() can feel it.",
+    "Put your turn INSIDE if (blocked()) { } so the bot only turns when a wall is really there.",
+    "After you round the wall, face east again and roll the last squares to the beacon."
   ],
   "briefing": "New chip installed: a SCANNER. blocked() looks one square ahead and says yes or no. Use it with if to go around Sprocket's wall — no crashing.",
   "authorSolution": "forward(3)\nif (blocked()) {\n  left()\n  forward(1)\n  right()\n  forward(2)\n  right()\n  forward(1)\n  left()\n}\nforward(2)",

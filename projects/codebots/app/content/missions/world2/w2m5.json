@@ -68,9 +68,9 @@
   "parLines": 7,
   "starterCode": "// Put it together: if there's a barrel, shoot it — otherwise, drive on.\n",
   "hints": [
-    "One loop handles the whole runway: shoot barrels, roll past gaps.",
-    "if (targetAhead()) { shoot() } else { forward(1) }",
-    "repeat 9 { if (targetAhead()) { shoot() } else { forward(1) } }"
+    "One loop can handle the whole runway: some squares have a barrel, some are open.",
+    "if (targetAhead()) { shoot() } else { forward(1) } — blast when there's a barrel, roll when there isn't.",
+    "Repeat that one decision enough times to reach the far end."
   ],
   "briefing": "Two barrels, some open road. Each turn: if a barrel's ahead, blast it; else roll forward. One tidy loop clears the lot.",
   "authorSolution": "repeat 9 {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",

@@ -98,9 +98,9 @@
   "parLines": 9,
   "starterCode": "// Corners AND barrels. One loop: shoot if you must, turn if blocked, else roll.\n",
   "hints": [
-    "Order matters: check for a barrel FIRST, then a wall, then just drive.",
-    "if (targetAhead()) shoot(); else if (blocked()) right(); else forward().",
-    "while (!atBeacon()) { if (targetAhead()) { shoot() } else if (blocked()) { right() } else { forward(1) } }"
+    "Now there are barrels AND corners. Handle them in order of priority.",
+    "Check barrel first, then wall, then open road: barrel? shoot. else blocked? turn. else forward.",
+    "Put all three choices inside one while (!atBeacon()) — that's your full navigator."
   ],
   "briefing": "The full navigator: barrels to blast and corners to round, length unknown. Chain the decisions — barrel? wall? open road? — inside one while.",
   "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

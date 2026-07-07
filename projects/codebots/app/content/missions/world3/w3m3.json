@@ -83,9 +83,9 @@
   "parLines": 7,
   "starterCode": "// The corridor turns. When you're blocked, turn right — otherwise roll on.\n",
   "hints": [
-    "Loop until you reach the beacon.",
-    "Inside: if (blocked()) turn right; else forward. Let the loop handle the corner.",
-    "while (!atBeacon()) { if (blocked()) { right() } else { forward(1) } }"
+    "The corridor bends. When the wall stops you, there's only one open way — turn to it.",
+    "Inside while (!atBeacon()): if (blocked()) turn; else roll forward.",
+    "One right turn opens each corner here. Let the loop find the bend for you."
   ],
   "briefing": "A corner you can't see the end of. The trick: when the wall stops you, turn right; otherwise keep rolling. One little loop drives the whole bend.",
   "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

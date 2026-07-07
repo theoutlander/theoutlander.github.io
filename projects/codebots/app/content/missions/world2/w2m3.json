@@ -79,9 +79,9 @@
   "parLines": 14,
   "starterCode": "// if does something WHEN true. else does something when it's NOT.\nforward(3)\n",
   "hints": [
-    "If the way is blocked, dip DOWN and around; else just drive straight.",
-    "if (blocked()) { go around } else { forward(2) }",
-    "forward(3); if (blocked()) { right(); forward(1); left(); forward(2); left(); forward(1); right() } else { forward(2) }; forward(2)"
+    "This time write BOTH paths: what to do when blocked, and what to do when the road's clear.",
+    "if (blocked()) { …go around… } else { …drive straight… } — the bot picks one.",
+    "In the blocked path, dip around the wall and come back to the same row before you finish."
   ],
   "briefing": "Sometimes the road's clear, sometimes it's not. if handles the blocked road; else handles the open one. Teach Sparkplug to do both.",
   "authorSolution": "forward(3)\nif (blocked()) {\n  right()\n  forward(1)\n  left()\n  forward(2)\n  left()\n  forward(1)\n  right()\n} else {\n  forward(2)\n}\nforward(2)",

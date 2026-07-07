@@ -75,9 +75,9 @@
   "parLines": 7,
   "starterCode": "// Same idea, but barrels in the way. Keep driving until you arrive —\n// blasting any barrel you meet.\n",
   "hints": [
-    "while (!atBeacon()) around the whole thing.",
-    "Each pass: if there's a barrel, shoot it; otherwise roll forward.",
-    "while (!atBeacon()) { if (targetAhead()) { shoot() } else { forward(1) } }"
+    "Same 'drive until you arrive' idea — but blast barrels on the way.",
+    "Inside while (!atBeacon()), decide each pass: barrel ahead? shoot. Otherwise, forward.",
+    "That's an if/else living inside the while — you've written both before, now together."
   ],
   "briefing": "Sprocket packed the runway with barrels — you can't count them all. Let while do the counting: keep going until atBeacon(), blasting whatever's in front.",
   "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",

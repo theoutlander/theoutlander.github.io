@@ -77,9 +77,9 @@
   "parLines": 10,
   "starterCode": "// A function can hold a loop inside it. row() rolls a whole row.\n",
   "hints": [
-    "row() should drive forward 4 using a repeat inside it.",
-    "Then: row(), turn right, row() — an L in three short lines.",
-    "function row() { repeat 4 { forward(1) } }  then  row(); right(); row()"
+    "A function can hold a loop inside it. row() could roll a whole row by itself.",
+    "Put a repeat inside your function: function row() { repeat 4 { … } }.",
+    "Then it's just row(), a turn, row() — an L in three short lines."
   ],
   "briefing": "Put a loop INSIDE a function. row() rolls four squares by itself. Call row(), turn the corner, call row() again — the loop hides inside your command.",
   "authorSolution": "function row() {\n  repeat 4 {\n    forward(1)\n  }\n}\nrow()\nright()\nrow()",

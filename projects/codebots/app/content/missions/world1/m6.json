@@ -150,9 +150,9 @@
   "parLines": 10,
   "starterCode": "// Sprocket parks in the middle lane. The pit guards the right side. Pick your row.\n",
   "hints": [
-    "Row 3 is blocked twice — by a tank and a pit. Which row is clear?",
-    "Ride row 1 across the middle, drop to the pad at (9,3), honk, then east.",
-    "forward(5) left() forward(2) right()"
+    "Row 3 is blocked twice (a tank and a pit) — find the row that's clear.",
+    "Ride the clear row across the middle, then drop down to the pad.",
+    "Honk on the pad to open the gate, then roll east to the chest."
   ],
   "briefing": "Captain Sprocket himself, Sparkplug — and his rustbucket is parked square in the road with a pit dug behind it. Thread the top lane, honk open his toll gate, and lift the chest right from under his bumper.",
   "authorSolution": "forward(5)\nleft()\nforward(2)\nright()\nforward(4)\nright()\nforward(2)\nhonk()\nleft()\nforward(2)",

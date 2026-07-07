@@ -92,9 +92,9 @@
   "parLines": 10,
   "starterCode": "// Your own command works anywhere — even inside a loop.\n",
   "hints": [
-    "Make stair() again, then don't call it five times by hand…",
-    "…put it inside a repeat!",
-    "function stair() { ... }  then  repeat 5 { stair() }"
+    "Make the stair() move again — then don't call it five times by hand.",
+    "A loop can call YOUR command too: repeat n { stair() }.",
+    "Count the steps in this staircase to pick the number for the loop."
   ],
   "briefing": "A longer staircase — five steps. Name the step once, then let repeat call your stair() five times. Your commands and loops work together.",
   "authorSolution": "function stair() {\n  forward(1)\n  right()\n  forward(1)\n  left()\n}\nrepeat 5 {\n  stair()\n}",

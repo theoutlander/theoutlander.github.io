@@ -111,9 +111,9 @@
   "parLines": 14,
   "starterCode": "// The gauntlet: barrels to blast, a wall to round, treasure at the top.\n// Sense before you act.\n",
   "hints": [
-    "Blast the barrel on the bottom row, roll to the wall, then climb the open side.",
-    "Along the top row there's another barrel — targetAhead() then shoot() again.",
-    "Roll 2, shoot, roll to the wall, turn up, climb, turn right, shoot the top barrel, finish up to the chest."
+    "Two jobs: blast the barrels, and get around the wall in the middle.",
+    "Use targetAhead()/shoot() for the barrels, and turn at the wall to climb the open side.",
+    "Bottom row to the wall, up the clear side, across the top (mind the barrel), then up to the chest."
   ],
   "briefing": "Sprocket's final trap: barrels AND a wall between you and the treasure. Use everything — blocked(), targetAhead(), shoot() — to reach the chest.",
   "authorSolution": "forward(2)\nif (targetAhead()) { shoot() }\nforward(3)\nleft()\nforward(4)\nright()\nforward(2)\nif (targetAhead()) { shoot() }\nforward(2)\nleft()\nforward(1)",

@@ -83,9 +83,9 @@
   "parLines": 7,
   "starterCode": "// Two corners now. The SAME loop as before still works — that's the magic.\n",
   "hints": [
-    "Don't write more code for more corners.",
-    "The exact same while + if (blocked()) right() else forward() drives all of it.",
-    "while (!atBeacon()) { if (blocked()) { right() } else { forward(1) } }"
+    "More corners — but don't write more code.",
+    "The exact loop from the last level drives this too. Try it before changing anything.",
+    "'if blocked turn, else forward' inside a while handles any number of turns."
   ],
   "briefing": "More corners, same loop. A while loop doesn't care if there's one turn or ten — 'blocked? turn right; else roll' handles them all.",
   "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

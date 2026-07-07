@@ -74,9 +74,9 @@
   "parLines": 4,
   "starterCode": "// You're boxed in, nose to the wall. back(n) reverses without turning.\n",
   "hints": [
-    "Forward is a wall. What's behind you?",
-    "back(1) frees you; then turn to face east.",
-    "back(1) right() right()"
+    "Forward is a wall — what direction is open behind you?",
+    "back() reverses without turning. Use it to get free first.",
+    "Then turn to face the beacon and finish the roll."
   ],
   "briefing": "You parked nose-first, Sparkplug — rookie move. Reverse out gently and make for the beacon. Bonus points for not scraping the paint.",
   "authorSolution": "back(1)\nright()\nright()\nforward(3)",

@@ -68,9 +68,9 @@
   "parLines": 6,
   "starterCode": "// New gear: a BLASTER. shoot() smashes a barrel right in front of you.\n// targetAhead() tells you when there's one to hit.\n",
   "hints": [
-    "Loop: each time, if there's a barrel ahead, shoot it — then roll forward.",
-    "targetAhead() is yes/no, just like blocked(). Use it inside an if.",
-    "repeat 7 { if (targetAhead()) { shoot() } forward(1) }"
+    "The runway is a straight line — you just need to clear barrels as you meet them.",
+    "Before each roll, ask targetAhead(). If it's yes, shoot() before you move.",
+    "Wrap 'check, maybe shoot, then forward' in a repeat so it handles every square."
   ],
   "briefing": "Barrels on the runway! Your new BLASTER clears them. Check targetAhead() before each roll and shoot() when a barrel's in the way.",
   "authorSolution": "repeat 7 {\n  if (targetAhead()) {\n    shoot()\n  }\n  forward(1)\n}",
