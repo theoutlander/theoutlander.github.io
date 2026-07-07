@@ -49,7 +49,7 @@ export function ResultOverlay({
         }}
       >
         <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-3xl)", color: "var(--amber)" }}>
-          ★ MISSION CLEAR ★
+          ★ LEVEL CLEAR ★
         </div>
         <Stars earned={result.stars} total={3} size={30} />
         <div style={{ display: "flex", alignItems: "center", gap: 8, color: "var(--text-body)", fontSize: "var(--text-md)" }}>

@@ -321,7 +321,7 @@ export function MissionScreen({
       {result ? (
         <ResultOverlay
           result={result}
-          continueLabel={hasNext ? "NEXT MISSION →" : "MISSION MAP →"}
+          continueLabel={hasNext ? "NEXT LEVEL →" : "BACK TO MAP →"}
           onRetry={() => {
             setResult(null);
             stop();

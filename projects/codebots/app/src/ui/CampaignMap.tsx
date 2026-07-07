@@ -33,7 +33,7 @@ export function CampaignMap({
     <div style={{ padding: "22px 20px", display: "flex", flexDirection: "column", gap: 16, alignItems: "center" }}>
       <div style={{ display: "flex", alignItems: "center", gap: 14, width: "min(880px, 94vw)" }}>
         <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-2xl)" }}>
-          WORLD 1 · FIRST ROLL
+          THE MAP <span style={{ color: "var(--text-dim)", fontWeight: 500 }}>· FIRST ROLL</span>
         </div>
         <div style={{ flex: 1 }} />
         <Stars earned={totalStars} total={missions.length * 3} showCount size={14} />
@@ -77,8 +77,13 @@ export function CampaignMap({
                   >
                     {prog?.cleared ? "✓" : m.index}
                   </div>
-                  <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-lg)" }}>
-                    {m.title}
+                  <div>
+                    <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", letterSpacing: "1px", fontWeight: 700 }}>
+                      LEVEL {m.index}
+                    </div>
+                    <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-lg)" }}>
+                      {m.title}
+                    </div>
                   </div>
                 </div>
                 <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>teaches {m.teaches}</div>
@@ -87,7 +92,7 @@ export function CampaignMap({
                     <Stars earned={prog?.stars ?? 0} total={3} size={14} />
                   ) : (
                     <Chip color="dim" dashed>
-                      CLEAR CH {String(m.index - 1).padStart(2, "0")}
+                      CLEAR LEVEL {m.index - 1}
                     </Chip>
                   )}
                 </div>
@@ -97,7 +102,7 @@ export function CampaignMap({
         })}
         <div style={{ width: 260, display: "grid", placeItems: "center" }}>
           <Chip color="cyan" dashed>
-            MORE MISSIONS SOON
+            MORE LEVELS SOON
           </Chip>
         </div>
       </div>

@@ -61,12 +61,14 @@ export function App() {
               color: mission ? "var(--cyan)" : "var(--ink)",
             }}
           >
-            {mission ? "‹ WORLD 1" : "WORLD 1 · FIRST ROLL"}
+            {mission ? "‹ MAP" : "THE MAP"}
           </button>
           {mission ? (
             <>
               <span style={{ color: "var(--text-dim)" }}>›</span>
-              <span style={{ color: "var(--ink)", fontWeight: 700, letterSpacing: "1px" }}>{mission.title}</span>
+              <span style={{ color: "var(--ink)", fontWeight: 700, letterSpacing: "1px" }}>
+                LEVEL {mission.index} · {mission.title}
+              </span>
             </>
           ) : null}
         </div>
