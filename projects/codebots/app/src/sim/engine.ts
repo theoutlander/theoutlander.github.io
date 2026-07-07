@@ -135,11 +135,13 @@ export function createSim(mission: Mission): Sim {
         }
         state = next;
       } else {
-        // honk — advance, emit the honk, then open a gate if we're standing on its pad
-        tick += ticksSpent;
+        // honk(n) — n horns (rising pitch via seq); then open a gate if we're on its pad
         state = next;
-        log.push({ tick, type: "honk", at: state.pos });
-        trace.push(recordTrace(arena, state, tick));
+        for (let k = 0; k < outcome.count; k++) {
+          tick += 1;
+          log.push({ tick, type: "honk", at: state.pos, seq: k });
+          trace.push(recordTrace(arena, state, tick));
+        }
         for (const g of gates) {
           if (!g.open && g.pad.x === state.pos.x && g.pad.y === state.pos.y) {
             g.open = true;

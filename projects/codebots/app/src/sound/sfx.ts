@@ -74,9 +74,10 @@ export class Sfx {
   private turn(): void {
     this.tone(320, 0.13, "sawtooth", 0.05, 0, 520); // servo whirr up
   }
-  private honk(): void {
-    this.tone(300, 0.22, "square", 0.09);
-    this.tone(400, 0.22, "square", 0.07, 0.02);
+  private honk(seq = 0): void {
+    const base = 300 + seq * 70; // each honk in a honk(n) burst rises in pitch
+    this.tone(base, 0.22, "square", 0.09);
+    this.tone(base + 100, 0.22, "square", 0.07, 0.02);
   }
   private bump(): void {
     this.tone(90, 0.18, "square", 0.12, 0, 55); // CLUNK
@@ -104,7 +105,7 @@ export class Sfx {
     switch (ev.type) {
       case "move": this.tread(); break;
       case "turn": this.turn(); break;
-      case "honk": this.honk(); break;
+      case "honk": this.honk(ev.seq ?? 0); break;
       case "bump": this.bump(); break;
       case "fall": this.fall(); break;
       case "gateOpen": this.gate(); break;

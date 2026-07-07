@@ -11,7 +11,7 @@ const REVERSE: Record<Facing, Facing> = { N: "S", S: "N", E: "W", W: "E" };
 export type CommandOutcome =
   | { kind: "move"; from: Vec2; path: { to: Vec2; cost: number }[]; bumped: boolean; fell: boolean }
   | { kind: "turn"; facings: Facing[] } // one facing per 90° step (right(2) turns twice)
-  | { kind: "honk" };
+  | { kind: "honk"; count: number };
 
 export function executeCommand(
   world: MoveWorld,
@@ -49,12 +49,15 @@ export function executeCommand(
       }
       return { state: { ...state, facing }, ticksSpent: turns, outcome: { kind: "turn", facings } };
     }
-    case "honk":
+    case "honk": {
+      // honk() honks once; honk(n) honks n times (fun, and consistent with forward(n)).
+      const n = Math.max(1, cmd.args[0] ?? 1);
       return {
-        state: { ...state, honks: state.honks + 1 },
-        ticksSpent: 1,
-        outcome: { kind: "honk" },
+        state: { ...state, honks: state.honks + n },
+        ticksSpent: n,
+        outcome: { kind: "honk", count: n },
       };
+    }
     default:
       throw new Error(`"${cmd.name}" isn't implemented yet`);
   }

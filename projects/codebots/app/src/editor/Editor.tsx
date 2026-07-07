@@ -4,6 +4,7 @@ import { EditorView, keymap, lineNumbers, Decoration, type DecorationSet } from 
 import { history, historyKeymap, defaultKeymap, indentWithTab } from "@codemirror/commands";
 import { javascript } from "@codemirror/lang-javascript";
 import { codebotsTheme, codebotsHighlight } from "./theme";
+import { codebotsLinter, codebotsAutocomplete } from "./assist";
 
 // A single-line highlight for the line an error points at. Errors never cost points — this is
 // just a gentle "look here".
@@ -57,6 +58,8 @@ export function Editor({
         javascript(),
         codebotsTheme,
         codebotsHighlight,
+        codebotsAutocomplete,
+        codebotsLinter,
         errorLineField,
         keymap.of([
           {

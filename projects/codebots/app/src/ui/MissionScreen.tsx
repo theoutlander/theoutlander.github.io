@@ -172,14 +172,9 @@ export function MissionScreen({
       {/* LEFT: collapsible briefing / commands / hint — collapse it to give the code + arena room */}
       {briefOpen ? (
       <div style={{ ...col, width: 230, flex: "none", overflowY: "auto" }}>
-        <div style={{ display: "flex", gap: 6 }}>
-          <Button variant="ghost" size="sm" onClick={onExit} style={{ flex: 1 }}>
-            ← MAP
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => setBriefOpen(false)} style={{ padding: "8px 10px" }}>
-            ◀ HIDE
-          </Button>
-        </div>
+        <Button variant="ghost" size="sm" onClick={() => setBriefOpen(false)}>
+          ◀ HIDE PANEL
+        </Button>
         <Panel label="BRIEFING">
           <div style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)", color: "var(--text-body)" }}>
             {mission.briefing}
@@ -223,17 +218,14 @@ export function MissionScreen({
         </Button>
       </div>
       ) : (
-        <div style={{ width: 42, flex: "none", display: "flex", flexDirection: "column", gap: 8 }}>
-          <Button variant="ghost" size="sm" onClick={onExit} style={{ padding: "8px 0" }}>
-            ←
-          </Button>
+        <div style={{ width: 42, flex: "none", display: "flex", flexDirection: "column" }}>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setBriefOpen(true)}
             style={{ flex: 1, writingMode: "vertical-rl", padding: "10px 0", letterSpacing: "2px" }}
           >
-            ▶ BRIEFING
+            ▶ SHOW PANEL
           </Button>
         </div>
       )}

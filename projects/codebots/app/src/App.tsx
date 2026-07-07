@@ -48,14 +48,31 @@ export function App() {
         <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 18, letterSpacing: "-.5px" }}>
           CODE<span style={{ color: "var(--amber)" }}>BOTS</span>
         </div>
+        {/* Breadcrumbs — where you are, and how to go back. Click "WORLD 1" to return to the map. */}
+        <div style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "var(--text-sm)" }}>
+          <button
+            onClick={toMap}
+            disabled={!mission}
+            style={{
+              all: "unset",
+              cursor: mission ? "pointer" : "default",
+              fontWeight: 700,
+              letterSpacing: "1px",
+              color: mission ? "var(--cyan)" : "var(--ink)",
+            }}
+          >
+            {mission ? "‹ WORLD 1" : "WORLD 1 · FIRST ROLL"}
+          </button>
+          {mission ? (
+            <>
+              <span style={{ color: "var(--text-dim)" }}>›</span>
+              <span style={{ color: "var(--ink)", fontWeight: 700, letterSpacing: "1px" }}>{mission.title}</span>
+            </>
+          ) : null}
+        </div>
+        <div style={{ flex: 1 }} />
         <Chip color="dim">PILOT: {bot.playerName}</Chip>
         <Chip color="cyan">BOT: {bot.botName}</Chip>
-        <div style={{ flex: 1 }} />
-        {mission ? (
-          <Chip color="amber">
-            {mission.id.toUpperCase()} · {mission.teaches.toUpperCase()}
-          </Chip>
-        ) : null}
         <Coin count={coins} />
       </div>
 
