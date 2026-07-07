@@ -46,6 +46,7 @@ export function MissionScreen({
   const [hintLevel, setHintLevel] = useState(0);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MissionResult | null>(null);
+  const [briefOpen, setBriefOpen] = useState(true);
 
   useEffect(() => {
     let cancelled = false;
@@ -167,11 +168,17 @@ export function MissionScreen({
         overflow: "hidden",
       }}
     >
-      {/* LEFT: briefing, commands, hint */}
-      <div style={{ ...col, width: 240, flex: "none", overflowY: "auto" }}>
-        <Button variant="ghost" size="sm" onClick={onExit}>
-          ← MISSION MAP
-        </Button>
+      {/* LEFT: collapsible briefing / commands / hint — collapse it to give the code + arena room */}
+      {briefOpen ? (
+      <div style={{ ...col, width: 230, flex: "none", overflowY: "auto" }}>
+        <div style={{ display: "flex", gap: 6 }}>
+          <Button variant="ghost" size="sm" onClick={onExit} style={{ flex: 1 }}>
+            ← MAP
+          </Button>
+          <Button variant="ghost" size="sm" onClick={() => setBriefOpen(false)} style={{ padding: "8px 10px" }}>
+            ◀ HIDE
+          </Button>
+        </div>
         <Panel label="BRIEFING">
           <div style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)", color: "var(--text-body)" }}>
             {mission.briefing}
@@ -196,6 +203,21 @@ export function MissionScreen({
           {hintLevel === 0 ? "NEED A HINT?" : hintLevel >= 3 ? "NO MORE HINTS" : "ANOTHER HINT?"}
         </Button>
       </div>
+      ) : (
+        <div style={{ width: 42, flex: "none", display: "flex", flexDirection: "column", gap: 8 }}>
+          <Button variant="ghost" size="sm" onClick={onExit} style={{ padding: "8px 0" }}>
+            ←
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setBriefOpen(true)}
+            style={{ flex: 1, writingMode: "vertical-rl", padding: "10px 0", letterSpacing: "2px" }}
+          >
+            ▶ BRIEFING
+          </Button>
+        </div>
+      )}
 
       {/* CENTER: HUD + arena. The arena box fills the remaining space; Phaser FIT centers the grid
           inside it so the whole thing always stays within the screen. */}
@@ -215,8 +237,8 @@ export function MissionScreen({
         />
       </div>
 
-      {/* RIGHT: editor + controls + radio */}
-      <div style={{ ...col, width: 380, flex: "none", minHeight: 0 }}>
+      {/* RIGHT: editor + controls + radio — the coding window, given generous width */}
+      <div style={{ ...col, width: briefOpen ? 460 : 540, flex: "none", minHeight: 0 }}>
         <Panel label="YOUR PROGRAM" style={{ flex: 1, minHeight: 0 }}>
           <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
             <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
