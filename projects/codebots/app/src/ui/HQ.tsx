@@ -76,7 +76,7 @@ export function HQ({
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           <Door
             title="CAMPAIGN"
-            desc={`First Roll — ${cleared}/${missions.length} levels cleared. The Rust Pirates await.`}
+            desc={`${cleared}/${missions.length} levels cleared. The Rust Pirates await.`}
             chip={cleared === 0 ? "START →" : `CONTINUE · LEVEL ${nextLevel} →`}
             onClick={onPlay}
           />
@@ -90,13 +90,13 @@ export function HQ({
           <Door
             title="GARAGE"
             desc="Spend C-coins on unlocked parts. Weight is destiny."
-            chip="OPENS IN WORLD 2"
+            chip="COMING SOON"
             locked
           />
           <Door
             title="PLAY"
             desc="Time trials vs your ghost · treasure runs."
-            chip="OPENS IN WORLD 2"
+            chip="COMING SOON"
             locked
           />
         </div>

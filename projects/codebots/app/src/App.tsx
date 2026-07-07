@@ -5,7 +5,7 @@ import { MissionScreen } from "./ui/MissionScreen";
 import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { HQ } from "./ui/HQ";
 import { BotMaker } from "./ui/BotMaker";
-import { WORLD1 } from "./content/missions";
+import { ALL, globalLevel } from "./content/missions";
 import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
 import { loadSave } from "./state/save";
 import { analytics } from "./state/analytics";
@@ -40,7 +40,7 @@ export function App() {
     domeColor: resolveInt(botConfig.paint.dome, botConfig.paintbox),
   };
 
-  const mission = screen.name === "mission" ? WORLD1[screen.index] : null;
+  const mission = screen.name === "mission" ? ALL[screen.index] : null;
   const refresh = () => force((n) => n + 1);
 
   const toHQ = () => { refresh(); setScreen({ name: "hq" }); };
@@ -48,13 +48,13 @@ export function App() {
   const toBotMaker = () => setScreen({ name: "botmaker" });
 
   function openMission(index: number) {
-    analytics.levelOpen(WORLD1[index].index, WORLD1[index].title);
+    analytics.levelOpen(index + 1, ALL[index].title);
     setScreen({ name: "mission", index });
   }
   function nextMission() {
     if (screen.name !== "mission") return;
     const next = screen.index + 1;
-    if (next < WORLD1.length && isUnlocked(WORLD1, next, loadSave())) openMission(next);
+    if (next < ALL.length && isUnlocked(ALL, next, loadSave())) openMission(next);
     else toMap();
   }
 
@@ -65,7 +65,7 @@ export function App() {
       : screen.name === "botmaker"
         ? { back: "‹ HQ", onBack: toHQ, current: "BOT MAKER" }
         : mission
-          ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${mission.index} · ${mission.title}` }
+          ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
 
   return (
@@ -94,21 +94,21 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={WORLD1} onPlay={toMap} onBotMaker={toBotMaker} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} />
         ) : screen.name === "botmaker" ? (
           <BotMaker onExit={toHQ} onSaved={() => setBotConfig(loadBotConfig())} />
         ) : screen.name === "mission" ? (
           <MissionScreen
-            key={WORLD1[screen.index].id}
-            mission={WORLD1[screen.index]}
+            key={ALL[screen.index].id}
+            mission={ALL[screen.index]}
             paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
             onCoins={setCoins}
             onExit={toMap}
             onNext={nextMission}
-            hasNext={screen.index + 1 < WORLD1.length}
+            hasNext={screen.index + 1 < ALL.length}
           />
         ) : (
-          <CampaignMap missions={WORLD1} save={save} onPick={openMission} />
+          <CampaignMap missions={ALL} save={save} onPick={openMission} />
         )}
       </div>
     </div>

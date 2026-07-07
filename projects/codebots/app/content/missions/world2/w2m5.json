@@ -1,0 +1,80 @@
+{
+  "id": "w2m5",
+  "world": 2,
+  "index": 5,
+  "title": "MIXED BAG",
+  "teaches": "if / else + shoot",
+  "arena": {
+    "cols": 8,
+    "rows": 3,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 6,
+        "y": 1
+      }
+    ],
+    "beacon": {
+      "x": 7,
+      "y": 1
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 1
+    },
+    "facing": "E"
+  },
+  "parLines": 7,
+  "starterCode": "// Put it together: if there's a barrel, shoot it — otherwise, drive on.\n",
+  "hints": [
+    "One loop handles the whole runway: shoot barrels, roll past gaps.",
+    "if (targetAhead()) { shoot() } else { forward(1) }",
+    "repeat 9 { if (targetAhead()) { shoot() } else { forward(1) } }"
+  ],
+  "briefing": "Two barrels, some open road. Each turn: if a barrel's ahead, blast it; else roll forward. One tidy loop clears the lot.",
+  "authorSolution": "repeat 9 {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

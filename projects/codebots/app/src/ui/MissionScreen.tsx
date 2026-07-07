@@ -7,6 +7,7 @@ import { Hud } from "./Hud";
 import { TankRadio, type RadioLine } from "./TankRadio";
 import { ArenaKey } from "./ArenaKey";
 import { commandsFor, isNewOn } from "../content/commandDocs";
+import { globalLevel } from "../content/missions";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -37,10 +38,11 @@ export function MissionScreen({
   const client = useRef<SandboxClient | null>(null);
   const sfx = useRef<Sfx | null>(null);
   const fails = useRef(0); // consecutive non-clearing runs on this level
+  const level = globalLevel(mission); // the kid-facing global level number, used for analytics
 
   function bumpFails() {
     fails.current += 1;
-    if (fails.current === 4) analytics.stuck(mission.index, fails.current);
+    if (fails.current === 4) analytics.stuck(level, fails.current);
   }
 
   const [code, setCode] = useState(mission.starterCode);
@@ -96,12 +98,12 @@ export function MissionScreen({
     const usedCmds = ["forward", "back", "left", "right", "honk", "repeat"]
       .filter((c) => new RegExp(`\\b${c}\\b`).test(code))
       .join(",");
-    analytics.run(mission.index, countCodeLines(code), usedCmds);
+    analytics.run(level, countCodeLines(code), usedCmds);
 
     const res = await c.run(code, mission);
     if (!res.ok) {
       // Errors never cost points — point at the line, suggest a fix, keep going.
-      analytics.runError(mission.index, res.error.message);
+      analytics.runError(level, res.error.message);
       bumpFails();
       setErrorLine(res.error.line);
       setErrorMsg(res.error.message);
@@ -151,7 +153,7 @@ export function MissionScreen({
     saveSave(next);
     onCoins(next.coins);
     fails.current = 0;
-    analytics.levelClear(mission.index, stars, countCodeLines(code), mission.parLines);
+    analytics.levelClear(level, stars, countCodeLines(code), mission.parLines);
     setResult({
       stars,
       coinsEarned,
@@ -242,7 +244,7 @@ export function MissionScreen({
           onClick={() => {
             const next = Math.min(3, hintLevel + 1);
             setHintLevel(next);
-            analytics.hintUsed(mission.index, next);
+            analytics.hintUsed(level, next);
           }}
         >
           {hintLevel === 0 ? "NEED A HINT?" : hintLevel >= 3 ? "NO MORE HINTS" : "ANOTHER HINT?"}
@@ -350,10 +352,10 @@ export function MissionScreen({
       {result ? (
         <ResultOverlay
           result={result}
-          onFeedback={(rating) => analytics.feedback(mission.index, rating)}
+          onFeedback={(rating) => analytics.feedback(level, rating)}
           continueLabel={hasNext ? "NEXT LEVEL →" : "BACK TO MAP →"}
           onRetry={() => {
-            analytics.levelRetry(mission.index);
+            analytics.levelRetry(level);
             setResult(null);
             stop();
           }}
