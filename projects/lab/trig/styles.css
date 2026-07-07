@@ -574,29 +574,59 @@ sup.fn {
   .site-footer .row { grid-template-columns: 1fr; }
 }
 
-/* status bar (engineering mode) */
-.status-bar {
-  font-family: var(--mono);
-  font-size: 0.72rem;
-  color: var(--ink-3);
-  padding: 0.4rem var(--gap-4);
-  border-bottom: 1px solid var(--rule);
+/* lab top bar — logo + "Lab / <page>" breadcrumb, shared shape across /lab pages */
+.lab-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 30;
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1.5rem;
-  letter-spacing: 0.01em;
-  background: var(--paper-2);
+  padding: 0.65rem var(--gap-4);
+  background: color-mix(in oklch, var(--paper-2) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--rule);
 }
-.status-bar .dot {
-  display: inline-block;
-  width: 6px; height: 6px;
+.lab-topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+}
+.lab-topbar-logo {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  flex: none;
   background: var(--accent);
-  margin-right: 0.5em;
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--accent);
-  animation: pulse 2.4s ease-in-out infinite;
+  box-shadow: 0 0 14px -4px var(--accent);
 }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
-[data-aesthetic="editorial"] .status-bar { display: none; }
+.lab-topbar-crumb {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: 0;
+  white-space: nowrap;
+}
+.lab-topbar-crumb a {
+  color: var(--ink-3);
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: none;
+}
+.lab-topbar-crumb a:hover { color: var(--accent); }
+.lab-topbar-crumb .sep { color: var(--ink-3); font-weight: 500; }
+.lab-topbar-tag {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  font-weight: 600;
+  white-space: nowrap;
+}
+[data-aesthetic="editorial"] .lab-topbar { display: none; }
 
 /* terminal-style code block */
 .term {
