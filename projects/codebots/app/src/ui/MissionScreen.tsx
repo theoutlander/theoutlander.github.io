@@ -8,6 +8,8 @@ import { TankRadio, type RadioLine } from "./TankRadio";
 import { ArenaKey } from "./ArenaKey";
 import { commandsFor, isNewOn } from "../content/commandDocs";
 import { globalLevel } from "../content/missions";
+import { conceptFor } from "../content/concepts";
+import { ConceptCard } from "./ConceptCard";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -39,6 +41,7 @@ export function MissionScreen({
   const sfx = useRef<Sfx | null>(null);
   const fails = useRef(0); // consecutive non-clearing runs on this level
   const level = globalLevel(mission); // the kid-facing global level number, used for analytics
+  const concept = conceptFor(mission.world, mission.index); // the NEW idea this level teaches, if any
 
   function bumpFails() {
     fails.current += 1;
@@ -142,6 +145,39 @@ export function MissionScreen({
     });
   }
 
+  /**
+   * "WATCH IT" — show the new idea running in the arena. Deliberately a SEPARATE path from run():
+   * it never calls finish()/recordResult()/analytics, so a demo can never record a clear or corrupt
+   * the save, even if its snippet happens to reach the beacon. It just plays + resets to the start.
+   */
+  async function playDemo() {
+    const a = arena.current;
+    const c = client.current;
+    if (!a || !c || running || !concept?.demoCode) return;
+    setRunning(true);
+    setResult(null);
+    setErrorLine(null);
+    setErrorMsg(null);
+    setHud({ score: 0, armor: 100 });
+    setRadio([{ text: "watch closely — here's the idea…", tone: "dim" }]);
+    a.scene.reset();
+    const res = await c.run(concept.demoCode, mission);
+    if (!res.ok) {
+      // A demo must never break the level. If something's off, just bail quietly.
+      a.scene.reset();
+      setRunning(false);
+      return;
+    }
+    a.scene.play(res.run.events, {
+      onEvent: (ev) => sfx.current?.play(ev),
+      onDone: () => {
+        setRunning(false);
+        addRadio("that's the idea — now you try it!", "info");
+        a.scene.reset();
+      },
+    });
+  }
+
   function finish(stars: number) {
     const save = loadSave();
     const { save: next, coinsEarned, newlyUnlocked } = recordResult(
@@ -199,6 +235,9 @@ export function MissionScreen({
         <Button variant="ghost" size="sm" onClick={() => setBriefOpen(false)}>
           ◀ HIDE PANEL
         </Button>
+        {concept ? (
+          <ConceptCard concept={concept} learned={!!loadSave().missions[mission.id]?.cleared} onWatch={playDemo} />
+        ) : null}
         <Panel label="BRIEFING">
           <div style={{ fontSize: "var(--text-sm)", lineHeight: "var(--leading-body)", color: "var(--text-body)" }}>
             {mission.briefing}
