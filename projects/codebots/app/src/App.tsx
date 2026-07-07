@@ -6,6 +6,7 @@ import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { WORLD1 } from "./content/missions";
 import { loadBotIdentity } from "./state/paint";
 import { loadSave } from "./state/save";
+import { analytics } from "./state/analytics";
 
 type Screen = { name: "map" } | { name: "mission"; index: number };
 
@@ -24,6 +25,7 @@ export function App() {
   const mission = screen.name === "mission" ? WORLD1[screen.index] : null;
 
   function openMission(index: number) {
+    analytics.levelOpen(WORLD1[index].index, WORLD1[index].title);
     setScreen({ name: "mission", index });
   }
 

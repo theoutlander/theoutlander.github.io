@@ -14,6 +14,7 @@ import { SandboxClient } from "../sandbox/sandboxClient";
 import { Sfx } from "../sound/sfx";
 import { loadSave, saveSave, recordResult } from "../state/save";
 import { countCodeLines } from "../sandbox/lines";
+import { analytics } from "../state/analytics";
 
 
 export function MissionScreen({
@@ -86,10 +87,12 @@ export function MissionScreen({
     setHud({ score: 0, armor: 100 });
     setRadio([{ text: "program uploaded — rolling…", tone: "dim" }]);
     a.scene.reset();
+    analytics.run(mission.index, countCodeLines(code));
 
     const res = await c.run(code, mission);
     if (!res.ok) {
       // Errors never cost points — point at the line, suggest a fix, keep going.
+      analytics.runError(mission.index, res.error.message);
       setErrorLine(res.error.line);
       setErrorMsg(res.error.message);
       addRadio(res.error.message, "error");
@@ -132,6 +135,7 @@ export function MissionScreen({
     );
     saveSave(next);
     onCoins(next.coins);
+    analytics.levelClear(mission.index, stars, countCodeLines(code), mission.parLines);
     setResult({
       stars,
       coinsEarned,
@@ -215,7 +219,16 @@ export function MissionScreen({
             </div>
           </Panel>
         ) : null}
-        <Button variant="quiet" size="sm" disabled={hintLevel >= 3} onClick={() => setHintLevel((h) => Math.min(3, h + 1))}>
+        <Button
+          variant="quiet"
+          size="sm"
+          disabled={hintLevel >= 3}
+          onClick={() => {
+            const next = Math.min(3, hintLevel + 1);
+            setHintLevel(next);
+            analytics.hintUsed(mission.index, next);
+          }}
+        >
           {hintLevel === 0 ? "NEED A HINT?" : hintLevel >= 3 ? "NO MORE HINTS" : "ANOTHER HINT?"}
         </Button>
       </div>

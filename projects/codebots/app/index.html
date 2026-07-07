@@ -4,6 +4,22 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CodeBots</title>
+    <!-- Google Analytics (reuses the site property). Skips local dev. -->
+    <script>
+      (function () {
+        var ID = "G-62FC7BDSGJ";
+        var h = location.hostname;
+        if (h === "localhost" || h === "127.0.0.1" || h === "" || location.protocol === "file:") return;
+        var s = document.createElement("script");
+        s.async = true;
+        s.src = "https://www.googletagmanager.com/gtag/js?id=" + ID;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag("js", new Date());
+        window.gtag("config", ID);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
