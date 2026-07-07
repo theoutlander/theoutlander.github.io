@@ -14,7 +14,7 @@ arena.cells[3][1] = "mud";
 
 function makeMission() {
   return {
-    id: "test", world: 1, index: 1, teaches: "sequencing",
+    id: "test", world: 1, index: 1, title: "TEST", teaches: "sequencing",
     arena, start: { pos: { x: 0, y: 4 }, facing: "E" as const },
     parLines: 6, starterCode: "", hints: ["", "", ""], briefing: "",
     authorSolution: "forward(2); left(); forward(3); right(); forward(5); honk();",

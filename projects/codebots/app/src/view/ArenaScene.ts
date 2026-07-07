@@ -3,7 +3,7 @@ import type { Mission } from "../sim/engine";
 import type { SimEvent } from "../sim/events";
 import type { Facing } from "../sim/types";
 import { createBot, facingRotation } from "./botGraphics";
-import { CELL, cellCenter, drawArena, drawBeacon } from "./furniture";
+import { CELL, cellCenter, drawArena, drawBeacon, drawGates, drawObstacles } from "./furniture";
 
 const BOT_SCALE = 0.34;
 
@@ -34,6 +34,7 @@ export class ArenaScene extends Phaser.Scene {
   private bot!: Phaser.GameObjects.Container;
   private playing = false;
   private ss = 1;
+  private gateBarriers = new Map<string, Phaser.GameObjects.Container>();
 
   constructor() {
     super("arena");
@@ -52,17 +53,23 @@ export class ArenaScene extends Phaser.Scene {
     this.cameras.main.setZoom(this.ss);
     this.cameras.main.centerOn((this.mission.arena.cols * CELL) / 2, (this.mission.arena.rows * CELL) / 2);
     drawArena(this, this.mission.arena);
-    drawBeacon(this, this.mission.arena.beacon);
+    this.gateBarriers = drawGates(this, this.mission.arena);
+    drawObstacles(this, this.mission.arena);
+    drawBeacon(this, this.mission.arena.beacon, this.mission.arena.beaconStyle ?? "beacon");
     this.bot = createBot(this, this.bodyColor, this.domeColor);
     this.bot.setScale(BOT_SCALE);
     this.resetBot();
   }
 
-  /** Put the bot back on its start square, kill any running tweens. */
+  /** Put the bot back on its start square, kill any running tweens, re-close gates. */
   reset(): void {
     this.tweens.killAll();
     this.playing = false;
     this.resetBot();
+    for (const barrier of this.gateBarriers.values()) {
+      barrier.setAlpha(1);
+      barrier.setScale(1);
+    }
   }
 
   private resetBot(): void {
@@ -132,9 +139,44 @@ export class ArenaScene extends Phaser.Scene {
         });
         break;
       }
+      case "fall": {
+        // lurch toward the pit and get towed back
+        const ox = this.bot.x;
+        const oy = this.bot.y;
+        this.tweens.add({
+          targets: this.bot,
+          x: ox + (Math.cos(this.bot.rotation) * 14),
+          y: oy + (Math.sin(this.bot.rotation) * 14),
+          duration: 140,
+          yoyo: true,
+          ease: "Quad.easeOut",
+          onComplete: () => {
+            this.bot.x = ox;
+            this.bot.y = oy;
+            done();
+          },
+        });
+        break;
+      }
       case "honk": {
         this.honkPulse(ev.at);
         this.time.delayedCall(240, done);
+        break;
+      }
+      case "gateOpen": {
+        const barrier = this.gateBarriers.get(`${ev.pad.x},${ev.pad.y}`);
+        if (barrier) {
+          this.tweens.add({
+            targets: barrier,
+            alpha: 0,
+            scaleY: 0,
+            duration: 260,
+            ease: "Back.easeIn",
+            onComplete: done,
+          });
+        } else {
+          this.time.delayedCall(30, done);
+        }
         break;
       }
       case "score": {
@@ -147,7 +189,7 @@ export class ArenaScene extends Phaser.Scene {
         break;
       }
       default:
-        // gateOpen / coin — no W1M1 animation yet; advance immediately.
+        // coin — no W1 animation yet; advance immediately.
         this.time.delayedCall(30, done);
     }
   }

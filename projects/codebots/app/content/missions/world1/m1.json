@@ -119,5 +119,6 @@
   "authorSolution": "forward(2); left(); forward(3); right(); forward(5); honk();",
   "bonusStar": {
     "kind": "honkOnBeacon"
-  }
+  },
+  "unlock": { "part": "AIR HORN", "cost": 0 }
 }

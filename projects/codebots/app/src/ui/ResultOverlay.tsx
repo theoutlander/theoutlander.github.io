@@ -10,6 +10,7 @@ export interface MissionResult {
   newlyUnlocked: string | null;
   lines: number;
   par: number;
+  cutscene?: string;
 }
 
 /** MISSION CLEAR moment — stars, coins, any new unlock, and a way forward. Loud and celebratory
@@ -73,6 +74,11 @@ export function ResultOverlay({
             }}
           >
             NEW UNLOCK: {result.newlyUnlocked}
+          </div>
+        ) : null}
+        {result.cutscene ? (
+          <div style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-body)", fontStyle: "italic" }}>
+            {result.cutscene}
           </div>
         ) : null}
         <div style={{ display: "flex", gap: 10, marginTop: 4 }}>

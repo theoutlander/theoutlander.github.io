@@ -106,6 +106,8 @@ export function MissionScreen({
           setHud((h) => ({ ...h, armor }));
           addRadio("CLUNK! hit a wall — fix the program and run again", "error");
         }
+        if (ev.type === "fall") addRadio("WHOA! that's a pit — −40. steer around it", "error");
+        if (ev.type === "gateOpen") addRadio("gate open!", "info");
         if (ev.type === "honk") addRadio("HONK!", "info");
         if (ev.type === "clear") addRadio("★ beacon reached!", "success");
       },
@@ -133,6 +135,7 @@ export function MissionScreen({
       newlyUnlocked,
       lines: countCodeLines(code),
       par: mission.parLines,
+      cutscene: mission.cutscene,
     });
   }
 

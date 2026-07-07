@@ -9,7 +9,7 @@ import { countCodeLines } from "../../src/sandbox/lines";
  * all 3 stars in that single run, and fit within par. This grid-verifies the authored content —
  * the classic content bug is a solution that collides with its own furniture (CONTENT_SPEC §9).
  */
-const IDS = ["m1", "m2", "m3"];
+const IDS = ["m1", "m2", "m3", "m4", "m5", "m6"];
 
 function load(id: string) {
   const raw = JSON.parse(

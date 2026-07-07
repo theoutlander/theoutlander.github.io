@@ -82,6 +82,13 @@ export class Sfx {
     this.tone(90, 0.18, "square", 0.12, 0, 55); // CLUNK
     this.noise(0.22, 0.08, 900, 0.04); // sad buzzer
   }
+  private fall(): void {
+    this.tone(420, 0.4, "sawtooth", 0.1, 0, 90); // whoooop — descending
+  }
+  private gate(): void {
+    this.tone(300, 0.12, "square", 0.06, 0, 620); // clank up — gate springs open
+    this.tone(700, 0.1, "triangle", 0.05, 0.06);
+  }
   private win(): void {
     const notes = [523, 659, 784, 1047]; // C E G C — ascending jingle
     notes.forEach((f, i) => this.tone(f, 0.16, "triangle", 0.09, i * 0.11));
@@ -99,9 +106,11 @@ export class Sfx {
       case "turn": this.turn(); break;
       case "honk": this.honk(); break;
       case "bump": this.bump(); break;
+      case "fall": this.fall(); break;
+      case "gateOpen": this.gate(); break;
       case "coin": this.coin(); break;
       case "clear": this.win(); break;
-      default: break; // score, gateOpen — no dedicated sound yet
+      default: break; // score — no dedicated sound
     }
   }
 }

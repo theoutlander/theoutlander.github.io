@@ -1,0 +1,36 @@
+{
+  "id": "w1m4",
+  "world": 1,
+  "index": 4,
+  "title": "HONK THE GATES",
+  "teaches": "honk-gates",
+  "arena": {
+    "cols": 10,
+    "rows": 4,
+    "cells": [
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [
+      { "pad": { "x": 2, "y": 2 }, "gateCells": [{ "x": 3, "y": 2 }], "open": false },
+      { "pad": { "x": 6, "y": 2 }, "gateCells": [{ "x": 7, "y": 2 }], "open": false }
+    ],
+    "beacon": { "x": 9, "y": 2 }
+  },
+  "start": { "pos": { "x": 0, "y": 2 }, "facing": "E" },
+  "parLines": 7,
+  "starterCode": "// Gates open for the horn. Stop ON the pad, then honk().\n",
+  "hints": [
+    "A honk from the wrong square does nothing. Find the pads.",
+    "forward(2) puts you on the first pad. Honk, then roll to the next.",
+    "forward(2) honk() forward(4) honk()"
+  ],
+  "briefing": "Two locked gates between you and dinner, Sparkplug. Park on each pad and give them the horn. Exactly two honks — this is a quiet neighborhood.",
+  "authorSolution": "forward(2)\nhonk()\nforward(4)\nhonk()\nforward(3)",
+  "bonusStar": { "kind": "exactHonks", "count": 2 }
+}
