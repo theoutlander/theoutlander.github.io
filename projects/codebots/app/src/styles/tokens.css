@@ -1,0 +1,111 @@
+/* CodeBots design tokens — bundled into the app from projects/codebots/tokens/*.
+   Source of truth is the design system; keep these in sync. Two font families only:
+   Space Grotesk 700 (display) + IBM Plex Mono (everything else). */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Mono:wght@400;500;700&display=swap');
+
+:root {
+  /* -- blueprint surfaces -- */
+  --bg: #0D1A33;
+  --surface-panel: #13234A;
+  --surface-deep: #0F1D3D;
+  --surface-arena: #0A1F45;
+  --surface-inset: rgba(0, 0, 0, 0.22);
+
+  /* -- lines & grid -- */
+  --line: rgba(146, 180, 240, 0.28);
+  --line-strong: rgba(146, 180, 240, 0.4);
+  --grid-line: rgba(120, 170, 255, 0.14);
+
+  /* -- text -- */
+  --ink: #EAF2FF;
+  --text-body: #B9C9E6;
+  --text-dim: #8FA7CD;
+  --on-amber: #1A1206;
+
+  /* -- brand accents -- */
+  --amber: #FFB454;
+  --cyan: #5FD4FF;
+  --green: #6FE3A5;
+  --red: #FF6B7A;
+  --pink: #FF7A9C;
+
+  /* -- arena furniture -- */
+  --steel: #41598C;
+  --steel-edge: #2B3F6B;
+  --crate: #7FA8E0;
+
+  /* -- element fx -- */
+  --fx-fire: #FF7A5C;
+  --fx-ice: #9FE8FF;
+  --fx-water: #7FB2FF;
+  --fx-vine: #8BE98B;
+  --fx-gust: #C9D6EE;
+
+  /* -- paintbox (bot paint only, never UI) -- */
+  --paint-bumblebee: #FFD95C;
+  --paint-tangerine: #FF9E4A;
+  --paint-cherry-pop: #FF6B6B;
+  --paint-bubblegum: #FF8BB3;
+  --paint-grape-soda: #B48CFF;
+  --paint-skyblast: #7FB2FF;
+  --paint-lagoon: #5FD4FF;
+  --paint-sea-mint: #7FE8C0;
+  --paint-slime: #A8E85C;
+  --paint-peach-fuzz: #F2B8A0;
+  --paint-cloud: #EAF2FF;
+  --paint-midnight: #3D5A99;
+
+  /* -- type -- */
+  --font-display: 'Space Grotesk', 'Helvetica Neue', sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --text-2xs: 10px;
+  --text-xs: 11px;
+  --text-sm: 12px;
+  --text-md: 13px;
+  --text-lg: 14px;
+  --text-xl: 17px;
+  --text-2xl: 20px;
+  --text-3xl: 24px;
+  --text-4xl: 30px;
+  --label-tracking: 2px;
+  --label-tracking-tight: 1px;
+  --label-tracking-wide: 3px;
+  --leading-ui: 1.5;
+  --leading-body: 1.65;
+  --leading-code: 22px;
+
+  /* -- spacing / radii / borders -- */
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+  --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px;
+  --radius-sm: 7px; --radius-md: 9px; --radius-lg: 12px; --radius-xl: 14px; --radius-pill: 999px;
+  --border-w: 2px;
+  --border: var(--border-w) solid var(--line);
+  --border-dashed: var(--border-w) dashed var(--line-strong);
+  --cell: 52px;
+  --hit-target: 44px;
+
+  /* -- effects -- */
+  --shadow-pop: 0 6px 24px rgba(0, 0, 0, 0.35);
+  --glow-amber: 0 0 24px rgba(255, 180, 84, 0.18);
+  --ease-snap: cubic-bezier(0.4, 0.1, 0.5, 0.9);
+  --speed-fast: 0.15s;
+  --speed-pop: 0.25s;
+  --hover-lift: translateY(-3px);
+}
+
+@keyframes cbPulse { 0% { transform: scale(0.4); opacity: 0.9; } 100% { transform: scale(2.1); opacity: 0; } }
+@keyframes cbBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+@keyframes cbShake { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(-4px, 1px); } 40% { transform: translate(4px, -1px); } 60% { transform: translate(-3px, 0); } 80% { transform: translate(2px, 1px); } }
+@keyframes cbFall { 0% { transform: translateY(-40px) rotate(0deg); opacity: 1; } 75% { opacity: 1; } 100% { transform: translateY(70vh) rotate(340deg); opacity: 0; } }
+@keyframes cbPop { 0% { transform: scale(0.85); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+@keyframes cbFloatUp { 0% { transform: translateY(0); opacity: 1; } 100% { transform: translateY(-34px); opacity: 0; } }
+
+* { box-sizing: border-box; }
+html, body, #root { height: 100%; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  -webkit-font-smoothing: antialiased;
+}

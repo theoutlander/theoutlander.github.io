@@ -12,6 +12,12 @@ export interface GateSpec {
   open: boolean;
 }
 
+export interface Obstacle {
+  /** villain props that block a cell but are drawn specially (e.g. Sprocket's parked tank) */
+  kind: "tank";
+  pos: Vec2;
+}
+
 export interface Arena {
   cols: number;
   rows: number;
@@ -21,9 +27,12 @@ export interface Arena {
   coins: Vec2[];
   chests: { id: string; pos: Vec2 }[];
   gates: GateSpec[];
+  obstacles?: Obstacle[];
   beacon: Vec2;
   /** if set, arriving at the beacon also requires this facing (W1M3 rule) */
   beaconRequiresFacing?: Facing;
+  /** view-only: draw the beacon as a treasure chest (boss missions) */
+  beaconStyle?: "beacon" | "chest";
 }
 
 export interface BotState {

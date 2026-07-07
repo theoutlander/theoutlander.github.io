@@ -64,6 +64,7 @@ export function runInSandbox(mission: Mission, source: string) {
     stars: computeStars(mission, source, cleared, facts),
     ticks: sim.trace().length,
     trace: sim.trace(),
+    events: sim.events(),
     finalState,
   };
 }

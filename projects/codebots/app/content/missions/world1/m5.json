@@ -1,0 +1,36 @@
+{
+  "id": "w1m5",
+  "world": 1,
+  "index": 5,
+  "title": "THE LOOP",
+  "teaches": "repeat (loops)",
+  "arena": {
+    "cols": 10,
+    "rows": 3,
+    "cells": [
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"],
+      ["floor","floor","floor","floor","floor","floor","floor","floor","floor","floor"]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [
+      { "pad": { "x": 2, "y": 1 }, "gateCells": [{ "x": 3, "y": 1 }], "open": false },
+      { "pad": { "x": 4, "y": 1 }, "gateCells": [{ "x": 5, "y": 1 }], "open": false },
+      { "pad": { "x": 6, "y": 1 }, "gateCells": [{ "x": 7, "y": 1 }], "open": false }
+    ],
+    "beacon": { "x": 9, "y": 1 }
+  },
+  "start": { "pos": { "x": 0, "y": 1 }, "facing": "E" },
+  "parLines": 3,
+  "starterCode": "// Same move, three times. What repeats?\n",
+  "hints": [
+    "Same move, over and over? That's a loop's job.",
+    "repeat 3 { } runs whatever's inside it three times.",
+    "repeat 3 { forward(2) honk() }"
+  ],
+  "briefing": "Three gates, same move each time, Sparkplug — roll, honk, roll, honk. Typing that out gets old fast. Wrap it in a repeat and let the loop do the work.",
+  "authorSolution": "repeat 3 { forward(2); honk(); }\nforward(3)",
+  "bonusStar": { "kind": "exactHonks", "count": 3 }
+}

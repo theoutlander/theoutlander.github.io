@@ -18,14 +18,17 @@ export const ArenaSchema = z.object({
     gateCells: z.array(Vec2Schema),
     open: z.boolean(),
   })),
+  obstacles: z.array(z.object({ kind: z.literal("tank"), pos: Vec2Schema })).optional(),
   beacon: Vec2Schema,
   beaconRequiresFacing: FacingSchema.optional(),
+  beaconStyle: z.enum(["beacon", "chest"]).optional(),
 });
 
 export const MissionSchema = z.object({
   id: z.string(),
   world: z.number().int().min(1).max(8),
   index: z.number().int().min(1).max(6),
+  title: z.string(),
   teaches: z.string(),
   arena: ArenaSchema,
   start: z.object({ pos: Vec2Schema, facing: FacingSchema }),
@@ -40,6 +43,7 @@ export const MissionSchema = z.object({
     z.object({ kind: z.literal("exactHonks"), count: z.number().int().positive() }),
   ]),
   unlock: z.object({ part: z.string(), cost: z.number().int().nonnegative() }).optional(),
+  cutscene: z.string().optional(),
 });
 export type Mission = z.infer<typeof MissionSchema>;
 

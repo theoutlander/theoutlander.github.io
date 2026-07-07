@@ -1,12 +1,12 @@
 {
-  "id": "w1m1",
+  "id": "w1m2",
   "world": 1,
-  "index": 1,
-  "title": "WAKE UP, SPARKPLUG",
-  "teaches": "sequencing",
+  "index": 2,
+  "title": "THE ZIGZAG",
+  "teaches": "repeated turns",
   "arena": {
-    "cols": 9,
-    "rows": 6,
+    "cols": 8,
+    "rows": 8,
     "cells": [
       [
         "floor",
@@ -16,34 +16,10 @@
         "floor",
         "floor",
         "floor",
-        "floor",
         "floor"
       ],
       [
         "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor"
-      ],
-      [
-        "floor",
-        "mud",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor",
-        "floor"
-      ],
-      [
-        "floor",
-        "mud",
         "floor",
         "floor",
         "floor",
@@ -60,11 +36,49 @@
         "floor",
         "floor",
         "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
         "floor",
         "floor"
       ],
       [
         "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
         "floor",
         "floor",
         "floor",
@@ -77,20 +91,28 @@
     ],
     "crates": [
       {
-        "x": 3,
-        "y": 4
+        "x": 2,
+        "y": 7
+      },
+      {
+        "x": 2,
+        "y": 6
+      },
+      {
+        "x": 4,
+        "y": 5
       },
       {
         "x": 4,
         "y": 4
       },
       {
-        "x": 5,
-        "y": 4
+        "x": 6,
+        "y": 3
       },
       {
-        "x": 7,
-        "y": 3
+        "x": 6,
+        "y": 2
       }
     ],
     "coins": [],
@@ -98,27 +120,26 @@
     "gates": [],
     "beacon": {
       "x": 7,
-      "y": 1
+      "y": 0
     }
   },
   "start": {
     "pos": {
       "x": 0,
-      "y": 4
+      "y": 7
     },
     "facing": "E"
   },
-  "parLines": 6,
-  "starterCode": "// Wake up! forward(1) rolls 1 square.\nforward(1)",
+  "parLines": 8,
+  "starterCode": "// Up and over, up and over. Watch for the crate corners.\n",
   "hints": [
-    "Count squares before the crates.",
-    "forward(2), then face north — which turn is that?",
-    "forward(2) left()"
+    "You can't get past a crate column — go around its top.",
+    "forward(1), turn north, forward(2), turn east — that's one zig.",
+    "forward(1) left() forward(2) right()"
   ],
-  "briefing": "Rise and shine, Sparkplug. The pirates parked crates all over Dock 1. Roll to the beacon — the long way if you must, the smart way if you can.",
-  "authorSolution": "forward(2); left(); forward(3); right(); forward(5); honk();",
+  "briefing": "Sprocket stacked crate walls across the yard, Sparkplug. Zig up and over each one. Smooth corners, no dents.",
+  "authorSolution": "forward(1)\nrepeat 3 { left(); forward(2); right(); forward(2); }\nleft()\nforward(1)",
   "bonusStar": {
-    "kind": "honkOnBeacon"
-  },
-  "unlock": { "part": "AIR HORN", "cost": 0 }
+    "kind": "zeroBumps"
+  }
 }

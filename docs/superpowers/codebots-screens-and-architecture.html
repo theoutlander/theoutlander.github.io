@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CodeBots — Screens & Architecture</title>
+<style>
+  :root{
+    --bg:#0D1A33; --panel:#13234A; --deep:#0F1D3D; --inset:rgba(0,0,0,.22);
+    --line:rgba(146,180,240,.28); --line2:rgba(146,180,240,.4);
+    --ink:#EAF2FF; --body:#B9C9E6; --dim:#8FA7CD;
+    --amber:#FFB454; --cyan:#5FD4FF; --green:#6FE3A5; --red:#FF6B7A;
+    --mono:'IBM Plex Mono',ui-monospace,monospace;
+    --disp:'Space Grotesk','Helvetica Neue',sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);padding:28px 32px 60px}
+  h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0 0 4px}
+  h2{font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.5px;margin:34px 0 14px;color:var(--ink)}
+  .sub{color:var(--dim);font-size:12px;margin-bottom:8px}
+  .legend{display:flex;gap:18px;flex-wrap:wrap;font-size:11px;color:var(--dim);margin:10px 0 4px}
+  .legend b{color:var(--body);font-weight:700}
+  .row{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap}
+  .col{display:flex;flex-direction:column;gap:12px}
+  .box{background:var(--panel);border:2px solid var(--line);border-radius:12px;padding:12px 14px;min-width:150px}
+  .box.built{border-color:var(--amber)}
+  .box.plan{border-style:dashed;opacity:.72}
+  .box.core{border-color:var(--cyan);background:var(--deep)}
+  .box.data{border-color:var(--green)}
+  .t{font-family:var(--disp);font-weight:700;font-size:14px;letter-spacing:.3px}
+  .d{font-size:11px;color:var(--dim);line-height:1.5;margin-top:5px}
+  .tag{display:inline-block;font-size:9px;font-weight:700;letter-spacing:1px;border-radius:999px;padding:2px 8px;margin-top:8px;border:1.5px solid}
+  .tag.built{color:var(--amber);border-color:var(--amber)}
+  .tag.plan{color:var(--dim);border-color:var(--line2);border-style:dashed}
+  .arrow{align-self:center;color:var(--amber);font-size:20px;font-weight:700;padding:0 2px}
+  .arrow.d{color:var(--cyan)}
+  .arrow.v{align-self:center}
+  .note{font-size:11px;color:var(--dim);border-left:2px solid var(--cyan);padding:6px 0 6px 12px;margin:10px 0;line-height:1.6}
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+  .band{border:2px dashed var(--line);border-radius:12px;padding:14px;margin-top:6px}
+  .bandlbl{font-size:10px;letter-spacing:2px;color:var(--dim);font-weight:700;margin-bottom:10px}
+  code{color:var(--amber)}
+  .scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+
+<h1>CODE<span style="color:var(--amber)">BOTS</span> — Screens &amp; Architecture</h1>
+<div class="sub">July 6, 2026 · a map of every screen and the system that drives them. This is documentation, not committed code.</div>
+<div class="legend">
+  <span><b style="color:var(--amber)">▬</b> built &amp; working now</span>
+  <span><b style="color:var(--dim)">▭</b> planned (next steps)</span>
+  <span><b style="color:var(--cyan)">▬</b> sim / engine</span>
+  <span><b style="color:var(--green)">▬</b> data</span>
+</div>
+
+<h2>1 · Screen flow</h2>
+<div class="sub">Where the kid goes. Solid amber = built; dashed = the screens still to come.</div>
+
+<div class="scroll">
+<div class="row" style="align-items:center;min-width:900px">
+  <div class="box plan"><div class="t">BOOT</div><div class="d">Her bot rolls in; paintbox settles on her colors.</div><span class="tag plan">PLANNED</span></div>
+  <div class="arrow">→</div>
+  <div class="box plan"><div class="t">HQ</div><div class="d">The hub. Coins &amp; stars up top; four doors below.</div><span class="tag plan">PLANNED</span></div>
+  <div class="arrow">→</div>
+  <div class="col">
+    <div class="box built"><div class="t">CAMPAIGN MAP</div><div class="d">World 1 mission dots, stars, lock/unlock, coins.</div><span class="tag built">BUILT</span></div>
+    <div class="box plan"><div class="t">GARAGE</div><div class="d">Spend coins on unlocked parts; weight bar.</div><span class="tag plan">PLANNED (step 5)</span></div>
+    <div class="box plan"><div class="t">BOT MAKER</div><div class="d">Name it, paint it, eyes/decal → writes <code>bot.json</code>.</div><span class="tag plan">PLANNED (step 5)</span></div>
+    <div class="box plan"><div class="t">PLAY</div><div class="d">Time trials vs your ghost · treasure runs.</div><span class="tag plan">PLANNED (World 2)</span></div>
+  </div>
+  <div class="arrow">→</div>
+  <div class="box built" style="max-width:230px">
+    <div class="t">MISSION</div>
+    <div class="d">The core loop, built &amp; verified. Its four beats:</div>
+    <div class="row" style="margin-top:8px;gap:6px">
+      <span class="tag built" style="margin:0">BRIEF</span><span class="arrow" style="font-size:13px">→</span>
+      <span class="tag built" style="margin:0">CODE</span><span class="arrow" style="font-size:13px">→</span>
+      <span class="tag built" style="margin:0">RUN</span><span class="arrow" style="font-size:13px">→</span>
+      <span class="tag built" style="margin:0">RESULT</span>
+    </div>
+    <div class="d" style="margin-top:8px">RESULT → next mission, or back to the map.</div>
+  </div>
+</div>
+</div>
+
+<div class="note">
+  <b style="color:var(--body)">You asked where name/colors live.</b> That's <b style="color:var(--ink)">BOT MAKER</b> (name, paint, eyes) and
+  <b style="color:var(--ink)">GARAGE</b> (parts/coins) — both <b>planned (build step 5)</b>, not built yet. Right now the bot's
+  name and paint come from <code>bot.json</code> (edit it by hand and reload — that's a feature). BOOT and HQ are also still to come;
+  today the app opens straight on the CAMPAIGN MAP.
+</div>
+
+<h2>2 · System architecture</h2>
+<div class="sub">How a program becomes a run. The golden rule: <b style="color:var(--body)">one deterministic event log is the only thing the views ever see.</b></div>
+
+<div class="band">
+  <div class="bandlbl">INPUTS</div>
+  <div class="row">
+    <div class="box built"><div class="t">Editor (CodeMirror&nbsp;6)</div><div class="d">Kid writes real JavaScript + <code>repeat n {}</code>. Friendly, line-pointed errors — errors never cost points.</div></div>
+    <div class="box data"><div class="t">Content (JSON)</div><div class="d">Missions, parts, <code>bot.json</code>. Data-driven — new content never touches the engine.</div></div>
+  </div>
+</div>
+
+<div style="text-align:center;margin:8px 0"><span class="arrow v">↓</span></div>
+
+<div class="band" style="border-color:var(--cyan)">
+  <div class="bandlbl" style="color:var(--cyan)">EXECUTION — the one and only code path</div>
+  <div class="row" style="align-items:center">
+    <div class="box core"><div class="t">Web Worker Sandbox</div><div class="d">Desugar <code>repeat</code> → transform to a generator → step it. Isolated from the page; per-tick step budget.</div></div>
+    <div class="arrow d">→</div>
+    <div class="box core"><div class="t">Sim Core</div><div class="d">Deterministic, fixed ticks, seeded. Grid physics, commands, gates, scoring. <b>Renderer-free.</b></div></div>
+    <div class="arrow d">→</div>
+    <div class="box core" style="border-style:solid"><div class="t" style="color:var(--cyan)">EVENT LOG</div><div class="d">The single output: <code>move · turn · bump · honk · gateOpen · coin · score · clear</code>. Same code → same log, always.</div></div>
+  </div>
+</div>
+
+<div style="text-align:center;margin:8px 0"><span class="arrow v" style="color:var(--cyan)">↓</span><span style="color:var(--dim);font-size:11px;margin-left:10px">every consumer below is "dumb" — it replays the log, it runs no game logic</span></div>
+
+<div class="band">
+  <div class="bandlbl">CONSUMERS (view layer)</div>
+  <div class="grid4">
+    <div class="box built"><div class="t">Phaser 4 Arena</div><div class="d">Vector bot + furniture; tweens the log. Supersampled, crisp.</div></div>
+    <div class="box built"><div class="t">Sound</div><div class="d">Web Audio SFX per event — tread, turn, honk, clunk, win.</div></div>
+    <div class="box built"><div class="t">HUD</div><div class="d">ARMOR + SCORE meters (Law 5: no number before it's felt).</div></div>
+    <div class="box built"><div class="t">Tank Radio</div><div class="d">Friendly play-by-play the kid debugs by.</div></div>
+  </div>
+</div>
+
+<div style="text-align:center;margin:8px 0"><span class="arrow v">↓</span></div>
+
+<div class="row">
+  <div class="box built"><div class="t">Result + Save</div><div class="d">Stars (complete · par-lines · bonus), coins, unlocks → <code>localStorage</code>. "Lines vs par" nudge, no timer.</div></div>
+  <div class="box data"><div class="t">Golden tests</div><div class="d">Replay every author solution; assert the <b>event log + final state</b> — never pixels. That's why the view stays a dumb consumer.</div></div>
+</div>
+
+<div class="note" style="border-color:var(--amber)">
+  <b style="color:var(--body)">Why this shape?</b> Because the event log is deterministic and the sole execution path, we get <b style="color:var(--ink)">ghosts &amp; replays for free</b>
+  (a ghost is just a saved log replayed on a translucent bot), fair battles later, and a testable game where correctness never depends on rendering.
+</div>
+
+</body>
+</html>
