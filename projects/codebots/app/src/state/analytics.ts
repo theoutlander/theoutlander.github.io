@@ -38,3 +38,28 @@ export const analytics = {
 function track(event: string, params?: Params): void {
   gtag()?.("event", event, params);
 }
+
+/**
+ * One-time setup: identify the player (family vs. guest) and capture crashes.
+ * Family members open the game once with `?who=<name>`; that name persists and is sent to GA as
+ * the `player` user property. Everyone else is `guest`, so you can segment insiders vs. outsiders.
+ */
+export function initAnalytics(): void {
+  let player = "guest";
+  try {
+    const who = new URL(window.location.href).searchParams.get("who");
+    if (who) localStorage.setItem("cb.player", who.slice(0, 40));
+    player = localStorage.getItem("cb.player") || "guest";
+  } catch {
+    /* storage/URL blocked — stay guest */
+  }
+  gtag()?.("set", "user_properties", { player });
+
+  // Catch real crashes so we learn when the game breaks for a real player.
+  window.addEventListener("error", (e) => {
+    track("cb_js_error", { message: String(e.message ?? e).slice(0, 200), src: e.filename });
+  });
+  window.addEventListener("unhandledrejection", (e) => {
+    track("cb_js_error", { message: String(e.reason).slice(0, 200), kind: "promise" });
+  });
+}
