@@ -17,14 +17,21 @@ import w3m3 from "../../content/missions/world3/w3m3.json";
 import w3m4 from "../../content/missions/world3/w3m4.json";
 import w3m5 from "../../content/missions/world3/w3m5.json";
 import w3m6 from "../../content/missions/world3/w3m6.json";
+import w4m1 from "../../content/missions/world4/w4m1.json";
+import w4m2 from "../../content/missions/world4/w4m2.json";
+import w4m3 from "../../content/missions/world4/w4m3.json";
+import w4m4 from "../../content/missions/world4/w4m4.json";
+import w4m5 from "../../content/missions/world4/w4m5.json";
+import w4m6 from "../../content/missions/world4/w4m6.json";
 
 // Missions validated at module load so malformed content fails loudly and early.
 export const WORLD1: Mission[] = [m1, m2, m3, m4, m5, m6].map((m) => MissionSchema.parse(m));
 export const WORLD2: Mission[] = [w2m1, w2m2, w2m3, w2m4, w2m5, w2m6].map((m) => MissionSchema.parse(m));
 export const WORLD3: Mission[] = [w3m1, w3m2, w3m3, w3m4, w3m5, w3m6].map((m) => MissionSchema.parse(m));
+export const WORLD4: Mission[] = [w4m1, w4m2, w4m3, w4m4, w4m5, w4m6].map((m) => MissionSchema.parse(m));
 
 /** The campaign, world by world, in play order. Append a world here as it's authored. */
-export const WORLDS: Mission[][] = [WORLD1, WORLD2, WORLD3];
+export const WORLDS: Mission[][] = [WORLD1, WORLD2, WORLD3, WORLD4];
 
 /** One flat sequence across every world — the campaign is a single ladder of levels. A level's
  *  GLOBAL number (what the kid sees, "LEVEL 9") is its 1-based position here. */

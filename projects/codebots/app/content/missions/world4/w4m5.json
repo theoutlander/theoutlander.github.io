@@ -1,0 +1,76 @@
+{
+  "id": "w4m5",
+  "world": 4,
+  "index": 5,
+  "title": "TOOLS FROM TOOLS",
+  "teaches": "functions calling functions",
+  "arena": {
+    "cols": 5,
+    "rows": 5,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 0,
+      "y": 3
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 0
+    },
+    "facing": "E"
+  },
+  "parLines": 14,
+  "starterCode": "// Your commands can use your OTHER commands. leg() is built from step().\n",
+  "hints": [
+    "step() moves forward 1. leg() calls step() three times, then turns right.",
+    "Trace three legs to walk three sides of a square.",
+    "function step(){ forward(1) }  function leg(){ step(); step(); step(); right() }  then repeat 3 { leg() }"
+  ],
+  "briefing": "Commands built from commands. step() is tiny; leg() calls step() three times and turns. Three legs walk you around the block — small tools stacking into big ones.",
+  "authorSolution": "function step() {\n  forward(1)\n}\nfunction leg() {\n  step()\n  step()\n  step()\n  right()\n}\nrepeat 3 {\n  leg()\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

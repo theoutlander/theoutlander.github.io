@@ -1,0 +1,80 @@
+{
+  "id": "w4m1",
+  "world": 4,
+  "index": 1,
+  "title": "NAME A MOVE",
+  "teaches": "define + call a function",
+  "arena": {
+    "cols": 5,
+    "rows": 5,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 3,
+      "y": 3
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 0
+    },
+    "facing": "E"
+  },
+  "parLines": 10,
+  "starterCode": "// You can make your OWN command! function stair() { ... } names a move.\n// Then call it by name: stair()\n",
+  "hints": [
+    "The staircase is the same move over and over: forward, turn, forward, turn back.",
+    "Name it once with function stair() { ... }, then call stair() three times.",
+    "function stair() { forward(1); right(); forward(1); left() }  then  stair(); stair(); stair()"
+  ],
+  "briefing": "Time to build your own commands. A function gives a name to a bunch of moves. Name the staircase step 'stair', then just call stair() to use it — again and again.",
+  "authorSolution": "function stair() {\n  forward(1)\n  right()\n  forward(1)\n  left()\n}\nstair()\nstair()\nstair()",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  },
+  "unlock": {
+    "part": "FUNCTION KEYS",
+    "cost": 0
+  }
+}

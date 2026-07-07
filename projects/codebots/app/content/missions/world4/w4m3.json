@@ -1,0 +1,101 @@
+{
+  "id": "w4m3",
+  "world": 4,
+  "index": 3,
+  "title": "TWO TOOLS",
+  "teaches": "more than one function",
+  "arena": {
+    "cols": 8,
+    "rows": 6,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 6,
+      "y": 2
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 4
+    },
+    "facing": "E"
+  },
+  "parLines": 14,
+  "starterCode": "// You can make as many commands as you want. Here: one to dash, one to climb.\n",
+  "hints": [
+    "dash() rolls forward 3. climb() goes up 2 and faces east again.",
+    "Then use them in order: dash(), climb(), dash().",
+    "function dash() { forward(3) }  function climb() { left(); forward(2); right() }  then dash(); climb(); dash()"
+  ],
+  "briefing": "Two jobs, two tools. Build dash() to sprint and climb() to go up a level, then snap them together like LEGO to reach the beacon.",
+  "authorSolution": "function dash() {\n  forward(3)\n}\nfunction climb() {\n  left()\n  forward(2)\n  right()\n}\ndash()\nclimb()\ndash()",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "id": "w4m4",
+  "world": 4,
+  "index": 4,
+  "title": "A TOOL THAT LOOPS",
+  "teaches": "loops inside functions",
+  "arena": {
+    "cols": 6,
+    "rows": 6,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 4,
+      "y": 4
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 0
+    },
+    "facing": "E"
+  },
+  "parLines": 10,
+  "starterCode": "// A function can hold a loop inside it. row() rolls a whole row.\n",
+  "hints": [
+    "row() should drive forward 4 using a repeat inside it.",
+    "Then: row(), turn right, row() — an L in three short lines.",
+    "function row() { repeat 4 { forward(1) } }  then  row(); right(); row()"
+  ],
+  "briefing": "Put a loop INSIDE a function. row() rolls four squares by itself. Call row(), turn the corner, call row() again — the loop hides inside your command.",
+  "authorSolution": "function row() {\n  repeat 4 {\n    forward(1)\n  }\n}\nrow()\nright()\nrow()",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}
