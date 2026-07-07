@@ -6,8 +6,16 @@ declare global {
 	}
 }
 
+function isLocalDev() {
+	if (typeof window === 'undefined') return false;
+	if (import.meta.env.DEV) return true;
+	const hostname = window.location.hostname;
+	return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
+}
+
 function track(eventName: string, params?: Record<string, any>) {
 	if (typeof window === 'undefined') return;
+	if (isLocalDev()) return;
 	if (typeof window.gtag !== 'function') return;
 	window.gtag('event', eventName, params);
 }

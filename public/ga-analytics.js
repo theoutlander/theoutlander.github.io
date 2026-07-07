@@ -1,6 +1,14 @@
 (function () {
 	var MEASUREMENT_ID = 'G-62FC7BDSGJ';
 
+	var isLocalDev =
+		window.location.hostname === 'localhost' ||
+		window.location.hostname === '127.0.0.1' ||
+		window.location.hostname === '' ||
+		window.location.protocol === 'file:';
+
+	if (isLocalDev) return;
+
 	window.dataLayer = window.dataLayer || [];
 	window.gtag =
 		window.gtag ||
