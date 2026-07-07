@@ -51,12 +51,12 @@ export const codebotsLinter = linter((view) => {
 });
 
 const OPTIONS: Completion[] = [
-  { label: "forward", type: "function", apply: "forward(", detail: "roll forward n squares" },
-  { label: "back", type: "function", apply: "back(", detail: "reverse n squares" },
-  { label: "left", type: "function", apply: "left()", detail: "turn left 90°" },
-  { label: "right", type: "function", apply: "right()", detail: "turn right 90°" },
-  { label: "honk", type: "function", apply: "honk()", detail: "AIR HORN — honk(n) for n honks" },
-  { label: "repeat", type: "keyword", apply: "repeat 3 {\n  \n}", detail: "do the moves inside n times" },
+  { label: "forward", type: "function", apply: "forward(", detail: "(n)", info: "forward(n) — roll forward n squares. n is a number, e.g. forward(3)." },
+  { label: "back", type: "function", apply: "back(", detail: "(n)", info: "back(n) — reverse n squares without turning." },
+  { label: "left", type: "function", apply: "left()", detail: "(n?)", info: "left() turns 90° left. left(2) turns twice." },
+  { label: "right", type: "function", apply: "right()", detail: "(n?)", info: "right() turns 90° right. right(2) turns twice." },
+  { label: "honk", type: "function", apply: "honk()", detail: "(n?)", info: "honk() honks once. honk(3) honks three times — opens gates on a pad." },
+  { label: "repeat", type: "keyword", apply: "repeat 3 {\n  \n}", detail: "n { }", info: "repeat n { ... } runs the moves inside n times." },
 ];
 
 function complete(ctx: CompletionContext): CompletionResult | null {

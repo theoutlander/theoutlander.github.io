@@ -44,6 +44,7 @@ export function MissionScreen({
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MissionResult | null>(null);
   const [briefOpen, setBriefOpen] = useState(true);
+  const [codeOpen, setCodeOpen] = useState(true);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
@@ -248,9 +249,14 @@ export function MissionScreen({
         />
       </div>
 
-      {/* RIGHT: editor + controls + radio — the coding window, given generous width */}
+      {/* RIGHT: editor + controls + radio — the coding window. Collapsible so you can watch the
+          arena full-size; a RUN button stays in the collapsed strip so you can still run it. */}
+      {codeOpen ? (
       <div style={{ ...col, width: briefOpen ? 460 : 540, flex: "none", minHeight: 0 }}>
         <Panel label="YOUR PROGRAM" style={{ flex: 1, minHeight: 0 }}>
+          <Button variant="ghost" size="sm" onClick={() => setCodeOpen(false)}>
+            HIDE CODE ▶
+          </Button>
           <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
             <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
           </div>
@@ -289,6 +295,27 @@ export function MissionScreen({
         </Panel>
         <TankRadio lines={radio} />
       </div>
+      ) : (
+        <div style={{ width: 48, flex: "none", display: "flex", flexDirection: "column", gap: 8 }}>
+          {running ? (
+            <Button variant="ghost" size="sm" onClick={stop} style={{ padding: "10px 0" }}>
+              ■
+            </Button>
+          ) : (
+            <Button size="sm" onClick={run} style={{ padding: "10px 0" }}>
+              ▶
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setCodeOpen(true)}
+            style={{ flex: 1, writingMode: "vertical-rl", padding: "10px 0", letterSpacing: "2px" }}
+          >
+            ◀ SHOW CODE
+          </Button>
+        </div>
+      )}
 
       {result ? (
         <ResultOverlay
