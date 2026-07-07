@@ -97,3 +97,50 @@ export function toGeneratorSource(source: string, apiNames: string[]): string {
 
   return generate(mainFn as unknown as Node);
 }
+
+/**
+ * Find calls to command names the game doesn't know (misspellings, unknown commands), with the
+ * line each is on. Runs on the already-desugared source. Parse errors return [] — those are
+ * reported separately as friendly syntax messages.
+ */
+export function findUnknownCalls(
+  source: string,
+  apiNames: string[],
+): { line: number; name: string }[] {
+  const known = new Set(apiNames);
+  let ast: unknown;
+  try {
+    ast = parse(source, { ecmaVersion: 2022, locations: true });
+  } catch {
+    return [];
+  }
+  const found: { line: number; name: string }[] = [];
+  const seen = new Set<string>();
+
+  function walk(node: unknown): void {
+    if (!node || typeof node !== "object") return;
+    const n = node as {
+      type?: string;
+      callee?: { type?: string; name?: string; loc?: { start: { line: number } } };
+      loc?: { start: { line: number } };
+      [k: string]: unknown;
+    };
+    if (n.type === "CallExpression" && n.callee?.type === "Identifier" && !known.has(n.callee.name ?? "")) {
+      const line = n.callee.loc?.start.line ?? n.loc?.start.line ?? 1;
+      const key = `${n.callee.name}:${line}`;
+      if (!seen.has(key)) {
+        seen.add(key);
+        found.push({ line, name: n.callee.name ?? "?" });
+      }
+    }
+    for (const k in n) {
+      if (k === "loc" || k === "start" || k === "end") continue;
+      const v = n[k];
+      if (Array.isArray(v)) v.forEach(walk);
+      else if (v && typeof v === "object" && typeof (v as { type?: unknown }).type === "string") walk(v);
+    }
+  }
+
+  walk(ast);
+  return found;
+}

@@ -41,4 +41,18 @@ describe("engine", () => {
     expect(sim.trace().length).toBeGreaterThan(0);
     expect(sim.trace().at(-1)).toMatchObject({ x: 2, y: 4 });
   });
+
+  it("right(n) turns n times and emits a turn event per 90°", () => {
+    const sim = createSim(makeMission()); // starts facing E
+    sim.execute({ name: "right", args: [2] });
+    expect(sim.state().facing).toBe("W"); // E -> S -> W
+    expect(sim.events().filter((e) => e.type === "turn")).toHaveLength(2);
+  });
+
+  it("right() with no argument still turns exactly once", () => {
+    const sim = createSim(makeMission());
+    sim.execute({ name: "right", args: [] });
+    expect(sim.state().facing).toBe("S"); // E -> S
+    expect(sim.events().filter((e) => e.type === "turn")).toHaveLength(1);
+  });
 });

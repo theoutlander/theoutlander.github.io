@@ -126,10 +126,14 @@ export function createSim(mission: Mission): Sim {
         }
         state = next; // fold in armor/score/bumps bookkeeping (position already = last step)
       } else if (outcome.kind === "turn") {
-        tick += ticksSpent;
+        // one turn event per 90° step, so left(n)/right(n) visibly turn n times
+        for (const f of outcome.facings) {
+          tick += 1;
+          state = { ...state, facing: f };
+          log.push({ tick, type: "turn", facing: f });
+          trace.push(recordTrace(arena, state, tick));
+        }
         state = next;
-        log.push({ tick, type: "turn", facing: next.facing });
-        trace.push(recordTrace(arena, state, tick));
       } else {
         // honk — advance, emit the honk, then open a gate if we're standing on its pad
         tick += ticksSpent;

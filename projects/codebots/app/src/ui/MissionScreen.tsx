@@ -5,6 +5,7 @@ import { Panel } from "./components/Panel";
 import { Button } from "./components/Button";
 import { Hud } from "./Hud";
 import { TankRadio, type RadioLine } from "./TankRadio";
+import { ArenaKey } from "./ArenaKey";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -47,6 +48,7 @@ export function MissionScreen({
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MissionResult | null>(null);
   const [briefOpen, setBriefOpen] = useState(true);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +84,7 @@ export function MissionScreen({
 
     setRunning(true);
     setErrorLine(null);
+    setErrorMsg(null);
     setResult(null);
     setHud({ score: 0, armor: 100 });
     setRadio([{ text: "program uploaded — rolling…", tone: "dim" }]);
@@ -91,6 +94,7 @@ export function MissionScreen({
     if (!res.ok) {
       // Errors never cost points — point at the line, suggest a fix, keep going.
       setErrorLine(res.error.line);
+      setErrorMsg(res.error.message);
       addRadio(res.error.message, "error");
       sfx.current?.play({ tick: 0, type: "bump", at: mission.start.pos } as SimEvent);
       setRunning(false);
@@ -150,6 +154,7 @@ export function MissionScreen({
     stop();
     setCode(mission.starterCode);
     setErrorLine(null);
+    setErrorMsg(null);
     setHintLevel(0);
     setRadio([]);
   }
@@ -192,6 +197,7 @@ export function MissionScreen({
             </div>
           ))}
         </Panel>
+        <ArenaKey arena={mission.arena} />
         {hintLevel > 0 ? (
           <Panel label={`HINT ${hintLevel}/3`}>
             <div style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
@@ -243,6 +249,24 @@ export function MissionScreen({
           <div style={{ flex: 1, minHeight: 140, border: "var(--border)", borderRadius: 8, overflow: "hidden" }}>
             <Editor value={code} onChange={setCode} onRun={run} errorLine={errorLine} />
           </div>
+          {errorMsg ? (
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                fontSize: "var(--text-sm)",
+                color: "var(--red)",
+                background: "rgba(255,107,122,0.10)",
+                border: "2px solid var(--red)",
+                borderRadius: "var(--radius-md)",
+                padding: "8px 12px",
+              }}
+            >
+              <span style={{ fontWeight: 700 }}>!</span>
+              <span>{errorMsg}</span>
+            </div>
+          ) : null}
           <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
             {running ? (
               <Button variant="ghost" onClick={stop} style={{ flex: 1 }}>

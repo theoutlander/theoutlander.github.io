@@ -33,6 +33,17 @@ describe("handleRequest (sandbox brain)", () => {
     }
   });
 
+  it("catches a misspelled command with a line-pointed, suggested error", () => {
+    const mission = loadMission();
+    const res = handleRequest({ id: 10, code: "forward(2)\nforwrd(1)", mission });
+    expect(res.ok).toBe(false);
+    if (!res.ok) {
+      expect(res.error.line).toBe(2); // the misspelling is on line 2
+      expect(res.error.message).toMatch(/forwrd/); // names the exact word
+      expect(res.error.message).toMatch(/forward/); // suggests the fix
+    }
+  });
+
   it("returns ok:false with the kid-worded step-budget message for an endless loop", () => {
     const mission = loadMission();
     const res = handleRequest({ id: 9, code: "repeat 999999 { forward(1) }", mission });

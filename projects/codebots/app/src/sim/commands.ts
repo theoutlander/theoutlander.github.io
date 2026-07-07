@@ -10,7 +10,7 @@ const REVERSE: Record<Facing, Facing> = { N: "S", S: "N", E: "W", W: "E" };
  *  is decided by the engine, which owns the gate state. */
 export type CommandOutcome =
   | { kind: "move"; from: Vec2; path: { to: Vec2; cost: number }[]; bumped: boolean; fell: boolean }
-  | { kind: "turn" }
+  | { kind: "turn"; facings: Facing[] } // one facing per 90° step (right(2) turns twice)
   | { kind: "honk" };
 
 export function executeCommand(
@@ -37,17 +37,18 @@ export function executeCommand(
       };
     }
     case "left":
-      return {
-        state: { ...state, facing: TURN_LEFT[state.facing] },
-        ticksSpent: 1,
-        outcome: { kind: "turn" },
-      };
-    case "right":
-      return {
-        state: { ...state, facing: TURN_RIGHT[state.facing] },
-        ticksSpent: 1,
-        outcome: { kind: "turn" },
-      };
+    case "right": {
+      // left()/right() turn 90° once; left(n)/right(n) turn n times (consistent with forward(n)).
+      const turns = Math.max(1, cmd.args[0] ?? 1);
+      const table = cmd.name === "left" ? TURN_LEFT : TURN_RIGHT;
+      const facings: Facing[] = [];
+      let facing = state.facing;
+      for (let i = 0; i < turns; i++) {
+        facing = table[facing];
+        facings.push(facing);
+      }
+      return { state: { ...state, facing }, ticksSpent: turns, outcome: { kind: "turn", facings } };
+    }
     case "honk":
       return {
         state: { ...state, honks: state.honks + 1 },

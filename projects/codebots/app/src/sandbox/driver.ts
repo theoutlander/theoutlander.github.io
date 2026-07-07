@@ -1,6 +1,6 @@
-import { desugarRepeat, toGeneratorSource } from "./transform";
+import { desugarRepeat, toGeneratorSource, findUnknownCalls } from "./transform";
 import { createSim, type Mission } from "../sim/engine";
-import { SandboxError } from "./errors";
+import { SandboxError, LintError, unknownCommandMessage } from "./errors";
 import { countCodeLines } from "./lines";
 import type { Command } from "../sim/types";
 
@@ -28,6 +28,16 @@ function computeStars(mission: Mission, source: string, cleared: boolean, facts:
 
 export function runInSandbox(mission: Mission, source: string) {
   const desugared = desugarRepeat(source);
+
+  // Lint for misspelled commands BEFORE running, so we can point at the exact line + word and
+  // suggest a fix (a typo like `forwrd(1)` is valid JS, so it would otherwise only fail at
+  // runtime with no line info). Errors never cost points.
+  const unknown = findUnknownCalls(desugared, W1_API);
+  if (unknown.length > 0) {
+    const u = unknown[0];
+    throw new LintError(u.line, unknownCommandMessage(u.name, u.line, W1_API));
+  }
+
   const generatorSource = toGeneratorSource(desugared, W1_API);
   const compiled = new Function(
     "__call",
