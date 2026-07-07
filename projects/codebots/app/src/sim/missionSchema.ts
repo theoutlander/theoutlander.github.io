@@ -45,6 +45,8 @@ export const MissionSchema = z.object({
   ]),
   unlock: z.object({ part: z.string(), cost: z.number().int().nonnegative() }).optional(),
   cutscene: z.string().optional(),
+  /** a "your turn — no hints" level: the kid must pick the right tools unaided (one per world). */
+  challenge: z.boolean().optional(),
 });
 export type Mission = z.infer<typeof MissionSchema>;
 

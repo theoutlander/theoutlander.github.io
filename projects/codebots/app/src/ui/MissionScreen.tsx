@@ -6,10 +6,11 @@ import { Button } from "./components/Button";
 import { Hud } from "./Hud";
 import { TankRadio, type RadioLine } from "./TankRadio";
 import { ArenaKey } from "./ArenaKey";
-import { commandsFor, isNewOn } from "../content/commandDocs";
+import { commandsFor } from "../content/commandDocs";
 import { globalLevel } from "../content/missions";
 import { conceptFor } from "../content/concepts";
 import { ConceptCard } from "./ConceptCard";
+import { CommandList } from "./CommandList";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -244,29 +245,7 @@ export function MissionScreen({
           </div>
         </Panel>
         <Panel label="COMMANDS">
-          {commandsFor(mission.world, mission.index).map((cmd) => (
-            <div key={cmd.sig} style={{ padding: "7px 0", borderTop: "1px dashed var(--line)" }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                <span style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--amber)" }}>{cmd.sig}</span>
-                {isNewOn(cmd, mission.world, mission.index) ? (
-                  <span
-                    style={{
-                      fontSize: "var(--text-2xs)",
-                      fontWeight: 700,
-                      color: "var(--green)",
-                      border: "1.5px solid var(--green)",
-                      borderRadius: "var(--radius-pill)",
-                      padding: "1px 6px",
-                      letterSpacing: "1px",
-                    }}
-                  >
-                    NEW
-                  </span>
-                ) : null}
-              </div>
-              <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>{cmd.desc}</div>
-            </div>
-          ))}
+          <CommandList commands={commandsFor(mission.world, mission.index)} world={mission.world} index={mission.index} />
         </Panel>
         <ArenaKey arena={mission.arena} />
         {hintLevel > 0 ? (

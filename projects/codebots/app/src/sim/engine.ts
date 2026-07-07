@@ -24,6 +24,7 @@ export interface Mission {
     | { kind: "exactHonks"; count: number };
   unlock?: { part: string; cost: number };
   cutscene?: string;
+  challenge?: boolean;
 }
 
 export interface Sim {

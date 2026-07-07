@@ -38,9 +38,13 @@ export const ALL_COMMANDS: CommandDoc[] = [
   { sig: "function name() { }", desc: "make your OWN command out of other commands", world: 4, since: 1, kind: "control" },
 ];
 
-/** Every command taught by (world, level): all earlier worlds, plus this world up to this level. */
+/** Every command taught by (world, level): all earlier worlds, plus this world up to this level.
+ *  Sorted alphabetically so the panel reads like a reference you can scan; the NEW badge (not
+ *  position) is what flags the command just introduced. */
 export function commandsFor(world: number, index: number): CommandDoc[] {
-  return ALL_COMMANDS.filter((c) => c.world < world || (c.world === world && c.since <= index));
+  return ALL_COMMANDS.filter((c) => c.world < world || (c.world === world && c.since <= index)).sort(
+    (a, b) => a.sig.localeCompare(b.sig),
+  );
 }
 
 /** True when this command debuts on exactly this level (so the UI badges it NEW). */
