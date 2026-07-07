@@ -1,0 +1,95 @@
+{
+  "id": "w3m3",
+  "world": 3,
+  "index": 3,
+  "title": "AROUND THE BEND",
+  "teaches": "while + if/else turning",
+  "arena": {
+    "cols": 7,
+    "rows": 6,
+    "cells": [
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 4,
+      "y": 4
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 2
+    },
+    "facing": "E"
+  },
+  "parLines": 7,
+  "starterCode": "// The corridor turns. When you're blocked, turn right — otherwise roll on.\n",
+  "hints": [
+    "Loop until you reach the beacon.",
+    "Inside: if (blocked()) turn right; else forward. Let the loop handle the corner.",
+    "while (!atBeacon()) { if (blocked()) { right() } else { forward(1) } }"
+  ],
+  "briefing": "A corner you can't see the end of. The trick: when the wall stops you, turn right; otherwise keep rolling. One little loop drives the whole bend.",
+  "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

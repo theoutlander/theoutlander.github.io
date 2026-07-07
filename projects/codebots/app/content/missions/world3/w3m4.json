@@ -1,0 +1,95 @@
+{
+  "id": "w3m4",
+  "world": 3,
+  "index": 4,
+  "title": "THREE SIDES",
+  "teaches": "while handles ANY turns",
+  "arena": {
+    "cols": 7,
+    "rows": 6,
+    "cells": [
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 1,
+      "y": 4
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 1,
+      "y": 1
+    },
+    "facing": "E"
+  },
+  "parLines": 7,
+  "starterCode": "// Two corners now. The SAME loop as before still works — that's the magic.\n",
+  "hints": [
+    "Don't write more code for more corners.",
+    "The exact same while + if (blocked()) right() else forward() drives all of it.",
+    "while (!atBeacon()) { if (blocked()) { right() } else { forward(1) } }"
+  ],
+  "briefing": "More corners, same loop. A while loop doesn't care if there's one turn or ten — 'blocked? turn right; else roll' handles them all.",
+  "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

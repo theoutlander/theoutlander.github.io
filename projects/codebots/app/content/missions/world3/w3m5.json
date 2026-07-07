@@ -1,0 +1,110 @@
+{
+  "id": "w3m5",
+  "world": 3,
+  "index": 5,
+  "title": "TWISTS AND BARRELS",
+  "teaches": "while + shoot + turn",
+  "arena": {
+    "cols": 8,
+    "rows": 6,
+    "cells": [
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [
+      {
+        "x": 3,
+        "y": 1
+      },
+      {
+        "x": 5,
+        "y": 3
+      }
+    ],
+    "beacon": {
+      "x": 2,
+      "y": 4
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 1
+    },
+    "facing": "E"
+  },
+  "parLines": 9,
+  "starterCode": "// Corners AND barrels. One loop: shoot if you must, turn if blocked, else roll.\n",
+  "hints": [
+    "Order matters: check for a barrel FIRST, then a wall, then just drive.",
+    "if (targetAhead()) shoot(); else if (blocked()) right(); else forward().",
+    "while (!atBeacon()) { if (targetAhead()) { shoot() } else if (blocked()) { right() } else { forward(1) } }"
+  ],
+  "briefing": "The full navigator: barrels to blast and corners to round, length unknown. Chain the decisions — barrel? wall? open road? — inside one while.",
+  "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

@@ -1,0 +1,150 @@
+{
+  "id": "w3m6",
+  "world": 3,
+  "index": 6,
+  "title": "THE SPIRAL VAULT",
+  "teaches": "while: the master navigator",
+  "arena": {
+    "cols": 9,
+    "rows": 9,
+    "cells": [
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "wall"
+      ],
+      [
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall",
+        "wall"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [
+      {
+        "x": 4,
+        "y": 1
+      },
+      {
+        "x": 7,
+        "y": 4
+      }
+    ],
+    "beacon": {
+      "x": 3,
+      "y": 5
+    },
+    "beaconStyle": "chest"
+  },
+  "start": {
+    "pos": {
+      "x": 1,
+      "y": 1
+    },
+    "facing": "E"
+  },
+  "parLines": 9,
+  "starterCode": "// Sprocket's vault spirals inward. But your navigator already knows the way —\n// the same loop, all the way to the treasure.\n",
+  "hints": [
+    "You already wrote this program. Don't overthink it.",
+    "shoot the barrels, turn right at walls, roll otherwise — until atBeacon().",
+    "while (!atBeacon()) { if (targetAhead()) { shoot() } else if (blocked()) { right() } else { forward(1) } }"
+  ],
+  "briefing": "The treasure sits at the heart of a spiral vault — barrels on the arms, walls at every turn. One while loop, the navigator you built, winds all the way in.",
+  "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  }
+}

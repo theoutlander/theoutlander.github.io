@@ -1,0 +1,78 @@
+{
+  "id": "w3m1",
+  "world": 3,
+  "index": 1,
+  "title": "ROLL ON",
+  "teaches": "while (!atBeacon())",
+  "arena": {
+    "cols": 9,
+    "rows": 3,
+    "cells": [
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ],
+      [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor"
+      ]
+    ],
+    "crates": [],
+    "coins": [],
+    "chests": [],
+    "gates": [],
+    "targets": [],
+    "beacon": {
+      "x": 7,
+      "y": 1
+    }
+  },
+  "start": {
+    "pos": {
+      "x": 0,
+      "y": 1
+    },
+    "facing": "E"
+  },
+  "parLines": 3,
+  "starterCode": "// New idea: while repeats AS LONG AS something is true.\n// You don't know how long the runway is — so just drive until you're there.\n",
+  "hints": [
+    "while (!atBeacon()) means 'keep going until you reach the goal'.",
+    "The ! means NOT. So: while NOT at the beacon, roll forward.",
+    "while (!atBeacon()) { forward(1) }"
+  ],
+  "briefing": "repeat needs a number. But what if you don't KNOW the number? while keeps going until a test stops being true. Drive until atBeacon() — no counting.",
+  "authorSolution": "while (!atBeacon()) {\n  forward(1)\n}",
+  "bonusStar": {
+    "kind": "zeroBumps"
+  },
+  "unlock": {
+    "part": "AUTO-DRIVE",
+    "cost": 0
+  }
+}
