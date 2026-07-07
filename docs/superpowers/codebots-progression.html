@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>CodeBots — Learning Progression</title>
+<style>
+  :root{
+    --bg:#0D1A33; --panel:#13234A; --deep:#0F1D3D; --inset:rgba(0,0,0,.22);
+    --line:rgba(146,180,240,.28); --line2:rgba(146,180,240,.4);
+    --ink:#EAF2FF; --body:#B9C9E6; --dim:#8FA7CD;
+    --amber:#FFB454; --cyan:#5FD4FF; --green:#6FE3A5; --red:#FF6B7A; --grape:#B48CFF;
+    --mono:'IBM Plex Mono',ui-monospace,monospace; --disp:'Space Grotesk','Helvetica Neue',sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--mono);padding:28px 30px 70px}
+  h1{font-family:var(--disp);font-weight:700;font-size:26px;margin:0 0 4px}
+  .sub{color:var(--dim);font-size:12px;margin-bottom:6px}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;font-size:11px;color:var(--dim);margin:10px 0 20px}
+  .legend b{color:var(--body)}
+  .world{display:flex;gap:0;margin-bottom:12px;border:2px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel)}
+  .world.built{border-color:var(--amber)}
+  .num{flex:none;width:70px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--deep);border-right:2px solid var(--line)}
+  .world.built .num{border-right-color:var(--amber)}
+  .num .w{font-family:var(--disp);font-weight:700;font-size:11px;color:var(--dim);letter-spacing:1px}
+  .num .n{font-family:var(--disp);font-weight:700;font-size:30px;color:var(--ink)}
+  .world.built .num .n{color:var(--amber)}
+  .body{flex:1;padding:12px 16px;min-width:0}
+  .htitle{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+  .htitle .name{font-family:var(--disp);font-weight:700;font-size:16px}
+  .concept{font-size:11px;color:var(--cyan);border:1.5px solid var(--cyan);border-radius:999px;padding:2px 9px;font-weight:700}
+  .tag{font-size:9px;font-weight:700;letter-spacing:1px;border-radius:999px;padding:2px 8px}
+  .tag.built{color:var(--amber);border:1.5px solid var(--amber)}
+  .tag.next{color:var(--dim);border:1.5px dashed var(--line2)}
+  .rows{display:grid;grid-template-columns:88px 1fr;gap:4px 12px;font-size:11.5px;align-items:start}
+  .rk{color:var(--dim);text-align:right;padding-top:2px;letter-spacing:.5px}
+  .rv{color:var(--body);line-height:1.55}
+  code{color:var(--amber);background:rgba(0,0,0,.22);padding:1px 5px;border-radius:4px}
+  .arena{color:var(--green)} .meter{color:var(--grape)} .part{color:var(--cyan)}
+  .missions{margin-top:10px;border-top:1px dashed var(--line);padding-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+  .m{font-size:10.5px;color:var(--dim);border:1px solid var(--line);border-radius:8px;padding:6px 8px}
+  .m b{color:var(--ink);font-family:var(--disp)}
+  .m .c{color:var(--amber)}
+  .note{font-size:11px;color:var(--dim);border-left:2px solid var(--amber);padding:8px 0 8px 12px;margin:18px 0;line-height:1.65}
+  .scroll{overflow-x:auto}
+</style>
+</head>
+<body>
+<h1>CODE<span style="color:var(--amber)">BOTS</span> — Learning Progression</h1>
+<div class="sub">The 8-world ladder: each world turns three dials at once — a new coding concept, new commands, and a meaner arena. "World" = a chapter of ~6 missions the kid advances through (not a software version).</div>
+<div class="legend">
+  <span><b style="color:var(--amber)">▬</b> built now (World 1)</span>
+  <span><b style="color:var(--dim)">▭</b> designed / next</span>
+  <span><code>code</code> commands · <span class="arena">arena</span> · <span class="meter">meter</span> · <span class="part">part</span></span>
+</div>
+
+<div class="scroll">
+
+<!-- WORLD 1 -->
+<div class="world built">
+  <div class="num"><div class="w">WORLD</div><div class="n">1</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">FIRST ROLL</span><span class="concept">CONCEPT · sequencing &amp; loops</span><span class="tag built">BUILT</span></div>
+    <div class="rows">
+      <div class="rk">commands</div><div class="rv"><code>forward(n)</code> <code>back(n)</code> <code>left(n)</code> <code>right(n)</code> <code>honk(n)</code> <code>repeat n {}</code></div>
+      <div class="rk">arena</div><div class="rv arena">crates · mud · steel walls · pits · honk-gates + pads · parked tank · treasure chest</div>
+      <div class="rk">meters</div><div class="rv meter">SCORE · ARMOR</div>
+      <div class="rk">unlock</div><div class="rv part">AIR HORN</div>
+    </div>
+    <div class="missions">
+      <div class="m"><b>M1</b> Wake Up · <span class="c">sequencing</span></div>
+      <div class="m"><b>M2</b> The Zigzag · <span class="c">repeated pattern</span></div>
+      <div class="m"><b>M3</b> Reverse Out · <span class="c">back()</span></div>
+      <div class="m"><b>M4</b> Honk the Gates · <span class="c">honk-gates</span></div>
+      <div class="m"><b>M5</b> The Loop · <span class="c">repeat</span></div>
+      <div class="m"><b>M6</b> Sprocket boss · <span class="c">everything</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 2 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">2</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">ROUND &amp; ROUND</span><span class="concept">CONCEPT · loops, for, nesting</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>repeat</code> → <code>for (let i…)</code> (boss ceremony) · nested loops · <code>boost()</code></div>
+      <div class="rk">arena</div><div class="rv arena">the Windmill — a moving-hazard <b>timing</b> boss (arms sweep on a beat)</div>
+      <div class="rk">part / feat</div><div class="rv part">TURBO TREADS · Time Trials + Ghosts unlock</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 3 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">3</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">TREASURE COUNT</span><span class="concept">CONCEPT · variables &amp; math</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>let</code>, math · <code>grab()</code> <code>drop()</code> · <code>position()</code> <code>heading()</code> <code>coins()</code> <code>carrying()</code></div>
+      <div class="rk">arena</div><div class="rv arena">chests · fillable pits (drop a crate!) · weight-limited bridges · <b>water needs a crossing part/bridge here</b></div>
+      <div class="rk">meters</div><div class="rv meter">SPEED · WEIGHT debut (you feel weight → speed)</div>
+      <div class="rk">part / feat</div><div class="rv part">CARGO CLAW · Treasure Runs unlock</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 4 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">4</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">EYES ON</span><span class="concept">CONCEPT · decisions + sensing + events</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>if / else</code> · <code>radar()</code> <code>touch()</code> <code>status()</code> · <b>events</b>: <code>when bumped { }</code> <code>when spotted { }</code>…</div>
+      <div class="rk">arena</div><div class="rv arena">night sectors · bushes (cover) · scout drones on patrol loops (the moving-target intercept lives here on)</div>
+      <div class="rk">part / feat</div><div class="rv part">RADAR DISH · HEADLIGHTS</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 5 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">5</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">SMART LOOPS</span><span class="concept">CONCEPT · loops + ifs together</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>fire(ammo)</code> · elements: fireball / ice / water / vine (each a different trick) · reactive patrols</div>
+      <div class="rk">meters</div><div class="rv meter">CHARGE debut (weapon energy — no spamming fire)</div>
+      <div class="rk">part / feat</div><div class="rv part">ZAPPER + ammo packs · boss = first true duel</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 6 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">6</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">MY OWN MOVES</span><span class="concept">CONCEPT · functions &amp; parameters</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>function</code> — the kid names her own moves; a personal MOVES library that follows her</div>
+      <div class="rk">part / feat</div><div class="rv part">MACRO CHIP · Echo missions (co-op with your past run)</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 7 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">7</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">ROUTE PLANNER</span><span class="concept">CONCEPT · lists &amp; waypoints</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>[ ]</code> lists · <code>for..of</code> · treasure maps — X marks the spot at <code>(x, y)</code></div>
+      <div class="rk">part / feat</div><div class="rv part">NAV LOG · boss = convoy escort</div>
+    </div>
+  </div>
+</div>
+
+<!-- WORLD 8 -->
+<div class="world">
+  <div class="num"><div class="w">WORLD</div><div class="n">8</div></div>
+  <div class="body">
+    <div class="htitle"><span class="name">THE GAUNTLET</span><span class="concept">CONCEPT · everything + state machines</span><span class="tag next">NEXT</span></div>
+    <div class="rows">
+      <div class="rk">new</div><div class="rv"><code>when tick { }</code> — the battle heartbeat · modes / state machines (<code>setMode("chase")</code>)</div>
+      <div class="rk">part / feat</div><div class="rv part">CHAFF · GRAPPLE · MORTAR · Captain Cogbeard 3-phase boss → LEAGUE KEY → battles</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div class="note">
+  <b style="color:var(--body)">On "the early lessons feel simple / can we get there faster":</b> that's by design for a 9–13-year-old's
+  first hour — World 1 is deliberately blind sequencing + loops with no sensing or reacting, so nothing she learns needs
+  unlearning. But the ramp is a <b style="color:var(--ink)">dial we can turn</b>. Three ways to steepen it without breaking the ladder:
+  <br>• <b style="color:var(--ink)">Bonus "★★★ hard" stars</b> — an optional advanced goal per mission (fewest lines, a loop where a copy-paste would do) for kids who want more.
+  <br>• <b style="color:var(--ink)">Compress the on-ramp</b> — fold M2–M3 into fewer, denser missions so <code>repeat</code>, sensing, and variables arrive a world or two sooner.
+  <br>• <b style="color:var(--ink)">A "fast track"</b> — let a confident kid test out of a world's practices straight to its boss.
+  <br>Pick the feel you want and I'll re-shape the mission list to match.
+</div>
+
+</body>
+</html>
