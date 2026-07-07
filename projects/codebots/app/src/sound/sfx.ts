@@ -86,6 +86,10 @@ export class Sfx {
   private fall(): void {
     this.tone(420, 0.4, "sawtooth", 0.1, 0, 90); // whoooop — descending
   }
+  private splash(): void {
+    this.noise(0.28, 0.12, 2600); // watery splash
+    this.tone(700, 0.14, "sine", 0.05, 0, 300);
+  }
   private gate(): void {
     this.tone(300, 0.12, "square", 0.06, 0, 620); // clank up — gate springs open
     this.tone(700, 0.1, "triangle", 0.05, 0.06);
@@ -108,6 +112,7 @@ export class Sfx {
       case "honk": this.honk(ev.seq ?? 0); break;
       case "bump": this.bump(); break;
       case "fall": this.fall(); break;
+      case "splash": this.splash(); break;
       case "gateOpen": this.gate(); break;
       case "coin": this.coin(); break;
       case "clear": this.win(); break;

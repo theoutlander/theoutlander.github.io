@@ -109,6 +109,7 @@ export function MissionScreen({
           addRadio("CLUNK! hit a wall — fix the program and run again", "error");
         }
         if (ev.type === "fall") addRadio("WHOA! that's a pit — −40. steer around it", "error");
+        if (ev.type === "splash") addRadio("SPLASH! that's water — you can't cross it", "info");
         if (ev.type === "gateOpen") addRadio("gate open!", "info");
         if (ev.type === "honk") addRadio("HONK!", "info");
         if (ev.type === "clear") addRadio("★ beacon reached!", "success");

@@ -15,6 +15,8 @@ const COLORS = {
   steelEdge: 0x2b3f6b,
   mud: 0x243a63,
   pit: 0x050a14,
+  water: 0x2e6bd6,
+  waterLine: 0x9fe0ff,
   cyan: 0x5fd4ff,
   amber: 0xffb454,
   green: 0x6fe3a5,
@@ -58,6 +60,22 @@ export function drawArena(scene: Phaser.Scene, arena: Arena): void {
         bg.fillRoundedRect(px + 3, py + 3, CELL - 6, CELL - 6, 4);
         bg.lineStyle(2, 0x14203c, 1);
         bg.strokeRoundedRect(px + 3, py + 3, CELL - 6, CELL - 6, 4);
+      } else if (kind === "water") {
+        bg.fillStyle(COLORS.water, 0.55);
+        bg.fillRect(px + 1, py + 1, CELL - 2, CELL - 2);
+        // wavy ripples
+        bg.lineStyle(2, COLORS.waterLine, 0.8);
+        for (let r = 0; r < 3; r++) {
+          const wy = py + 14 + r * 12;
+          bg.beginPath();
+          bg.moveTo(px + 6, wy);
+          bg.lineTo(px + 14, wy - 3);
+          bg.lineTo(px + 22, wy);
+          bg.lineTo(px + 30, wy - 3);
+          bg.lineTo(px + 38, wy);
+          bg.lineTo(px + 46, wy - 3);
+          bg.strokePath();
+        }
       }
     }
   }

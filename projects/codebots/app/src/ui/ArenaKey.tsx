@@ -23,6 +23,14 @@ function Mud() {
 function Pit() {
   return <div style={{ ...sq, background: "#050a14", border: "2px solid #14203c" }} />;
 }
+function Water() {
+  return (
+    <div style={{ ...sq, background: "rgba(46,107,214,.55)", overflow: "hidden" }}>
+      <div style={{ position: "absolute", left: 2, right: 2, top: 5, height: 2, background: "#9fe0ff", opacity: 0.8, borderRadius: 2 }} />
+      <div style={{ position: "absolute", left: 2, right: 2, top: 11, height: 2, background: "#9fe0ff", opacity: 0.8, borderRadius: 2 }} />
+    </div>
+  );
+}
 function Steel() {
   return <div style={{ ...sq, background: "var(--steel)", border: "2px solid var(--steel-edge)" }} />;
 }
@@ -79,6 +87,7 @@ export function ArenaKey({ arena }: { arena: Arena }) {
   if (cells.includes("wall")) entries.push({ icon: <Steel />, name: "STEEL", desc: "a solid wall" });
   if (cells.includes("mud")) entries.push({ icon: <Mud />, name: "MUD", desc: "slows you down" });
   if (cells.includes("pit")) entries.push({ icon: <Pit />, name: "PIT", desc: "don't fall in! −40" });
+  if (cells.includes("water")) entries.push({ icon: <Water />, name: "WATER", desc: "you'll sink — can't cross" });
   if (arena.gates.length) {
     entries.push({ icon: <Pad />, name: "PAD", desc: "stop here and honk()" });
     entries.push({ icon: <Gate />, name: "GATE", desc: "opens when you honk on its pad" });

@@ -7,13 +7,14 @@ const baseState = (): BotState => ({
   score: 0, bumps: 0, honks: 0, wrecked: false,
 });
 
-/** A tiny 1-row world for the horizontal move tests. `blocked`/`pit`/`mud` are cell x-coords. */
-function world(opts: { blocked?: number[]; pit?: number[]; mud?: number[]; cols?: number } = {}): MoveWorld {
+/** A tiny 1-row world for the horizontal move tests. `blocked`/`pit`/`water`/`mud` are cell x-coords. */
+function world(opts: { blocked?: number[]; pit?: number[]; water?: number[]; mud?: number[]; cols?: number } = {}): MoveWorld {
   const cols = opts.cols ?? 3;
   const has = (s: number[] | undefined, p: { x: number }) => !!s?.includes(p.x);
   return {
     isBlocked: (p) => p.x < 0 || p.x >= cols || has(opts.blocked, p),
     isPit: (p) => has(opts.pit, p),
+    isWater: (p) => has(opts.water, p),
     isMud: (p) => has(opts.mud, p),
   };
 }
@@ -46,5 +47,13 @@ describe("physics", () => {
     expect(fell).toBe(true);
     expect(state.pos).toEqual({ x: 1, y: 0 }); // entered (1,0), stopped at the pit edge
     expect(state.score).toBe(-40);
+  });
+
+  it("splashes at water's edge with no penalty and does not cross", () => {
+    const { state, splashed } = resolveMove(world({ water: [2] }), baseState(), "E", 3);
+    expect(splashed).toBe(true);
+    expect(state.pos).toEqual({ x: 1, y: 0 }); // stopped at the bank
+    expect(state.score).toBe(0); // water is gentle — no points lost
+    expect(state.armor).toBe(100);
   });
 });

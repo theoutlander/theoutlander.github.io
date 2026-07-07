@@ -158,6 +158,25 @@ export class ArenaScene extends Phaser.Scene {
         });
         break;
       }
+      case "splash": {
+        this.ripple(ev.at, 0x5fd4ff);
+        const ox = this.bot.x;
+        const oy = this.bot.y;
+        this.tweens.add({
+          targets: this.bot,
+          x: ox + Math.cos(this.bot.rotation) * 10,
+          y: oy + Math.sin(this.bot.rotation) * 10,
+          duration: 130,
+          yoyo: true,
+          ease: "Quad.easeOut",
+          onComplete: () => {
+            this.bot.x = ox;
+            this.bot.y = oy;
+            done();
+          },
+        });
+        break;
+      }
       case "honk": {
         this.honkPulse(ev.at);
         this.time.delayedCall(240, done);
@@ -213,6 +232,23 @@ export class ArenaScene extends Phaser.Scene {
       scale: { from: 0.5, to: 2.4 },
       alpha: { from: 1, to: 0 },
       duration: 420,
+      ease: "Quad.easeOut",
+      onComplete: () => c.destroy(),
+    });
+  }
+
+  private ripple(at: { x: number; y: number }, color: number): void {
+    const { x, y } = cellCenter(at);
+    const ring = this.add.graphics();
+    ring.lineStyle(2, color, 1);
+    ring.strokeCircle(0, 0, 12);
+    const c = this.add.container(x, y, [ring]);
+    c.setDepth(20);
+    this.tweens.add({
+      targets: c,
+      scale: { from: 0.4, to: 2 },
+      alpha: { from: 1, to: 0 },
+      duration: 380,
       ease: "Quad.easeOut",
       onComplete: () => c.destroy(),
     });

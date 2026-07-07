@@ -71,6 +71,7 @@ export function createSim(mission: Mission): Sim {
       return gates.some((g) => !g.open && g.gateCells.some((c) => c.x === p.x && c.y === p.y));
     },
     isPit: (p) => inBounds(arena, p) && cellAt(arena, p) === "pit",
+    isWater: (p) => inBounds(arena, p) && cellAt(arena, p) === "water",
     isMud: (p) => inBounds(arena, p) && cellAt(arena, p) === "mud",
   };
 
@@ -117,6 +118,10 @@ export function createSim(mission: Mission): Sim {
           tick += 1;
           log.push({ tick, type: "fall", at: from });
           log.push({ tick, type: "score", delta: -40, total: next.score, at: from });
+          trace.push(recordTrace(arena, next, tick));
+        } else if (outcome.splashed) {
+          tick += 1;
+          log.push({ tick, type: "splash", at: from });
           trace.push(recordTrace(arena, next, tick));
         } else if (outcome.bumped) {
           tick += 1;

@@ -9,7 +9,7 @@ const REVERSE: Record<Facing, Facing> = { N: "S", S: "N", E: "W", W: "E" };
  *  applied; this only describes the shape of what happened. Gate opening (a side effect of honk)
  *  is decided by the engine, which owns the gate state. */
 export type CommandOutcome =
-  | { kind: "move"; from: Vec2; path: { to: Vec2; cost: number }[]; bumped: boolean; fell: boolean }
+  | { kind: "move"; from: Vec2; path: { to: Vec2; cost: number }[]; bumped: boolean; fell: boolean; splashed: boolean }
   | { kind: "turn"; facings: Facing[] } // one facing per 90° step (right(2) turns twice)
   | { kind: "honk"; count: number };
 
@@ -24,7 +24,7 @@ export function executeCommand(
       return {
         state: r.state,
         ticksSpent: r.ticksSpent,
-        outcome: { kind: "move", from: state.pos, path: r.path, bumped: r.bumped, fell: r.fell },
+        outcome: { kind: "move", from: state.pos, path: r.path, bumped: r.bumped, fell: r.fell, splashed: r.splashed },
       };
     }
     case "back": {
@@ -33,7 +33,7 @@ export function executeCommand(
       return {
         state: { ...r.state, facing: state.facing },
         ticksSpent: r.ticksSpent,
-        outcome: { kind: "move", from: state.pos, path: r.path, bumped: r.bumped, fell: r.fell },
+        outcome: { kind: "move", from: state.pos, path: r.path, bumped: r.bumped, fell: r.fell, splashed: r.splashed },
       };
     }
     case "left":

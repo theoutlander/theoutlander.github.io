@@ -5,6 +5,7 @@ import { history, historyKeymap, defaultKeymap, indentWithTab } from "@codemirro
 import { javascript } from "@codemirror/lang-javascript";
 import { codebotsTheme, codebotsHighlight } from "./theme";
 import { codebotsLinter, codebotsAutocomplete } from "./assist";
+import { acceptCompletion } from "@codemirror/autocomplete";
 
 // A single-line highlight for the line an error points at. Errors never cost points — this is
 // just a gentle "look here".
@@ -69,6 +70,8 @@ export function Editor({
               return true;
             },
           },
+          // Tab accepts the highlighted autocomplete option; otherwise it indents.
+          { key: "Tab", run: acceptCompletion },
           indentWithTab,
           ...defaultKeymap,
           ...historyKeymap,

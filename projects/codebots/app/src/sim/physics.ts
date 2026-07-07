@@ -3,14 +3,16 @@ import type { BotState, Facing, Vec2 } from "./types";
 
 /**
  * The movable world as physics sees it — decoupled from the Arena so runtime-mutable things
- * (honk-gates opening) and hazards (pits, mud) are just predicates. The engine builds this with
- * closures over the live gate state, so a gate that opens mid-run immediately stops blocking.
+ * (honk-gates opening) and hazards (pits, water, mud) are just predicates. The engine builds this
+ * with closures over the live gate state, so a gate that opens mid-run immediately stops blocking.
  */
 export interface MoveWorld {
   /** wall / crate / tank / closed-gate cell / out of bounds */
   isBlocked(pos: Vec2): boolean;
   /** a pit: entering it is a fall (−40 + tow), not a step */
   isPit(pos: Vec2): boolean;
+  /** water: the bot would sink — can't cross (splash, no damage) */
+  isWater(pos: Vec2): boolean;
   /** mud costs 2 ticks to cross instead of 1 */
   isMud(pos: Vec2): boolean;
 }
@@ -24,6 +26,8 @@ export interface MoveResult {
   bumped: boolean;
   /** stopped early at a pit's edge (−40 applied) */
   fell: boolean;
+  /** stopped early at water's edge (splash, no penalty) */
+  splashed: boolean;
 }
 
 export function resolveMove(
@@ -39,6 +43,7 @@ export function resolveMove(
   let armor = state.armor;
   let bumped = false;
   let fell = false;
+  let splashed = false;
   const path: { to: Vec2; cost: number }[] = [];
 
   for (let i = 0; i < squares; i++) {
@@ -47,6 +52,11 @@ export function resolveMove(
       // The pit guards the way — the bot lurches to the edge and is towed back. −40, no crossing.
       score -= 40;
       fell = true;
+      break;
+    }
+    if (world.isWater(next)) {
+      // Water — the bot would sink. It stops at the bank with a splash; no damage, water's gentle.
+      splashed = true;
       break;
     }
     if (world.isBlocked(next)) {
@@ -68,5 +78,6 @@ export function resolveMove(
     path,
     bumped,
     fell,
+    splashed,
   };
 }
