@@ -3,6 +3,8 @@
  * Everything reversible: this is the kid's campaign progress (cleared missions, stars, coins,
  * unlocked parts). Missing/corrupt storage falls back to a fresh save.
  */
+import { earnedBadges, newlyEarned, type Badge } from "../content/badges";
+
 export interface MissionProgress {
   cleared: boolean;
   stars: number;
@@ -12,11 +14,13 @@ export interface SaveData {
   missions: Record<string, MissionProgress>;
   coins: number;
   unlocked: string[];
+  /** earned badge ids (see content/badges.ts) */
+  badges: string[];
 }
 
 const KEY = "codebots.save.v1";
 
-const FRESH: SaveData = { missions: {}, coins: 0, unlocked: [] };
+const FRESH: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [] };
 
 export function loadSave(): SaveData {
   try {
@@ -27,6 +31,7 @@ export function loadSave(): SaveData {
       missions: parsed.missions ?? {},
       coins: parsed.coins ?? 0,
       unlocked: parsed.unlocked ?? [],
+      badges: parsed.badges ?? [],
     };
   } catch {
     return { ...FRESH };
@@ -50,7 +55,13 @@ export function recordResult(
   missionId: string,
   stars: number,
   unlockPart: string | undefined,
-): { save: SaveData; coinsEarned: number; firstClear: boolean; newlyUnlocked: string | null } {
+): {
+  save: SaveData;
+  coinsEarned: number;
+  firstClear: boolean;
+  newlyUnlocked: string | null;
+  newBadges: Badge[];
+} {
   const prev = save.missions[missionId] ?? { cleared: false, stars: 0 };
   const firstClear = !prev.cleared;
   const newStars = Math.max(0, stars - prev.stars);
@@ -70,6 +81,10 @@ export function recordResult(
     },
     coins: save.coins + coinsEarned,
     unlocked,
+    badges: save.badges,
   };
-  return { save: next, coinsEarned, firstClear, newlyUnlocked };
+  // Badges are recomputed from the updated progress; new ones (not already recorded) are surfaced.
+  const newBadges = newlyEarned(next);
+  next.badges = earnedBadges(next);
+  return { save: next, coinsEarned, firstClear, newlyUnlocked, newBadges };
 }

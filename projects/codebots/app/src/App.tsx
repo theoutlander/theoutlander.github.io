@@ -5,6 +5,7 @@ import { MissionScreen } from "./ui/MissionScreen";
 import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { HQ } from "./ui/HQ";
 import { BotMaker } from "./ui/BotMaker";
+import { Profile } from "./ui/Profile";
 import { ALL, globalLevel } from "./content/missions";
 import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
 import { loadSave } from "./state/save";
@@ -14,7 +15,8 @@ type Screen =
   | { name: "hq" }
   | { name: "map" }
   | { name: "mission"; index: number }
-  | { name: "botmaker" };
+  | { name: "botmaker" }
+  | { name: "profile" };
 
 /**
  * App shell: the CodeBots header + a hub → map/bot-maker → mission state machine. The bot config
@@ -46,6 +48,7 @@ export function App() {
   const toHQ = () => { refresh(); setScreen({ name: "hq" }); };
   const toMap = () => { refresh(); setScreen({ name: "map" }); };
   const toBotMaker = () => setScreen({ name: "botmaker" });
+  const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
 
   function openMission(index: number) {
     analytics.levelOpen(index + 1, ALL[index].title);
@@ -64,6 +67,8 @@ export function App() {
       ? { back: "‹ HQ", onBack: toHQ, current: "THE MAP" }
       : screen.name === "botmaker"
         ? { back: "‹ HQ", onBack: toHQ, current: "BOT MAKER" }
+        : screen.name === "profile"
+        ? { back: "‹ HQ", onBack: toHQ, current: "PROFILE" }
         : mission
           ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
@@ -94,7 +99,9 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} />
+        ) : screen.name === "profile" ? (
+          <Profile bot={bot} save={save} />
         ) : screen.name === "botmaker" ? (
           <BotMaker onExit={toHQ} onSaved={() => setBotConfig(loadBotConfig())} />
         ) : screen.name === "mission" ? (

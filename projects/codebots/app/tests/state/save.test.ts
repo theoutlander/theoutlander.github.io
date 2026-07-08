@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { recordResult, type SaveData } from "../../src/state/save";
 
-const fresh: SaveData = { missions: {}, coins: 0, unlocked: [] };
+const fresh: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [] };
 
 describe("recordResult economy", () => {
   it("pays 10 for first clear + 5 per star, and records the unlock", () => {

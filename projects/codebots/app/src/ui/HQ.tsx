@@ -36,28 +36,35 @@ function Door({
   );
 }
 
-/** HQ — the hub. The bot rolls in; four doors lead out. */
+/** HQ — the hub. The bot rolls in; the doors lead out. */
 export function HQ({
   bot,
   save,
   missions,
   onPlay,
   onBotMaker,
+  onProfile,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
   missions: Mission[];
   onPlay: () => void;
   onBotMaker: () => void;
+  onProfile: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
   const nextLevel = Math.min(cleared + 1, missions.length);
+  const badgeCount = (save.badges ?? []).length;
 
   return (
     <div style={{ height: "100%", overflow: "auto", padding: "28px 24px" }}>
       <div style={{ maxWidth: 820, margin: "0 auto", display: "flex", flexDirection: "column", gap: 22 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+        <button
+          onClick={onProfile}
+          title="View your profile & badges"
+          style={{ all: "unset", cursor: "pointer", display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}
+        >
           <BotAvatar body={bot.bodyHex} dome={bot.domeHex} width={150} />
           <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: "var(--text-2xs)", letterSpacing: "var(--label-tracking)", color: "var(--text-dim)", fontWeight: 700 }}>
@@ -69,9 +76,13 @@ export function HQ({
             <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 8 }}>
               <Stars earned={totalStars} total={missions.length * 3} showCount size={14} />
               <Coin count={save.coins} />
+              <Chip color="amber">{badgeCount} ★ BADGES</Chip>
+            </div>
+            <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginTop: 6, letterSpacing: "1px" }}>
+              VIEW PROFILE &amp; BADGES →
             </div>
           </div>
-        </div>
+        </button>
 
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
           <Door

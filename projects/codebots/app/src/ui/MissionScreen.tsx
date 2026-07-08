@@ -181,7 +181,7 @@ export function MissionScreen({
 
   function finish(stars: number) {
     const save = loadSave();
-    const { save: next, coinsEarned, newlyUnlocked } = recordResult(
+    const { save: next, coinsEarned, newlyUnlocked, newBadges } = recordResult(
       save,
       mission.id,
       stars,
@@ -191,6 +191,7 @@ export function MissionScreen({
     onCoins(next.coins);
     fails.current = 0;
     analytics.levelClear(level, stars, countCodeLines(code), mission.parLines);
+    for (const b of newBadges) analytics.badgeEarned(b.id);
     setResult({
       stars,
       coinsEarned,
@@ -198,6 +199,7 @@ export function MissionScreen({
       lines: countCodeLines(code),
       par: mission.parLines,
       cutscene: mission.cutscene,
+      newBadges,
     });
   }
 

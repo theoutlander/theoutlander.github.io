@@ -37,6 +37,9 @@ export const analytics = {
   feedback(level: number, rating: "fun" | "ok" | "meh") {
     track("cb_feedback", { level, rating });
   },
+  badgeEarned(badge: string) {
+    track("cb_badge", { badge });
+  },
   botSaved(playerName: string, botName: string) {
     track("cb_bot_saved", { bot: botName });
     // a personalized pilot name becomes the player identity (default names stay generic)

@@ -3,6 +3,8 @@ import { Panel } from "./components/Panel";
 import { Button } from "./components/Button";
 import { Stars } from "./components/Stars";
 import { Coin } from "./components/Coin";
+import { BadgeIcon } from "./components/BadgeIcon";
+import type { Badge } from "../content/badges";
 
 export interface MissionResult {
   stars: number;
@@ -11,6 +13,7 @@ export interface MissionResult {
   lines: number;
   par: number;
   cutscene?: string;
+  newBadges?: Badge[];
 }
 
 type Rating = "fun" | "ok" | "meh";
@@ -132,6 +135,28 @@ export function ResultOverlay({
             }}
           >
             NEW UNLOCK: {result.newlyUnlocked}
+          </div>
+        ) : null}
+        {result.newBadges && result.newBadges.length ? (
+          <div
+            style={{
+              display: "flex", flexDirection: "column", alignItems: "center", gap: 8,
+              border: "2px solid var(--amber)", borderRadius: "var(--radius-md)", padding: "12px 16px",
+              background: "rgba(255,180,84,.06)", width: "100%", boxSizing: "border-box",
+            }}
+          >
+            <div style={{ fontSize: "var(--text-2xs)", fontWeight: 700, letterSpacing: "var(--label-tracking)", color: "var(--amber)" }}>
+              {result.newBadges.length > 1 ? "★ NEW BADGES!" : "★ NEW BADGE!"}
+            </div>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap", justifyContent: "center" }}>
+              {result.newBadges.map((b) => (
+                <div key={b.id} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, maxWidth: 96 }}>
+                  <BadgeIcon icon={b.icon} earned size={52} />
+                  <div style={{ fontSize: "var(--text-2xs)", fontWeight: 700, color: "var(--ink)" }}>{b.title}</div>
+                  <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", lineHeight: 1.3 }}>{b.desc}</div>
+                </div>
+              ))}
+            </div>
           </div>
         ) : null}
         {result.cutscene ? (
