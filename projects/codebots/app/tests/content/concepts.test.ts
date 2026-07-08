@@ -12,10 +12,11 @@ import { runInSandbox } from "../../src/sandbox/driver";
 describe("concept demoCode — runs clean and never spoils the level", () => {
   for (const c of CONCEPTS) {
     const mission = ALL.find((m) => m.world === c.world && m.index === c.level);
-    it(`${c.key} (W${c.world}L${c.level}) has a mission and a demo`, () => {
+    it(`${c.key} (W${c.world}L${c.level}) maps to a real mission`, () => {
       expect(mission, `no mission for concept ${c.key}`).toBeDefined();
-      expect(c.demoCode, `${c.key} should have demoCode`).toBeTruthy();
     });
+    // demoCode is optional (some ideas can't be demoed without giving the answer away). When a
+    // concept HAS one, it must run clean and not solve the level.
     if (mission && c.demoCode) {
       it(`${c.key} demo runs without throwing`, () => {
         expect(() => runInSandbox(mission, c.demoCode!)).not.toThrow();

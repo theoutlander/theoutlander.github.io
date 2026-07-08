@@ -130,7 +130,7 @@
     },
     "facing": "E"
   },
-  "parLines": 8,
+  "parLines": 15,
   "starterCode": "// Up and over, up and over. Watch for the crate corners.\n",
   "hints": [
     "You can't push through a crate column — slip around the top of it.",
@@ -138,7 +138,7 @@
     "Repeat that zig for each column until you reach the beacon."
   ],
   "briefing": "Sprocket stacked crate walls across the yard, Sparkplug. Zig up and over each one. Smooth corners, no dents.",
-  "authorSolution": "forward(1)\nrepeat 3 { left(); forward(2); right(); forward(2); }\nleft()\nforward(1)",
+  "authorSolution": "forward(1)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(1)",
   "bonusStar": {
     "kind": "zeroBumps"
   }

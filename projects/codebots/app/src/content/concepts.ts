@@ -78,7 +78,15 @@ export const CONCEPTS: Concept[] = [
     example: "while (!atBeacon()) {\n  forward(1)\n}",
     exampleNote: "drive until you reach the goal",
     whenToUse: "When you DON'T know how many times. You can't count it — so loop until a test says stop.",
-    demoCode: "forward(2)",
+    // No demo: any while snippet that visibly loops in this open lane would drive onto the beacon
+    // and give the answer away. The example above carries the idea instead.
+  },
+  {
+    key: "chain", world: 3, level: 5, title: "CHAIN OF CHOICES",
+    idea: "else if lets you ask a SECOND question when the first was no. The checks run top to bottom — the first one that's true wins, and the rest are skipped.",
+    example: "if (targetAhead()) {\n  shoot()\n} else if (blocked()) {\n  right()\n} else {\n  forward(1)\n}",
+    exampleNote: "barrel? shoot. else wall? turn. else just drive.",
+    whenToUse: "When there are MORE than two choices — chain the checks in order of priority.",
   },
   {
     key: "functions", world: 4, level: 1, title: "YOUR OWN COMMANDS",
