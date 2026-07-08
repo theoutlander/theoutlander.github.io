@@ -44,6 +44,7 @@ export function HQ({
   onPlay,
   onBotMaker,
   onProfile,
+  onOpenField,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
@@ -51,6 +52,7 @@ export function HQ({
   onPlay: () => void;
   onBotMaker: () => void;
   onProfile: () => void;
+  onOpenField: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
@@ -105,10 +107,11 @@ export function HQ({
             locked
           />
           <Door
-            title="PLAY"
-            desc="Time trials vs your ghost · treasure runs."
-            chip="COMING SOON"
-            locked
+            title="OPEN FIELD"
+            desc="Endless random challenges — no stars, no par. Just reach the beacon, get a new one."
+            chip="FREE PLAY →"
+            chipColor="green"
+            onClick={onOpenField}
           />
         </div>
       </div>

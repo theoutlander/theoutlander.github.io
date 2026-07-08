@@ -40,6 +40,12 @@ export const analytics = {
   badgeEarned(badge: string) {
     track("cb_badge", { badge });
   },
+  fieldOpen() {
+    track("cb_field_open");
+  },
+  fieldSolved(total: number) {
+    track("cb_field_solved", { total });
+  },
   botSaved(playerName: string, botName: string) {
     track("cb_bot_saved", { bot: botName });
     // a personalized pilot name becomes the player identity (default names stay generic)
