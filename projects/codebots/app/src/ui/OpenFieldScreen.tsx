@@ -108,7 +108,8 @@ export function OpenFieldScreen({ paint }: { paint: { bodyColor: number; domeCol
             {challenge.title}
           </div>
           <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", marginTop: 4, lineHeight: "var(--leading-body)" }}>
-            No stars, no par — just reach the beacon however you like.
+            Write your bot's <b style={{ color: "var(--ink)" }}>brain</b>, then press RUN — it drives
+            itself. No stars, no par.
           </div>
         </Panel>
         <Panel label="SOLVED">

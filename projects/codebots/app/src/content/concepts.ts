@@ -26,10 +26,10 @@ export interface Concept {
 export const CONCEPTS: Concept[] = [
   {
     key: "sequencing", world: 1, level: 1, title: "STEP BY STEP",
-    idea: "Your bot does exactly what you tell it — one line at a time, from top to bottom.",
+    idea: "You don't steer the bot — you write ALL its moves first, then press RUN and it drives itself. It does exactly what you wrote, one line at a time, top to bottom. Nothing more, nothing less.",
     example: "forward(2)\nleft()\nforward(3)",
-    exampleNote: "roll 2, turn, roll 3 — in that order",
-    whenToUse: "Always. Every program is a list of steps in order.",
+    exampleNote: "roll 2, turn, roll 3 — in that order, all by itself",
+    whenToUse: "Always. Every program is a list of steps, written before the bot moves.",
     demoCode: "forward(2)\nleft()\nforward(1)",
   },
   {

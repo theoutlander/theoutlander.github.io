@@ -11,6 +11,7 @@ import { globalLevel } from "../content/missions";
 import { conceptFor } from "../content/concepts";
 import { ConceptCard } from "./ConceptCard";
 import { CommandList } from "./CommandList";
+import { RobotRules } from "./RobotRules";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -250,6 +251,7 @@ export function MissionScreen({
           <CommandList commands={commandsFor(mission.world, mission.index)} world={mission.world} index={mission.index} />
         </Panel>
         <ArenaKey arena={mission.arena} />
+        <RobotRules />
         {hintLevel > 0 ? (
           <Panel label={`HINT ${hintLevel}/3`}>
             <div style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>

@@ -75,11 +75,33 @@ export function suggestCommand(name: string, candidates: string[]): string | nul
   return bestD <= 3 ? best : null;
 }
 
+/** The command that matches ignoring case but ISN'T spelled the same — i.e. a capitals mistake. */
+export function caseOnlyMatch(name: string, candidates: string[]): string | null {
+  const lower = name.toLowerCase();
+  return candidates.find((c) => c.toLowerCase() === lower && c !== name) ?? null;
+}
+
+/**
+ * The message body for an unknown command. A capitals mistake gets its own explanation rather than
+ * a silent "did you mean" — otherwise the kid learns "click the suggestion" instead of the actual
+ * rule (computers read `Forward` and `forward` as different words). camelCase names get taught too,
+ * since a capital in the MIDDLE of a word is genuinely baffling the first time you meet one.
+ */
+export function unknownCommandHint(name: string, candidates: string[]): string {
+  const cased = caseOnlyMatch(name, candidates);
+  if (cased) {
+    const camel = /[a-z][A-Z]/.test(cased);
+    return camel
+      ? `You spelled it right, but the CAPITAL letters matter — a computer reads "${name}" and "${cased}" as different words. This one squishes two words together, and the second word gets a capital: ${cased}()`
+      : `Almost! Computers are picky about capital letters: "${name}" and "${cased}" are different words to a robot. Try ${cased}()`;
+  }
+  const suggestion = suggestCommand(name, candidates);
+  return suggestion
+    ? `I don't know "${name}". Did you mean ${suggestion}()?`
+    : `I don't know "${name}". Check the COMMANDS list on the left.`;
+}
+
 /** "Line 2 — I don't know 'forwrd'. Did you mean forward()?" */
 export function unknownCommandMessage(name: string, line: number, candidates: string[]): string {
-  const suggestion = suggestCommand(name, candidates);
-  const where = `Line ${line} — `;
-  return suggestion
-    ? `${where}I don't know "${name}". Did you mean ${suggestion}()?`
-    : `${where}I don't know "${name}". Check the COMMANDS list on the left.`;
+  return `Line ${line} — ${unknownCommandHint(name, candidates)}`;
 }

@@ -5,7 +5,7 @@ import {
   type CompletionContext,
   type CompletionResult,
 } from "@codemirror/autocomplete";
-import { suggestCommand } from "../sandbox/errors";
+import { unknownCommandHint } from "../sandbox/errors";
 import { apiForWorld } from "../sandbox/api";
 
 /** Control-flow words that may legally appear before "(" (or as keywords) — never "unknown". */
@@ -50,17 +50,12 @@ export function makeCodebotsLinter(world: number) {
   return linter((view) => {
     const doc = view.state.doc.toString();
     const allowed = new Set([...api, ...CONTROL, ...userFnNames(doc)]);
-    return scanUnknownCalls(doc, allowed).map<Diagnostic>((u) => {
-      const guess = suggestCommand(u.name, api);
-      return {
-        from: u.from,
-        to: u.to,
-        severity: "error",
-        message: guess
-          ? `I don't know "${u.name}". Did you mean ${guess}()?`
-          : `I don't know "${u.name}". Check the COMMANDS list on the left.`,
-      };
-    });
+    return scanUnknownCalls(doc, allowed).map<Diagnostic>((u) => ({
+      from: u.from,
+      to: u.to,
+      severity: "error",
+      message: unknownCommandHint(u.name, api),
+    }));
   });
 }
 
