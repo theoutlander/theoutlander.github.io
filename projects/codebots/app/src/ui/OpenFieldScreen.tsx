@@ -103,9 +103,12 @@ export function OpenFieldScreen({ paint }: { paint: { bodyColor: number; domeCol
   return (
     <div style={{ display: "flex", gap: 14, padding: "14px 20px", height: "100%", boxSizing: "border-box", overflow: "hidden" }}>
       <div style={{ width: 220, flex: "none", display: "flex", flexDirection: "column", gap: 12, overflowY: "auto" }}>
-        <Panel label="OPEN FIELD">
-          <div style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
-            A brand-new field every time — no stars, no par. Just reach the beacon however you like.
+        <Panel label="CHALLENGE">
+          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-lg)", color: "var(--cyan)" }}>
+            {challenge.title}
+          </div>
+          <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", marginTop: 4, lineHeight: "var(--leading-body)" }}>
+            No stars, no par — just reach the beacon however you like.
           </div>
         </Panel>
         <Panel label="SOLVED">
