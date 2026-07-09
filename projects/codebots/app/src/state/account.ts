@@ -10,8 +10,16 @@ import type { SaveData } from "./save";
  * If the Supabase env vars are absent (local dev, or before setup), `cloudEnabled` is false and the
  * whole game runs exactly as before — guest, localStorage only. Nothing is gated behind an account.
  */
-const URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const ANON = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+// Reuses the family's existing Supabase project (also used by Maya's chat). The anon key is a
+// public, RLS-limited key — already shipped client-side in maya/shared/family-chat.js — so it's
+// safe to embed here too. Env vars override if ever needed.
+const URL =
+  (import.meta.env.VITE_SUPABASE_URL as string | undefined) ?? "https://mqmkktxaqmgqbdogozuu.supabase.co";
+const ANON =
+  (import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined) ??
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xbWtrdHhhcW1ncWJkb2dvenV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxOTA4ODIsImV4cCI6MjA5NTc2Njg4Mn0.agbC0-xB0jeetK5i6huDm87O3rDOwqdb4fRvEmNDPYU";
+
+const CODEBOTS_SAVES = "codebots_saves";
 
 export const cloudEnabled = !!(URL && ANON);
 
@@ -49,8 +57,8 @@ export async function signUp(username: string, password: string, recoveryEmail?:
   if (error) throw friendly(error.message);
   const user = data.user;
   if (!user) throw new Error("Couldn't create the account — try again.");
-  // Own-row insert (RLS enforces auth.uid() = id).
-  await sb().from("profiles").upsert({ id: user.id, username, recovery_email: recoveryEmail || null });
+  // Username + recovery email live in the auth user's metadata (set above) — no extra table needed;
+  // uniqueness comes free from the synthetic email being unique in auth.users.
   return { id: user.id, username };
 }
 
@@ -77,7 +85,7 @@ export async function currentAccount(): Promise<Account | null> {
 /** Pull the cloud save for the signed-in user (or null if none/logged out). */
 export async function pullSave(): Promise<SaveData | null> {
   if (!cloudEnabled) return null;
-  const { data, error } = await sb().from("saves").select("data").maybeSingle();
+  const { data, error } = await sb().from(CODEBOTS_SAVES).select("data").maybeSingle();
   if (error) return null;
   return (data?.data as SaveData) ?? null;
 }
@@ -88,6 +96,6 @@ export async function pushSave(save: SaveData): Promise<void> {
   const { data } = await sb().auth.getUser();
   if (!data.user) return;
   await sb()
-    .from("saves")
+    .from(CODEBOTS_SAVES)
     .upsert({ user_id: data.user.id, data: save, updated_at: new Date().toISOString() });
 }
