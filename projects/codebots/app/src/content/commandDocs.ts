@@ -19,14 +19,14 @@ export const ALL_COMMANDS: CommandDoc[] = [
   { sig: "forward(n)", desc: "roll forward n squares", world: 1, since: 1 },
   { sig: "left(n) / right(n)", desc: "turn 90° — n times if you pass a number", world: 1, since: 1 },
   { sig: "honk(n)", desc: "AIR HORN — n honks; opens gates", world: 1, since: 1 },
-  { sig: "back(n)", desc: "reverse n squares, no turn", world: 1, since: 3 },
-  { sig: "repeat n { }", desc: "do the moves inside n times", world: 1, since: 5, kind: "control" },
+  { sig: "back(n)", desc: "reverse n squares, no turn", world: 1, since: 1 },
+  { sig: "repeat n { }", desc: "do the moves inside n times", world: 1, since: 3, kind: "control" },
 
   // World 2 — sensors, decisions & the blaster
   { sig: "blocked()", desc: "is something right in front of you? (yes/no)", world: 2, since: 1, kind: "sensor" },
   { sig: "if ( ) { }", desc: "only do the moves inside when it's true", world: 2, since: 1, kind: "control" },
   { sig: "shoot()", desc: "fire the blaster — smashes a barrel ahead", world: 2, since: 2 },
-  { sig: "targetAhead()", desc: "is a barrel one square ahead? (yes/no)", world: 2, since: 2, kind: "sensor" },
+  { sig: "targetAhead()", desc: "is a barrel one square ahead? (yes/no)", world: 2, since: 3, kind: "sensor" },
   { sig: "else { }", desc: "what to do when the if was NOT true", world: 2, since: 3, kind: "control" },
   { sig: "atBeacon()", desc: "are you standing on the goal? (yes/no)", world: 2, since: 4, kind: "sensor" },
 

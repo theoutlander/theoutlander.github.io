@@ -33,7 +33,7 @@ export const CONCEPTS: Concept[] = [
     demoCode: "forward(2)\nleft()\nforward(1)",
   },
   {
-    key: "repeat", world: 1, level: 5, title: "REPEAT",
+    key: "repeat", world: 1, level: 3, title: "REPEAT",
     idea: "Doing the same thing over and over? Write it once inside repeat and it runs that many times.",
     example: "repeat 4 {\n  forward(1)\n  right()\n}",
     exampleNote: "forward + turn, four times",
@@ -49,11 +49,19 @@ export const CONCEPTS: Concept[] = [
     demoCode: "forward(3)\nif (blocked()) {\n  honk()\n}",
   },
   {
-    key: "blaster", world: 2, level: 2, title: "THE BLASTER",
-    idea: "shoot() blasts a barrel right in front of you. targetAhead() is a yes/no sensor that tells you when there's one to hit.",
+    key: "shoot", world: 2, level: 2, title: "THE BLASTER",
+    idea: "shoot() fires straight ahead and smashes the first barrel in front of you. When you can SEE a barrel in your lane, just fire.",
+    example: "shoot()\nforward(3)",
+    exampleNote: "blast the barrel, then roll on",
+    whenToUse: "When a barrel is blocking your path and you can see it's there.",
+    demoCode: "shoot()\nforward(1)",
+  },
+  {
+    key: "targetahead", world: 2, level: 3, title: "SPOT THE BARREL",
+    idea: "targetAhead() is a yes/no sensor: is a barrel right in front of me? Use it so your loop shoots only WHEN there's something to hit — not blindly.",
     example: "if (targetAhead()) {\n  shoot()\n}",
     exampleNote: "IF a barrel's ahead, blast it",
-    whenToUse: "When a barrel blocks the path — check first, then blast.",
+    whenToUse: "When you're looping down a lane and don't know which squares have barrels.",
     demoCode: "if (targetAhead()) {\n  shoot()\n}",
   },
   {

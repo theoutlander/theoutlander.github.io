@@ -1,7 +1,7 @@
 {
   "id": "w2m4",
   "world": 2,
-  "index": 4,
+  "index": 5,
   "title": "ARE WE THERE YET",
   "teaches": "atBeacon()",
   "arena": {

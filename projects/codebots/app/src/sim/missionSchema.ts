@@ -28,7 +28,7 @@ export const ArenaSchema = z.object({
 export const MissionSchema = z.object({
   id: z.string(),
   world: z.number().int().min(1).max(8),
-  index: z.number().int().min(1).max(6),
+  index: z.number().int().min(1).max(8),
   title: z.string(),
   teaches: z.string(),
   arena: ArenaSchema,

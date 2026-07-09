@@ -3,7 +3,7 @@
   "world": 3,
   "index": 6,
   "title": "THE SPIRAL VAULT",
-  "teaches": "while: the master navigator",
+  "teaches": "while + honk-gate (put it together)",
   "arena": {
     "cols": 9,
     "rows": 9,
@@ -111,7 +111,21 @@
     "crates": [],
     "coins": [],
     "chests": [],
-    "gates": [],
+    "gates": [
+      {
+        "pad": {
+          "x": 2,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 3,
+            "y": 3
+          }
+        ],
+        "open": false
+      }
+    ],
     "targets": [
       {
         "x": 4,
@@ -135,15 +149,15 @@
     },
     "facing": "E"
   },
-  "parLines": 9,
-  "starterCode": "// Sprocket's vault spirals inward. But your navigator already knows the way —\n// the same loop, all the way to the treasure.\n",
+  "parLines": 12,
+  "starterCode": "// Sprocket LOCKED the vault. Your navigator winds the spiral — but a gate blocks\n// the inner arm, and only a honk on its pad opens it. Remember honk()?\n",
   "hints": [
-    "You already built the program that solves this — don't start over.",
-    "The spiral is just more of the same: barrels, walls, and turns, until the chest.",
-    "Your full navigator — shoot / turn / forward inside one while — winds all the way in."
+    "This isn't just the navigator — there's a locked GATE in the spiral now.",
+    "A honk on the gate's pad opens it. You don't have to find the pad: honk every step and you'll roll right over it.",
+    "Take your full navigator and add honk() at the top of the loop — everything else stays the same."
   ],
-  "briefing": "The treasure sits at the heart of a spiral vault — barrels on the arms, walls at every turn. One while loop, the navigator you built, winds all the way in.",
-  "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
+  "briefing": "The final vault is locked. Your navigator still winds the spiral — but a GATE bars the inner arm, and only a honk on its pad opens it. Add honk() to your loop; honking every step trips the pad for you. World 3 meets World 1.",
+  "authorSolution": "while (!atBeacon()) {\n  honk()\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",
   "bonusStar": {
     "kind": "zeroBumps"
   }

@@ -36,7 +36,7 @@ export const BADGES: Badge[] = [
   { id: "decider", title: "DECIDER", desc: "Wrote your first if — the bot can decide", kind: "concept", icon: "branch",
     earned: (s) => cleared(s, "w2m1") },
   { id: "sharpshooter", title: "SHARPSHOOTER", desc: "Blasted a barrel with shoot()", kind: "concept", icon: "target",
-    earned: (s) => cleared(s, "w2m2") },
+    earned: (s) => cleared(s, "w2m2s") },
   { id: "both-ways", title: "BOTH WAYS", desc: "Handled two paths with if / else", kind: "concept", icon: "fork",
     earned: (s) => cleared(s, "w2m3") },
   { id: "never-quit", title: "NEVER QUIT", desc: "Looped with while until the job was done", kind: "concept", icon: "infinity",

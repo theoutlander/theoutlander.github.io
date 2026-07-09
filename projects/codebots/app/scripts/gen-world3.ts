@@ -42,6 +42,7 @@ interface Build {
   path?: [number, number][];
   open?: boolean; // all floor (no walls) — for the simple straight lanes
   targets?: [number, number][];
+  gates?: { pad: [number, number]; gateCells: [number, number][] }[];
   start: { x: number; y: number; facing: "N" | "E" | "S" | "W" };
   beacon: [number, number]; beaconStyle?: "beacon" | "chest";
   parLines: number; starterCode: string; hints: [string, string, string];
@@ -58,7 +59,12 @@ function build(b: Build) {
     id: b.id, world: 3, index: b.index, title: b.title, teaches: b.teaches,
     arena: {
       cols: b.cols, rows: b.rows, cells,
-      crates: [], coins: [], chests: [], gates: [],
+      crates: [], coins: [], chests: [],
+      gates: (b.gates ?? []).map((g) => ({
+        pad: V(g.pad[0], g.pad[1]),
+        gateCells: g.gateCells.map(([x, y]) => V(x, y)),
+        open: false,
+      })),
       targets: (b.targets ?? []).map(([x, y]) => V(x, y)),
       beacon: V(b.beacon[0], b.beacon[1]),
       ...(b.beaconStyle ? { beaconStyle: b.beaconStyle } : {}),
@@ -78,6 +84,11 @@ const FULL_RULE =
   "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}";
 const SHOOT_LANE =
   "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}";
+// The boss twist: the full navigator PLUS a honk every step. Honking is harmless off the pad, but
+// trips the gate's pad when the bot rolls over it — so the kid combines the W3 navigator with W1's
+// honk-gates without having to pinpoint where the pad is.
+const HONK_NAVIGATOR =
+  "while (!atBeacon()) {\n  honk()\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}";
 
 const missions: Build[] = [
   // ── L1 — while (!atBeacon()) ────────────────────────────────────────────────
@@ -166,9 +177,9 @@ const missions: Build[] = [
     authorSolution: FULL_RULE,
     bonus: { kind: "zeroBumps" },
   },
-  // ── L6 — BOSS: the spiral vault ─────────────────────────────────────────────
+  // ── L6 — BOSS: the spiral vault, now with a locked gate (synthesis) ─────────
   {
-    id: "w3m6", index: 6, title: "THE SPIRAL VAULT", teaches: "while: the master navigator",
+    id: "w3m6", index: 6, title: "THE SPIRAL VAULT", teaches: "while + honk-gate (put it together)",
     cols: 9, rows: 9,
     path: join(
       line(1, 1, 7, 1), // top outer  E
@@ -180,16 +191,19 @@ const missions: Build[] = [
       line(5, 5, 3, 5), // inner bottom W
     ),
     targets: [[4, 1], [7, 4]],
+    // A locked gate deep on the inner arm (3,3); its pad sits early on the outer top (2,1). The
+    // plain navigator would jam at the closed gate — the kid must add honk() to open it on the way.
+    gates: [{ pad: [2, 1], gateCells: [[3, 3]] }],
     start: { x: 1, y: 1, facing: "E" }, beacon: [3, 5], beaconStyle: "chest",
-    parLines: 9,
-    starterCode: "// Sprocket's vault spirals inward. But your navigator already knows the way —\n// the same loop, all the way to the treasure.\n",
+    parLines: 12,
+    starterCode: "// Sprocket LOCKED the vault. Your navigator winds the spiral — but a gate blocks\n// the inner arm, and only a honk on its pad opens it. Remember honk()?\n",
     hints: [
-      "You already built the program that solves this — don't start over.",
-      "The spiral is just more of the same: barrels, walls, and turns, until the chest.",
-      "Your full navigator — shoot / turn / forward inside one while — winds all the way in.",
+      "This isn't just the navigator — there's a locked GATE in the spiral now.",
+      "A honk on the gate's pad opens it. You don't have to find the pad: honk every step and you'll roll right over it.",
+      "Take your full navigator and add honk() at the top of the loop — everything else stays the same.",
     ],
-    briefing: "The treasure sits at the heart of a spiral vault — barrels on the arms, walls at every turn. One while loop, the navigator you built, winds all the way in.",
-    authorSolution: FULL_RULE,
+    briefing: "The final vault is locked. Your navigator still winds the spiral — but a GATE bars the inner arm, and only a honk on its pad opens it. Add honk() to your loop; honking every step trips the pad for you. World 3 meets World 1.",
+    authorSolution: HONK_NAVIGATOR,
     bonus: { kind: "zeroBumps" },
   },
 ];

@@ -1,9 +1,9 @@
 {
-  "id": "w2m2",
+  "id": "w2m2s",
   "world": 2,
-  "index": 3,
-  "title": "BLAST IT",
-  "teaches": "targetAhead()",
+  "index": 2,
+  "title": "TAKE THE SHOT",
+  "teaches": "shoot()",
   "arena": {
     "cols": 8,
     "rows": 3,
@@ -49,7 +49,7 @@
         "y": 1
       },
       {
-        "x": 5,
+        "x": 4,
         "y": 1
       }
     ],
@@ -65,16 +65,20 @@
     },
     "facing": "E"
   },
-  "parLines": 6,
-  "starterCode": "// New sensor: targetAhead() tells you when a barrel is right ahead —\n// so your loop knows WHEN to shoot instead of firing blindly.\n",
+  "parLines": 4,
+  "starterCode": "// New gear: a BLASTER. shoot() fires straight ahead and smashes a barrel.\n// The barrels are right in your lane — blast them and roll on.\n",
   "hints": [
-    "The runway is a straight line — clear barrels only when there's one to clear.",
-    "Before each roll, ask targetAhead(). If it's yes, shoot() before you move.",
-    "Wrap 'check, maybe shoot, then forward' in a repeat so it handles every square."
+    "The barrel is dead ahead — you don't need to check anything, just fire.",
+    "shoot() smashes the first barrel in front of you. Then keep rolling.",
+    "Blast, drive, blast the next one, then drive to the beacon."
   ],
-  "briefing": "More barrels — but firing blindly wastes shots. targetAhead() is a yes/no sensor: it tells you when a barrel's right in front. Check it, then shoot only when you need to.",
-  "authorSolution": "repeat 7 {\n  if (targetAhead()) {\n    shoot()\n  }\n  forward(1)\n}",
+  "briefing": "Your new BLASTER clears the way. See a barrel in your lane? shoot() smashes it. No sensors yet — just aim down the runway and fire.",
+  "authorSolution": "shoot()\nforward(2)\nshoot()\nforward(5)",
   "bonusStar": {
     "kind": "zeroBumps"
+  },
+  "unlock": {
+    "part": "BLASTER",
+    "cost": 0
   }
 }

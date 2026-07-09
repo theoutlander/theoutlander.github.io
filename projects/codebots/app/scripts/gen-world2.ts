@@ -72,27 +72,44 @@ const missions: Build[] = [
     bonus: { kind: "zeroBumps" },
     unlock: { part: "SCANNER", cost: 0 },
   },
-  // ── L2 — shoot() + targetAhead() in a loop ─────────────────────────────────
+  // ── L2 — shoot() ALONE (a barrel you can see is dead ahead) ────────────────
   {
-    id: "w2m2", index: 2, title: "BLAST IT", teaches: "shoot() + targetAhead()",
+    id: "w2m2s", index: 2, title: "TAKE THE SHOT", teaches: "shoot()",
+    cols: 8, rows: 3,
+    targets: [[2, 1], [4, 1]],
+    start: { x: 0, y: 1, facing: "E" }, beacon: [7, 1],
+    parLines: 4,
+    starterCode: "// New gear: a BLASTER. shoot() fires straight ahead and smashes a barrel.\n// The barrels are right in your lane — blast them and roll on.\n",
+    hints: [
+      "The barrel is dead ahead — you don't need to check anything, just fire.",
+      "shoot() smashes the first barrel in front of you. Then keep rolling.",
+      "Blast, drive, blast the next one, then drive to the beacon.",
+    ],
+    briefing: "Your new BLASTER clears the way. See a barrel in your lane? shoot() smashes it. No sensors yet — just aim down the runway and fire.",
+    authorSolution: "shoot()\nforward(2)\nshoot()\nforward(5)",
+    bonus: { kind: "zeroBumps" },
+    unlock: { part: "BLASTER", cost: 0 },
+  },
+  // ── L3 — targetAhead() (know WHEN to shoot, in a loop) ─────────────────────
+  {
+    id: "w2m2", index: 3, title: "BLAST IT", teaches: "targetAhead()",
     cols: 8, rows: 3,
     targets: [[2, 1], [5, 1]],
     start: { x: 0, y: 1, facing: "E" }, beacon: [7, 1],
     parLines: 6,
-    starterCode: "// New gear: a BLASTER. shoot() smashes a barrel right in front of you.\n// targetAhead() tells you when there's one to hit.\n",
+    starterCode: "// New sensor: targetAhead() tells you when a barrel is right ahead —\n// so your loop knows WHEN to shoot instead of firing blindly.\n",
     hints: [
-      "The runway is a straight line — you just need to clear barrels as you meet them.",
+      "The runway is a straight line — clear barrels only when there's one to clear.",
       "Before each roll, ask targetAhead(). If it's yes, shoot() before you move.",
       "Wrap 'check, maybe shoot, then forward' in a repeat so it handles every square.",
     ],
-    briefing: "Barrels on the runway! Your new BLASTER clears them. Check targetAhead() before each roll and shoot() when a barrel's in the way.",
+    briefing: "More barrels — but firing blindly wastes shots. targetAhead() is a yes/no sensor: it tells you when a barrel's right in front. Check it, then shoot only when you need to.",
     authorSolution: "repeat 7 {\n  if (targetAhead()) {\n    shoot()\n  }\n  forward(1)\n}",
     bonus: { kind: "zeroBumps" },
-    unlock: { part: "BLASTER", cost: 0 },
   },
   // ── L3 — if / else ─────────────────────────────────────────────────────────
   {
-    id: "w2m3", index: 3, title: "THIS WAY OR THAT", teaches: "if / else",
+    id: "w2m3", index: 4, title: "THIS WAY OR THAT", teaches: "if / else",
     cols: 8, rows: 5,
     walls: [[4, 2]],
     start: { x: 0, y: 2, facing: "E" }, beacon: [7, 2],
@@ -109,7 +126,7 @@ const missions: Build[] = [
   },
   // ── L4 — atBeacon() ────────────────────────────────────────────────────────
   {
-    id: "w2m4", index: 4, title: "ARE WE THERE YET", teaches: "atBeacon()",
+    id: "w2m4", index: 5, title: "ARE WE THERE YET", teaches: "atBeacon()",
     cols: 8, rows: 3,
     mud: [[3, 1]],
     start: { x: 0, y: 1, facing: "E" }, beacon: [6, 1],
@@ -126,7 +143,7 @@ const missions: Build[] = [
   },
   // ── L5 — combine: if/else with shoot in a loop ─────────────────────────────
   {
-    id: "w2m5", index: 5, title: "MIXED BAG", teaches: "if / else + shoot",
+    id: "w2m5", index: 6, title: "MIXED BAG", teaches: "if / else + shoot",
     cols: 8, rows: 3,
     targets: [[3, 1], [6, 1]],
     start: { x: 0, y: 1, facing: "E" }, beacon: [7, 1],
@@ -143,7 +160,7 @@ const missions: Build[] = [
   },
   // ── L6 — BOSS: the gauntlet ────────────────────────────────────────────────
   {
-    id: "w2m6", index: 6, title: "SPROCKET'S GAUNTLET", teaches: "everything: sense, shoot, decide",
+    id: "w2m6", index: 7, title: "SPROCKET'S GAUNTLET", teaches: "everything: sense, shoot, decide",
     cols: 10, rows: 6,
     walls: [[6, 5], [6, 4], [6, 3], [6, 2]],
     targets: [[3, 5], [8, 1]],

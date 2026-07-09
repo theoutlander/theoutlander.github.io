@@ -22,7 +22,7 @@ describe("badges", () => {
 
   it("concept badges tie to the level that teaches the concept", () => {
     expect(earnedBadges(save([{ id: "w2m1", stars: 1 }]))).toContain("decider"); // first if
-    expect(earnedBadges(save([{ id: "w2m2", stars: 1 }]))).toContain("sharpshooter"); // first shoot
+    expect(earnedBadges(save([{ id: "w2m2s", stars: 1 }]))).toContain("sharpshooter"); // first shoot
     expect(earnedBadges(save([{ id: "w3m1", stars: 1 }]))).toContain("never-quit"); // first while
     expect(earnedBadges(save([{ id: "w4m1", stars: 1 }]))).toContain("toolmaker"); // first function
   });
