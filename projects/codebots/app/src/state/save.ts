@@ -44,6 +44,32 @@ export function saveSave(data: SaveData): void {
   } catch {
     // storage full/blocked — progress just won't persist; the game stays playable.
   }
+  // Signal the cloud-sync layer (if any) to push. No-op when there's no window / no account.
+  if (typeof window !== "undefined") window.dispatchEvent(new Event("cb:saved"));
+}
+
+/**
+ * Non-destructive "best of both" merge of two saves (local + cloud). Used when a kid logs in on
+ * a new device: we never want a stale device to WIPE newer progress, so every field takes the
+ * more-advanced value — cleared if either cleared, the higher star count per mission, the union
+ * of unlocked parts + badges, and the max coins. Deterministic and order-independent.
+ */
+export function mergeSaves(a: SaveData, b: SaveData): SaveData {
+  const missions: Record<string, MissionProgress> = {};
+  for (const id of new Set([...Object.keys(a.missions), ...Object.keys(b.missions)])) {
+    const ma = a.missions[id];
+    const mb = b.missions[id];
+    missions[id] = {
+      cleared: !!(ma?.cleared || mb?.cleared),
+      stars: Math.max(ma?.stars ?? 0, mb?.stars ?? 0),
+    };
+  }
+  return {
+    missions,
+    coins: Math.max(a.coins, b.coins),
+    unlocked: [...new Set([...a.unlocked, ...b.unlocked])],
+    badges: [...new Set([...a.badges, ...b.badges])],
+  };
 }
 
 /**

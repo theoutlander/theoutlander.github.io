@@ -34,6 +34,7 @@
     "@codemirror/state": "^6.7.1",
     "@codemirror/view": "^6.43.6",
     "@lezer/highlight": "^1.2.3",
+    "@supabase/supabase-js": "^2.110.1",
     "phaser": "^4.2.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7"

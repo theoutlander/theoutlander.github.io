@@ -7,7 +7,10 @@ import { HQ } from "./ui/HQ";
 import { BotMaker } from "./ui/BotMaker";
 import { Profile } from "./ui/Profile";
 import { OpenFieldScreen } from "./ui/OpenFieldScreen";
+import { AccountScreen } from "./ui/AccountScreen";
 import { ALL, globalLevel } from "./content/missions";
+import { currentAccount, cloudEnabled, type Account } from "./state/account";
+import { syncNow, initCloudSync } from "./state/cloudSync";
 import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
 import { loadSave } from "./state/save";
 import { analytics } from "./state/analytics";
@@ -18,7 +21,8 @@ type Screen =
   | { name: "mission"; index: number }
   | { name: "botmaker" }
   | { name: "profile" }
-  | { name: "field" };
+  | { name: "field" }
+  | { name: "account" };
 
 /**
  * App shell: the CodeBots header + a hub → map/bot-maker → mission state machine. The bot config
@@ -28,10 +32,19 @@ export function App() {
   const [botConfig, setBotConfig] = useState(loadBotConfig);
   const [screen, setScreen] = useState<Screen>({ name: "hq" });
   const [coins, setCoins] = useState(() => loadSave().coins);
+  const [account, setAccount] = useState<Account | null>(null);
   const [, force] = useState(0); // re-read the save after a clear (unlocks the next level)
 
   useEffect(() => {
     analytics.gameOpen();
+    // If already signed in from a previous visit, pull + merge the cloud save, then keep it synced.
+    initCloudSync();
+    currentAccount().then((a) => {
+      if (a) {
+        setAccount(a);
+        syncNow().then(() => { setCoins(loadSave().coins); force((n) => n + 1); });
+      }
+    });
   }, []);
 
   const save = loadSave();
@@ -52,6 +65,7 @@ export function App() {
   const toBotMaker = () => setScreen({ name: "botmaker" });
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
   const toField = () => setScreen({ name: "field" });
+  const toAccount = () => setScreen({ name: "account" });
 
   function openMission(index: number) {
     analytics.levelOpen(index + 1, ALL[index].title);
@@ -74,6 +88,8 @@ export function App() {
         ? { back: "‹ HQ", onBack: toHQ, current: "PROFILE" }
         : screen.name === "field"
         ? { back: "‹ HQ", onBack: toHQ, current: "OPEN FIELD" }
+        : screen.name === "account"
+        ? { back: "‹ HQ", onBack: toHQ, current: "ACCOUNT" }
         : mission
           ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
@@ -97,6 +113,11 @@ export function App() {
           </div>
         ) : null}
         <div style={{ flex: 1 }} />
+        {cloudEnabled ? (
+          <button onClick={toAccount} style={{ all: "unset", cursor: "pointer" }}>
+            <Chip color={account ? "green" : "amber"}>{account ? `◉ ${account.username}` : "LOG IN"}</Chip>
+          </button>
+        ) : null}
         <Chip color="dim">PILOT: {bot.playerName}</Chip>
         <Chip color="cyan">BOT: {bot.botName}</Chip>
         <Coin count={coins} />
@@ -109,6 +130,12 @@ export function App() {
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (
           <OpenFieldScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
+        ) : screen.name === "account" ? (
+          <AccountScreen
+            account={account}
+            onAccount={(a) => { setAccount(a); setCoins(loadSave().coins); refresh(); }}
+            onDone={toHQ}
+          />
         ) : screen.name === "botmaker" ? (
           <BotMaker onExit={toHQ} onSaved={() => setBotConfig(loadBotConfig())} />
         ) : screen.name === "mission" ? (
