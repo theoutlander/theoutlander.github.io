@@ -46,6 +46,7 @@ export function HQ({
   onProfile,
   onOpenField,
   onBattle,
+  onGarage,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
@@ -55,6 +56,7 @@ export function HQ({
   onProfile: () => void;
   onOpenField: () => void;
   onBattle: () => void;
+  onGarage: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
@@ -108,6 +110,13 @@ export function HQ({
             chip="FIGHT →"
             chipColor="green"
             onClick={onBattle}
+          />
+          <Door
+            title="GARAGE"
+            desc="Spend your coins. Bolt on gear, pick a frame — but weight is destiny, so choose."
+            chip={save.coins > 0 ? `SPEND ${save.coins} →` : "BUILD YOUR BOT"}
+            chipColor="amber"
+            onClick={onGarage}
           />
           <Door
             title="OPEN FIELD"

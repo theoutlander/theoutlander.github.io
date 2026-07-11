@@ -8,12 +8,13 @@ import { BotMaker } from "./ui/BotMaker";
 import { Profile } from "./ui/Profile";
 import { OpenFieldScreen } from "./ui/OpenFieldScreen";
 import { BattleScreen } from "./ui/BattleScreen";
+import { GarageScreen } from "./ui/GarageScreen";
 import { AccountScreen } from "./ui/AccountScreen";
 import { ALL, globalLevel } from "./content/missions";
 import { currentAccount, cloudEnabled, type Account } from "./state/account";
 import { syncNow, initCloudSync } from "./state/cloudSync";
 import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
-import { loadSave } from "./state/save";
+import { loadSave, saveSave } from "./state/save";
 import { analytics } from "./state/analytics";
 
 type Screen =
@@ -24,6 +25,7 @@ type Screen =
   | { name: "profile" }
   | { name: "field" }
   | { name: "battle" }
+  | { name: "garage" }
   | { name: "account" };
 
 /**
@@ -68,7 +70,15 @@ export function App() {
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
   const toField = () => setScreen({ name: "field" });
   const toBattle = () => setScreen({ name: "battle" });
+  const toGarage = () => { refresh(); setScreen({ name: "garage" }); };
   const toAccount = () => setScreen({ name: "account" });
+
+  /** Garage purchases/equips write straight to the save, then repaint coins + screens. */
+  function applySave(next: ReturnType<typeof loadSave>) {
+    saveSave(next);
+    setCoins(next.coins);
+    refresh();
+  }
 
   function openMission(index: number) {
     analytics.levelOpen(index + 1, ALL[index].title);
@@ -93,6 +103,8 @@ export function App() {
         ? { back: "‹ HQ", onBack: toHQ, current: "OPEN FIELD" }
         : screen.name === "battle"
         ? { back: "‹ HQ", onBack: toHQ, current: "BATTLE ARENA" }
+        : screen.name === "garage"
+        ? { back: "‹ HQ", onBack: toHQ, current: "GARAGE" }
         : screen.name === "account"
         ? { back: "‹ HQ", onBack: toHQ, current: "ACCOUNT" }
         : mission
@@ -130,13 +142,15 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (
           <OpenFieldScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
         ) : screen.name === "battle" ? (
           <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
+        ) : screen.name === "garage" ? (
+          <GarageScreen save={save} onSave={applySave} />
         ) : screen.name === "account" ? (
           <AccountScreen
             account={account}

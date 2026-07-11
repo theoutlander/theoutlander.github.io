@@ -35,6 +35,8 @@ export interface Entrant {
   id: string;
   source: string;
   isPlayer?: boolean;
+  /** from the Garage loadout. Omitted = the stock bot (armour 100, damage 34, range 6). */
+  stats?: { armor?: number; damage?: number; range?: number };
 }
 
 export type BattleOutcome = "win" | "lose" | "draw";
@@ -54,6 +56,10 @@ interface Bot {
   pos: Vec2;
   facing: Facing;
   armor: number;
+  /** per-bot combat stats (from the Garage loadout) */
+  maxArmor: number;
+  damage: number;
+  range: number;
   wrecked: boolean;
   gen: Generator<Command, void, unknown> | null;
   done: boolean;
@@ -76,16 +82,22 @@ export function runBattle(
   api: string[],
   winRule: WinRule = "reachBeacon",
 ): BattleResult {
-  const bots: Bot[] = entrants.map((e, i) => ({
-    index: i,
-    isPlayer: !!e.isPlayer,
-    pos: starts[i].pos,
-    facing: starts[i].facing,
-    armor: ARMOR_MAX,
-    wrecked: false,
-    gen: compile(e.source, api)(),
-    done: false,
-  }));
+  const bots: Bot[] = entrants.map((e, i) => {
+    const armor = e.stats?.armor ?? ARMOR_MAX;
+    return {
+      index: i,
+      isPlayer: !!e.isPlayer,
+      pos: starts[i].pos,
+      facing: starts[i].facing,
+      armor,
+      maxArmor: armor,
+      damage: e.stats?.damage ?? SHOOT_DAMAGE,
+      range: e.stats?.range ?? SHOOT_RANGE,
+      wrecked: false,
+      gen: compile(e.source, api)(),
+      done: false,
+    };
+  });
   const targets = new Set<string>((arena.targets ?? []).map(key));
   const staticBlocked = new Set<string>();
   for (const c of arena.crates) staticBlocked.add(key(c));
@@ -123,9 +135,9 @@ export function runBattle(
       case "atBeacon":
         return atBeacon(self);
       case "enemyAhead": {
-        // any living other bot straight ahead within shot range (nothing solid in between)
+        // any living other bot straight ahead within THIS bot's shot range (nothing solid between)
         let p = self.pos;
-        for (let i = 0; i < SHOOT_RANGE; i++) {
+        for (let i = 0; i < self.range; i++) {
           p = stepFacing(p, self.facing);
           if (!inBounds(arena, p) || cellAt(arena, p) === "wall" || staticBlocked.has(key(p)) || targets.has(key(p))) return false;
           if (botAt(p)) return true;
@@ -145,7 +157,7 @@ export function runBattle(
     let p = self.pos;
     let hitBot: Bot | null = null;
     let hitAt: Vec2 | null = null;
-    for (let i = 0; i < SHOOT_RANGE; i++) {
+    for (let i = 0; i < self.range; i++) {
       p = stepFacing(p, self.facing);
       if (!inBounds(arena, p) || cellAt(arena, p) === "wall" || staticBlocked.has(key(p))) break;
       if (targets.has(key(p))) { targets.delete(key(p)); hitAt = { ...p }; break; }
@@ -154,7 +166,7 @@ export function runBattle(
     }
     events.push({ round, bot: self.index, type: "shoot", from: { ...self.pos }, facing: self.facing, hit: hitBot?.index ?? null, at: hitAt });
     if (hitBot) {
-      hitBot.armor = Math.max(0, hitBot.armor - SHOOT_DAMAGE);
+      hitBot.armor = Math.max(0, hitBot.armor - self.damage);
       events.push({ round, bot: self.index, type: "hit", target: hitBot.index, at: { ...hitBot.pos }, armor: hitBot.armor });
       if (hitBot.armor === 0) {
         hitBot.wrecked = true;

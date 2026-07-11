@@ -10,31 +10,43 @@ export interface MissionProgress {
   stars: number;
 }
 
+/** What the kid has built in the Garage. Capability parts come from `unlocked` (learning); `bought`
+ *  is what coins have paid for; `equipped` is the current loadout (only bites in the Arena). */
+export interface Loadout {
+  chassis: string;
+  equipped: string[];
+  bought: string[];
+}
+
+export const FRESH_LOADOUT: Loadout = { chassis: "scout", equipped: [], bought: [] };
+
 export interface SaveData {
   missions: Record<string, MissionProgress>;
   coins: number;
   unlocked: string[];
   /** earned badge ids (see content/badges.ts) */
   badges: string[];
+  loadout: Loadout;
 }
 
 const KEY = "codebots.save.v1";
 
-const FRESH: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [] };
+const FRESH: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [], loadout: { ...FRESH_LOADOUT } };
 
 export function loadSave(): SaveData {
   try {
     const raw = localStorage.getItem(KEY);
-    if (!raw) return { ...FRESH };
+    if (!raw) return { ...FRESH, loadout: { ...FRESH_LOADOUT } };
     const parsed = JSON.parse(raw) as Partial<SaveData>;
     return {
       missions: parsed.missions ?? {},
       coins: parsed.coins ?? 0,
       unlocked: parsed.unlocked ?? [],
       badges: parsed.badges ?? [],
+      loadout: { ...FRESH_LOADOUT, ...(parsed.loadout ?? {}) },
     };
   } catch {
-    return { ...FRESH };
+    return { ...FRESH, loadout: { ...FRESH_LOADOUT } };
   }
 }
 
@@ -64,12 +76,48 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
       stars: Math.max(ma?.stars ?? 0, mb?.stars ?? 0),
     };
   }
+  // Loadout: never lose a purchase. Bought parts union; keep the frame with the most slots; keep
+  // whichever loadout has more equipped (an empty one never wipes a built bot).
+  const la = a.loadout ?? FRESH_LOADOUT;
+  const lb = b.loadout ?? FRESH_LOADOUT;
+  const bought = [...new Set([...la.bought, ...lb.bought])];
+  const chassis = slotsOf(la.chassis) >= slotsOf(lb.chassis) ? la.chassis : lb.chassis;
+  const equipped = la.equipped.length >= lb.equipped.length ? la.equipped : lb.equipped;
+
   return {
     missions,
     coins: Math.max(a.coins, b.coins),
     unlocked: [...new Set([...a.unlocked, ...b.unlocked])],
     badges: [...new Set([...a.badges, ...b.badges])],
+    loadout: { chassis, equipped, bought },
   };
+}
+
+// Kept local (not imported from content/parts) so save.ts stays free of content deps.
+const CHASSIS_SLOTS: Record<string, number> = { scout: 2, ranger: 3, hauler: 4 };
+const slotsOf = (id: string) => CHASSIS_SLOTS[id] ?? 0;
+
+/** Spend coins on a chassis. Returns null if it can't be afforded / already owned. */
+export function buyChassis(save: SaveData, id: string, cost: number): SaveData | null {
+  if (save.loadout.chassis === id || save.coins < cost) return null;
+  return { ...save, coins: save.coins - cost, loadout: { ...save.loadout, chassis: id } };
+}
+
+/** Spend coins on a part. Returns null if it can't be afforded / already owned. */
+export function buyPart(save: SaveData, id: string, cost: number): SaveData | null {
+  if (save.loadout.bought.includes(id) || save.coins < cost) return null;
+  return {
+    ...save,
+    coins: save.coins - cost,
+    loadout: { ...save.loadout, bought: [...save.loadout.bought, id] },
+  };
+}
+
+/** Equip / unequip a part (no coin cost). */
+export function toggleEquip(save: SaveData, id: string): SaveData {
+  const on = save.loadout.equipped.includes(id);
+  const equipped = on ? save.loadout.equipped.filter((p) => p !== id) : [...save.loadout.equipped, id];
+  return { ...save, loadout: { ...save.loadout, equipped } };
 }
 
 /**
@@ -108,6 +156,7 @@ export function recordResult(
     coins: save.coins + coinsEarned,
     unlocked,
     badges: save.badges,
+    loadout: save.loadout,
   };
   // Badges are recomputed from the updated progress; new ones (not already recorded) are surfaced.
   const newBadges = newlyEarned(next);

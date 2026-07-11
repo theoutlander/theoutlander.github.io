@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mergeSaves, type SaveData } from "../../src/state/save";
 
-const base: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [] };
+const base: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [], loadout: { chassis: "scout", equipped: [], bought: [] } };
 const make = (o: Partial<SaveData>): SaveData => ({ ...base, ...o });
 
 /**

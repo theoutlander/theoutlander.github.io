@@ -11,6 +11,8 @@ import { PRESETS, presetById, BATTLE_API } from "../content/enemies";
 import { desugarRepeat, findUnknownCalls, collectFunctionNames } from "../sandbox/transform";
 import { unknownCommandMessage } from "../sandbox/errors";
 import { analytics } from "../state/analytics";
+import { loadSave } from "../state/save";
+import { computeStats } from "../content/parts";
 
 const BATTLE_EXTRA = ["enemyAhead", "enemyNear"];
 
@@ -36,14 +38,15 @@ function sfxEvent(type: string): SimEvent | null {
   return t ? ({ type: t } as unknown as SimEvent) : null;
 }
 
-function HealthBar({ label, hp, color }: { label: string; hp: number; color: string }) {
+function HealthBar({ label, hp, max, color }: { label: string; hp: number; max: number; color: string }) {
+  const pct = max > 0 ? Math.max(0, Math.min(100, (hp / max) * 100)) : 0;
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 3, flex: 1, minWidth: 120 }}>
       <div style={{ display: "flex", justifyContent: "space-between", fontSize: "var(--text-2xs)", fontWeight: 700, letterSpacing: "1px", color: "var(--text-dim)" }}>
-        <span>{label}</span><span>{hp}</span>
+        <span>{label}</span><span>{hp}/{max}</span>
       </div>
       <div style={{ height: 10, borderRadius: 6, background: "rgba(0,0,0,.3)", overflow: "hidden" }}>
-        <div style={{ width: `${hp}%`, height: "100%", background: color, transition: "width .2s" }} />
+        <div style={{ width: `${pct}%`, height: "100%", background: color, transition: "width .2s" }} />
       </div>
     </div>
   );
@@ -58,10 +61,19 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
   const [code, setCode] = useState(STARTER);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<"win" | "lose" | "draw" | null>(null);
-  const [hp, setHp] = useState({ player: 100, enemy: 100 });
+  const enemy = presetById(enemyId)!;
+
+  // Your Garage loadout feeds the fight — unless you've overloaded the frame, in which case the
+  // gear doesn't fit and your bot rolls out stock. Weight is a real constraint, not a suggestion.
+  const save = loadSave();
+  const ls = computeStats(save.loadout.chassis, save.loadout.equipped);
+  const overloaded = ls.overWeight || ls.overSlots;
+  const myStats = overloaded ? undefined : { armor: ls.armor, damage: ls.damage, range: ls.range };
+  const myMax = myStats?.armor ?? 100;
+
+  const [hp, setHp] = useState({ player: myMax, enemy: 100 });
   const [errorLine, setErrorLine] = useState<number | null>(null);
   const [status, setStatus] = useState("Write your bot's brain, then press FIGHT — once it starts, you can't steer it.");
-  const enemy = presetById(enemyId)!;
 
   useEffect(() => {
     sfx.current = new Sfx();
@@ -96,7 +108,10 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
     try {
       res = runBattle(
         ARENA,
-        [{ id: "me", source: code, isPlayer: true }, { id: enemy.id, source: enemy.source }],
+        [
+          { id: "me", source: code, isPlayer: true, stats: myStats },
+          { id: enemy.id, source: enemy.source },
+        ],
         [PLAYER_START, ENEMY_START],
         [...BATTLE_API, ...BATTLE_EXTRA],
         "both",
@@ -107,7 +122,7 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
     }
     analytics.battleRun?.(enemy.id);
     setRunning(true);
-    setHp({ player: 100, enemy: 100 });
+    setHp({ player: myMax, enemy: 100 });
     setStatus("FIGHT!");
     b.scene.play(res.events, {
       onEvent: (ev) => {
@@ -151,8 +166,8 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
 
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
         <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
-          <HealthBar label="YOUR BOT" hp={hp.player} color="var(--cyan)" />
-          <HealthBar label={enemy.name} hp={hp.enemy} color="var(--red)" />
+          <HealthBar label="YOUR BOT" hp={hp.player} max={myMax} color="var(--cyan)" />
+          <HealthBar label={enemy.name} hp={hp.enemy} max={100} color="var(--red)" />
         </div>
         <div ref={host} style={{ flex: 1, minHeight: 0, borderRadius: 10, overflow: "hidden", position: "relative" }}>
           {result ? (

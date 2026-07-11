@@ -6,7 +6,7 @@ import type { SaveData } from "../../src/state/save";
 function save(clears: { id: string; stars: number }[]): SaveData {
   const missions: SaveData["missions"] = {};
   for (const c of clears) missions[c.id] = { cleared: true, stars: c.stars };
-  return { missions, coins: 0, unlocked: [], badges: [] };
+  return { missions, coins: 0, unlocked: [], badges: [], loadout: { chassis: "scout", equipped: [], bought: [] } };
 }
 
 const cleared3 = (ids: string[]) => ids.map((id) => ({ id, stars: 3 }));
