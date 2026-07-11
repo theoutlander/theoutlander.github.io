@@ -16,7 +16,10 @@ import type { Arena, Command, Facing, Vec2 } from "./types";
  */
 
 const ARMOR_MAX = 100;
-const SHOOT_DAMAGE = 34; // ~3 clean hits to wreck a bot — fights last a satisfying few rounds
+// ~7 hits to wreck. Deliberately NOT a 3-hit kill: with a 3-hit kill whoever fires first simply
+// wins and tactics are irrelevant. A longer fight is what makes positioning, cover and RANGE matter
+// — i.e. what makes better CODE win.
+const SHOOT_DAMAGE = 15;
 const SHOOT_RANGE = 6;
 const MAX_ROUNDS = 200; // a battle that never resolves ends in a draw, never hangs
 const MAX_THINK = 200; // per-turn cap on sensor calls before we force a pass (guards while(true))
@@ -145,11 +148,49 @@ export function runBattle(
         return false;
       }
       case "enemyNear": {
-        return bots.some((b) => b !== self && !b.wrecked && Math.abs(b.pos.x - self.pos.x) + Math.abs(b.pos.y - self.pos.y) <= 2);
+        return bots.some((b) => b !== self && !b.wrecked && dist(self.pos, b.pos) <= 2);
+      }
+      // "Would rolling forward bring me CLOSER to my rival?" This is what lets a bot actually HUNT.
+      // Without it, a bot can only see a rival perfectly lined up on a row/column — so it spins in
+      // place forever and never engages (which is exactly what the presets were doing).
+      case "closerAhead": {
+        const foe = nearestFoe(self);
+        if (!foe) return false;
+        const ahead2 = stepFacing(self.pos, self.facing);
+        if (stopsProgress(self, ahead2)) return false;
+        return dist(ahead2, foe.pos) < dist(self.pos, foe.pos);
+      }
+      // Which side is the rival on? (relative to the way I'm facing)
+      case "enemyLeft":
+      case "enemyRight": {
+        const foe = nearestFoe(self);
+        if (!foe) return false;
+        const dx = foe.pos.x - self.pos.x;
+        const dy = foe.pos.y - self.pos.y;
+        // sideways component in the bot's own frame: +ve = to its right
+        const side =
+          self.facing === "E" ? dy :
+          self.facing === "W" ? -dy :
+          self.facing === "S" ? -dx : dx;
+        return name === "enemyRight" ? side > 0 : side < 0;
       }
       default:
         return false;
     }
+  }
+
+  const dist = (a: Vec2, b: Vec2) => Math.abs(a.x - b.x) + Math.abs(a.y - b.y);
+
+  function nearestFoe(self: Bot): Bot | null {
+    const foes = bots.filter((b) => b !== self && !b.wrecked);
+    if (!foes.length) return null;
+    return foes.reduce((best, b) => (dist(self.pos, b.pos) < dist(self.pos, best.pos) ? b : best));
+  }
+
+  /** Can't roll into it (wall, crate, barrel, pit, water, edge, or another bot). */
+  function stopsProgress(self: Bot, p: Vec2): boolean {
+    const w = worldFor(self);
+    return w.isBlocked(p) || w.isPit(p) || w.isWater(p);
   }
 
   /** shoot(): first living bot (or barrel) down the lane takes it. */
@@ -176,7 +217,10 @@ export function runBattle(
     }
   }
 
-  const SENSORS = new Set(["blocked", "targetAhead", "atBeacon", "enemyAhead", "enemyNear"]);
+  const SENSORS = new Set([
+    "blocked", "targetAhead", "atBeacon",
+    "enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight",
+  ]);
 
   /** Advance one bot until it performs a world action (or finishes). Sensors resolved inline. */
   function takeTurn(self: Bot): void {

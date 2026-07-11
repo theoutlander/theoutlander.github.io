@@ -43,8 +43,8 @@ describe("battle engine", () => {
   it("shooting an enemy enough times wrecks it, and last-standing wins", () => {
     const arena = lane();
     const entrants: Entrant[] = [
-      { id: "me", source: "repeat 6 { shoot() }", isPlayer: true },
-      { id: "sitting-duck", source: "repeat 50 { honk() }" }, // never moves, never shoots back
+      { id: "me", source: "repeat 10 { shoot() }", isPlayer: true },
+      { id: "sitting-duck", source: "repeat 60 { honk() }" }, // never moves, never shoots back
     ];
     // enemy 3 cells ahead of the player, in the lane
     const res = runBattle(arena, entrants, [start(0, 1, "E"), start(3, 1, "E")], API, "lastStanding");
@@ -55,8 +55,8 @@ describe("battle engine", () => {
   it("if the player's bot is wrecked, the player loses", () => {
     const arena = lane();
     const entrants: Entrant[] = [
-      { id: "me", source: "repeat 50 { honk() }", isPlayer: true }, // just sits there
-      { id: "killer", source: "repeat 6 { shoot() }" }, // guns the player down
+      { id: "me", source: "repeat 60 { honk() }", isPlayer: true }, // just sits there
+      { id: "killer", source: "repeat 10 { shoot() }" }, // guns the player down
     ];
     const res = runBattle(arena, entrants, [start(0, 1, "E"), start(3, 1, "W")], API, "lastStanding");
     expect(res.events.some((e) => e.type === "wreck" && e.bot === 0)).toBe(true);

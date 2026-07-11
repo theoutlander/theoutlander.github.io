@@ -14,18 +14,21 @@ import { analytics } from "../state/analytics";
 import { loadSave } from "../state/save";
 import { computeStats } from "../content/parts";
 
-const BATTLE_EXTRA = ["enemyAhead", "enemyNear"];
+const BATTLE_EXTRA = ["enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight"];
 
-// A fixed arena with a little cover. Player races from bottom-left to the beacon (top-right of the
-// player's side) while the enemy hunts. Win by reaching the beacon OR wrecking the enemy.
+/**
+ * The rival stands BETWEEN you and the beacon. That's the whole point: the first arena used to put
+ * the enemy 15 squares away while the beacon was 9 away, so you just strolled to the goal and the
+ * fight never happened. Now you have to get past it — shoot it, or outsmart it through the cover.
+ */
 const ARENA: Arena = (() => {
-  const cols = 10, rows = 7;
+  const cols = 11, rows = 7;
   const cells = Array.from({ length: rows }, () => Array<string>(cols).fill("floor"));
-  for (const [x, y] of [[3, 2], [3, 3], [6, 3], [6, 4]] as [number, number][]) cells[y][x] = "wall";
-  return { cols, rows, cells: cells as Arena["cells"], crates: [], coins: [], chests: [], gates: [], targets: [], beacon: { x: 9, y: 6 } };
+  for (const [x, y] of [[4, 1], [4, 2], [4, 5], [7, 0], [7, 4], [7, 5]] as [number, number][]) cells[y][x] = "wall";
+  return { cols, rows, cells: cells as Arena["cells"], crates: [], coins: [], chests: [], gates: [], targets: [], beacon: { x: 10, y: 3 } };
 })();
-const PLAYER_START = { pos: { x: 0, y: 6 }, facing: "E" as const };
-const ENEMY_START = { pos: { x: 9, y: 0 }, facing: "W" as const };
+const PLAYER_START = { pos: { x: 0, y: 3 }, facing: "E" as const };
+const ENEMY_START = { pos: { x: 7, y: 3 }, facing: "W" as const };
 
 const STARTER =
   "// FIGHT! Write your bot's brain, then press FIGHT — it battles on its own.\n" +
@@ -110,7 +113,7 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
         ARENA,
         [
           { id: "me", source: code, isPlayer: true, stats: myStats },
-          { id: enemy.id, source: enemy.source },
+          { id: enemy.id, source: enemy.source, stats: enemy.stats },
         ],
         [PLAYER_START, ENEMY_START],
         [...BATTLE_API, ...BATTLE_EXTRA],

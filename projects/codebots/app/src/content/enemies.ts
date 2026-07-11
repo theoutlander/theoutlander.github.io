@@ -5,7 +5,10 @@
  */
 export const BATTLE_API = [
   "forward", "back", "left", "right", "honk", "shoot",
-  "blocked", "atBeacon", "targetAhead", "enemyAhead", "enemyNear",
+  "blocked", "atBeacon", "targetAhead",
+  // battle sensing. closerAhead() is the one that lets a bot actually HUNT: without it a bot can
+  // only see a rival perfectly lined up on a row/column, so it spins in place and never engages.
+  "enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight",
 ];
 
 export interface Preset {
@@ -14,29 +17,70 @@ export interface Preset {
   desc: string;
   /** the bot's brain — a normal CodeBots program */
   source: string;
+  /** Enemies see SHORTER than you (range 4 vs your 6). That's the tactical lesson the whole arena
+   *  teaches: shoot the moment you can see it — don't walk into its face. A kid who codes
+   *  `if (enemyAhead()) shoot()` wins; one who charges blindly gets wrecked. */
+  stats?: { armor?: number; damage?: number; range?: number };
 }
 
 export const PRESETS: Preset[] = [
   {
     id: "patroller",
     name: "PATROLLER",
-    desc: "Roams the arena following walls. Harmless unless you get in its way.",
-    // wall-follower: never attacks, just wanders
-    source: "while (!atBeacon()) {\n  if (blocked()) { right() } else { forward(1) }\n}",
+    stats: { range: 4 },
+    desc: "Roams the arena. It'll take a shot if you wander into its sights, but it won't come looking.",
+    // Wanders; fires only if you happen to line up. The gentle one — a fair first fight.
+    source: [
+      "while (true) {",
+      "  if (enemyAhead()) {",
+      "    shoot()",
+      "  } else if (blocked()) {",
+      "    right()",
+      "  } else {",
+      "    forward(1)",
+      "  }",
+      "}",
+    ].join("\n"),
   },
   {
     id: "sniper",
     name: "SNIPER",
-    desc: "Holds its spot and sweeps its aim. Fires the moment you're in its line.",
-    // turret: rotate scanning, shoot when it sees you
-    source: "while (!atBeacon()) {\n  if (enemyAhead()) { shoot() } else { left() }\n}",
+    stats: { range: 5 },
+    desc: "Holds its ground and tracks you. The moment you line up with it, it fires.",
+    // Turret: never moves, but TURNS TOWARD you (enemyLeft/enemyRight) so it can actually line up.
+    source: [
+      "while (true) {",
+      "  if (enemyAhead()) {",
+      "    shoot()",
+      "  } else if (enemyLeft()) {",
+      "    left()",
+      "  } else if (enemyRight()) {",
+      "    right()",
+      "  } else {",
+      "    right()",
+      "  }",
+      "}",
+    ].join("\n"),
   },
   {
     id: "chaser",
     name: "CHASER",
-    desc: "Hunts you down — turns until it spots you, then charges and shoots.",
-    // seeker: rotate to face you, then close in and fire
-    source: "while (!atBeacon()) {\n  if (enemyAhead()) { shoot(); forward(1) } else { right() }\n}",
+    stats: { range: 4, armor: 120 },
+    desc: "Hunts you down. It closes the distance and shoots the second it has a clear line.",
+    // Greedy pursuit: fire if lined up, else move whenever forward gets it CLOSER, else turn.
+    source: [
+      "while (true) {",
+      "  if (enemyAhead()) {",
+      "    shoot()",
+      "  } else if (closerAhead()) {",
+      "    forward(1)",
+      "  } else if (enemyLeft()) {",
+      "    left()",
+      "  } else {",
+      "    right()",
+      "  }",
+      "}",
+    ].join("\n"),
   },
 ];
 
