@@ -74,6 +74,11 @@ export const analytics = {
   solutionShown(level: number) {
     track("cb_solution_shown", { level });
   },
+  /** a PROVE IT drill passed — one program that survived three random fields. The clearest evidence
+   *  we have that a concept actually landed, as opposed to a level being beaten by counting squares. */
+  drillPassed(drill: string, first: boolean) {
+    track("cb_drill_passed", { drill, first });
+  },
 };
 
 function track(event: string, params?: Params): void {

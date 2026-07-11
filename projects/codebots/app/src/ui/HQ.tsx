@@ -4,6 +4,7 @@ import { Chip } from "./components/Chip";
 import { Stars } from "./components/Stars";
 import { Coin } from "./components/Coin";
 import { BotAvatar } from "./components/BotAvatar";
+import { availableDrills } from "../content/drills";
 import type { SaveData } from "../state/save";
 import type { Mission } from "../sim/missionSchema";
 
@@ -47,6 +48,7 @@ export function HQ({
   onOpenField,
   onBattle,
   onGarage,
+  onDrill,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
@@ -57,11 +59,13 @@ export function HQ({
   onOpenField: () => void;
   onBattle: () => void;
   onGarage: () => void;
+  onDrill: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
   const nextLevel = Math.min(cleared + 1, missions.length);
   const badgeCount = (save.badges ?? []).length;
+  const drills = availableDrills();
 
   return (
     <div style={{ height: "100%", overflow: "auto", padding: "28px 24px" }}>
@@ -125,6 +129,17 @@ export function HQ({
             chipColor="green"
             onClick={onOpenField}
           />
+          {/* PROVE IT only appears once she can sense the beacon — before that, the drill is
+              unwinnable, and a locked door she can't open is worse than no door. */}
+          {drills.length ? (
+            <Door
+              title="PROVE IT"
+              desc="One program. Three fields you've never seen. No counting squares — your bot has to think for itself."
+              chip="DRILL →"
+              chipColor="amber"
+              onClick={onDrill}
+            />
+          ) : null}
         </div>
       </div>
     </div>

@@ -9,6 +9,7 @@ import { Profile } from "./ui/Profile";
 import { OpenFieldScreen } from "./ui/OpenFieldScreen";
 import { BattleScreen } from "./ui/BattleScreen";
 import { GarageScreen } from "./ui/GarageScreen";
+import { DrillScreen } from "./ui/DrillScreen";
 import { AccountScreen } from "./ui/AccountScreen";
 import { ALL, globalLevel } from "./content/missions";
 import { currentAccount, cloudEnabled, type Account } from "./state/account";
@@ -26,6 +27,7 @@ type Screen =
   | { name: "field" }
   | { name: "battle" }
   | { name: "garage" }
+  | { name: "drill" }
   | { name: "account" };
 
 /**
@@ -72,6 +74,7 @@ export function App() {
   const toBattle = () => setScreen({ name: "battle" });
   const toGarage = () => { refresh(); setScreen({ name: "garage" }); };
   const toAccount = () => setScreen({ name: "account" });
+  const toDrill = () => setScreen({ name: "drill" });
 
   /** Garage purchases/equips write straight to the save, then repaint coins + screens. */
   function applySave(next: ReturnType<typeof loadSave>) {
@@ -107,6 +110,8 @@ export function App() {
         ? { back: "‹ HQ", onBack: toHQ, current: "GARAGE" }
         : screen.name === "account"
         ? { back: "‹ HQ", onBack: toHQ, current: "ACCOUNT" }
+        : screen.name === "drill"
+        ? { back: "‹ HQ", onBack: toHQ, current: "PROVE IT" }
         : mission
           ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
@@ -142,7 +147,7 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (
@@ -151,6 +156,8 @@ export function App() {
           <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
         ) : screen.name === "garage" ? (
           <GarageScreen save={save} onSave={applySave} />
+        ) : screen.name === "drill" ? (
+          <DrillScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onExit={toHQ} />
         ) : screen.name === "account" ? (
           <AccountScreen
             account={account}

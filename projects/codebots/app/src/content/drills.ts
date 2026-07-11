@@ -1,4 +1,5 @@
 import type { Mission } from "../sim/engine";
+import { loadSave } from "../state/save";
 import type { Arena, CellKind, Vec2 } from "../sim/types";
 
 /**
@@ -43,8 +44,10 @@ export interface DrillFamily {
   /** which concept this drill hammers home */
   concept: string;
   title: string;
-  /** commands the kid must already have unlocked — a drill is never offered before its tools are */
-  requires: string[];
+  /** the mission that must be cleared first — a drill is never offered before its tools are.
+   *  Every drill needs atBeacon() (you cannot "park on the beacon" without knowing you're on it),
+   *  and that arrives in w2m4 "ARE WE THERE YET". */
+  unlockAfter: string;
   /** what the kid is told — always states the ONE rule that makes hardcoding pointless */
   brief: string;
   /** the general program that clears ANY arena in this family */
@@ -91,12 +94,12 @@ const barrelRun: DrillFamily = {
   key: "barrel-run",
   concept: "targetahead",
   title: "BARREL RUN",
-  requires: ["forward", "shoot", "targetAhead", "atBeacon", "honk"],
+  unlockAfter: "w2m4",
   brief:
     "Three runways, one program. The barrels MOVE between runways, and you have to STOP on the " +
     "beacon — not roll past it. Counting squares cannot save you. The bot has to look.",
   authorSolution:
-    "repeat 40 {\n  if (atBeacon()) {\n    honk()\n  } else if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",
+    "repeat 20 {\n  if (atBeacon()) {\n    honk()\n  } else if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",
   hardcodedTrap: (m) => {
     // exactly what a kid writes when she reads the board instead of sensing it: count, shoot, count
     const row = m.start.pos.y;
@@ -134,7 +137,7 @@ const barrelRun: DrillFamily = {
       hints: [
         "The barrels sit somewhere different on each runway, and the beacon is a different distance away. So what can your code NOT rely on?",
         "Every single step, the bot has two things worth asking: have I arrived, and is something in my way? Its answer decides what it does next.",
-        "repeat 40 {\n  if ( ??? ) {\n    honk()\n  } else if ( ??? ) {\n    ???\n  } else {\n    forward(1)\n  }\n}\nTwo questions, in the right order. Which one has to be asked first?",
+        "repeat 20 {\n  if ( ??? ) {\n    honk()\n  } else if ( ??? ) {\n    ???\n  } else {\n    forward(1)\n  }\n}\nTwo questions, in the right order. Which one has to be asked first?",
       ],
       authorSolution: barrelRun.authorSolution,
     };
@@ -149,11 +152,11 @@ const longHaul: DrillFamily = {
   key: "long-haul",
   concept: "arrived",
   title: "THE LONG HAUL",
-  requires: ["forward", "atBeacon", "honk"],
+  unlockAfter: "w2m4",
   brief:
     "Three roads, all different lengths, one program. The road keeps going past the beacon, so " +
     "rolling forever will not do it. The bot has to notice when it has arrived.",
-  authorSolution: "repeat 40 {\n  if (atBeacon()) {\n    honk()\n  } else {\n    forward(1)\n  }\n}",
+  authorSolution: "repeat 20 {\n  if (atBeacon()) {\n    honk()\n  } else {\n    forward(1)\n  }\n}",
   hardcodedTrap: (m) => `forward(${m.arena.beacon.x - m.start.pos.x})\nhonk()`,
   build: (seed) => {
     const r = rng(seed);
@@ -171,7 +174,7 @@ const longHaul: DrillFamily = {
       hints: [
         "Each road is a different length, and the road carries on past the beacon. Is there any number of steps that works for all three?",
         "The bot can check whether it is standing on the beacon. Have it check after every single step.",
-        "repeat 40 {\n  if ( ??? ) {\n    honk()\n  } else {\n    forward(1)\n  }\n}\nWhat should the bot ask itself after each step?",
+        "repeat 20 {\n  if ( ??? ) {\n    honk()\n  } else {\n    forward(1)\n  }\n}\nWhat should the bot ask itself after each step?",
       ],
       authorSolution: longHaul.authorSolution,
     };
@@ -186,13 +189,13 @@ const wallDodge: DrillFamily = {
   key: "wall-dodge",
   concept: "deciding",
   title: "THE WALL",
-  requires: ["forward", "left", "right", "blocked", "atBeacon", "honk"],
+  unlockAfter: "w2m4",
   brief:
     "Three lanes, one wall in each — never in the same place. One program for all three. The bot has " +
     "to FEEL the wall, not remember where it was. And it has to stop on the beacon.",
   // dodge = up, over, back down, carry on
   authorSolution:
-    "repeat 40 {\n  if (atBeacon()) {\n    honk()\n  } else if (blocked()) {\n    left()\n    forward(1)\n    right()\n    forward(2)\n    right()\n    forward(1)\n    left()\n  } else {\n    forward(1)\n  }\n}",
+    "repeat 20 {\n  if (atBeacon()) {\n    honk()\n  } else if (blocked()) {\n    left()\n    forward(1)\n    right()\n    forward(2)\n    right()\n    forward(1)\n    left()\n  } else {\n    forward(1)\n  }\n}",
   hardcodedTrap: (m) => {
     const wx = m.arena.cells[m.start.pos.y].findIndex((c) => c === "wall");
     return `forward(${wx - 1})\nleft()\nforward(1)\nright()\nforward(2)\nright()\nforward(1)\nleft()\nforward(${m.arena.beacon.x - wx - 1})\nhonk()`;
@@ -216,7 +219,7 @@ const wallDodge: DrillFamily = {
       hints: [
         "The wall is in a different spot in every lane, and the beacon is a different distance away. What can the bot check for itself, every step?",
         "Roll on while the way ahead is clear. When something is in the way, go around it and get back into the lane. And keep checking whether you have arrived.",
-        "repeat 40 {\n  if ( ??? ) {\n    honk()\n  } else if ( ??? ) {\n    ??? // the way around\n  } else {\n    forward(1)\n  }\n}\nGoing around takes several moves. Work the little dance out on paper first.",
+        "repeat 20 {\n  if ( ??? ) {\n    honk()\n  } else if ( ??? ) {\n    ??? // the way around\n  } else {\n    forward(1)\n  }\n}\nGoing around takes several moves. Work the little dance out on paper first.",
       ],
       authorSolution: wallDodge.authorSolution,
     };
@@ -248,4 +251,10 @@ export function drillArenas(family: DrillFamily, seed: number): Mission[] {
     out.push(m);
   }
   return out;
+}
+
+/** Which drills the player has the tools for — never offer one whose commands she hasn't met yet. */
+export function availableDrills(): DrillFamily[] {
+  const save = loadSave();
+  return DRILLS.filter((d) => save.missions[d.unlockAfter]?.cleared);
 }

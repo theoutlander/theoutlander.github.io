@@ -27,6 +27,8 @@ export interface SaveData {
   /** earned badge ids (see content/badges.ts) */
   badges: string[];
   loadout: Loadout;
+  /** PROVE IT drills passed (see content/drills.ts) — one program, three random fields */
+  drillsPassed?: string[];
 }
 
 const KEY = "codebots.save.v1";
@@ -89,6 +91,7 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
     coins: Math.max(a.coins, b.coins),
     unlocked: [...new Set([...a.unlocked, ...b.unlocked])],
     badges: [...new Set([...a.badges, ...b.badges])],
+    drillsPassed: [...new Set([...(a.drillsPassed ?? []), ...(b.drillsPassed ?? [])])],
     loadout: { chassis, equipped, bought },
   };
 }
