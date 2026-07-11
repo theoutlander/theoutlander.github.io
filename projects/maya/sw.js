@@ -117,9 +117,26 @@ self.addEventListener("activate", function (event) {
 	);
 });
 
+// CDN hosts the Lab loads engines/fonts from at runtime (see design spec
+// "2. What gets cached"). Anything else cross-origin — e.g. Supabase family
+// chat — must go straight to the network, never through this cache.
+var ALLOWED_CDN_HOSTS = ["cdn.jsdelivr.net", "fonts.googleapis.com", "fonts.gstatic.com"];
+
+/** True for requests this service worker should apply cache-first-with-
+    background-revalidate to: same-origin requests within this SW's own
+    scope (/maya/), or requests to the CDN allowlist above. Everything else
+    (e.g. Supabase chat traffic) falls through untouched. */
+function shouldHandle(url) {
+	if (url.origin === self.location.origin && url.pathname.indexOf(new URL(SCOPE_URL).pathname) === 0) {
+		return true;
+	}
+	return ALLOWED_CDN_HOSTS.indexOf(url.hostname) !== -1;
+}
+
 self.addEventListener("fetch", function (event) {
 	var request = event.request;
 	if (request.method !== "GET") return;
+	if (!shouldHandle(new URL(request.url))) return;
 
 	event.respondWith(
 		caches.match(request).then(function (cached) {
