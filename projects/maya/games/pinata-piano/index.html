@@ -6,6 +6,7 @@
 <title>Piñata Piano! 🪅</title>
 <script>window.MAYA_GAME='games/pinata-piano/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 
 <!-- Google Analytics -->
 <script src="../../shared/ga-analytics.js" defer></script>
@@ -262,7 +263,7 @@ function setMode(m){
 
 /* ===== AUDIO ===== */
 let ax;
-function au(){if(!ax)ax=new(window.AudioContext||window.webkitAudioContext)();return ax;}
+function au(){if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();if(!ax)ax=new(window.AudioContext||window.webkitAudioContext)();return ax;}
 function pn(f,d=0.4,t='triangle',v=0.28){
   try{
     const c=au(),o=c.createOscillator(),g=c.createGain();

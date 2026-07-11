@@ -13,6 +13,7 @@ LORD.Audio = (function () {
   let currentTrack = null;
 
   function ensure() {
+    if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
     if (ctx) return;
     try {
       ctx = new (window.AudioContext || window.webkitAudioContext)();

@@ -363,6 +363,7 @@ function animalSound(emoji) {
 /* ── audio ── */
 let _actx, _master, _musicBus, _sfxBus;
 function AC() {
+	if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
 	if (!_actx) {
 		try {
 			_actx = new (window.AudioContext || window.webkitAudioContext)();

@@ -6,6 +6,7 @@
 <title>Spell It! 🌈</title>
 <script>window.MAYA_GAME='games/spell-it/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 
 <!-- Google Analytics -->
 <script src="../../shared/ga-analytics.js" defer></script>
@@ -172,7 +173,7 @@ let gameRunning=false,wordComplete=false,usedWords=[];
 let audioCtx;
 
 // Audio
-function au(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function au(){if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
 function tone(f,d,type='sine',v=0.18){try{const c=au(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=type;o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(v,c.currentTime);g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
 function playCorrect(){tone(660,.15,'sine',.22);setTimeout(()=>tone(880,.12,'sine',.18),100);}
 function playWrong(){[320,240].forEach((f,i)=>setTimeout(()=>tone(f,.12,'sawtooth',.2),i*90));}

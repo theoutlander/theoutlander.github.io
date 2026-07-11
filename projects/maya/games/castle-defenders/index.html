@@ -6,6 +6,7 @@
 <title>Castle Defenders! 🏰</title>
 <script>window.MAYA_GAME='games/castle-defenders/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 <script src="../../shared/ga-analytics.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
 <style>
@@ -39,7 +40,7 @@ const G = {
 
 // ── audio helper ──────────────────────────────────────────
 let _actx;
-function AC(){ return _actx||(_actx=new(window.AudioContext||window.webkitAudioContext)()); }
+function AC(){ if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock(); return _actx||(_actx=new(window.AudioContext||window.webkitAudioContext)()); }
 function beep(freq,dur,type='sine',vol=0.18){
   try{const c=AC(),o=c.createOscillator(),g=c.createGain();
   o.connect(g);g.connect(c.destination);o.type=type;

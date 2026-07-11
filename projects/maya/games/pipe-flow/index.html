@@ -6,6 +6,7 @@
 <title>Pipe Flow! 💧</title>
 <script>window.MAYA_GAME='games/pipe-flow/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 
 <!-- Google Analytics -->
 <script src="../../shared/ga-analytics.js" defer></script>
@@ -3489,7 +3490,7 @@ function onMenuTitleTap(){
   loadLevel(SECRET_IDX);
 }
 
-function au(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function au(){if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
 function tone(f,d,type,v){try{const c=au(),o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);o.type=type||'sine';o.frequency.setValueAtTime(f,c.currentTime);g.gain.setValueAtTime(v||.15,c.currentTime);g.gain.exponentialRampToValueAtTime(.001,c.currentTime+d);o.start();o.stop(c.currentTime+d);}catch(e){}}
 function playRotate(){tone(420+Math.random()*40,.06,'triangle',.12);}
 function playPlace(){tone(640,.08,'sine',.11);setTimeout(function(){tone(820,.06,'sine',.09);},60);}

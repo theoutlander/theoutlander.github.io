@@ -6,6 +6,7 @@
 <title>City Builder! 🏙️</title>
 <script>window.MAYA_GAME='games/skyline-builder/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <!-- Google Analytics -->
@@ -145,6 +146,7 @@ html, body {
 // ── Audio ────────────────────────────────────────────────────
 let audioCtx = null;
 function getAudio() {
+  if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
   if (!audioCtx) {
     try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) {}
   }

@@ -5,6 +5,7 @@ let AC=null, master=null, musTimer=null, musStep=0, musName=null;
 let muted = localStorage.getItem('cdMuted')==='1';
 
 function ctx(){
+  if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
   if(!AC){
     AC = new (window.AudioContext||window.webkitAudioContext)();
     master = AC.createGain(); master.gain.value = muted?0:0.5; master.connect(AC.destination);

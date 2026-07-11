@@ -5,6 +5,7 @@
   try{ muted = localStorage.getItem('gardenwork_mute')==='1'; }catch(e){}
 
   function ac(){
+    if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
     if(ctx) return ctx;
     try{
       ctx = new (window.AudioContext||window.webkitAudioContext)();

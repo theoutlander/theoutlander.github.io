@@ -150,7 +150,7 @@
   var ctx=null, master=null, musicBus=null, ambBus=null, muted=false, vol=0.62;
   try{ muted = localStorage.getItem('buildon_mute')==='1'; }catch(e){}
   try{ var _sv=localStorage.getItem('buildon_vol'); if(_sv!=null){ vol=parseFloat(_sv); if(isNaN(vol)) vol=0.62; } }catch(e){}
-  function ac(){ if(ctx) return ctx; try{
+  function ac(){ if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock(); if(ctx) return ctx; try{
       ctx=new (window.AudioContext||window.webkitAudioContext)();
       master=ctx.createGain(); master.gain.value=muted?0:vol; master.connect(ctx.destination);
       musicBus=ctx.createGain(); musicBus.gain.value=0.85; musicBus.connect(master);

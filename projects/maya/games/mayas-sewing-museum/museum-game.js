@@ -41,6 +41,7 @@ const PLUCKS = [523.25, 587.33, 659.25, 783.99, 880.00, 1046.5];
 let chordIdx = 0, chordTimer = null, pluckTimer = null;
 
 function initAudio(){
+  if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
   if (AC) return;
   try {
     AC = new (window.AudioContext || window.webkitAudioContext)();

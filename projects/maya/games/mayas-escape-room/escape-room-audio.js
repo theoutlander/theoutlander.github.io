@@ -5,6 +5,7 @@ let AC=null, master=null, ambGain=null, ambTimer=null, ambNodes=[];
 let muted = localStorage.getItem('mayaEscapeMuted')==='1';
 
 function ctx(){
+  if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
   if(!AC){
     AC = new (window.AudioContext||window.webkitAudioContext)();
     master = AC.createGain(); master.gain.value = muted?0:0.55; master.connect(AC.destination);

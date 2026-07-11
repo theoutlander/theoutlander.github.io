@@ -44,6 +44,7 @@ var coolOff=false;         // call-out cooldown
 // ════════ AUDIO ════════
 var AC=null, MASTER=null;
 function ac(){
+  if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
   if(!AC){
     try{
       AC=new (window.AudioContext||window.webkitAudioContext)();

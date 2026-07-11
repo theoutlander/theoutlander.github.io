@@ -6,6 +6,7 @@
 <title>Dust Chasers! 👻</title>
 <script>window.MAYA_GAME='games/dust-chasers/index.html';</script>
 <script src="../../shared/portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
 
 <!-- Google Analytics -->
 <script src="../../shared/ga-analytics.js" defer></script>
@@ -168,7 +169,7 @@ window.addEventListener('resize',resize);resize();
 
 // ===== AUDIO =====
 let audioCtx;
-function getAudio(){if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
+function getAudio(){if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();return audioCtx;}
 function playSound(type){
   try{
     const ac=getAudio();
