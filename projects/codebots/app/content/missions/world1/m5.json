@@ -101,7 +101,7 @@
     },
     "facing": "E"
   },
-  "parLines": 3,
+  "parLines": 5,
   "starterCode": "// Same move, three times. What repeats?\n",
   "hints": [
     "The same move repeats down the whole lane — that's a job for a loop.",
@@ -109,7 +109,7 @@
     "Count how many times the move repeats to pick your number."
   ],
   "briefing": "Three gates, same move each time, Sparkplug — roll, honk, roll, honk. Typing that out gets old fast. Wrap it in a repeat and let the loop do the work.",
-  "authorSolution": "repeat 3 { forward(2); honk(); }\nforward(3)",
+  "authorSolution": "repeat 3 {\n  forward(2)\n  honk()\n}\nforward(3)",
   "bonusStar": {
     "kind": "exactHonks",
     "count": 3

@@ -27,8 +27,8 @@ export const ALL_COMMANDS: CommandDoc[] = [
   { sig: "if ( ) { }", desc: "only do the moves inside when it's true", world: 2, since: 1, kind: "control" },
   { sig: "shoot()", desc: "fire the blaster — smashes a barrel ahead", world: 2, since: 2 },
   { sig: "targetAhead()", desc: "is a barrel one square ahead? (yes/no)", world: 2, since: 3, kind: "sensor" },
-  { sig: "else { }", desc: "what to do when the if was NOT true", world: 2, since: 3, kind: "control" },
-  { sig: "atBeacon()", desc: "are you standing on the goal? (yes/no)", world: 2, since: 4, kind: "sensor" },
+  { sig: "else { }", desc: "what to do when the if was NOT true", world: 2, since: 4, kind: "control" },
+  { sig: "atBeacon()", desc: "are you standing on the goal? (yes/no)", world: 2, since: 5, kind: "sensor" },
 
   // World 3 — while loops
   { sig: "while ( ) { }", desc: "keep repeating the moves WHILE it's true", world: 3, since: 1, kind: "control" },

@@ -165,7 +165,9 @@ const missions: Build[] = [
     walls: [[6, 5], [6, 4], [6, 3], [6, 2]],
     targets: [[3, 5], [8, 1]],
     start: { x: 0, y: 5, facing: "E" }, beacon: [9, 0], beaconStyle: "chest",
-    parLines: 14,
+    // Par must match the solution written the way a KID writes it (multi-line blocks), not crammed
+    // onto one line — otherwise good, readable code loses the star.
+    parLines: 15,
     starterCode: "// The gauntlet: barrels to blast, a wall to round, treasure at the top.\n// Sense before you act.\n",
     hints: [
       "Two jobs: blast the barrels, and get around the wall in the middle.",
@@ -175,13 +177,17 @@ const missions: Build[] = [
     briefing: "Sprocket's final trap: barrels AND a wall between you and the treasure. Use everything — blocked(), targetAhead(), shoot() — to reach the chest.",
     authorSolution: [
       "forward(2)",
-      "if (targetAhead()) { shoot() }",
+      "if (targetAhead()) {",
+      "  shoot()",
+      "}",
       "forward(3)",
       "left()",
       "forward(4)",
       "right()",
       "forward(2)",
-      "if (targetAhead()) { shoot() }",
+      "if (targetAhead()) {",
+      "  shoot()",
+      "}",
       "forward(2)",
       "left()",
       "forward(1)",

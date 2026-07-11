@@ -9,6 +9,41 @@ import { runInSandbox } from "../../src/sandbox/driver";
  * sandbox for the kid, so both must at least PARSE and run without throwing — a broken demo or a
  * malformed starter would ship green off the golden test and blow up in Asha's face.
  */
+/**
+ * REGRESSION GUARD. Inserting a level (w2m2s) once shifted every later World-2 index by one while
+ * concepts.ts kept the old numbers — so the if/else level showed the atBeacon card, the atBeacon
+ * level showed NOTHING, and the "OR ELSE" card never rendered at all (two concepts collided on one
+ * slot and `.find()` silently returned the first). The old test passed because it only checked a
+ * concept mapped to SOME mission. These two tests make that impossible to ship again.
+ */
+describe("concept cards point at the RIGHT level", () => {
+  it("no two concepts share a (world, level) slot — a collision silently swallows a card", () => {
+    const slots = CONCEPTS.map((c) => `${c.world}-${c.level}`);
+    const dupes = slots.filter((s, i) => slots.indexOf(s) !== i);
+    expect(dupes, `two concepts on the same level: ${dupes.join(", ")}`).toEqual([]);
+  });
+
+  it("each concept lands on a mission that actually teaches it", () => {
+    // the mission's own `teaches` string must mention the concept's subject
+    const expectTeaches: Record<string, string> = {
+      sequencing: "sequencing", repeat: "repeat", deciding: "blocked", shoot: "shoot",
+      targetahead: "targetAhead", orelse: "else", arrived: "atBeacon",
+      keepgoing: "while", chain: "shoot", functions: "function",
+    };
+    for (const c of CONCEPTS) {
+      const mission = ALL.find((m) => m.world === c.world && m.index === c.level);
+      expect(mission, `concept "${c.key}" points at W${c.world}L${c.level} — no such mission`).toBeDefined();
+      const needle = expectTeaches[c.key];
+      if (needle) {
+        expect(
+          mission!.teaches.toLowerCase(),
+          `concept "${c.key}" is on "${mission!.title}" (teaches: ${mission!.teaches}) — wrong level`,
+        ).toContain(needle.toLowerCase());
+      }
+    }
+  });
+});
+
 describe("concept demoCode — runs clean and never spoils the level", () => {
   for (const c of CONCEPTS) {
     const mission = ALL.find((m) => m.world === c.world && m.index === c.level);

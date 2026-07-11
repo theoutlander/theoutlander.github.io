@@ -65,7 +65,7 @@ export const CONCEPTS: Concept[] = [
     demoCode: "if (targetAhead()) {\n  shoot()\n}",
   },
   {
-    key: "orelse", world: 2, level: 3, title: "OR ELSE",
+    key: "orelse", world: 2, level: 4, title: "OR ELSE",
     idea: "else is the OTHER path. Do one thing when the answer is yes, and something different when it's no.",
     example: "if (blocked()) {\n  right()\n} else {\n  forward(1)\n}",
     exampleNote: "wall? turn. no wall? drive on.",
@@ -73,7 +73,7 @@ export const CONCEPTS: Concept[] = [
     demoCode: "if (blocked()) {\n  honk()\n} else {\n  forward(1)\n}",
   },
   {
-    key: "arrived", world: 2, level: 4, title: "AM I THERE?",
+    key: "arrived", world: 2, level: 5, title: "AM I THERE?",
     idea: "atBeacon() is a yes/no sensor: are you standing on the goal yet?",
     example: "if (atBeacon()) {\n  honk()\n}",
     exampleNote: "the moment you arrive, honk",

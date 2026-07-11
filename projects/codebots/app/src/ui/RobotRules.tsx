@@ -30,8 +30,14 @@ const RULES: { rule: string; why: string }[] = [
   },
 ];
 
-export function RobotRules() {
-  const [open, setOpen] = useState(false);
+/**
+ * `startOpen` — a BEGINNER sees these expanded. They were collapsed behind "why won't it work? tap
+ * me", which only appeals to a kid who has ALREADY failed; a brand-new player never tapped it, and
+ * so never learned that capitals matter or that the bot runs itself. Those were exactly the two
+ * things a real 9-year-old got stuck on. Open by default until she's found her feet.
+ */
+export function RobotRules({ startOpen = false }: { startOpen?: boolean }) {
+  const [open, setOpen] = useState(startOpen);
   return (
     <Panel label="ROBOT RULES">
       <button
@@ -40,7 +46,7 @@ export function RobotRules() {
       >
         <span style={{ color: "var(--text-dim)", fontSize: "var(--text-2xs)" }}>{open ? "▾" : "▸"}</span>
         <span style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>
-          {open ? "how computers think" : "why won't it work? tap me"}
+          {open ? "how your robot thinks" : "how your robot thinks — tap to read"}
         </span>
       </button>
       {open ? (

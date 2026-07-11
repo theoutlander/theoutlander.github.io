@@ -44,6 +44,7 @@ export function MissionScreen({
   const fails = useRef(0); // consecutive non-clearing runs on this level
   const level = globalLevel(mission); // the kid-facing global level number, used for analytics
   const concept = conceptFor(mission.world, mission.index); // the NEW idea this level teaches, if any
+  const clearedCount = Object.values(loadSave().missions).filter((m) => m.cleared).length;
 
   function bumpFails() {
     fails.current += 1;
@@ -251,7 +252,9 @@ export function MissionScreen({
           <CommandList commands={commandsFor(mission.world, mission.index)} world={mission.world} index={mission.index} />
         </Panel>
         <ArenaKey arena={mission.arena} />
-        <RobotRules />
+        {/* A beginner gets the rules OPEN — she has no reason to tap a collapsed panel, and these
+            are exactly what she trips on (capitals, camelCase, "the bot runs itself"). */}
+        <RobotRules startOpen={clearedCount < 3} />
         {hintLevel > 0 ? (
           <Panel label={`HINT ${hintLevel}/3`}>
             <div style={{ fontSize: "var(--text-sm)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
