@@ -21,7 +21,8 @@
 		"test:links:local": "NPM_CONFIG_LOGLEVEL=error npx serve dist -l 5173 & sleep 2 && NPM_CONFIG_LOGLEVEL=error npx linkinator http://localhost:5173 --recurse --skip 'linkedin.com' --skip 'tableau.com' --skip 'cdn-cgi/l/email-protection' ; kill %1",
 		"test:links:dist": "./scripts/test-links-dist.sh",
 		"deploy": "./scripts/deploy.sh",
-		"og:cards": "tsx scripts/generate-og-cards.ts"
+		"og:cards": "tsx scripts/generate-og-cards.ts",
+		"maya:icons": "tsx scripts/generate-maya-icons.ts"
 	},
 	"dependencies": {
 		"@heroicons/react": "^2.2.0",
