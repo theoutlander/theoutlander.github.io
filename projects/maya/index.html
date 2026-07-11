@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>Maya's Game Lab 🎮</title>
 
+<!-- Offline support: installable PWA + service worker (see sw.js) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f0a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maya's Games">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
 <!-- Google Analytics -->
 <script src="shared/ga-analytics.js" defer></script>
 
@@ -852,5 +860,14 @@ function showToast(msg){
 })();
 </script>
 <script type="module" src="shared/family-chat.js"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(err){
+      console.warn('[maya] service worker registration failed', err);
+    });
+  });
+}
+</script>
 </body>
 </html>
