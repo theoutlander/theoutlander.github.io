@@ -118,9 +118,9 @@
   "parLines": 14,
   "starterCode": "// Sprocket's factory floor. Name your staircase once — then use it in TWO places.\n",
   "hints": [
-    "Name your staircase move once — you'll use it in two different spots.",
-    "Build stair(), then use it before the dash and again after it.",
-    "Repeat some stairs, forward across the gap, then repeat a few more stairs to the chest."
+    "Look at the whole route to the chest. Staircase, then a flat dash straight across, then staircase again. The two staircases are made of the very same move.",
+    "Name that one staircase step, once. Then use the name on both sides of the dash — a command you build works anywhere you need it, as many times as you like.",
+    "Build your staircase function, then below it: some stairs, a dash straight across, then more stairs. How many stairs before the dash, how far is the dash, and how many stairs after?"
   ],
   "briefing": "The final run through Sprocket's factory. Name your staircase move once, and reuse it on both sides of the conveyor dash — one command, used wherever you need it, all the way to the treasure.",
   "authorSolution": "function stair() {\n  forward(1)\n  right()\n  forward(1)\n  left()\n}\nrepeat 3 {\n  stair()\n}\nforward(2)\nrepeat 2 {\n  stair()\n}",

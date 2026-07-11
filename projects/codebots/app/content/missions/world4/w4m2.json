@@ -92,9 +92,9 @@
   "parLines": 10,
   "starterCode": "// Your own command works anywhere — even inside a loop.\n",
   "hints": [
-    "Make the stair() move again — then don't call it five times by hand.",
-    "A loop can call YOUR command too: repeat n { stair() }.",
-    "Count the steps in this staircase to pick the number for the loop."
+    "This staircase is longer than the last one. Count the steps between your bot and the beacon. Do you want to type the same move out that many times?",
+    "Name the one-step move like you did before. Then, instead of calling it by hand once per step, let a loop do the calling for you.",
+    "repeat ??? { ??? } — a loop can call a command YOU made, not only the built-in ones. What goes inside the loop, and what number goes after repeat?"
   ],
   "briefing": "A longer staircase — five steps. Name the step once, then let repeat call your stair() five times. Your commands and loops work together.",
   "authorSolution": "function stair() {\n  forward(1)\n  right()\n  forward(1)\n  left()\n}\nrepeat 5 {\n  stair()\n}",

@@ -98,9 +98,9 @@
   "parLines": 9,
   "starterCode": "// Corners AND barrels. One loop: shoot if you must, turn if blocked, else roll.\n",
   "hints": [
-    "Now there are barrels AND corners. Handle them in order of priority.",
-    "Check barrel first, then wall, then open road: barrel? shoot. else blocked? turn. else forward.",
-    "Put all three choices inside one while (!atBeacon()) — that's your full navigator."
+    "Two different troubles in the same corridor: things standing in the lane, and bends in the lane. The bot only ever sees the one square in front of it. So each time around, it has to work out which of those it is looking at.",
+    "Each pass, the bot is in one of three situations: a barrel in front, a wall in front, or a clear road. Exactly one of them is true at a time. Decide what the bot does in each situation, and decide which situation it should ask about first.",
+    "while (!atBeacon()) { if ( ??? ) { ??? } else if ( ??? ) { ??? } else { forward(1) } } — two questions, two actions. Then ask yourself: if you swapped the two questions around, would the bot still make it?"
   ],
   "briefing": "The full navigator: barrels to blast and corners to round, length unknown. Chain the decisions — barrel? wall? open road? — inside one while.",
   "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

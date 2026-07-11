@@ -63,6 +63,17 @@ export const analytics = {
   hintUsed(level: number, hint: number) {
     track("cb_hint_used", { level, hint });
   },
+  /**
+   * The two loudest teaching signals we have. Nobody is sitting next to the kid, so these are how we
+   * find out a level is broken: a high SHOW ME rate means the hints failed, and a high
+   * SOLUTION rate means the level itself is out of reach. Watch these per level, not in aggregate.
+   */
+  showMe(level: number) {
+    track("cb_show_me", { level });
+  },
+  solutionShown(level: number) {
+    track("cb_solution_shown", { level });
+  },
 };
 
 function track(event: string, params?: Params): void {

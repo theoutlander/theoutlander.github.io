@@ -68,9 +68,9 @@
   "parLines": 4,
   "starterCode": "// New gear: a BLASTER. shoot() fires straight ahead and smashes a barrel.\n// The barrels are right in your lane — blast them and roll on.\n",
   "hints": [
-    "The barrel is dead ahead — you don't need to check anything, just fire.",
-    "shoot() smashes the first barrel in front of you. Then keep rolling.",
-    "Blast, drive, blast the next one, then drive to the beacon."
+    "Both barrels are sitting in the same lane as the bot. Count the squares: how far is the bot from the first barrel, and how far is that barrel from the next one?",
+    "The blaster reaches all the way down the lane, so the bot can fire from where it stands — no need to drive up close first. Clear a barrel, drive until the next one is the thing lined up ahead, clear that one, then finish the drive.",
+    "Shape it like this and work out the blanks by counting squares:\nshoot()\nforward( ??? )\nshoot()\nforward( ??? )"
   ],
   "briefing": "Your new BLASTER clears the way. See a barrel in your lane? shoot() smashes it. No sensors yet — just aim down the runway and fire.",
   "authorSolution": "shoot()\nforward(2)\nshoot()\nforward(5)",

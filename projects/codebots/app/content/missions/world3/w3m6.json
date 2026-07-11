@@ -152,9 +152,9 @@
   "parLines": 12,
   "starterCode": "// Sprocket LOCKED the vault. Your navigator winds the spiral — but a gate blocks\n// the inner arm, and only a honk on its pad opens it. Remember honk()?\n",
   "hints": [
-    "This isn't just the navigator — there's a locked GATE in the spiral now.",
-    "A honk on the gate's pad opens it. You don't have to find the pad: honk every step and you'll roll right over it.",
-    "Take your full navigator and add honk() at the top of the loop — everything else stays the same."
+    "Walk your navigator through this spiral in your head. It winds around fine — until it meets the thing barring the inner arm. That thing is not a wall and it is not a barrel. You met one of these back in World 1. What opened it then?",
+    "The gate opens when the bot makes a noise while standing on its pad. You do not have to hunt for the pad. If the bot makes that noise on every single square it stands on, then it makes it on the pad too — without ever knowing where the pad was.",
+    "Keep your full navigator exactly as it is and add ONE line: while (!atBeacon()) { ??? ...the rest... } — which World 1 command trips a pad? And why does it have to sit INSIDE the loop instead of above it?"
   ],
   "briefing": "The final vault is locked. Your navigator still winds the spiral — but a GATE bars the inner arm, and only a honk on its pad opens it. Add honk() to your loop; honking every step trips the pad for you. World 3 meets World 1.",
   "authorSolution": "while (!atBeacon()) {\n  honk()\n  if (targetAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

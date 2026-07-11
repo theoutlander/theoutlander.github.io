@@ -68,9 +68,9 @@
   "parLines": 7,
   "starterCode": "// Put it together: if there's a barrel, shoot it — otherwise, drive on.\n",
   "hints": [
-    "One loop can handle the whole runway: some squares have a barrel, some are open.",
-    "if (targetAhead()) { shoot() } else { forward(1) } — blast when there's a barrel, roll when there isn't.",
-    "Repeat that one decision enough times to reach the far end."
+    "Some squares in the lane have a barrel in front of them and some are wide open. Does the bot need to do the same thing on both kinds of square?",
+    "Before every move, have the bot ask whether a barrel is lined up ahead. Fire only when there is one, because a wasted shot moves the bot nowhere. When the lane ahead is clear, that is the moment to roll. Two different actions, one sensor choosing between them.",
+    "Shape it like this and fill in the blanks:\nrepeat ??? {\n  if ( ??? ) {\n    ???\n  } else {\n    ???\n  }\n}\nThe two actions are 'clear the barrel' and 'take a step' — you work out which one belongs in which branch. And remember: a turn spent shooting is a turn the bot did not move, so it needs more turns than there are squares."
   ],
   "briefing": "Two barrels, some open road. Each turn: if a barrel's ahead, blast it; else roll forward. One tidy loop clears the lot.",
   "authorSolution": "repeat 9 {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",

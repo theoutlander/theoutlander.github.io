@@ -45,9 +45,11 @@ export function MissionScreen({
   const level = globalLevel(mission); // the kid-facing global level number, used for analytics
   const concept = conceptFor(mission.world, mission.index); // the NEW idea this level teaches, if any
   const clearedCount = Object.values(loadSave().missions).filter((m) => m.cleared).length;
+  const hasSolution = mission.authorSolution.trim().length > 0; // Open Field levels are generated — no author solution exists
 
   function bumpFails() {
     fails.current += 1;
+    setStuck(fails.current);
     if (fails.current === 4) analytics.stuck(level, fails.current);
   }
 
@@ -56,6 +58,12 @@ export function MissionScreen({
   const [radio, setRadio] = useState<RadioLine[]>([]);
   const [errorLine, setErrorLine] = useState<number | null>(null);
   const [hintLevel, setHintLevel] = useState(0);
+  // The help ladder. `stuck` mirrors the fails ref so the UI can re-render as she struggles: the
+  // deeper rungs (SHOW ME, GIVE ME THE CODE) only appear once she's actually stuck, so a kid who's
+  // doing fine never sees the answer dangled in front of her.
+  const [stuck, setStuck] = useState(0);
+  const [showMeUsed, setShowMeUsed] = useState(false);
+  const [solutionUsed, setSolutionUsed] = useState(false);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<MissionResult | null>(null);
   const [briefOpen, setBriefOpen] = useState(true);
@@ -149,22 +157,22 @@ export function MissionScreen({
   }
 
   /**
-   * "WATCH IT" — show the new idea running in the arena. Deliberately a SEPARATE path from run():
-   * it never calls finish()/recordResult()/analytics, so a demo can never record a clear or corrupt
-   * the save, even if its snippet happens to reach the beacon. It just plays + resets to the start.
+   * Play a program in the arena WITHOUT it counting: never calls finish()/recordResult(), so it can
+   * never record a clear or corrupt the save even if the snippet reaches the beacon. Used by both
+   * "WATCH IT" (the concept demo) and "SHOW ME" (the author's solution, when a kid is stranded).
    */
-  async function playDemo() {
+  async function playSource(source: string, opener: string, closer: string) {
     const a = arena.current;
     const c = client.current;
-    if (!a || !c || running || !concept?.demoCode) return;
+    if (!a || !c || running || !source.trim()) return;
     setRunning(true);
     setResult(null);
     setErrorLine(null);
     setErrorMsg(null);
     setHud({ score: 0, armor: 100 });
-    setRadio([{ text: "watch closely — here's the idea…", tone: "dim" }]);
+    setRadio([{ text: opener, tone: "dim" }]);
     a.scene.reset();
-    const res = await c.run(concept.demoCode, mission);
+    const res = await c.run(source, mission);
     if (!res.ok) {
       // A demo must never break the level. If something's off, just bail quietly.
       a.scene.reset();
@@ -175,13 +183,52 @@ export function MissionScreen({
       onEvent: (ev) => sfx.current?.play(ev),
       onDone: () => {
         setRunning(false);
-        addRadio("that's the idea — now you try it!", "info");
+        addRadio(closer, "info");
         a.scene.reset();
       },
     });
   }
 
-  function finish(stars: number) {
+  /** "WATCH IT" — show the new idea running, before she's written anything. */
+  const playDemo = () =>
+    concept?.demoCode &&
+    playSource(concept.demoCode, "watch closely — here's the idea…", "that's the idea — now you try it!");
+
+  /**
+   * "SHOW ME" — the escape hatch. The game must never say "no more hints" and leave a kid stranded
+   * with nothing left to click; that's exactly where she closes the tab. This plays the author's
+   * solution so she can SEE the strategy — but it does not hand her the code. She still has to write
+   * it. (If she's still stuck after watching, GIVE ME THE CODE below does hand it over.)
+   */
+  function showMe() {
+    setShowMeUsed(true);
+    analytics.showMe?.(level);
+    playSource(
+      mission.authorSolution,
+      "ok — watch MY bot do it. See what it tries?",
+      "your turn. You don't have to copy me — any code that gets there works.",
+    );
+  }
+
+  /**
+   * Last resort. She gets the code, and the level still clears — being stuck must never be a dead
+   * end. But it clears at ONE star and earns no "solved it" credit, so the stars stay honest and
+   * she has a reason to come back and beat it for real.
+   */
+  function giveCode() {
+    setCode(mission.authorSolution);
+    setSolutionUsed(true);
+    analytics.solutionShown?.(level);
+    setRadio([
+      { text: "here's one way to do it — read it, then press RUN.", tone: "info" },
+      { text: "this one only counts for ★. Come back and beat it yourself for all three.", tone: "dim" },
+    ]);
+  }
+
+  function finish(earned: number) {
+    // Clearing with the answer in hand still clears — being stuck is never a dead end — but it caps
+    // at one star, so the stars keep meaning "I worked this out" and she has a reason to come back.
+    const stars = solutionUsed ? Math.min(1, earned) : earned;
     const save = loadSave();
     const { save: next, coinsEarned, newlyUnlocked, newBadges } = recordResult(
       save,
@@ -192,6 +239,7 @@ export function MissionScreen({
     saveSave(next);
     onCoins(next.coins);
     fails.current = 0;
+    setStuck(0);
     analytics.levelClear(level, stars, countCodeLines(code), mission.parLines);
     for (const b of newBadges) analytics.badgeEarned(b.id);
     setResult({
@@ -262,18 +310,54 @@ export function MissionScreen({
             </div>
           </Panel>
         ) : null}
-        <Button
-          variant="quiet"
-          size="sm"
-          disabled={hintLevel >= 3}
-          onClick={() => {
-            const next = Math.min(3, hintLevel + 1);
-            setHintLevel(next);
-            analytics.hintUsed(level, next);
-          }}
-        >
-          {hintLevel === 0 ? "NEED A HINT?" : hintLevel >= 3 ? "NO MORE HINTS" : "ANOTHER HINT?"}
-        </Button>
+        {/*
+          The help ladder — nudge → nudge → nudge → watch me do it → here's the code.
+          It NEVER bottoms out. The old version disabled the button and said "NO MORE HINTS",
+          which is a locked door in the face of the one kid who most needs it open.
+        */}
+        {hintLevel < 3 ? (
+          <Button
+            variant="quiet"
+            size="sm"
+            onClick={() => {
+              const next = hintLevel + 1;
+              setHintLevel(next);
+              analytics.hintUsed(level, next);
+            }}
+          >
+            {/* after a few failed runs, stop waiting to be asked — offer */}
+            {hintLevel === 0 ? (stuck >= 3 ? "STUCK? I CAN HELP →" : "NEED A HINT?") : "ANOTHER HINT?"}
+          </Button>
+        ) : !hasSolution ? (
+          // Open Field challenges are generated, so there's no author solution to show. Say so
+          // plainly rather than dangling a button that does nothing.
+          <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", lineHeight: 1.5 }}>
+            This one's a puzzle I made up on the spot — there's no single answer. Try a smaller piece
+            of it first, or hit NEW CHALLENGE for a different one.
+          </div>
+        ) : !showMeUsed ? (
+          <Button variant="quiet" size="sm" disabled={running} onClick={showMe}>
+            ▶ SHOW ME HOW
+          </Button>
+        ) : !solutionUsed ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <Button variant="quiet" size="sm" disabled={running} onClick={showMe}>
+              ▶ WATCH IT AGAIN
+            </Button>
+            <Button variant="quiet" size="sm" disabled={running} onClick={giveCode}>
+              GIVE ME THE CODE
+            </Button>
+            <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", lineHeight: 1.4 }}>
+              Taking the code still clears the level, but only for ★. You can always come back and
+              beat it yourself.
+            </div>
+          </div>
+        ) : (
+          <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", lineHeight: 1.5 }}>
+            The code's in your editor. Read it line by line, then press RUN — and next time, try it
+            before you ask me.
+          </div>
+        )}
       </div>
       ) : (
         <div style={{ width: 42, flex: "none", display: "flex", flexDirection: "column" }}>

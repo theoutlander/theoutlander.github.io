@@ -133,9 +133,9 @@
   "parLines": 15,
   "starterCode": "// Up and over, up and over. Watch for the crate corners.\n",
   "hints": [
-    "You can't push through a crate column — slip around the top of it.",
-    "One 'zig' is: forward, turn up, forward past the column, turn back east.",
-    "Repeat that zig for each column until you reach the beacon."
+    "You can't push through a crate. Look at the top of each column of crates — what do you see there?",
+    "Slip over the top of a column, then drop back down to keep heading for the beacon. You'll do the same little dance at every column.",
+    "One zig is four moves: go, turn up, go past, turn back. Write ONE zig and run it. If it works, do it again for the next column."
   ],
   "briefing": "Sprocket stacked crate walls across the yard, Sparkplug. Zig up and over each one. Smooth corners, no dents.",
   "authorSolution": "forward(1)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(2)\nright()\nforward(2)\nleft()\nforward(1)",

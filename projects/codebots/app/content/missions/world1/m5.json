@@ -104,9 +104,9 @@
   "parLines": 5,
   "starterCode": "// Same move, three times. What repeats?\n",
   "hints": [
-    "The same move repeats down the whole lane — that's a job for a loop.",
-    "repeat n { } runs whatever's inside it n times. What's the repeating move?",
-    "Count how many times the move repeats to pick your number."
+    "Read the code you wrote on the last level. Are you typing the same lines over and over?",
+    "A loop lets you write the repeating part ONCE and tell the bot how many times to do it. Find the part that repeats, then count how many times it happens.",
+    "repeat ??? {\n  ...the moves that repeat...\n}\nThe number is how many times. Working out what goes INSIDE is the real puzzle."
   ],
   "briefing": "Three gates, same move each time, Sparkplug — roll, honk, roll, honk. Typing that out gets old fast. Wrap it in a repeat and let the loop do the work.",
   "authorSolution": "repeat 3 {\n  forward(2)\n  honk()\n}\nforward(3)",

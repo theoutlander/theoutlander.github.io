@@ -75,9 +75,9 @@
   "parLines": 7,
   "starterCode": "// Same idea, but barrels in the way. Keep driving until you arrive —\n// blasting any barrel you meet.\n",
   "hints": [
-    "Same 'drive until you arrive' idea — but blast barrels on the way.",
-    "Inside while (!atBeacon()), decide each pass: barrel ahead? shoot. Otherwise, forward.",
-    "That's an if/else living inside the while — you've written both before, now together."
+    "Barrels are sitting in the lane between you and the goal. Blasting a barrel costs the bot a turn, and stepping costs a turn too. So the number of turns it takes to finish is not the same as the number of squares. What does that tell you about counting?",
+    "Every time around, the bot should look at the one square right in front of it. If a barrel is there, blast it. If the way is clear, take a step. Nothing else changes — it still keeps going until it reaches the goal.",
+    "while (!atBeacon()) { if ( ??? ) { ??? } else { forward(1) } } — what question tells the bot a barrel is right in front of it, and what should it do when the answer is yes?"
   ],
   "briefing": "Sprocket packed the runway with barrels — you can't count them all. Let while do the counting: keep going until atBeacon(), blasting whatever's in front.",
   "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",

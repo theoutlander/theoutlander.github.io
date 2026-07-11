@@ -83,9 +83,9 @@
   "parLines": 7,
   "starterCode": "// The corridor turns. When you're blocked, turn right — otherwise roll on.\n",
   "hints": [
-    "The corridor bends. When the wall stops you, there's only one open way — turn to it.",
-    "Inside while (!atBeacon()): if (blocked()) turn; else roll forward.",
-    "One right turn opens each corner here. Let the loop find the bend for you."
+    "Trace the corridor with your finger. It does not run straight to the goal. If the bot only knows how to step forward, what happens to it when the bend arrives?",
+    "The bot can never see the whole corridor. But it can always check the one square in front of it. So make that the plan: every time around, if that square is a wall, turn; if it is open, step. The loop asks again and again until the bot arrives.",
+    "while (!atBeacon()) { if ( ??? ) { ??? } else { forward(1) } } — you need a check for 'wall in front of me', and you have to choose which way the bot turns. This corridor only bends one way. Which turn keeps the bot inside it?"
   ],
   "briefing": "A corner you can't see the end of. The trick: when the wall stops you, turn right; otherwise keep rolling. One little loop drives the whole bend.",
   "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

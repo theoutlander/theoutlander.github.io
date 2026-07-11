@@ -103,9 +103,9 @@
   "parLines": 7,
   "starterCode": "// Gates open for the horn. Stop ON the pad, then honk().\n",
   "hints": [
-    "A honk only works while you're standing ON a pad.",
-    "Roll onto the first pad, honk to open its gate, then move to the next pad.",
-    "Two pads, two honks — open both gates on the way across."
+    "A honk from across the room does nothing. Look at where the pad is — what has to be true before a honk can open a gate?",
+    "Stand ON a pad, then honk. There are two pads, so you'll honk twice — once at each, on your way across.",
+    "forward(???) to land on the first pad, honk(), then forward(???) to the next one. The numbers are just squares. Count them."
   ],
   "briefing": "Two locked gates between you and dinner, Sparkplug. Park on each pad and give them the horn. Exactly two honks — this is a quiet neighborhood.",
   "authorSolution": "forward(2)\nhonk()\nforward(4)\nhonk()\nforward(3)",

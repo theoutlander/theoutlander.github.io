@@ -62,9 +62,9 @@
   "parLines": 3,
   "starterCode": "// New idea: while repeats AS LONG AS something is true.\n// You don't know how long the runway is — so just drive until you're there.\n",
   "hints": [
-    "You can't count the squares — so don't. Keep going until a test says you've arrived.",
-    "while (!atBeacon()) means 'as long as you are NOT there yet'. What one move goes inside?",
-    "Inside the loop, take a single step forward. The loop repeats it until you're on the goal."
+    "Look down the lane at the goal. Could you say, without counting squares, how many steps it takes to get there? If someone slid the goal further away, would your number still be right?",
+    "The bot should keep taking one step, over and over, and stop the moment it is standing on the goal. So before every step it needs to ask itself a question: am I there yet? The bot has a way to ask that — atBeacon().",
+    "while ( ??? ) { forward(1) } — the loop keeps repeating for as long as the ??? is TRUE. So what has to stay TRUE the whole time the bot is still driving?"
   ],
   "briefing": "repeat needs a number. But what if you don't KNOW the number? while keeps going until a test stops being true. Drive until atBeacon() — no counting.",
   "authorSolution": "while (!atBeacon()) {\n  forward(1)\n}",

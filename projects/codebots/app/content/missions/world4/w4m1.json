@@ -64,9 +64,9 @@
   "parLines": 10,
   "starterCode": "// You can make your OWN command! function stair() { ... } names a move.\n// Then call it by name: stair()\n",
   "hints": [
-    "Look at the staircase: the same little move repeats — forward, turn, forward, turn back.",
-    "Give that move a name with function stair() { … }, then call stair() to use it.",
-    "You'll call stair() a few times to climb all the way. How many steps is the staircase?"
+    "Trace the path to the beacon with your finger. It isn't a straight line — it's a staircase. Over a square, down a square, over, down. The same little move, again and again.",
+    "Writing that move out over and over is a waste of your time. Give the move a name instead, so you can build it once and then use it every time you need a step.",
+    "function ???() { ... } — the lines for ONE staircase step go inside. Then call it once per step. What do you NAME this move, and how many steps does the staircase have?"
   ],
   "briefing": "Time to build your own commands. A function gives a name to a bunch of moves. Name the staircase step 'stair', then just call stair() to use it — again and again.",
   "authorSolution": "function stair() {\n  forward(1)\n  right()\n  forward(1)\n  left()\n}\nstair()\nstair()\nstair()",

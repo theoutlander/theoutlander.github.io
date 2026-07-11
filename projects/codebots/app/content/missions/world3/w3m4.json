@@ -83,9 +83,9 @@
   "parLines": 7,
   "starterCode": "// Two corners now. The SAME loop as before still works — that's the magic.\n",
   "hints": [
-    "More corners — but don't write more code.",
-    "The exact loop from the last level drives this too. Try it before changing anything.",
-    "'if blocked turn, else forward' inside a while handles any number of turns."
+    "This corridor bends more than once. Look hard at the program you wrote for the single bend: does anything in it mention a corner, or count how many corners there are?",
+    "You do not need one piece of code per corner. The bot checks the square in front of it every single time around the loop — so the same rule catches the second corner exactly the way it caught the first.",
+    "Run last level's program here, unchanged, and predict first: how many times does the wall-check say yes before the bot reaches the goal? If your prediction matches what happens, you understand why one loop covers every corner — even corners you have never seen."
   ],
   "briefing": "More corners, same loop. A while loop doesn't care if there's one turn or ten — 'blocked? turn right; else roll' handles them all.",
   "authorSolution": "while (!atBeacon()) {\n  if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}",

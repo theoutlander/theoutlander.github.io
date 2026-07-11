@@ -77,9 +77,9 @@
   "parLines": 10,
   "starterCode": "// A function can hold a loop inside it. row() rolls a whole row.\n",
   "hints": [
-    "A function can hold a loop inside it. row() could roll a whole row by itself.",
-    "Put a repeat inside your function: function row() { repeat 4 { … } }.",
-    "Then it's just row(), a turn, row() — an L in three short lines."
+    "The path to the beacon is an L: a straight run, one turn, then another straight run. Look closely at the two runs. How are they the same?",
+    "Build one command that drives a whole straight run all on its own — the repeating is its job, not yours. Then your main code is a run, a turn, and a run.",
+    "function ???() { repeat ??? { ??? } } — then three short lines below it. How long is one run, what repeats inside, and what do you name the command?"
   ],
   "briefing": "Put a loop INSIDE a function. row() rolls four squares by itself. Call row(), turn the corner, call row() again — the loop hides inside your command.",
   "authorSolution": "function row() {\n  repeat 4 {\n    forward(1)\n  }\n}\nrow()\nright()\nrow()",

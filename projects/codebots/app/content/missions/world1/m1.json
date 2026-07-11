@@ -111,9 +111,9 @@
   "parLines": 6,
   "starterCode": "// Wake up! forward(1) rolls 1 square.\nforward(1)",
   "hints": [
-    "Count the open squares before you reach the crates.",
-    "Roll to the last clear square, then face north — which turn points you up?",
-    "Once you're past the crates, turn back east and roll to the beacon."
+    "Look along the lane. Count the clear squares before the crates get in the way — that first number is hiding in plain sight.",
+    "Roll as far as you can, climb over the crates, then come back down into the lane and finish on the beacon.",
+    "Watch out with turns: left() turns the bot to ITS OWN left, not the screen's left. Your bot is facing right, so left() points it up. Try forward(???), left(), forward(???) and count the squares yourself."
   ],
   "briefing": "Rise and shine, Sparkplug. The pirates parked crates all over Dock 1. Roll to the beacon — the long way if you must, the smart way if you can.",
   "authorSolution": "forward(2); left(); forward(3); right(); forward(5); honk();",

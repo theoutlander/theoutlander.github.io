@@ -89,9 +89,9 @@
   "parLines": 14,
   "starterCode": "// You can make as many commands as you want. Here: one to dash, one to climb.\n",
   "hints": [
-    "Two different moves here: a straight dash, and a climb up a level.",
-    "Make dash() and climb() as separate functions, then use them in order.",
-    "The path is dash, climb, dash — call your two commands in that sequence."
+    "Follow the route to the beacon. Part of it is a long straight run. Part of it is going up a level and carrying on. Two different kinds of move — and one of them shows up more than once.",
+    "You can build more than one command. Give a name to the straight run, and a different name to the going-up move. Then your plan is only those two names, in the right order.",
+    "function ???() { ... } and function ???() { ... }, then a few lines at the bottom that call them. Which lines belong inside each one, what do you name them, and which order do you call them in?"
   ],
   "briefing": "Two jobs, two tools. Build dash() to sprint and climb() to go up a level, then snap them together like LEGO to reach the beacon.",
   "authorSolution": "function dash() {\n  forward(3)\n}\nfunction climb() {\n  left()\n  forward(2)\n  right()\n}\ndash()\nclimb()\ndash()",

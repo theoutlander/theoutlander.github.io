@@ -59,9 +59,9 @@
   "parLines": 6,
   "starterCode": "// atBeacon() is yes/no: are you standing on the goal yet?\n",
   "hints": [
-    "You don't know which step lands you on the goal — so check after every step.",
-    "After each forward, ask if (atBeacon()) and honk() when it's true.",
-    "Loop 'forward, then check' enough times to cover the whole lane."
+    "The horn has to sound while the bot is standing on the goal, not one square early and not one square late. Counting squares would work here, but it breaks the moment the goal moves. Is there a way for the bot to know it has arrived?",
+    "Let the bot ask, after every single step it takes, whether it is standing on the goal, and sound the horn only on the step where the answer is yes. That way the bot finds the goal instead of you telling it where the goal is.",
+    "Shape it like this and fill in the blanks:\nrepeat ??? {\n  forward(1)\n  if ( ??? ) {\n    honk()\n  }\n}\nOne blank is the sensor. The other is how many steps it takes to reach the goal — too many and the bot rolls straight past it."
   ],
   "briefing": "Learn to KNOW when you've arrived. Roll forward, and each step ask atBeacon(). When it's yes, sound the horn right on the goal.",
   "authorSolution": "repeat 6 {\n  forward(1)\n  if (atBeacon()) {\n    honk()\n  }\n}",

@@ -79,9 +79,9 @@
   "parLines": 14,
   "starterCode": "// if does something WHEN true. else does something when it's NOT.\nforward(3)\n",
   "hints": [
-    "This time write BOTH paths: what to do when blocked, and what to do when the road's clear.",
-    "if (blocked()) { …go around… } else { …drive straight… } — the bot picks one.",
-    "In the blocked path, dip around the wall and come back to the same row before you finish."
+    "The bot cannot see the far end of the lane from the start line. Two things could be true when it gets there: the way ahead is blocked, or the way ahead is clear. What should the bot do in each of those two cases?",
+    "Write both plans, not one. One plan for a blocked lane: leave the lane, slip past the obstacle, and come back into the lane so the bot still lines up with the beacon. One plan for a clear lane: keep rolling. The bot senses, then picks the plan that matches.",
+    "Shape it like this and fill in the three blanks:\nforward(3)\nif ( ??? ) {\n  ???   // the detour\n} else {\n  ???   // the clear road\n}\nforward(2)\nWhichever plan runs, the bot has to end up in the same lane, still pointed at the beacon."
   ],
   "briefing": "Sometimes the road's clear, sometimes it's not. if handles the blocked road; else handles the open one. Teach Sparkplug to do both.",
   "authorSolution": "forward(3)\nif (blocked()) {\n  right()\n  forward(1)\n  left()\n  forward(2)\n  left()\n  forward(1)\n  right()\n} else {\n  forward(2)\n}\nforward(2)",
