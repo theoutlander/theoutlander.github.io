@@ -53,24 +53,6 @@ header{text-align:center;padding:48px 0 36px}
 .sh h2{font-family:'Fredoka One',cursive;font-size:24px;color:var(--text);white-space:nowrap}
 .sl{flex:1;height:1px;background:var(--border)}
 
-/* Game of the week */
-#gotw{background:linear-gradient(135deg,rgba(255,225,77,.07),rgba(255,110,180,.07));border:1px solid rgba(255,225,77,.18);border-radius:var(--radius);padding:18px 20px;display:flex;align-items:center;gap:16px;cursor:pointer;transition:transform .15s,box-shadow .15s;-webkit-user-select:none;user-select:none;touch-action:manipulation}
-#gotw:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.4)}
-#gotw:active{transform:scale(.98)}
-.gotw-badge{background:var(--yellow);color:#0f0a1e;font-family:'Fredoka One',cursive;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:4px 9px;border-radius:99px;white-space:nowrap;flex-shrink:0;align-self:flex-start}
-.gotw-em{font-size:48px;flex-shrink:0;line-height:1}
-.gotw-info{flex:1;min-width:0}
-.gotw-title{font-family:'Fredoka One',cursive;font-size:20px;line-height:1.1;margin-bottom:3px}
-.gotw-desc{font-size:12px;color:var(--muted);line-height:1.5}
-.gotw-btn{background:var(--yellow);color:#0f0a1e;border:none;font-family:'Fredoka One',cursive;font-size:15px;padding:9px 20px;border-radius:10px;cursor:pointer;flex-shrink:0;white-space:nowrap;transition:transform .1s;touch-action:manipulation;min-height:44px}
-.gotw-btn:active{transform:scale(.94)}
-@media(max-width:560px){
-  #gotw{flex-wrap:wrap}
-  .gotw-em{font-size:40px}
-  .gotw-info{flex:1 1 100%;order:3}
-  .gotw-btn{flex:1 1 100%;order:4;margin-top:4px}
-}
-
 /* Games grid */
 .gg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
 @media(max-width:640px){.gg{grid-template-columns:repeat(2,1fr)}}
@@ -90,6 +72,9 @@ header{text-align:center;padding:48px 0 36px}
 .gd{flex:1;font-size:11px;color:var(--muted);line-height:1.5}
 .tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
+.tn{background:rgba(255,225,77,.14);color:var(--yellow);border:1px solid rgba(255,225,77,.26)}
+.tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tags-row .tag{margin-top:0}
 .pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
 .pb:active{background:rgba(255,255,255,.2);transform:scale(.97)}
 
@@ -175,16 +160,153 @@ header{text-align:center;padding:48px 0 36px}
     <div class="tap-hint">🤫 tap the title 5 times...</div>
   </header>
 
-  <!-- GAME OF THE WEEK -->
-  <div class="sh"><h2>🌟 Our Latest Creation</h2><div class="sl"></div></div>
-  <div id="gotw">
-    <span class="gotw-badge">✨ New!</span>
-    <div class="gotw-em" id="ge">🐉</div>
-    <div class="gotw-info">
-      <div class="gotw-title" id="gtt">Legend of the Rainbow Dragon!</div>
-      <div class="gotw-desc" id="gdt">Daily turns on Sparkle Dragon 3000 — forest fights and a sparkly dragon boss!</div>
+  <!-- ALL GAMES -->
+  <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
+  <div class="gg">
+    <div class="gc">
+      <div class="ga ga-p5">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders 2!</div>
+        <div class="gd">The bigger, better castle siege! Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
+        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Tower Defense</span></div>
+        <button class="pb" data-game="games/castle-defenders-2/index.html" data-title="Castle Defenders 2! 🏰">▶ Play Now</button>
+      </div>
     </div>
-    <button class="gotw-btn">▶ Play!</button>
+    <div class="gc">
+      <div class="ga ga-p1">🗝️</div>
+      <div class="gb">
+        <div class="gt">Maya's Escape Room 🗝️</div>
+        <div class="gd">Escape the spooky mansion! Pick the right chairs, crack the clues, play the ghost's song, and step through the magic mirror! 👻</div>
+        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Puzzle</span></div>
+        <button class="pb" data-game="games/mayas-escape-room/index.html" data-title="Maya's Escape Room 🗝️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">🏛️</div>
+      <div class="gb">
+        <div class="gt">Maya's Sewing Museum!</div>
+        <div class="gd">Walk through Maya's museum, peek at everything she sewed, and sell to visitors who fall in love! 🏛️</div>
+        <span class="tag tm">Shop Sim</span>
+        <button class="pb" data-game="games/mayas-sewing-museum/index.html" data-title="Maya's Sewing Museum 🏛️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p4">🧱</div>
+      <div class="gb">
+        <div class="gt">Build On! 🧱</div>
+        <div class="gd">Build anything in your own 3D world! Blocks, plants, pets, day &amp; night, space &amp; sea. 🌈</div>
+        <span class="tag tm">Sandbox</span>
+        <button class="pb" data-game="games/build-on/index.html" data-title="Build On! 🧱">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🌻</div>
+      <div class="gb">
+        <div class="gt">Garden Work! 🌻</div>
+        <div class="gd">Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻</div>
+        <span class="tag tm">Garden Sim</span>
+        <button class="pb" data-game="games/garden-work-update/index.html" data-title="Garden Work! 🌻">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">✨</div>
+      <div class="gb">
+        <div class="gt">Sparkle Duel 2!</div>
+        <div class="gd">Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!</div>
+        <span class="tag tm">Spell Duel</span>
+        <button class="pb" data-game="games/sparkle-duel/index.html" data-title="Sparkle Duel 2 ✨">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🧵</div>
+      <div class="gb">
+        <div class="gt">Maya's Sewing Shop!</div>
+        <div class="gd">Sew and design cute things, then chat with customers — sell to them or shoo them out!</div>
+        <span class="tag tm">Shop Sim</span>
+        <button class="pb" data-game="games/mayas-sewing-shop/index.html" data-title="Maya's Sewing Shop 🧵">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🚐</div>
+      <div class="gb">
+        <div class="gt">Maya's Delivery Service!</div>
+        <div class="gd">Drive deliveries, earn coins, and unlock new vans and pets!</div>
+        <span class="tag tm">Delivery Sim</span>
+        <button class="pb" data-game="games/mayas-delivery-service/index.html" data-title="Maya's Delivery Service 🚐">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">🐉</div>
+      <div class="gb">
+        <div class="gt">LORD! 🐉</div>
+        <div class="gd">Legend of the Rainbow Dragon — Dad's sparkly LORD! Daily turns, forest, beat the dragon.</div>
+        <span class="tag tm">Adventure</span>
+        <button class="pb" data-game="games/legend-of-the-rainbow-dragon/index.html" data-title="Legend of the Rainbow Dragon 🐉">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p2">💧</div>
+      <div class="gb">
+        <div class="gt">Pipe Flow!</div>
+        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
+        <span class="tag tm">Puzzle</span>
+        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p3">🍳</div>
+      <div class="gb">
+        <div class="gt">Maya's Kitchen!</div>
+        <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
+        <span class="tag tm">Cooking Sim</span>
+        <button class="pb" data-game="games/mayas-kitchen/index.html" data-title="Maya's Kitchen! 🍳">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p4">🏙️</div>
+      <div class="gb">
+        <div class="gt">City Builder!</div>
+        <div class="gd">Place bricks, windows, doors, and rooftops to build a glittering skyline!</div>
+        <span class="tag tm">City Sim</span>
+        <button class="pb" data-game="games/skyline-builder/index.html" data-title="City Builder! 🏙️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders!</div>
+        <div class="gd">Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
+        <span class="tag tm">Tower Defense</span>
+        <button class="pb" data-game="games/castle-defenders/index.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🪅</div>
+      <div class="gb">
+        <div class="gt">Piñata Piano!</div>
+        <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
+        <span class="tag tm">Music</span>
+        <button class="pb" data-game="games/pinata-piano/index.html" data-title="Piñata Piano! 🪅">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">👻</div>
+      <div class="gb">
+        <div class="gt">Dust Chasers!</div>
+        <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
+        <span class="tag tm">Arcade</span>
+        <button class="pb" data-game="games/dust-chasers/index.html" data-title="Dust Chasers! 👻">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🌈</div>
+      <div class="gb">
+        <div class="gt">Spell It!</div>
+        <div class="gd">Letters rain down — tap them in order to spell the word! Grades 1–5.</div>
+        <span class="tag tm">Spelling</span>
+        <button class="pb" data-game="games/spell-it/index.html" data-title="Spell It! 🌈">▶ Play Now</button>
+      </div>
+    </div>
   </div>
 
   <!-- SHOP BANNER -->
@@ -196,137 +318,6 @@ header{text-align:center;padding:48px 0 36px}
       <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
     </div>
     <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
-  </div>
-
-  <!-- ALL GAMES -->
-  <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
-  <div class="gg">
-    <div class="gc">
-      <div class="ga ga-p6">🏛️</div>
-      <div class="gb">
-        <div class="gt">Maya's Sewing Museum!</div>
-        <div class="gd">Walk through Maya's museum, peek at everything she sewed, and sell to visitors who fall in love! 🏛️</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/mayas-sewing-museum/index.html" data-title="Maya's Sewing Museum 🏛️">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p4">🧱</div>
-      <div class="gb">
-        <div class="gt">Build On! 🧱</div>
-        <div class="gd">Build anything in your own 3D world! Blocks, plants, pets, day &amp; night, space &amp; sea. 🌈</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/build-on/index.html" data-title="Build On! 🧱">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p5">🌻</div>
-      <div class="gb">
-        <div class="gt">Garden Work! 🌻</div>
-        <div class="gd">Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/garden-work-update/index.html" data-title="Garden Work! 🌻">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p6">✨</div>
-      <div class="gb">
-        <div class="gt">Sparkle Duel 2!</div>
-        <div class="gd">Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/sparkle-duel/index.html" data-title="Sparkle Duel 2 ✨">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p1">🧵</div>
-      <div class="gb">
-        <div class="gt">Maya's Sewing Shop!</div>
-        <div class="gd">Sew and design cute things, then chat with customers — sell to them or shoo them out!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/mayas-sewing-shop/index.html" data-title="Maya's Sewing Shop 🧵">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p1">🚐</div>
-      <div class="gb">
-        <div class="gt">Maya's Delivery Service!</div>
-        <div class="gd">Drive deliveries, earn coins, and unlock new vans and pets!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/mayas-delivery-service/index.html" data-title="Maya's Delivery Service 🚐">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p6">🐉</div>
-      <div class="gb">
-        <div class="gt">LORD! 🐉</div>
-        <div class="gd">Legend of the Rainbow Dragon — Dad's sparkly LORD! Daily turns, forest, beat the dragon.</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/legend-of-the-rainbow-dragon/index.html" data-title="Legend of the Rainbow Dragon 🐉">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p2">💧</div>
-      <div class="gb">
-        <div class="gt">Pipe Flow!</div>
-        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p3">🍳</div>
-      <div class="gb">
-        <div class="gt">Maya's Kitchen!</div>
-        <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/mayas-kitchen/index.html" data-title="Maya's Kitchen! 🍳">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p4">🏙️</div>
-      <div class="gb">
-        <div class="gt">City Builder!</div>
-        <div class="gd">Place bricks, windows, doors, and rooftops to build a glittering skyline!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/skyline-builder/index.html" data-title="City Builder! 🏙️">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p5">🏰</div>
-      <div class="gb">
-        <div class="gt">Castle Defenders!</div>
-        <div class="gd">Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/castle-defenders/index.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p1">🪅</div>
-      <div class="gb">
-        <div class="gt">Piñata Piano!</div>
-        <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/pinata-piano/index.html" data-title="Piñata Piano! 🪅">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p1">👻</div>
-      <div class="gb">
-        <div class="gt">Dust Chasers!</div>
-        <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/dust-chasers/index.html" data-title="Dust Chasers! 👻">▶ Play Now</button>
-      </div>
-    </div>
-    <div class="gc">
-      <div class="ga ga-p5">🌈</div>
-      <div class="gb">
-        <div class="gt">Spell It!</div>
-        <div class="gd">Letters rain down — tap them in order to spell the word! Grades 1–5.</div>
-        <span class="tag tm">Made together 💕</span>
-        <button class="pb" data-game="games/spell-it/index.html" data-title="Spell It! 🌈">▶ Play Now</button>
-      </div>
-    </div>
   </div>
 
   <!-- DOODLE -->
@@ -486,8 +477,9 @@ setTimeout(()=>{
   showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
 },6000);
 
-// ===== GAME OF THE WEEK =====
 const GLIST=[
+  {em:'🏰',title:'Castle Defenders 2! 🏰',desc:'The bigger, better castle siege — chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders-2/index.html'},
+  {em:'🗝️',title:"Maya's Escape Room 🗝️",desc:"Escape the spooky mansion — tricky chairs, ghost songs, math locks, and a magic mirror!",file:'games/mayas-escape-room/index.html'},
   {em:'🏛️',title:"Maya's Sewing Museum 🏛️",desc:"Walk through three rooms of things Maya sewed, peek at every exhibit, and sell to visitors who fall in love!",file:'games/mayas-sewing-museum/index.html'},
   {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html'},
   {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html'},
@@ -504,20 +496,8 @@ const GLIST=[
   {em:'🌈',title:'Spell It! 🌈',desc:'Tap falling letters in order to spell the mystery word!',file:'games/spell-it/index.html'},
 ];
 const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
-const gw=GLIST[0];
-document.getElementById('ge').textContent=gw.em;
-document.getElementById('gtt').textContent=gw.title;
-document.getElementById('gdt').textContent=gw.desc;
-function gotwPlay(){openGame(gw.file,gw.title);}
 
-// Wire up all play buttons + gotw with pointerdown (no 300ms tap delay on iPad)
-document.getElementById('gotw').addEventListener('pointerdown',function(e){
-  if(e.target.closest('button')||e.pointerType==='mouse')return; // let button handle it; mouse uses click fine
-  gotwPlay();
-});
-document.querySelector('#gotw .gotw-btn').addEventListener('pointerdown',function(e){
-  e.stopPropagation(); gotwPlay();
-});
+// Wire up all play buttons with pointerdown (no 300ms tap delay on iPad)
 document.querySelectorAll('.pb[data-game]').forEach(function(btn){
   btn.addEventListener('pointerdown',function(e){
     e.preventDefault();

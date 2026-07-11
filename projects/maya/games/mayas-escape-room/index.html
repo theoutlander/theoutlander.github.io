@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<title>Maya's Escape Room 🗝️</title>
+<script>window.MAYA_GAME='games/mayas-escape-room/index.html';</script>
+<script src="portal-bridge.js"></script>
+<script src="ga-analytics.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0a14;--wall:#1c1328;--wall2:#241a33;--floor:#2a1a12;--floor2:#170d08;
+  --text:#f0e6ff;--muted:rgba(240,230,255,.5);
+  --candle:#ffb347;--key:#ffe14d;--ghost:#cfe3ff;--purple:#c77dff;--green:#5dffb0;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow:hidden;-webkit-text-size-adjust:100%}
+button{font-family:'Nunito',sans-serif;touch-action:manipulation}
+a{color:var(--purple)}a:hover{color:var(--candle)}
+
+#game{position:fixed;inset:0;display:flex;flex-direction:column}
+
+/* ---------- HUD ---------- */
+#hud{display:none;align-items:center;gap:10px;padding:10px 14px;background:rgba(13,10,20,.92);border-bottom:1px solid rgba(255,255,255,.08);z-index:20;min-height:56px}
+#hud.show{display:flex}
+#room-name{font-family:'Fredoka One',cursive;font-size:15px;color:var(--candle);white-space:nowrap}
+#sits{display:flex;gap:4px;align-items:center}
+#sits .sit-dot{font-size:20px;transition:opacity .3s,transform .3s}
+#sits .sit-dot.used{opacity:.18;transform:scale(.8)}
+#sits-label{font-size:10px;font-weight:900;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-right:2px}
+#hud-spacer{flex:1}
+#keyring{display:flex;gap:6px;font-size:20px}
+#keyring .kslot{opacity:.15;transition:opacity .3s,transform .3s}
+#keyring .kslot.got{opacity:1;animation:keypop .5s cubic-bezier(.34,1.56,.64,1);filter:drop-shadow(0 0 6px rgba(255,225,77,.9))}
+@keyframes keypop{0%{transform:scale(0) rotate(-180deg)}100%{transform:scale(1) rotate(0)}}
+#clue-btn{display:none;background:rgba(255,225,77,.1);border:1px solid rgba(255,225,77,.25);color:var(--key);font-size:12px;font-weight:900;padding:8px 12px;border-radius:10px;cursor:pointer;min-height:44px}
+#clue-btn.show{display:block}
+#goal{display:none;padding:7px 14px;background:rgba(255,225,77,.06);border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px;font-weight:900;color:var(--key);text-align:center}
+#goal.show{display:block}
+#mute-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);font-size:16px;padding:8px 10px;border-radius:10px;cursor:pointer;min-height:44px;min-width:44px}
+#mute-btn.off{opacity:.4}
+#timer{font-size:13px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
+
+/* ---------- Scenes ---------- */
+#stage{flex:1;position:relative;overflow:hidden}
+.scene{position:absolute;inset:0;display:none;flex-direction:column}
+.scene.on{display:flex}
+
+/* ---------- Title ---------- */
+#s-title{align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,#241a33 0%,#0d0a14 70%)}
+.t-moon{font-size:56px;animation:bob 3s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.t-title{font-family:'Fredoka One',cursive;font-size:clamp(36px,9vw,72px);line-height:1.05;margin:10px 0 6px;background:linear-gradient(135deg,var(--purple),var(--candle),var(--key));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 0 30px rgba(199,125,255,.25))}
+.t-sub{font-size:14px;color:var(--muted);max-width:420px;line-height:1.6;margin-bottom:26px}
+.big-btn{font-family:'Fredoka One',cursive;font-size:22px;color:#0d0a14;background:linear-gradient(135deg,var(--key),var(--candle));border:none;border-radius:14px;padding:16px 40px;cursor:pointer;box-shadow:0 5px 0 rgba(0,0,0,.45);transition:transform .12s,box-shadow .12s;min-height:56px}
+.big-btn:hover{transform:translateY(-2px)}
+.big-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.45)}
+.t-ghosts{font-size:26px;margin-top:34px;display:flex;gap:26px}
+.t-ghosts span{animation:bob 2.4s ease-in-out infinite;opacity:.5}
+.t-ghosts span:nth-child(2){animation-delay:.4s}
+.t-ghosts span:nth-child(3){animation-delay:.8s}
+#best-time{font-size:12px;color:var(--muted);margin-top:16px}
+
+/* ---------- Room shells ---------- */
+.wall{flex:1.15;position:relative;background:linear-gradient(180deg,var(--wall) 0%,var(--wall2) 100%);border-bottom:6px solid #120a06;min-height:0}
+.floor{flex:1;position:relative;background:repeating-linear-gradient(90deg,var(--floor) 0px,var(--floor) 70px,#241610 70px,#241610 72px),linear-gradient(180deg,var(--floor) 0%,var(--floor2) 100%);background-blend-mode:multiply}
+.candle{position:absolute;font-size:26px;filter:drop-shadow(0 0 14px rgba(255,179,71,.8));animation:flicker 1.6s ease-in-out infinite}
+@keyframes flicker{0%,100%{opacity:1}45%{opacity:.75}60%{opacity:.95}80%{opacity:.65}}
+.glow{position:absolute;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle,rgba(255,179,71,.14),transparent 70%);pointer-events:none}
+
+/* Door */
+.door{position:absolute;bottom:0;width:min(120px,22vw);height:78%;background:linear-gradient(180deg,#3b2314,#241408);border:4px solid #120a06;border-bottom:none;border-radius:10px 10px 0 0;cursor:pointer;transition:transform .15s;display:flex;align-items:center;justify-content:flex-end;flex-direction:column;padding-bottom:8px}
+.door:hover{transform:scale(1.02)}
+.door .knob{width:12px;height:12px;border-radius:50%;background:var(--key);position:absolute;right:10px;top:50%;box-shadow:0 0 8px rgba(255,225,77,.6)}
+.door .lock{font-size:22px;margin-bottom:4px}
+.door.shake{animation:doorshake .4s}
+@keyframes doorshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.door.open-anim{animation:dooropen .9s forwards}
+@keyframes dooropen{to{transform:perspective(500px) rotateY(-70deg);opacity:.3}}
+
+/* Portrait */
+.portrait{position:absolute;width:70px;height:88px;background:#1a0f24;border:5px solid #4a3418;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:36px;cursor:pointer}
+.portrait .eyes{animation:watch 5s ease-in-out infinite}
+@keyframes watch{0%,100%{transform:translateX(0)}40%{transform:translateX(3px)}70%{transform:translateX(-3px)}}
+
+/* ---------- Chairs ---------- */
+#chair-row{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-evenly;padding:0 8px 12px}
+.chair{position:relative;width:clamp(54px,15vw,92px);cursor:pointer;transition:transform .15s;-webkit-user-select:none;user-select:none}
+.chair:hover{transform:translateY(-4px)}
+.c-back{height:clamp(40px,9vw,64px);width:82%;margin:0 auto;background:var(--cc,#5a2d6e);border-radius:10px 10px 0 0;border:2px solid rgba(0,0,0,.35);border-bottom:none}
+.c-box{position:relative;height:clamp(34px,8vw,50px);background:color-mix(in oklab,var(--cc,#5a2d6e) 70%,black);border:2px solid rgba(0,0,0,.35);border-radius:6px}
+.c-content{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:clamp(20px,6vw,32px);opacity:0;transition:opacity .3s .15s}
+.c-lid{position:absolute;inset:-2px;background:var(--cc,#5a2d6e);border:2px solid rgba(0,0,0,.35);border-radius:6px;transition:transform .45s cubic-bezier(.34,1.56,.64,1);transform-origin:top left}
+.chair.open .c-lid{transform:translateY(-14px) rotate(-28deg)}
+.chair.open .c-content{opacity:1}
+.chair.open .c-content.takeable{animation:pulse 1s ease-in-out infinite;cursor:pointer}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.2)}}
+.c-legs{display:flex;justify-content:space-between;padding:0 8px}
+.c-legs span{width:7px;height:clamp(16px,4vw,24px);background:#241408;border-radius:0 0 3px 3px}
+.sitter{position:absolute;top:-8px;left:50%;transform:translateX(-50%) scale(0);font-size:clamp(26px,7vw,40px);transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:2}
+.chair.sitting .sitter{transform:translateX(-50%) scale(1)}
+.chair.dusty{animation:doorshake .4s}
+.chair.taken .c-content{opacity:.25}
+
+/* ---------- Room 2 furniture ---------- */
+#r2-wall-items{position:absolute;inset:0}
+#r2-floor-items{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-evenly;padding:0 6px 10px}
+.spot{position:relative;cursor:pointer;text-align:center;transition:transform .15s;-webkit-user-select:none;user-select:none;padding:6px;min-width:52px;min-height:52px}
+.spot:hover{transform:translateY(-4px)}
+.spot .s-emoji{font-size:clamp(38px,10vw,60px);line-height:1;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.spot .s-label{font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+.spot.wiggle{animation:doorshake .4s}
+.spot.found .s-emoji{filter:drop-shadow(0 0 18px rgba(255,225,77,.9))}
+.spot-wall{position:absolute;cursor:pointer;text-align:center;transition:transform .15s;padding:6px;min-width:52px;min-height:52px}
+.spot-wall:hover{transform:scale(1.06)}
+.spot-wall .s-emoji{font-size:clamp(34px,9vw,54px);line-height:1;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
+.spot-wall .s-label{font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.spot-wall.wiggle{animation:doorshake .4s}
+.spot-wall.found .s-emoji{filter:drop-shadow(0 0 18px rgba(255,225,77,.9))}
+
+/* Mirror */
+#mirror{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:min(150px,30vw);height:88%;background:linear-gradient(160deg,#3a4a6a 0%,#8aa4cc 30%,#2a3a55 55%,#5a7499 80%);border:8px solid #4a3418;border-bottom:none;border-radius:80px 80px 0 0;cursor:pointer;overflow:hidden;transition:transform .15s}
+#mirror:hover{transform:translateX(-50%) scale(1.02)}
+#mirror::after{content:'';position:absolute;top:8%;left:15%;width:22%;height:55%;background:linear-gradient(160deg,rgba(255,255,255,.5),transparent);border-radius:99px;transform:rotate(8deg)}
+#mirror .m-keyhole{position:absolute;bottom:16px;left:50%;transform:translateX(-50%);font-size:20px;filter:drop-shadow(0 0 6px rgba(0,0,0,.8))}
+#mirror.wiggle{animation:mshake .4s}
+@keyframes mshake{0%,100%{transform:translateX(-50%)}25%{transform:translateX(calc(-50% - 5px))}50%{transform:translateX(calc(-50% + 5px))}75%{transform:translateX(calc(-50% - 3px))}}
+#mirror.unlocked{animation:shimmer 1.4s ease-in-out infinite}
+@keyframes shimmer{0%,100%{box-shadow:0 0 20px rgba(138,164,204,.4)}50%{box-shadow:0 0 60px rgba(199,125,255,.9)}}
+#mirror.enter-anim{animation:mirrorenter 1s forwards}
+@keyframes mirrorenter{to{transform:translateX(-50%) scale(6);opacity:0;filter:blur(6px)}}
+
+/* ---------- Room 3: mirror hallway ---------- */
+#s-room3 .wall{background:linear-gradient(180deg,#1a2440 0%,#2a3a66 100%);border-bottom-color:#0a1020}
+#s-room3 .floor{background:repeating-linear-gradient(90deg,#22304f 0px,#22304f 70px,#1a2440 70px,#1a2440 72px)}
+.sparkle{position:absolute;font-size:16px;animation:sparklefloat linear infinite;pointer-events:none;opacity:0}
+@keyframes sparklefloat{0%{transform:translateY(0);opacity:0}15%{opacity:.9}85%{opacity:.3}100%{transform:translateY(-90vh);opacity:0}}
+#exit-door{position:absolute;left:50%;transform:translateX(-50%);bottom:0;width:min(130px,24vw);height:80%;background:linear-gradient(180deg,#fff8e0,#ffe14d);border:5px solid #b8952a;border-bottom:none;border-radius:70px 70px 0 0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:18px;color:#6a4a00;animation:exitglow 1.6s ease-in-out infinite;transition:transform .15s}
+#exit-door:hover{transform:translateX(-50%) scale(1.03)}
+@keyframes exitglow{0%,100%{box-shadow:0 0 30px rgba(255,225,77,.5)}50%{box-shadow:0 0 80px rgba(255,225,77,.95)}}
+.r3-note{position:absolute;top:12%;width:100%;text-align:center;font-size:14px;color:var(--ghost);opacity:.75;padding:0 20px;line-height:1.6}
+
+/* ---------- Win ---------- */
+#s-win{align-items:center;justify-content:center;text-align:center;padding:24px;background:radial-gradient(ellipse at 50% 30%,#2a3a66 0%,#0d0a14 75%)}
+.w-title{font-family:'Fredoka One',cursive;font-size:clamp(40px,10vw,80px);background:linear-gradient(135deg,var(--key),var(--green),var(--ghost));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin:12px 0 8px}
+.w-time{font-size:18px;font-weight:900;color:var(--key);margin-bottom:6px}
+.w-sub{font-size:14px;color:var(--muted);margin-bottom:28px;max-width:380px;line-height:1.6}
+.w-em{font-size:60px;animation:bob 2s ease-in-out infinite}
+
+/* ---------- Message bubble ---------- */
+#msg{position:fixed;left:50%;top:68px;transform:translateX(-50%) translateY(-160px);max-width:min(480px,92vw);width:max-content;background:rgba(20,13,34,.96);border:1px solid rgba(199,125,255,.35);border-radius:16px;padding:13px 20px;font-size:15px;font-weight:700;line-height:1.5;text-align:center;z-index:60;transition:transform .35s cubic-bezier(.34,1.56,.64,1);pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,.6)}
+#msg.show{transform:translateX(-50%) translateY(0)}
+
+/* ---------- Scroll / clue modal ---------- */
+#modal{position:fixed;inset:0;background:rgba(6,4,10,.75);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+#modal.show{display:flex}
+#scroll-paper{background:linear-gradient(180deg,#f5e6c4,#e8d0a0);color:#3a2810;border-radius:8px;padding:28px 26px 22px;max-width:400px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:scrollin .35s cubic-bezier(.34,1.56,.64,1);position:relative;max-height:80vh;overflow-y:auto}
+@keyframes scrollin{0%{transform:scale(.6) rotate(-4deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+#scroll-paper::before,#scroll-paper::after{content:'';position:absolute;left:0;right:0;height:12px;background:#c4a468;border-radius:99px}
+#scroll-paper::before{top:-5px}
+#scroll-paper::after{bottom:-5px}
+.sp-title{font-family:'Fredoka One',cursive;font-size:16px;margin-bottom:10px;color:#6a4a10}
+.sp-text{font-size:17px;line-height:1.6;font-weight:700}
+.sp-text em{display:block;font-size:12px;font-weight:400;margin-top:10px;color:#8a6a30}
+.sp-close{margin-top:18px;width:100%;background:#6a4a10;color:#f5e6c4;border:none;border-radius:10px;padding:12px;font-family:'Fredoka One',cursive;font-size:16px;cursor:pointer;min-height:48px}
+.clue-item{border-top:2px dashed #c4a468;padding:12px 2px;font-size:15px;line-height:1.55;font-weight:700}
+.clue-item:first-of-type{border-top:none}
+
+/* ---------- Net trap ---------- */
+#net{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;flex-direction:column;background:rgba(6,4,10,.55)}
+#net.show{display:flex}
+#net-mesh{position:absolute;left:0;right:0;top:-100%;bottom:100%;background:repeating-linear-gradient(45deg,transparent 0 14px,rgba(240,230,255,.5) 14px 17px),repeating-linear-gradient(-45deg,transparent 0 14px,rgba(240,230,255,.5) 14px 17px);animation:netdrop .5s cubic-bezier(.6,0,.8,1) forwards}
+@keyframes netdrop{to{top:0;bottom:0}}
+#net-card{position:relative;background:rgba(20,13,34,.97);border:1px solid rgba(255,110,110,.4);border-radius:20px;padding:28px 26px;text-align:center;max-width:360px;margin:20px;animation:scrollin .4s .45s both}
+#net-card .n-em{font-size:54px}
+#net-card h2{font-family:'Fredoka One',cursive;font-size:26px;color:#ff9090;margin:8px 0 6px}
+#net-card p{font-size:14px;color:var(--muted);line-height:1.6;margin-bottom:18px}
+
+/* Confetti */
+.cp{position:fixed;top:-30px;pointer-events:none;z-index:500;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(0) rotate(0deg)}100%{transform:translateY(110vh) rotate(720deg)}}
+
+/* fade transitions */
+.scene.fadein{animation:scfade .5s}
+@keyframes scfade{from{opacity:0}to{opacity:1}}
+
+/* ---------- Decor ---------- */
+.wall::before{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 44px,rgba(255,255,255,.022) 44px 47px);pointer-events:none}
+.cobweb{position:absolute;font-size:34px;opacity:.28;pointer-events:none}
+.chandelier{position:absolute;top:0;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;filter:drop-shadow(0 0 12px rgba(255,179,71,.5));z-index:1}
+.chandelier .chain{display:block;width:3px;height:24px;background:#4a3418;margin:0 auto}
+.chandelier .arms{font-size:18px;letter-spacing:2px;background:linear-gradient(180deg,#4a3418,#241408);border-radius:0 0 14px 14px;padding:3px 10px 5px;display:block}
+.m-window{position:absolute;width:76px;height:98px;border:5px solid #241408;border-radius:50px 50px 6px 6px;background:linear-gradient(180deg,#101c38,#1c2c50);overflow:hidden;pointer-events:none}
+.m-window .moon{position:absolute;top:10px;left:12px;font-size:26px;filter:drop-shadow(0 0 10px rgba(207,227,255,.8));animation:bob 6s ease-in-out infinite}
+.m-window .bars{position:absolute;inset:0;background:linear-gradient(90deg,transparent 47%,#241408 47% 53%,transparent 53%),linear-gradient(0deg,transparent 47%,#241408 47% 53%,transparent 53%)}
+.rug{position:absolute;left:50%;bottom:4%;transform:translateX(-50%);width:84%;height:60%;border-radius:50%;background:radial-gradient(ellipse at center,rgba(120,40,90,.30) 0%,rgba(90,30,70,.24) 54%,rgba(199,125,255,.13) 55% 60%,transparent 61%);pointer-events:none}
+.mote{position:absolute;width:3px;height:3px;border-radius:50%;background:rgba(255,220,170,.4);animation:motefloat linear infinite;pointer-events:none;opacity:0}
+@keyframes motefloat{0%{transform:translate(0,0);opacity:0}20%{opacity:.7}80%{opacity:.2}100%{transform:translate(24px,-70vh);opacity:0}}
+.flyby{position:absolute;left:-70px;font-size:26px;pointer-events:none;animation:flyacross 8.5s linear forwards;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));z-index:1}
+@keyframes flyacross{0%{transform:translate(0,0)}25%{transform:translate(28vw,-30px)}50%{transform:translate(55vw,14px)}75%{transform:translate(80vw,-24px)}100%{transform:translate(108vw,0)}}
+.fog{position:absolute;bottom:-6%;width:70%;height:52%;background:radial-gradient(ellipse,rgba(207,227,255,.10),transparent 70%);filter:blur(8px);pointer-events:none;animation:fogdrift 16s ease-in-out infinite alternate}
+@keyframes fogdrift{from{transform:translateX(-12%)}to{transform:translateX(26%)}}
+.sconce{position:absolute;font-size:20px;pointer-events:none;filter:drop-shadow(0 0 10px rgba(255,179,71,.7));animation:flicker 2.2s ease-in-out infinite}
+.spot .s-label,.spot-wall .s-label{background:rgba(0,0,0,.35);border:1px solid rgba(255,255,255,.08);border-radius:6px;padding:2px 6px;display:inline-block}
+.spot.found .s-emoji,.spot-wall.found .s-emoji{animation:foundpulse 1.2s ease-in-out infinite}
+@keyframes foundpulse{0%,100%{transform:scale(1);filter:drop-shadow(0 0 12px rgba(255,225,77,.7))}50%{transform:scale(1.12);filter:drop-shadow(0 0 26px rgba(255,225,77,1))}}
+#s-room3 .wall{background:linear-gradient(120deg,#1a2440,#2a3a66 40%,#23406a 70%,#1a2440);background-size:300% 300%;animation:aurora 12s ease-in-out infinite alternate}
+@keyframes aurora{from{background-position:0% 0%}to{background-position:100% 100%}}
+.floatprop{position:absolute;font-size:30px;opacity:.35;pointer-events:none;animation:propfloat ease-in-out infinite alternate}
+@keyframes propfloat{from{transform:scaleX(-1) translateY(0) rotate(-6deg)}to{transform:scaleX(-1) translateY(-26px) rotate(8deg)}}
+#exit-door span{display:inline-block;transform:scaleX(-1)}
+
+/* ---------- Kitchen ---------- */
+.shelf{position:absolute;background:linear-gradient(180deg,#3b2314,#241408);border:2px solid #120a06;border-radius:6px;padding:4px 10px 6px;font-size:22px;letter-spacing:4px;pointer-events:none;white-space:nowrap}
+#cauldron{position:absolute;left:34%;bottom:10%;width:150px;height:130px;cursor:pointer;transition:transform .15s;-webkit-user-select:none;user-select:none}
+#cauldron:hover{transform:translateY(-4px)}
+#cauldron .pot{position:absolute;bottom:10px;left:0;width:100%;height:88px;background:radial-gradient(circle at 35% 25%,#3a3a4a,#15151d 70%);border-radius:14px 14px 70px 70px;border:3px solid #000}
+#cauldron .brew{position:absolute;top:24px;left:9%;right:9%;height:26px;background:radial-gradient(ellipse at 50% 40%,#8dffa0,#2a9d3a);border-radius:50%;box-shadow:0 0 26px rgba(93,255,140,.55);z-index:2;animation:flicker 2.4s ease-in-out infinite}
+#cauldron .bub{position:absolute;top:16px;font-size:15px;z-index:3;animation:bubup 2.6s ease-in infinite;opacity:0}
+@keyframes bubup{0%{transform:translateY(0);opacity:0}25%{opacity:.9}100%{transform:translateY(-44px);opacity:0}}
+#cauldron .fire{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);font-size:26px;filter:drop-shadow(0 0 12px rgba(255,120,40,.8));animation:flicker 1.3s ease-in-out infinite}
+.scurry{position:absolute;bottom:8%;left:-60px;font-size:24px;pointer-events:none;transform:scaleX(-1);animation:scurryrun 5.5s linear forwards}
+@keyframes scurryrun{to{left:110%}}
+
+/* ---------- Library ---------- */
+.bigshelf{position:absolute;left:6%;top:12%;bottom:0;width:40%;background:#241408;border:4px solid #120a06;border-bottom:none;border-radius:8px 8px 0 0;display:grid;grid-auto-rows:1fr;gap:8px;padding:10px}
+.bigshelf .shelfrow{background:#140b1e;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,4vw,26px);letter-spacing:4px;overflow:hidden}
+#owl{position:absolute;left:52%;top:12%;font-size:34px;cursor:pointer;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5));animation:bob 4s ease-in-out infinite}
+#magic-books{position:absolute;left:58%;bottom:8%}
+#magic-books .s-emoji{animation:foundpulse 1.6s ease-in-out infinite}
+
+/* ---------- Scary pack ---------- */
+#lightning{position:fixed;inset:0;background:#e8ecff;opacity:0;pointer-events:none;z-index:70}
+#lightning.flash{animation:lflash 1.1s ease-out}
+@keyframes lflash{0%{opacity:0}6%{opacity:.5}14%{opacity:0}22%{opacity:.7}34%{opacity:.1}100%{opacity:0}}
+.spiderdrop{position:absolute;top:-10px;font-size:22px;pointer-events:none;animation:spdrop 5.5s ease-in-out forwards;filter:drop-shadow(0 3px 5px rgba(0,0,0,.6));z-index:1}
+.spiderdrop::before{content:'';position:absolute;left:50%;bottom:78%;width:2px;height:340px;background:linear-gradient(180deg,transparent,rgba(255,255,255,.35))}
+@keyframes spdrop{0%{transform:translateY(-30px)}42%{transform:translateY(120px)}58%{transform:translateY(108px)}100%{transform:translateY(-40px)}}
+.mghost{position:absolute;top:28%;left:50%;transform:translateX(-50%);font-size:46px;opacity:0;pointer-events:none;filter:blur(1px)}
+.mghost.boo{animation:mghostboo 3.2s ease-in-out}
+@keyframes mghostboo{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.8)}45%{opacity:.55;transform:translateX(-50%) translateY(-6px) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-24px) scale(1.06)}}
+.darkeyes{position:absolute;width:30px;height:9px;pointer-events:none;opacity:0;animation:eyeblink 9s infinite;background:radial-gradient(circle at 25% 50%,#ffcf5d 0 3.5px,transparent 4px),radial-gradient(circle at 75% 50%,#ffcf5d 0 3.5px,transparent 4px);filter:drop-shadow(0 0 4px rgba(255,207,93,.9))}
+@keyframes eyeblink{0%,82%,100%{opacity:0}85%,95%{opacity:.9}}
+
+/* ---------- Gems, secrets & spooks ---------- */
+#gemring{display:flex;align-items:center;gap:3px;font-size:16px;font-weight:900;color:#7de3ff}
+#gemring b{font-size:13px;font-family:'Fredoka One',cursive}
+.portrait{transition:transform .5s cubic-bezier(.34,1.56,.64,1)}
+.portrait.swung{transform:rotate(-80deg);transform-origin:6% 96%}
+#secret-btn{position:absolute;left:17.5%;top:27%;font-size:20px;display:none;cursor:pointer;filter:drop-shadow(0 0 10px rgba(255,90,90,.9));animation:foundpulse 1.4s ease-in-out infinite}
+#secret-btn.show{display:block}
+#chair-note{position:absolute;left:57%;top:38%;background:#f5e6c4;border-radius:3px;padding:5px 7px;font-size:15px;cursor:pointer;transition:transform .15s;box-shadow:0 3px 8px rgba(0,0,0,.5);transform:rotate(4deg)}
+#chair-note:hover{transform:rotate(4deg) scale(1.15)}
+#hint-ghost{position:fixed;right:14px;bottom:14px;z-index:65;font-size:28px;background:rgba(20,13,34,.75);border:1px solid rgba(199,125,255,.45);border-radius:50%;width:58px;height:58px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.5);animation:bob 3s ease-in-out infinite}
+#hint-ghost.show{display:flex}
+#big-ghost{position:fixed;top:30vh;left:-160px;font-size:100px;z-index:75;pointer-events:none;display:flex;align-items:center;gap:6px;opacity:0;filter:drop-shadow(0 0 30px rgba(207,227,255,.6))}
+#big-ghost b{font-family:'Fredoka One',cursive;font-size:40px;color:#fff;background:rgba(20,13,34,.8);padding:6px 14px;border-radius:14px;border:2px solid rgba(207,227,255,.5)}
+#big-ghost.swoop{animation:ghostswoop 1.7s ease-in-out forwards}
+@keyframes ghostswoop{0%{opacity:0;transform:translateX(0) rotate(-6deg)}12%{opacity:1}50%{transform:translateX(55vw) translateY(-40px) rotate(5deg)}100%{opacity:0;transform:translateX(115vw) translateY(10px) rotate(-4deg)}}
+.batburst{position:fixed;font-size:26px;z-index:75;pointer-events:none;animation:batout 1.1s ease-out forwards}
+@keyframes batout{0%{transform:translate(0,0) scale(.6);opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.15);opacity:0}}
+#scroll-paper.gold{background:linear-gradient(180deg,#ffedb0,#eccf78)}
+#scroll-paper.gold::before,#scroll-paper.gold::after{background:#b8952a}
+.clue-item.clue-gold{background:linear-gradient(90deg,rgba(255,201,50,.45),rgba(255,201,50,.12));border-radius:8px;outline:2px dashed #a8852a;padding:12px 8px}
+.mghost.boo{pointer-events:auto;cursor:pointer}
+#float-chair{pointer-events:auto;cursor:pointer}
+#secret-jar{position:absolute;left:24%;top:42%;font-size:24px;cursor:pointer;transition:transform .15s;filter:drop-shadow(0 3px 6px rgba(0,0,0,.6))}
+#secret-jar:hover{transform:scale(1.12)}
+.bk{background:none;border:none;font-size:inherit;cursor:pointer;padding:2px 3px;line-height:1;transition:transform .12s}
+.bk:hover{transform:translateY(-3px)}
+.bk:active{transform:scale(.88)}
+.bk.wiggle{animation:doorshake .4s}
+.bk.gotkey{filter:drop-shadow(0 0 10px rgba(255,225,77,.95))}
+#storybook{position:absolute;left:26%;bottom:8%}
+#s-secret .wall{background:linear-gradient(180deg,#26190c 0%,#3a2812 100%)}
+#chest{position:absolute;left:44%;bottom:14%;width:130px;height:104px;cursor:pointer;transition:transform .15s}
+#chest:hover{transform:translateY(-3px)}
+.chest-box{position:absolute;bottom:0;width:100%;height:56px;background:linear-gradient(180deg,#6a4218,#3a2410);border:3px solid #241408;border-radius:6px}
+.chest-box::after{content:'';position:absolute;left:50%;top:0;transform:translateX(-50%);width:16px;height:22px;background:#ffe14d;border-radius:0 0 6px 6px;border:2px solid #b8952a}
+.chest-lid{position:absolute;bottom:50px;width:100%;height:42px;background:linear-gradient(180deg,#8a5a24,#5a3a14);border:3px solid #241408;border-radius:44px 44px 6px 6px;transform-origin:bottom left;transition:transform .55s cubic-bezier(.34,1.56,.64,1)}
+#chest.open .chest-lid{transform:rotate(-42deg)}
+.chest-glow{position:absolute;top:2px;left:50%;transform:translateX(-50%);opacity:0;font-size:28px;transition:opacity .4s .25s;filter:drop-shadow(0 0 14px rgba(255,225,77,.9))}
+#chest.open .chest-glow{opacity:1}
+#bookmodal{position:fixed;inset:0;background:rgba(6,4,10,.78);z-index:82;display:none;align-items:center;justify-content:center;padding:18px}
+#bookmodal.show{display:flex}
+#bookpaper{background:linear-gradient(180deg,#fdf6e3,#f2e4c0);color:#3a2810;border-radius:10px;max-width:640px;width:100%;box-shadow:0 24px 70px rgba(0,0,0,.75);padding:26px 24px 18px;display:grid;grid-template-columns:1fr 1fr;gap:0 26px;animation:scrollin .35s cubic-bezier(.34,1.56,.64,1);max-height:82vh;overflow-y:auto;position:relative}
+#bookpaper::before{content:'';position:absolute;top:16px;bottom:16px;left:50%;width:1px;background:rgba(58,40,16,.25)}
+.bm-page{font-size:14.5px;line-height:1.75;font-weight:600}
+.bm-page h3{font-family:'Fredoka One',cursive;color:#8a5a10;font-size:17px;margin-bottom:8px}
+.bm-page .cap{float:left;font-family:'Fredoka One',cursive;font-size:44px;line-height:.9;color:#8a5a10;padding-right:6px}
+.bm-page .pnum{display:block;text-align:center;color:#a8854a;font-size:11px;margin-top:12px}
+#bm-close{grid-column:1/-1;background:#6a4a10;color:#f5e6c4;border:none;border-radius:10px;padding:12px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;margin-top:14px;min-height:48px}
+@media(max-width:520px){#bookpaper{grid-template-columns:1fr}#bookpaper::before{display:none}}
+</style>
+</head>
+<body>
+<div id="game">
+  <div id="hud">
+    <span id="room-name">The Chair Parlor</span>
+    <span id="sits"><span id="sits-label">Sits left</span><span class="sit-dot">🪑</span><span class="sit-dot">🪑</span><span class="sit-dot">🪑</span></span>
+    <span id="hud-spacer"></span>
+    <button id="clue-btn">📜 Clues</button>
+    <button id="mute-btn" title="Sound on/off">🔊</button>
+    <span id="gemring">💎<b id="gem-n">0</b></span>
+    <span id="keyring"><span class="kslot" id="k1">🗝️</span><span class="kslot" id="k2">🗝️</span></span>
+    <span id="timer">0:00</span>
+  </div>
+  <div id="goal"></div>
+
+  <div id="stage">
+
+    <div class="scene on" id="s-title">
+      <div class="t-moon">🌕</div>
+      <h1 class="t-title">Maya's<br>Escape Room</h1>
+      <p class="t-sub">You're locked inside a spooky old mansion! 👻 Outsmart the chairs, brew a potion, cast a spell, play the ghost's song, and escape through the magic mirror. But choose wisely — you only get <b>3 sits!</b> 🤫 Psst: <b>6 secret gems</b> are hidden inside...</p>
+      <button class="big-btn" id="start-btn">Enter the Mansion 🕯️</button>
+      <div class="t-ghosts"><span>👻</span><span>🦇</span><span>🕷️</span></div>
+      <div id="best-time"></div>
+    </div>
+
+    <div class="scene" id="s-room1">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <div class="chandelier"><span class="chain"></span><span class="arms">🕯️🕯️🕯️</span></div>
+        <div class="m-window" style="left:35%;top:14%"><span class="moon">🌕</span><span class="bars"></span></div>
+        <span class="candle" style="left:6%;top:18%">🕯️</span>
+        <div class="glow" style="left:calc(6% - 75px);top:calc(18% - 70px)"></div>
+        <span class="candle" style="right:6%;top:18%">🕯️</span>
+        <div class="glow" style="right:calc(6% - 75px);top:calc(18% - 70px)"></div>
+        <div id="secret-btn">🔘</div>
+        <div class="portrait" id="portrait" style="left:16%;top:22%"><span class="eyes">🧐</span></div>
+        <div id="chair-note">📌</div>
+        <div class="door" id="door1" style="right:14%"><span class="lock" id="door1-lock">🔒</span><span class="knob"></span></div>
+      </div>
+      <div class="floor"><div class="rug"></div><span class="darkeyes" style="left:5%;bottom:34%"></span><span class="darkeyes" style="right:7%;bottom:58%;animation-delay:-4s"></span><div id="chair-row"></div></div>
+    </div>
+
+    <div class="scene" id="s-kitchen">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <div class="shelf" style="left:6%;top:16%">🧪⚗️🫙</div>
+        <div class="shelf" style="left:10%;top:44%">🍯🦴🍄</div>
+        <span id="secret-jar">🫙</span>
+        <div class="m-window" style="left:44%;top:14%"><span class="moon">🌕</span><span class="bars"></span></div>
+        <span class="sconce" style="right:32%;top:42%">🕯️</span>
+        <div class="door" id="door-k" style="right:10%"><span class="lock" id="door-k-lock">🔒</span><span class="knob"></span></div>
+      </div>
+      <div class="floor">
+        <div class="fog" style="left:-8%"></div>
+        <span class="darkeyes" style="right:10%;bottom:44%;animation-delay:-6s"></span>
+        <div id="cauldron">
+          <span class="brew"></span>
+          <div class="pot"></div>
+          <span class="bub" style="left:28%">🫧</span>
+          <span class="bub" style="left:52%;animation-delay:.9s">🫧</span>
+          <span class="bub" style="left:68%;animation-delay:1.6s">✨</span>
+          <span class="fire">🔥</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="s-library">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <div class="bigshelf" id="book-wall"></div>
+        <span id="owl">🦉</span>
+        <span class="sconce" style="right:32%;top:40%">🕯️</span>
+        <div class="door" id="door-l" style="right:10%"><span class="lock" id="door-l-lock">🔒</span><span class="knob"></span></div>
+      </div>
+      <div class="floor">
+        <div class="fog" style="right:-8%"></div>
+        <span class="darkeyes" style="left:8%;bottom:50%;animation-delay:-2.5s"></span>
+        <div id="magic-books" class="spot"><span class="s-emoji">📖</span><span class="s-label">Glowing Book</span></div>
+        <div id="storybook" class="spot"><span class="s-emoji">📔</span><span class="s-label">Storybook</span></div>
+      </div>
+    </div>
+
+    <div class="scene" id="s-room2">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <span class="sconce" style="left:22%;top:46%">🕯️</span>
+        <span class="sconce" style="right:22%;top:46%">🕯️</span>
+        <span class="candle" style="left:4%;top:14%">🕯️</span>
+        <div class="glow" style="left:calc(4% - 75px);top:calc(14% - 70px)"></div>
+        <span class="candle" style="right:4%;top:14%">🕯️</span>
+        <div id="mirror"><span class="mghost" id="mghost">👻</span><span class="m-keyhole" id="m-keyhole">🔒</span></div>
+        <div id="r2-wall-items"></div>
+      </div>
+      <div class="floor"><div class="fog" style="left:-8%"></div><div class="fog" style="right:-8%;animation-delay:-8s"></div><div id="r2-floor-items"></div></div>
+    </div>
+
+    <div class="scene" id="s-room3">
+      <div class="wall">
+        <p class="r3-note">Whoa... you're <b>INSIDE the mirror!</b> ✨<br>Everything is backwards here. There's the way out!</p>
+        <div class="m-window" style="right:7%;top:12%"><span class="moon">☀️</span><span class="bars"></span></div>
+        <span class="floatprop" id="float-chair" style="left:10%;top:30%;animation-duration:5s">🪑</span>
+        <span class="floatprop" style="left:22%;top:58%;animation-duration:7s;font-size:24px">📚</span>
+        <span class="floatprop" style="right:12%;top:26%;animation-duration:6s">🕰️</span>
+        <span class="floatprop" style="right:24%;top:60%;animation-duration:8s;font-size:24px">🪴</span>
+        <div id="exit-door"><span>EXIT</span></div>
+      </div>
+      <div class="floor"></div>
+    </div>
+
+    <div class="scene" id="s-secret">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <p class="r3-note" style="color:#ffe14d;opacity:.85">🤫 The Secret Room! Shhh...</p>
+        <div class="shelf" style="left:8%;top:26%">🏺⚱️🕯️</div>
+        <span class="sconce" style="right:14%;top:30%">🕯️</span>
+        <div class="door" id="secret-back" style="left:6%"><span class="lock">🚪</span><span class="knob"></span></div>
+      </div>
+      <div class="floor">
+        <div id="chest">
+          <span class="chest-glow">💎✨</span>
+          <div class="chest-lid"></div>
+          <div class="chest-box"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene" id="s-win">
+      <div class="w-em">🎉</div>
+      <h1 class="w-title">YOU ESCAPED!</h1>
+      <div class="w-time" id="win-time"></div>
+      <div class="w-time" id="win-gems" style="color:#7de3ff;font-size:15px"></div>
+      <p class="w-sub" id="win-sub">You outsmarted the chairs, brewed a potion, cast a spell, played the ghost's song, and walked right through a mirror. The mansion is VERY impressed. 👻</p>
+      <button class="big-btn" id="again-btn">Play Again 🔄</button>
+    </div>
+
+  </div>
+</div>
+
+<div id="msg"></div>
+<button id="hint-ghost" title="Hint ghost">👻</button>
+<div id="big-ghost">👻<b>BOO!</b></div>
+<div id="lightning"></div>
+
+<div id="modal"><div id="scroll-paper">
+  <div class="sp-title" id="sp-title">📜 A dusty scroll</div>
+  <div id="sp-body" class="sp-text"></div>
+  <button class="sp-close" id="sp-close">Got it!</button>
+</div></div>
+
+<div id="bookmodal"><div id="bookpaper">
+  <div class="bm-page" id="bm-left"></div>
+  <div class="bm-page" id="bm-right"></div>
+  <button id="bm-close">Close the book 📔</button>
+</div></div>
+
+<div id="net">
+  <div id="net-mesh"></div>
+  <div id="net-card">
+    <div class="n-em">🥅</div>
+    <h2>GOTCHA!</h2>
+    <p>Three wrong chairs... and the mansion's silly net trap got you! It smells like old socks in here. 🧦</p>
+    <button class="big-btn" id="retry-btn">Try Again 💪</button>
+  </div>
+</div>
+
+<script src="escape-room-audio.js"></script>
+<script src="escape-room-puzzles.js"></script>
+<script src="escape-room-game.js"></script>
+</body>
+</html>
