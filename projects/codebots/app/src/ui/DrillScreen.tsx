@@ -110,6 +110,17 @@ export function DrillScreen({
     }
     setResults(outcomes);
 
+    // Bank the result NOW, before a single pixel moves.
+    //
+    // The outcome is already decided — it came out of the sim, and the animation is just a retelling.
+    // Awarding inside the playback's onDone made her progress hostage to the renderer: switch tabs
+    // mid-replay (browsers throttle animation in background tabs) or wander back to HQ, and she'd
+    // have passed the drill and got nothing for it. The event log is the truth here; the view is a
+    // dumb consumer of it. Same rule as the rest of the engine.
+    const all = outcomes.every(Boolean);
+    setPassed(all);
+    if (all) award();
+
     // Then show her the first field that FAILED — that's the one she needs to see. If they all
     // passed, replay field 1 as the victory lap.
     const firstFail = outcomes.findIndex((o) => !o);
@@ -128,10 +139,7 @@ export function DrillScreen({
       onEvent: (ev) => sfx.current?.play(ev),
       onDone: () => {
         setRunning(false);
-        const all = outcomes.every(Boolean);
-        setPassed(all);
-        if (all) award();
-        else
+        if (!all)
           setStatus(
             `Field ${watch + 1} beat you. Your bot didn't stop on the beacon there — so your code is ` +
               `relying on something that's only true on ONE field. What changes between them?`,

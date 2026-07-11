@@ -17,7 +17,7 @@ import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
 import { SandboxClient } from "../sandbox/sandboxClient";
 import { Sfx } from "../sound/sfx";
-import { loadSave, saveSave, recordResult } from "../state/save";
+import { loadSave, saveSave, recordResult, starsAfterHelp } from "../state/save";
 import { countCodeLines } from "../sandbox/lines";
 import { analytics } from "../state/analytics";
 
@@ -226,9 +226,7 @@ export function MissionScreen({
   }
 
   function finish(earned: number) {
-    // Clearing with the answer in hand still clears — being stuck is never a dead end — but it caps
-    // at one star, so the stars keep meaning "I worked this out" and she has a reason to come back.
-    const stars = solutionUsed ? Math.min(1, earned) : earned;
+    const stars = starsAfterHelp(earned, solutionUsed);
     const save = loadSave();
     const { save: next, coinsEarned, newlyUnlocked, newBadges } = recordResult(
       save,

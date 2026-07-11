@@ -166,3 +166,15 @@ export function recordResult(
   next.badges = earnedBadges(next);
   return { save: next, coinsEarned, firstClear, newlyUnlocked, newBadges };
 }
+
+/**
+ * Stars earned, once the help ladder is taken into account.
+ *
+ * A kid who takes the answer still CLEARS — being stuck must never be a dead end, or she closes the
+ * tab and we never hear from her again. But the clear caps at one star. That keeps the stars honest
+ * (three stars means "I worked this out"), and it leaves her a reason to come back and beat the level
+ * for real. Never let taking the answer be strictly better than not taking it.
+ */
+export function starsAfterHelp(earned: number, solutionUsed: boolean): number {
+  return solutionUsed ? Math.min(1, earned) : earned;
+}
