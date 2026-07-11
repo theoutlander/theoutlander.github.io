@@ -45,6 +45,7 @@ export function HQ({
   onBotMaker,
   onProfile,
   onOpenField,
+  onBattle,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
@@ -53,6 +54,7 @@ export function HQ({
   onBotMaker: () => void;
   onProfile: () => void;
   onOpenField: () => void;
+  onBattle: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
@@ -101,10 +103,11 @@ export function HQ({
             onClick={onBotMaker}
           />
           <Door
-            title="GARAGE"
-            desc="Spend C-coins on unlocked parts. Weight is destiny."
-            chip="COMING SOON"
-            locked
+            title="BATTLE ARENA"
+            desc="Program your bot to fight. Once it starts, you can't help it — better code wins."
+            chip="FIGHT →"
+            chipColor="green"
+            onClick={onBattle}
           />
           <Door
             title="OPEN FIELD"

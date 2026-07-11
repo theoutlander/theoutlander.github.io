@@ -37,6 +37,7 @@ export function Editor({
   onRun,
   errorLine,
   world = 1,
+  extraApi = [],
 }: {
   value: string;
   onChange: (v: string) => void;
@@ -44,6 +45,8 @@ export function Editor({
   errorLine?: number | null;
   /** which world's command vocabulary the autocomplete + linter should know */
   world?: number;
+  /** extra command names valid only in a special mode (e.g. battle sensors) */
+  extraApi?: string[];
 }) {
   const hostRef = useRef<HTMLDivElement>(null);
   const viewRef = useRef<EditorView | null>(null);
@@ -63,7 +66,7 @@ export function Editor({
         codebotsTheme,
         codebotsHighlight,
         makeCodebotsAutocomplete(world),
-        makeCodebotsLinter(world),
+        makeCodebotsLinter(world, extraApi),
         errorLineField,
         keymap.of([
           {

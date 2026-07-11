@@ -44,9 +44,10 @@ export function scanUnknownCalls(
   return out;
 }
 
-/** Live red squiggles under unknown commands for a given world, with a "did you mean" message. */
-export function makeCodebotsLinter(world: number) {
-  const api = apiForWorld(world);
+/** Live red squiggles under unknown commands for a given world, with a "did you mean" message.
+ *  `extra` adds command names only valid in a special mode (e.g. enemyAhead() in battles). */
+export function makeCodebotsLinter(world: number, extra: string[] = []) {
+  const api = [...apiForWorld(world), ...extra];
   return linter((view) => {
     const doc = view.state.doc.toString();
     const allowed = new Set([...api, ...CONTROL, ...userFnNames(doc)]);

@@ -46,6 +46,15 @@ export const analytics = {
   fieldSolved(total: number) {
     track("cb_field_solved", { total });
   },
+  battleOpen() {
+    track("cb_battle_open");
+  },
+  battleRun(enemy: string) {
+    track("cb_battle_run", { enemy });
+  },
+  battleResult(enemy: string, outcome: string) {
+    track("cb_battle_result", { enemy, outcome });
+  },
   botSaved(playerName: string, botName: string) {
     track("cb_bot_saved", { bot: botName });
     // a personalized pilot name becomes the player identity (default names stay generic)

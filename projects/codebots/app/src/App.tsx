@@ -7,6 +7,7 @@ import { HQ } from "./ui/HQ";
 import { BotMaker } from "./ui/BotMaker";
 import { Profile } from "./ui/Profile";
 import { OpenFieldScreen } from "./ui/OpenFieldScreen";
+import { BattleScreen } from "./ui/BattleScreen";
 import { AccountScreen } from "./ui/AccountScreen";
 import { ALL, globalLevel } from "./content/missions";
 import { currentAccount, cloudEnabled, type Account } from "./state/account";
@@ -22,6 +23,7 @@ type Screen =
   | { name: "botmaker" }
   | { name: "profile" }
   | { name: "field" }
+  | { name: "battle" }
   | { name: "account" };
 
 /**
@@ -65,6 +67,7 @@ export function App() {
   const toBotMaker = () => setScreen({ name: "botmaker" });
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
   const toField = () => setScreen({ name: "field" });
+  const toBattle = () => setScreen({ name: "battle" });
   const toAccount = () => setScreen({ name: "account" });
 
   function openMission(index: number) {
@@ -88,6 +91,8 @@ export function App() {
         ? { back: "‹ HQ", onBack: toHQ, current: "PROFILE" }
         : screen.name === "field"
         ? { back: "‹ HQ", onBack: toHQ, current: "OPEN FIELD" }
+        : screen.name === "battle"
+        ? { back: "‹ HQ", onBack: toHQ, current: "BATTLE ARENA" }
         : screen.name === "account"
         ? { back: "‹ HQ", onBack: toHQ, current: "ACCOUNT" }
         : mission
@@ -125,11 +130,13 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (
           <OpenFieldScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
+        ) : screen.name === "battle" ? (
+          <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
         ) : screen.name === "account" ? (
           <AccountScreen
             account={account}
