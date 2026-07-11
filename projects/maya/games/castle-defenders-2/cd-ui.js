@@ -231,7 +231,6 @@ $('continue-btn').addEventListener('click', () => {
 
 /* ---------- top buttons ---------- */
 $('home-btn').addEventListener('click', () => { if (window.MayaPortal) MayaPortal.leaveToLab(); });
-$('lab-btn').addEventListener('click', () => { if (window.MayaPortal) MayaPortal.leaveToLab(); });
 $('forge-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); ui.openShop(); });
 $('night-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); if (CD.state.phase === 'day') CD.Day.end(); });
 $('shop-close').addEventListener('click', () => { CDAudio.fx.click(); closeShop(); });

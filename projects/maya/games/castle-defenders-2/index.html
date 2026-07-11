@@ -1,218 +1,871 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>Castle Defenders! 🏰</title>
-<script>window.MAYA_GAME='games/castle-defenders-2/index.html';</script>
-<script src="portal-bridge.js"></script>
-<script src="ga-analytics.js" defer></script>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.min.js"></script>
-<style>
-:root{
-  --ink:#3B2A45; --cream:#FFF8EC; --panel:#FFFDF6;
-  --pink:#E8618C; --gold:#FFD24D; --teal:#4FA3D1; --green:#6FBF61;
-  --night:#141B3D; --muted:rgba(59,42,69,.55);
-}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;overflow:hidden;background:#0B1130;font-family:'Nunito',sans-serif;color:var(--ink);-webkit-text-size-adjust:100%}
-button{font-family:'Nunito',sans-serif;touch-action:manipulation;cursor:pointer}
-a{color:var(--teal)}a:hover{color:var(--pink)}
-#stage{position:fixed;inset:0}
-#stage canvas{display:block}
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"
+		/>
+		<title>Castle Defenders! 🏰</title>
+		<script>
+			window.MAYA_GAME = "games/castle-defenders-2/index.html";
+		</script>
+		<script src="portal-bridge.js"></script>
+		<script
+			src="ga-analytics.js"
+			defer
+		></script>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap"
+			rel="stylesheet"
+		/>
+		<script src="https://cdn.jsdelivr.net/npm/phaser@3.87.0/dist/phaser.min.js"></script>
+		<style>
+			:root {
+				--ink: #3b2a45;
+				--cream: #fff8ec;
+				--panel: #fffdf6;
+				--pink: #e8618c;
+				--gold: #ffd24d;
+				--teal: #4fa3d1;
+				--green: #6fbf61;
+				--night: #141b3d;
+				--muted: rgba(59, 42, 69, 0.55);
+			}
+			* {
+				box-sizing: border-box;
+				margin: 0;
+				padding: 0;
+				-webkit-tap-highlight-color: transparent;
+			}
+			html,
+			body {
+				height: 100%;
+				overflow: hidden;
+				background: #0b1130;
+				font-family: "Nunito", sans-serif;
+				color: var(--ink);
+				-webkit-text-size-adjust: 100%;
+			}
+			button {
+				font-family: "Nunito", sans-serif;
+				touch-action: manipulation;
+				cursor: pointer;
+			}
+			a {
+				color: var(--teal);
+			}
+			a:hover {
+				color: var(--pink);
+			}
+			#stage {
+				position: fixed;
+				inset: 0;
+			}
+			#stage canvas {
+				display: block;
+			}
 
-/* ---------- UI layer ---------- */
-#ui{position:fixed;inset:0;pointer-events:none;z-index:10}
-.chip{display:flex;align-items:center;gap:7px;background:rgba(255,248,236,.94);border:3px solid var(--ink);border-radius:14px;padding:6px 12px;font-weight:900;font-size:17px;box-shadow:0 3px 0 rgba(59,42,69,.35);min-height:44px}
-.icon-btn{pointer-events:auto;background:rgba(255,248,236,.94);border:3px solid var(--ink);border-radius:14px;min-width:46px;min-height:46px;font-size:20px;box-shadow:0 3px 0 rgba(59,42,69,.35);transition:transform .1s}
-.icon-btn:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(59,42,69,.35)}
-.icon-btn.off{opacity:.45}
+			/* ---------- UI layer ---------- */
+			#ui {
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 10;
+			}
+			.chip {
+				display: flex;
+				align-items: center;
+				gap: 7px;
+				background: rgba(255, 248, 236, 0.94);
+				border: 3px solid var(--ink);
+				border-radius: 14px;
+				padding: 6px 12px;
+				font-weight: 900;
+				font-size: 17px;
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.35);
+				min-height: 44px;
+			}
+			.icon-btn {
+				pointer-events: auto;
+				background: rgba(255, 248, 236, 0.94);
+				border: 3px solid var(--ink);
+				border-radius: 14px;
+				min-width: 46px;
+				min-height: 46px;
+				font-size: 20px;
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.35);
+				transition: transform 0.1s;
+			}
+			.icon-btn:active {
+				transform: translateY(2px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.35);
+			}
+			.icon-btn.off {
+				opacity: 0.45;
+			}
 
-#hud-top{position:absolute;top:10px;left:10px;right:10px;display:none;align-items:center;gap:8px}
-#hud-top.show{display:flex}
-html.maya-in-portal #hud-top{padding-left:64px}
-#phase-chip{background:rgba(255,248,236,.94)}
-#wood-chip .n{font-size:19px;min-width:26px;text-align:center}
-#wood-chip.pop .n{animation:pop .3s}
-@keyframes pop{50%{transform:scale(1.45)}}
-#hearts{display:none;gap:2px;font-size:21px}
-#hearts.show{display:flex}
-#hearts span{transition:transform .2s,opacity .2s}
-#hearts span.lost{opacity:.18;transform:scale(.75)}
-#hearts.pop span:not(.lost):last-of-type{animation:pop .3s}
-#hud-spacer{flex:1}
+			#hud-top {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				right: 10px;
+				display: none;
+				align-items: center;
+				gap: 8px;
+			}
+			#hud-top.show {
+				display: flex;
+			}
+			html.maya-in-portal #hud-top {
+				padding-left: 64px;
+			}
+			#phase-chip {
+				background: rgba(255, 248, 236, 0.94);
+			}
+			#wood-chip .n {
+				font-size: 19px;
+				min-width: 26px;
+				text-align: center;
+			}
+			#wood-chip.pop .n {
+				animation: pop 0.3s;
+			}
+			@keyframes pop {
+				50% {
+					transform: scale(1.45);
+				}
+			}
+			#hearts {
+				display: none;
+				gap: 2px;
+				font-size: 21px;
+			}
+			#hearts.show {
+				display: flex;
+			}
+			#hearts span {
+				transition:
+					transform 0.2s,
+					opacity 0.2s;
+			}
+			#hearts span.lost {
+				opacity: 0.18;
+				transform: scale(0.75);
+			}
+			#hearts.pop span:not(.lost):last-of-type {
+				animation: pop 0.3s;
+			}
+			#hud-spacer {
+				flex: 1;
+			}
 
-#daybar{position:absolute;top:64px;left:50%;transform:translateX(-50%);width:min(300px,52vw);height:12px;background:rgba(59,42,69,.35);border:2px solid rgba(255,248,236,.7);border-radius:8px;display:none;overflow:hidden}
-#daybar.show{display:block}
-#daybar .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--gold),#FFB347);border-radius:6px}
+			#daybar {
+				position: absolute;
+				top: 64px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: min(300px, 52vw);
+				height: 12px;
+				background: rgba(59, 42, 69, 0.35);
+				border: 2px solid rgba(255, 248, 236, 0.7);
+				border-radius: 8px;
+				display: none;
+				overflow: hidden;
+			}
+			#daybar.show {
+				display: block;
+			}
+			#daybar .fill {
+				height: 100%;
+				width: 0%;
+				background: linear-gradient(90deg, var(--gold), #ffb347);
+				border-radius: 6px;
+			}
 
-/* day controls */
-#day-controls{position:absolute;left:12px;bottom:12px;display:none;flex-direction:column;gap:10px;align-items:flex-start}
-#day-controls.show{display:flex}
-.big-btn{pointer-events:auto;font-family:'Fredoka One',cursive;font-size:19px;color:var(--ink);background:linear-gradient(180deg,#FFE082,var(--gold));border:3px solid var(--ink);border-radius:16px;padding:12px 20px;box-shadow:0 4px 0 rgba(59,42,69,.4);transition:transform .1s,box-shadow .1s;min-height:52px}
-.big-btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(59,42,69,.4)}
-.big-btn.blue{background:linear-gradient(180deg,#8CC9EC,var(--teal));color:#fff;text-shadow:0 1px 0 rgba(59,42,69,.3)}
-.big-btn.night{background:linear-gradient(180deg,#4A5490,var(--night));color:#fff}
+			/* day controls */
+			#day-controls {
+				position: absolute;
+				left: 12px;
+				bottom: 12px;
+				display: none;
+				flex-direction: column;
+				gap: 10px;
+				align-items: flex-start;
+			}
+			#day-controls.show {
+				display: flex;
+			}
+			.big-btn {
+				pointer-events: auto;
+				font-family: "Fredoka One", cursive;
+				font-size: 19px;
+				color: var(--ink);
+				background: linear-gradient(180deg, #ffe082, var(--gold));
+				border: 3px solid var(--ink);
+				border-radius: 16px;
+				padding: 12px 20px;
+				box-shadow: 0 4px 0 rgba(59, 42, 69, 0.4);
+				transition:
+					transform 0.1s,
+					box-shadow 0.1s;
+				min-height: 52px;
+			}
+			.big-btn:active {
+				transform: translateY(3px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.4);
+			}
+			.big-btn.blue {
+				background: linear-gradient(180deg, #8cc9ec, var(--teal));
+				color: #fff;
+				text-shadow: 0 1px 0 rgba(59, 42, 69, 0.3);
+			}
+			.big-btn.night {
+				background: linear-gradient(180deg, #4a5490, var(--night));
+				color: #fff;
+			}
 
-/* weapon bar */
-#weapon-bar{position:absolute;right:14px;bottom:10px;display:none;gap:9px;align-items:flex-end}
-#weapon-bar.show{display:flex}
-.wpn{pointer-events:auto;position:relative;width:66px;height:66px;border:3px solid var(--ink);border-radius:16px;background:rgba(255,248,236,.95);font-size:30px;box-shadow:0 4px 0 rgba(59,42,69,.4);overflow:hidden;transition:transform .1s}
-.wpn:active{transform:translateY(2px)}
-.wpn .cdov{position:absolute;left:0;right:0;bottom:0;height:0;background:rgba(59,42,69,.55);pointer-events:none}
-.wpn .lbl{position:absolute;bottom:1px;left:0;right:0;font-size:9px;font-weight:900;color:var(--ink);letter-spacing:.02em}
-.wpn.used{opacity:.35;filter:grayscale(1)}
-.wpn-hint{display:flex;flex-direction:column;justify-content:center;align-items:center;gap:2px;background:rgba(20,27,61,.75);border:2px solid rgba(255,248,236,.4);border-radius:14px;color:#FFF8EC;font-size:11px;font-weight:900;padding:8px 10px;max-width:110px;text-align:center}
-.wpn-hint .e{font-size:22px}
+			/* weapon bar */
+			#weapon-bar {
+				position: absolute;
+				right: 14px;
+				bottom: 10px;
+				display: none;
+				gap: 9px;
+				align-items: flex-end;
+			}
+			#weapon-bar.show {
+				display: flex;
+			}
+			.wpn {
+				pointer-events: auto;
+				position: relative;
+				width: 66px;
+				height: 66px;
+				border: 3px solid var(--ink);
+				border-radius: 16px;
+				background: rgba(255, 248, 236, 0.95);
+				font-size: 30px;
+				box-shadow: 0 4px 0 rgba(59, 42, 69, 0.4);
+				overflow: hidden;
+				transition: transform 0.1s;
+			}
+			.wpn:active {
+				transform: translateY(2px);
+			}
+			.wpn .cdov {
+				position: absolute;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				height: 0;
+				background: rgba(59, 42, 69, 0.55);
+				pointer-events: none;
+			}
+			.wpn .lbl {
+				position: absolute;
+				bottom: 1px;
+				left: 0;
+				right: 0;
+				font-size: 9px;
+				font-weight: 900;
+				color: var(--ink);
+				letter-spacing: 0.02em;
+			}
+			.wpn.used {
+				opacity: 0.35;
+				filter: grayscale(1);
+			}
+			.wpn-hint {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+				gap: 2px;
+				background: rgba(20, 27, 61, 0.75);
+				border: 2px solid rgba(255, 248, 236, 0.4);
+				border-radius: 14px;
+				color: #fff8ec;
+				font-size: 11px;
+				font-weight: 900;
+				padding: 8px 10px;
+				max-width: 110px;
+				text-align: center;
+			}
+			.wpn-hint .e {
+				font-size: 22px;
+			}
 
-/* ---------- banner ---------- */
-#banner{position:absolute;left:0;right:0;top:34%;text-align:center;opacity:0;pointer-events:none}
-#banner .t{font-family:'Fredoka One',cursive;font-size:clamp(38px,7vw,64px);color:#fff;text-shadow:0 4px 0 rgba(59,42,69,.55),0 0 34px rgba(255,210,77,.45)}
-#banner .s{font-size:clamp(15px,2.6vw,20px);font-weight:900;color:#FFE082;text-shadow:0 2px 0 rgba(59,42,69,.55)}
-#banner.go{animation:bannergo 2.4s ease forwards}
-@keyframes bannergo{0%{opacity:0;transform:scale(.7)}12%{opacity:1;transform:scale(1.06)}20%{transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:translateY(-20px)}}
+			/* ---------- banner ---------- */
+			#banner {
+				position: absolute;
+				left: 0;
+				right: 0;
+				top: 34%;
+				text-align: center;
+				opacity: 0;
+				pointer-events: none;
+			}
+			#banner .t {
+				font-family: "Fredoka One", cursive;
+				font-size: clamp(38px, 7vw, 64px);
+				color: #fff;
+				text-shadow:
+					0 4px 0 rgba(59, 42, 69, 0.55),
+					0 0 34px rgba(255, 210, 77, 0.45);
+			}
+			#banner .s {
+				font-size: clamp(15px, 2.6vw, 20px);
+				font-weight: 900;
+				color: #ffe082;
+				text-shadow: 0 2px 0 rgba(59, 42, 69, 0.55);
+			}
+			#banner.go {
+				animation: bannergo 2.4s ease forwards;
+			}
+			@keyframes bannergo {
+				0% {
+					opacity: 0;
+					transform: scale(0.7);
+				}
+				12% {
+					opacity: 1;
+					transform: scale(1.06);
+				}
+				20% {
+					transform: scale(1);
+				}
+				80% {
+					opacity: 1;
+				}
+				100% {
+					opacity: 0;
+					transform: translateY(-20px);
+				}
+			}
 
-/* tool banner */
-#toolbanner{position:absolute;left:50%;top:86px;transform:translate(-50%,-190px);background:var(--panel);border:3px solid var(--ink);border-radius:18px;box-shadow:0 6px 0 rgba(59,42,69,.35);padding:12px 20px;display:flex;gap:12px;align-items:center;transition:transform .5s cubic-bezier(.34,1.56,.64,1);max-width:min(430px,92vw)}
-#toolbanner.show{transform:translate(-50%,0)}
-#toolbanner .e{font-size:40px}
-#toolbanner .nt{font-family:'Fredoka One',cursive;font-size:12px;color:var(--pink);letter-spacing:.08em}
-#toolbanner .nm{font-family:'Fredoka One',cursive;font-size:19px}
-#toolbanner .d{font-size:13px;font-weight:700;color:var(--muted)}
+			/* tool banner */
+			#toolbanner {
+				position: absolute;
+				left: 50%;
+				top: 86px;
+				transform: translate(-50%, -190px);
+				background: var(--panel);
+				border: 3px solid var(--ink);
+				border-radius: 18px;
+				box-shadow: 0 6px 0 rgba(59, 42, 69, 0.35);
+				padding: 12px 20px;
+				display: flex;
+				gap: 12px;
+				align-items: center;
+				transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+				max-width: min(430px, 92vw);
+			}
+			#toolbanner.show {
+				transform: translate(-50%, 0);
+			}
+			#toolbanner .e {
+				font-size: 40px;
+			}
+			#toolbanner .nt {
+				font-family: "Fredoka One", cursive;
+				font-size: 12px;
+				color: var(--pink);
+				letter-spacing: 0.08em;
+			}
+			#toolbanner .nm {
+				font-family: "Fredoka One", cursive;
+				font-size: 19px;
+			}
+			#toolbanner .d {
+				font-size: 13px;
+				font-weight: 700;
+				color: var(--muted);
+			}
 
-/* ---------- shop ---------- */
-#shop{position:fixed;inset:0;background:rgba(20,15,30,.6);display:none;align-items:center;justify-content:center;z-index:40;pointer-events:auto;padding:14px}
-#shop.show{display:flex}
-#shop-panel{background:var(--panel);border:4px solid var(--ink);border-radius:24px;box-shadow:0 10px 0 rgba(59,42,69,.4);width:min(680px,96vw);max-height:92vh;overflow:auto;padding:18px}
-#shop-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-#shop-head .t{font-family:'Fredoka One',cursive;font-size:26px;flex:1}
-#shop-wood{font-weight:900;font-size:18px;background:var(--cream);border:3px solid var(--ink);border-radius:12px;padding:5px 12px}
-#shop-close{background:var(--pink);color:#fff;border:3px solid var(--ink);border-radius:12px;font-size:18px;font-weight:900;min-width:44px;min-height:44px;box-shadow:0 3px 0 rgba(59,42,69,.35)}
-#shop-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
-.wcard{border:3px solid var(--ink);border-radius:16px;padding:12px;background:var(--cream);display:flex;flex-direction:column;gap:6px;box-shadow:0 4px 0 rgba(59,42,69,.2)}
-.wcard .top{display:flex;align-items:center;gap:8px}
-.wcard .e{font-size:34px}
-.wcard .nm{font-family:'Fredoka One',cursive;font-size:15px;line-height:1.15}
-.wcard .d{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.35;flex:1}
-.wcard .buy{font-family:'Fredoka One',cursive;font-size:15px;border:3px solid var(--ink);border-radius:12px;padding:8px;background:linear-gradient(180deg,#9FE08C,var(--green));color:var(--ink);box-shadow:0 3px 0 rgba(59,42,69,.3);min-height:44px}
-.wcard .buy:active{transform:translateY(2px);box-shadow:0 1px 0 rgba(59,42,69,.3)}
-.wcard .buy:disabled{background:#E3DCD0;color:var(--muted);box-shadow:none;cursor:not-allowed}
-.wcard .owned{text-align:center;font-weight:900;color:var(--green);font-size:14px;padding:9px;background:rgba(111,191,97,.14);border-radius:12px;border:2px dashed var(--green)}
-.wcard.starter{opacity:.85}
+			/* ---------- shop ---------- */
+			#shop {
+				position: fixed;
+				inset: 0;
+				background: rgba(20, 15, 30, 0.6);
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 40;
+				pointer-events: auto;
+				padding: 14px;
+			}
+			#shop.show {
+				display: flex;
+			}
+			#shop-panel {
+				background: var(--panel);
+				border: 4px solid var(--ink);
+				border-radius: 24px;
+				box-shadow: 0 10px 0 rgba(59, 42, 69, 0.4);
+				width: min(680px, 96vw);
+				max-height: 92vh;
+				overflow: auto;
+				padding: 18px;
+			}
+			#shop-head {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 12px;
+			}
+			#shop-head .t {
+				font-family: "Fredoka One", cursive;
+				font-size: 26px;
+				flex: 1;
+			}
+			#shop-wood {
+				font-weight: 900;
+				font-size: 18px;
+				background: var(--cream);
+				border: 3px solid var(--ink);
+				border-radius: 12px;
+				padding: 5px 12px;
+			}
+			#shop-close {
+				background: var(--pink);
+				color: #fff;
+				border: 3px solid var(--ink);
+				border-radius: 12px;
+				font-size: 18px;
+				font-weight: 900;
+				min-width: 44px;
+				min-height: 44px;
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.35);
+			}
+			#shop-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+				gap: 10px;
+			}
+			.wcard {
+				border: 3px solid var(--ink);
+				border-radius: 16px;
+				padding: 12px;
+				background: var(--cream);
+				display: flex;
+				flex-direction: column;
+				gap: 6px;
+				box-shadow: 0 4px 0 rgba(59, 42, 69, 0.2);
+			}
+			.wcard .top {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+			}
+			.wcard .e {
+				font-size: 34px;
+			}
+			.wcard .nm {
+				font-family: "Fredoka One", cursive;
+				font-size: 15px;
+				line-height: 1.15;
+			}
+			.wcard .d {
+				font-size: 12.5px;
+				font-weight: 700;
+				color: var(--muted);
+				line-height: 1.35;
+				flex: 1;
+			}
+			.wcard .buy {
+				font-family: "Fredoka One", cursive;
+				font-size: 15px;
+				border: 3px solid var(--ink);
+				border-radius: 12px;
+				padding: 8px;
+				background: linear-gradient(180deg, #9fe08c, var(--green));
+				color: var(--ink);
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.3);
+				min-height: 44px;
+			}
+			.wcard .buy:active {
+				transform: translateY(2px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.3);
+			}
+			.wcard .buy:disabled {
+				background: #e3dcd0;
+				color: var(--muted);
+				box-shadow: none;
+				cursor: not-allowed;
+			}
+			.wcard .owned {
+				text-align: center;
+				font-weight: 900;
+				color: var(--green);
+				font-size: 14px;
+				padding: 9px;
+				background: rgba(111, 191, 97, 0.14);
+				border-radius: 12px;
+				border: 2px dashed var(--green);
+			}
+			.wcard.starter {
+				opacity: 0.85;
+			}
 
-/* ---------- title & endcards ---------- */
-.screen{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;text-align:center;pointer-events:auto;padding:20px}
-.screen.show{display:flex}
-#title{background:linear-gradient(180deg,#1D2A56 0%,#3E4A8C 45%,#B06AA8 78%,#FFB47E 100%)}
-#title .hill{position:absolute;bottom:0;left:0;right:0;height:22vh;background:radial-gradient(120% 130% at 50% 130%,#2C5231 0%,#2C5231 99%,transparent 100%)}
-.tw{position:relative;display:flex;flex-direction:column;align-items:center;gap:8px;max-width:560px}
-.t-castle{font-size:clamp(64px,14vw,110px);filter:drop-shadow(0 8px 0 rgba(0,0,0,.25));animation:bob 3s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.t-title{font-family:'Fredoka One',cursive;font-size:clamp(40px,9vw,76px);line-height:1;color:#fff;text-shadow:0 5px 0 rgba(59,42,69,.6),0 0 44px rgba(255,210,77,.35)}
-.t-title .gold{color:var(--gold)}
-.t-sub{font-size:clamp(14px,2.6vw,17px);font-weight:900;color:#FFE9F1;text-shadow:0 2px 0 rgba(59,42,69,.4);margin-bottom:8px}
-.howto{display:flex;gap:6px;align-items:center;justify-content:center;background:rgba(255,248,236,.14);border:2px solid rgba(255,248,236,.3);border-radius:16px;padding:9px 14px;color:#fff;font-weight:900;font-size:clamp(11px,2.2vw,14px);margin-bottom:14px;flex-wrap:wrap}
-.howto .st{display:flex;align-items:center;gap:5px}
-.howto .ar{opacity:.6}
-.menu-btn{font-family:'Fredoka One',cursive;font-size:clamp(19px,3.4vw,24px);color:var(--ink);background:linear-gradient(180deg,#FFE082,var(--gold));border:4px solid var(--ink);border-radius:18px;padding:14px 40px;box-shadow:0 6px 0 rgba(59,42,69,.55);transition:transform .12s,box-shadow .12s;min-height:56px;min-width:min(300px,74vw)}
-.menu-btn:hover{transform:translateY(-2px)}
-.menu-btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(59,42,69,.55)}
-.menu-btn.sec{background:rgba(255,248,236,.92);font-size:clamp(15px,2.8vw,18px);padding:11px 30px;min-height:48px}
-.won-badge{font-weight:900;color:var(--gold);font-size:14px;background:rgba(255,210,77,.15);border:2px dashed var(--gold);border-radius:12px;padding:6px 14px}
-#lab-link{position:absolute;bottom:12px;left:0;right:0;text-align:center}
-#lab-link button{background:none;border:none;color:rgba(255,255,255,.75);font-weight:900;font-size:13px;text-decoration:underline}
+			/* ---------- title & endcards ---------- */
+			.screen {
+				position: fixed;
+				inset: 0;
+				z-index: 50;
+				display: none;
+				align-items: center;
+				justify-content: center;
+				text-align: center;
+				pointer-events: auto;
+				padding: 20px;
+			}
+			.screen.show {
+				display: flex;
+			}
+			#title {
+				background: linear-gradient(
+					180deg,
+					#1d2a56 0%,
+					#3e4a8c 45%,
+					#b06aa8 78%,
+					#ffb47e 100%
+				);
+			}
+			#title .hill {
+				position: absolute;
+				bottom: 0;
+				left: 0;
+				right: 0;
+				height: 22vh;
+				background: radial-gradient(
+					120% 130% at 50% 130%,
+					#2c5231 0%,
+					#2c5231 99%,
+					transparent 100%
+				);
+			}
+			.tw {
+				position: relative;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 8px;
+				max-width: 560px;
+			}
+			.t-castle {
+				font-size: clamp(64px, 14vw, 110px);
+				filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.25));
+				animation: bob 3s ease-in-out infinite;
+			}
+			@keyframes bob {
+				0%,
+				100% {
+					transform: translateY(0);
+				}
+				50% {
+					transform: translateY(-12px);
+				}
+			}
+			.t-title {
+				font-family: "Fredoka One", cursive;
+				font-size: clamp(40px, 9vw, 76px);
+				line-height: 1;
+				color: #fff;
+				text-shadow:
+					0 5px 0 rgba(59, 42, 69, 0.6),
+					0 0 44px rgba(255, 210, 77, 0.35);
+			}
+			.t-title .gold {
+				color: var(--gold);
+			}
+			.t-sub {
+				font-size: clamp(14px, 2.6vw, 17px);
+				font-weight: 900;
+				color: #ffe9f1;
+				text-shadow: 0 2px 0 rgba(59, 42, 69, 0.4);
+				margin-bottom: 8px;
+			}
+			.howto {
+				display: flex;
+				gap: 6px;
+				align-items: center;
+				justify-content: center;
+				background: rgba(255, 248, 236, 0.14);
+				border: 2px solid rgba(255, 248, 236, 0.3);
+				border-radius: 16px;
+				padding: 9px 14px;
+				color: #fff;
+				font-weight: 900;
+				font-size: clamp(11px, 2.2vw, 14px);
+				margin-bottom: 14px;
+				flex-wrap: wrap;
+			}
+			.howto .st {
+				display: flex;
+				align-items: center;
+				gap: 5px;
+			}
+			.howto .ar {
+				opacity: 0.6;
+			}
+			.menu-btn {
+				font-family: "Fredoka One", cursive;
+				font-size: clamp(19px, 3.4vw, 24px);
+				color: var(--ink);
+				background: linear-gradient(180deg, #ffe082, var(--gold));
+				border: 4px solid var(--ink);
+				border-radius: 18px;
+				padding: 14px 40px;
+				box-shadow: 0 6px 0 rgba(59, 42, 69, 0.55);
+				transition:
+					transform 0.12s,
+					box-shadow 0.12s;
+				min-height: 56px;
+				min-width: min(300px, 74vw);
+			}
+			.menu-btn:hover {
+				transform: translateY(-2px);
+			}
+			.menu-btn:active {
+				transform: translateY(4px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.55);
+			}
+			.menu-btn.sec {
+				background: rgba(255, 248, 236, 0.92);
+				font-size: clamp(15px, 2.8vw, 18px);
+				padding: 11px 30px;
+				min-height: 48px;
+			}
+			.won-badge {
+				font-weight: 900;
+				color: var(--gold);
+				font-size: 14px;
+				background: rgba(255, 210, 77, 0.15);
+				border: 2px dashed var(--gold);
+				border-radius: 12px;
+				padding: 6px 14px;
+			}
 
-#endcard{background:rgba(13,10,20,.72)}
-#end-panel{background:var(--panel);border:4px solid var(--ink);border-radius:26px;box-shadow:0 12px 0 rgba(59,42,69,.45);padding:26px 30px;max-width:min(480px,94vw);display:flex;flex-direction:column;gap:10px;align-items:center}
-#end-panel .e{font-size:64px}
-#end-panel .t{font-family:'Fredoka One',cursive;font-size:clamp(26px,5vw,36px);line-height:1.1}
-#end-panel .d{font-size:15px;font-weight:700;color:var(--muted);line-height:1.5}
-#end-stats{display:flex;gap:10px;margin:4px 0 8px;flex-wrap:wrap;justify-content:center}
-#end-stats .st{background:var(--cream);border:3px solid var(--ink);border-radius:14px;padding:8px 14px;font-weight:900;font-size:14px}
+			#endcard {
+				background: rgba(13, 10, 20, 0.72);
+			}
+			#end-panel {
+				background: var(--panel);
+				border: 4px solid var(--ink);
+				border-radius: 26px;
+				box-shadow: 0 12px 0 rgba(59, 42, 69, 0.45);
+				padding: 26px 30px;
+				max-width: min(480px, 94vw);
+				display: flex;
+				flex-direction: column;
+				gap: 10px;
+				align-items: center;
+			}
+			#end-panel .e {
+				font-size: 64px;
+			}
+			#end-panel .t {
+				font-family: "Fredoka One", cursive;
+				font-size: clamp(26px, 5vw, 36px);
+				line-height: 1.1;
+			}
+			#end-panel .d {
+				font-size: 15px;
+				font-weight: 700;
+				color: var(--muted);
+				line-height: 1.5;
+			}
+			#end-stats {
+				display: flex;
+				gap: 10px;
+				margin: 4px 0 8px;
+				flex-wrap: wrap;
+				justify-content: center;
+			}
+			#end-stats .st {
+				background: var(--cream);
+				border: 3px solid var(--ink);
+				border-radius: 14px;
+				padding: 8px 14px;
+				font-weight: 900;
+				font-size: 14px;
+			}
 
-/* portrait hint */
-#rotate-hint{position:fixed;top:0;left:0;right:0;z-index:60;background:var(--gold);color:var(--ink);font-weight:900;font-size:13px;text-align:center;padding:8px;display:none}
-@media (orientation:portrait) and (max-width:700px){ #rotate-hint{display:block} }
-</style>
-</head>
-<body>
-<div id="stage"></div>
+			/* portrait hint */
+			#rotate-hint {
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				z-index: 60;
+				background: var(--gold);
+				color: var(--ink);
+				font-weight: 900;
+				font-size: 13px;
+				text-align: center;
+				padding: 8px;
+				display: none;
+			}
+			@media (orientation: portrait) and (max-width: 700px) {
+				#rotate-hint {
+					display: block;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="stage"></div>
 
-<div id="ui">
-  <div id="hud-top">
-    <button class="icon-btn maya-portal-hide" id="home-btn" title="Back to Game Lab">🏠</button>
-    <div class="chip" id="phase-chip">☀️ Day 1</div>
-    <div class="chip" id="wood-chip">🪵 <span class="n">0</span></div>
-    <div id="hud-spacer"></div>
-    <div id="hearts" class="chip"></div>
-    <button class="icon-btn" id="mute-btn" title="Sound">🔊</button>
-  </div>
-  <div id="daybar"><div class="fill"></div></div>
+		<div id="ui">
+			<div id="hud-top">
+				<button
+					class="icon-btn maya-portal-hide"
+					id="home-btn"
+					title="Back to Game Lab"
+				>
+					🏠
+				</button>
+				<div
+					class="chip"
+					id="phase-chip"
+				>
+					☀️ Day 1
+				</div>
+				<div
+					class="chip"
+					id="wood-chip"
+				>
+					🪵 <span class="n">0</span>
+				</div>
+				<div id="hud-spacer"></div>
+				<div
+					id="hearts"
+					class="chip"
+				></div>
+				<button
+					class="icon-btn"
+					id="mute-btn"
+					title="Sound"
+				>
+					🔊
+				</button>
+			</div>
+			<div id="daybar"><div class="fill"></div></div>
 
-  <div id="day-controls">
-    <button class="big-btn blue" id="forge-btn">🛠️ Forge Weapons</button>
-    <button class="big-btn night" id="night-btn">🌙 Ready for Night!</button>
-  </div>
+			<div id="day-controls">
+				<button
+					class="big-btn blue"
+					id="forge-btn"
+				>
+					🛠️ Forge Weapons
+				</button>
+				<button
+					class="big-btn night"
+					id="night-btn"
+				>
+					🌙 Ready for Night!
+				</button>
+			</div>
 
-  <div id="weapon-bar"></div>
+			<div id="weapon-bar"></div>
 
-  <div id="banner"><div class="t"></div><div class="s"></div></div>
+			<div id="banner">
+				<div class="t"></div>
+				<div class="s"></div>
+			</div>
 
-  <div id="toolbanner">
-    <div class="e"></div>
-    <div><div class="nt">✨ NEW TOOL UNLOCKED!</div><div class="nm"></div><div class="d"></div></div>
-  </div>
-</div>
+			<div id="toolbanner">
+				<div class="e"></div>
+				<div>
+					<div class="nt">✨ NEW TOOL UNLOCKED!</div>
+					<div class="nm"></div>
+					<div class="d"></div>
+				</div>
+			</div>
+		</div>
 
-<div id="shop">
-  <div id="shop-panel">
-    <div id="shop-head">
-      <div class="t">🛠️ The Forge</div>
-      <div id="shop-wood">🪵 0</div>
-      <button id="shop-close">✕</button>
-    </div>
-    <div id="shop-grid"></div>
-  </div>
-</div>
+		<div id="shop">
+			<div id="shop-panel">
+				<div id="shop-head">
+					<div class="t">🛠️ The Forge</div>
+					<div id="shop-wood">🪵 0</div>
+					<button id="shop-close">✕</button>
+				</div>
+				<div id="shop-grid"></div>
+			</div>
+		</div>
 
-<div id="title" class="screen show">
-  <div class="hill"></div>
-  <div class="tw">
-    <div class="t-castle">🏰</div>
-    <div class="t-title">Castle <span class="gold">Defenders!</span></div>
-    <div class="t-sub">Chop GIANT trees by day… bonk silly zombies by night!</div>
-    <div class="howto">
-      <span class="st">🌳 Chop wood</span><span class="ar">➜</span>
-      <span class="st">🛠️ Forge silly weapons</span><span class="ar">➜</span>
-      <span class="st">🧟 Defend the castle!</span>
-    </div>
-    <div id="won-badge" class="won-badge" style="display:none">👑 Castle Saved! Can you do it again?</div>
-    <button class="menu-btn" id="play-btn">▶ New Game</button>
-    <button class="menu-btn sec" id="continue-btn" style="display:none">Continue — Day 1</button>
-  </div>
-  <div id="lab-link"><button id="lab-btn">← Back to Maya's Game Lab</button></div>
-</div>
+		<div
+			id="title"
+			class="screen show"
+		>
+			<div class="hill"></div>
+			<div class="tw">
+				<div class="t-castle">🏰</div>
+				<div class="t-title">Castle <span class="gold">Defenders!</span></div>
+				<div class="t-sub">
+					Chop GIANT trees by day… bonk silly zombies by night!
+				</div>
+				<div class="howto">
+					<span class="st">🌳 Chop wood</span><span class="ar">➜</span>
+					<span class="st">🛠️ Forge silly weapons</span
+					><span class="ar">➜</span>
+					<span class="st">🧟 Defend the castle!</span>
+				</div>
+				<div
+					id="won-badge"
+					class="won-badge"
+					style="display: none"
+				>
+					👑 Castle Saved! Can you do it again?
+				</div>
+				<button
+					class="menu-btn"
+					id="play-btn"
+				>
+					▶ New Game
+				</button>
+				<button
+					class="menu-btn sec"
+					id="continue-btn"
+					style="display: none"
+				>
+					Continue — Day 1
+				</button>
+			</div>
+		</div>
 
-<div id="endcard" class="screen">
-  <div id="end-panel">
-    <div class="e"></div>
-    <div class="t"></div>
-    <div class="d"></div>
-    <div id="end-stats"></div>
-    <button class="menu-btn" id="end-primary"></button>
-    <button class="menu-btn sec" id="end-secondary"></button>
-  </div>
-</div>
+		<div
+			id="endcard"
+			class="screen"
+		>
+			<div id="end-panel">
+				<div class="e"></div>
+				<div class="t"></div>
+				<div class="d"></div>
+				<div id="end-stats"></div>
+				<button
+					class="menu-btn"
+					id="end-primary"
+				></button>
+				<button
+					class="menu-btn sec"
+					id="end-secondary"
+				></button>
+			</div>
+		</div>
 
-<div id="rotate-hint">📱 Tip: turn your device sideways for a bigger castle!</div>
+		<div id="rotate-hint">
+			📱 Tip: turn your device sideways for a bigger castle!
+		</div>
 
-<script src="cd-data.js"></script>
-<script src="cd-audio.js"></script>
-<script src="cd-art.js"></script>
-<script src="cd-day.js"></script>
-<script src="cd-night.js"></script>
-<script src="cd-game.js"></script>
-<script src="cd-ui.js"></script>
-</body>
+		<script src="cd-data.js"></script>
+		<script src="cd-audio.js"></script>
+		<script src="cd-art.js"></script>
+		<script src="cd-day.js"></script>
+		<script src="cd-night.js"></script>
+		<script src="cd-game.js"></script>
+		<script src="cd-ui.js"></script>
+	</body>
 </html>
