@@ -587,6 +587,7 @@ $('#clue-btn').addEventListener('click',()=>{
 
 /* ---------------- Flow ---------------- */
 function startGame(themeId){
+  if(window.mayaGameStart)window.mayaGameStart({theme:themeId});
   applyTheme(themeId);
   setupRound();
   S.phase='room1';

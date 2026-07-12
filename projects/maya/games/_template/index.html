@@ -18,6 +18,23 @@
 <body>
 <!-- Add your HTML here -->
 <script>
+// NEVER touch localStorage directly. On Maya's iPad, Safari throws on it when site data is
+// blocked (Block All Cookies / Private Browsing) — and a bare read at the top level aborts
+// this whole script, leaving the game's start button dead. That is exactly how Dust Chasers
+// broke for her. Go through `store`: worst case she loses a saved score, not the game.
+const store = {
+  get(k){ try { return localStorage.getItem(k); } catch(e){ return null; } },
+  set(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+};
+
+// Tell analytics the game actually started — the moment the start screen goes away. Without
+// this, a dead start button looks identical to a happy play session (both just load the page).
+// Pair with mayaGameEnd({score, outcome}) when a round finishes.
+function startGame(){
+  if (window.mayaGameStart) window.mayaGameStart();
+  // ...your game start code here
+}
+
 // Add your JavaScript here
 </script>
 </body>

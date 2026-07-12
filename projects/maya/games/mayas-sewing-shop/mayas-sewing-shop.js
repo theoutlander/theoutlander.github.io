@@ -910,6 +910,7 @@ function checkMilestone(){
 })();
 
 function startGame(){
+  if(window.mayaGameStart)window.mayaGameStart();
   setTop(); updateMood(); updateGoal(); renderShelf(); renderSew();
   lastMilestone = S.coins;
   dayShown=false;

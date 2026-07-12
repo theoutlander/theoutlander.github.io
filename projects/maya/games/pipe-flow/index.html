@@ -3355,6 +3355,7 @@ function bindTap(el,fn){
 }
 
 function startGame(){
+  if(window.mayaGameStart)window.mayaGameStart();
   if(window.PipMeta)window.PipMeta.onStartGame();
   document.getElementById('menu-ov').classList.add('hidden');
   mode='play';

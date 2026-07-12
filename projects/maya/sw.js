@@ -133,19 +133,34 @@ function shouldHandle(url) {
 	return ALLOWED_CDN_HOSTS.indexOf(url.hostname) !== -1;
 }
 
+/** The key a response is stored under. Same-origin requests are stored without their query
+    string, so the portal's `?v=<timestamp>` cache-buster doesn't write a brand-new entry on
+    every single game open and grow the cache without bound. CDN URLs keep their query string,
+    since for them (Google Fonts' ?family=) it identifies the resource. */
+function cacheKey(request) {
+	var url = new URL(request.url);
+	if (url.origin !== self.location.origin) return request;
+	url.search = "";
+	return new Request(url.toString(), { method: "GET" });
+}
+
 self.addEventListener("fetch", function (event) {
 	var request = event.request;
 	if (request.method !== "GET") return;
 	if (!shouldHandle(new URL(request.url))) return;
 
 	event.respondWith(
-		caches.match(request).then(function (cached) {
+		// ignoreSearch matters: the portal opens each game as `<game>/index.html?v=<timestamp>`
+		// to force a reload when reopening the same iframe, but games are precached under their
+		// clean URL. Matching on the full URL meant the cache never hit and every game fell
+		// through to the network — so offline served offline.html instead of her game.
+		caches.match(request, { ignoreSearch: true }).then(function (cached) {
 			var networkFetch = fetch(request)
 				.then(function (response) {
 					if (response && response.ok) {
 						var copy = response.clone();
 						caches.open(CACHE_NAME).then(function (cache) {
-							cache.put(request, copy);
+							cache.put(cacheKey(request), copy);
 						});
 					}
 					return response;

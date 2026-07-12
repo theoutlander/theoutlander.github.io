@@ -22,6 +22,7 @@
 
   function start(){
     if(started) return; started=true;
+    if(window.mayaGameStart)window.mayaGameStart();
     BO.audio.resume();
     state=BO.load();
     if(!state||!state.started){

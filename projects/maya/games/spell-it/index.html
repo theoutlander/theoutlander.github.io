@@ -239,6 +239,7 @@ function pickMode(el,m){
 }
 
 function startGame(){
+  if(window.mayaGameStart)window.mayaGameStart({mode:gameMode});
   usedWords=[];level=1;score=0;
   lives=gameMode==='zen'?99:3;
   timeLeft=60;
