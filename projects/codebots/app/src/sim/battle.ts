@@ -104,6 +104,9 @@ export function runBattle(
   starts: { pos: Vec2; facing: Facing }[],
   api: string[],
   winRule: WinRule = "reachBeacon",
+  /** cap the fight. The league runs thousands of these, and two turtles that can't hurt each other
+   *  would otherwise burn 200 rounds apiece for a draw we could have called far sooner. */
+  maxRounds: number = MAX_ROUNDS,
 ): BattleResult {
   const bots: Bot[] = entrants.map((e, i) => {
     const armor = e.stats?.armor ?? ARMOR_MAX;
@@ -308,7 +311,7 @@ export function runBattle(
     return null;
   }
 
-  for (round = 1; round <= MAX_ROUNDS; round++) {
+  for (round = 1; round <= maxRounds; round++) {
     for (const b of bots) {
       if (b.wrecked || b.done) continue;
       takeTurn(b);
@@ -328,7 +331,7 @@ export function runBattle(
   return {
     outcome: final ?? "draw",
     events,
-    rounds: Math.min(round, MAX_ROUNDS),
+    rounds: Math.min(round, maxRounds),
     survivors: bots.filter((x) => !x.wrecked).map((x) => x.index),
   };
 }
