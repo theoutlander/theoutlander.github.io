@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { whileYouWereAway, markSeen, fingerprint } from "../../src/rivals/away";
-import type { Fighter } from "../../src/rivals/league";
+import { playMatch, board, matchSeed, type Fighter } from "../../src/rivals/league";
+import { seasonSalt } from "../../src/rivals/leagueCache";
 
 /**
  * THE RETURN HOOK, AND THE TWO WAYS IT COULD BE A LIE.
@@ -76,6 +77,23 @@ describe("while you were away", () => {
     const a = JSON.stringify(whileYouWereAway(MINE, [WEAK, STRONG], {}));
     const b = JSON.stringify(whileYouWereAway(MINE, [WEAK, STRONG], {}));
     expect(a).toBe(b);
+  });
+
+  it("fights the SAME boards the ladder ranked on — one season salt, every consumer", () => {
+    // The bug this pins: the salt reached leagueCache and nowhere else, so the away card could report
+    // a fight the standings never scored. Same two bots + same salt must give the same match, always.
+    const salt = seasonSalt("S2900");
+    const r = whileYouWereAway(MINE, [WEAK], {}, salt);
+    const direct = playMatch(MINE, WEAK, salt);
+    expect(r.results[0].match).toEqual(direct);
+    expect(r.results[0].outcome).toBe(direct.winner === "a" ? "win" : direct.winner === "b" ? "lose" : "draw");
+  });
+
+  it("a season salt really does change the boards — so passing it is not cosmetic", () => {
+    const salt = seasonSalt("S2900");
+    expect(salt).not.toBe(0);
+    const seed = matchSeed(MINE.id, WEAK.id);
+    expect(JSON.stringify(board(seed + salt))).not.toBe(JSON.stringify(board(seed)));
   });
 
   it("a fingerprint changes when the code does, and only then", () => {

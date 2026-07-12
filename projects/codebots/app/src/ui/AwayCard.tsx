@@ -5,6 +5,7 @@ import { Chip } from "./components/Chip";
 import { loadSave, saveSave } from "../state/save";
 import { fetchOpponents } from "../rivals/publish";
 import { whileYouWereAway, markSeen, type AwayReport } from "../rivals/away";
+import { seasonToken, seasonSalt } from "../rivals/leagueCache";
 import { analytics } from "../state/analytics";
 import type { Fighter } from "../rivals/league";
 
@@ -40,7 +41,9 @@ export function AwayCard({ onWatch }: { onWatch: () => void }) {
       if (!rivals.length) return;
 
       const mine: Fighter = { id: "me", name: "your bot", source: save.publishedSource };
-      const r = whileYouWereAway(mine, rivals, save.seenRivals ?? {});
+      // THIS season's boards — the same salt the ladder was ranked with. Without it the card would
+      // fight last season's maps and could report a defeat the standings never scored.
+      const r = whileYouWereAway(mine, rivals, save.seenRivals ?? {}, seasonSalt(seasonToken()));
       if (!r.results.length) return; // no news is no card
 
       setReport(r);

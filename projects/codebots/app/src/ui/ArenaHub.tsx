@@ -7,14 +7,12 @@ import { AwayCard } from "./AwayCard";
 import { cachedStandings, previousStandings, seasonToken, seasonSalt } from "../rivals/leagueCache";
 import { board, matchSeed, playMatch, type Fighter, type Standing } from "../rivals/league";
 import { runBattle } from "../sim/battle";
-import { fetchOpponents, leaderboard, publishBot, type PublishedBot } from "../rivals/publish";
+import { fetchOpponents, leaderboard, type PublishedBot } from "../rivals/publish";
 import { PRESETS, BATTLE_API } from "../content/enemies";
 import { ReplayViewer } from "./ReplayViewer";
 import { currentAccount, cloudEnabled } from "../state/account";
 import { loadSave } from "../state/save";
 import type { Opponent } from "./FightScreen";
-
-const BATTLE_EXTRA = ["enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight", "hurt"];
 
 function toFighter(b: PublishedBot): Fighter {
   return { id: b.userId, name: `${b.botName} · ${b.username}`, source: b.source };
@@ -61,10 +59,9 @@ export function ArenaHub({ onFight }: { onFight: (opponent: Opponent) => void })
   const [board_, setBoard] = useState<PublishedBot[]>([]);
   const [presetRivals, setPresetRivals] = useState<PublishedBot[]>([]);
   const [accountId, setAccountId] = useState<string | null>(null);
-  const [publishMsg, setPublishMsg] = useState<string | null>(null);
-  const [code] = useState(loadSave().publishedSource ?? "");
   const [watching, setWatching] = useState<{ a: Fighter; b: Fighter } | null>(null);
   const loggedIn = accountId !== null;
+  const published = Boolean(loadSave().publishedSource);
 
   useEffect(() => {
     void (async () => {
@@ -210,35 +207,30 @@ export function ArenaHub({ onFight }: { onFight: (opponent: Opponent) => void })
       </div>
 
       <div style={{ width: 320, flex: "none", display: "flex", flexDirection: "column", gap: 12 }}>
+        {/* This panel REFLECTS publish state; it doesn't publish. The editor does — it's the only place
+            that holds her real, current program, and a "republish" button here could only ever re-send
+            the last source she published, which is a confusing thing to offer a child. So the path is
+            always the same one: go into a fight, and publish the bot you can see. */}
         <Panel label="YOUR BOT">
           {myBotRow ? (
             <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)" }}>
               #{standings.indexOf(myBotRow) + 1} on the ladder · {myBotRow.points} PTS
             </div>
+          ) : published ? (
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)" }}>
+              Your bot is out there fighting. Go into a fight, change its brain, and press ▲ PUBLISH MY
+              BOT again to send the new one.
+            </div>
           ) : (
             <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>
               Publish your bot and other kids will fight it while you're away. They see your code's
-              MOVES, never your code.
+              MOVES, never your code. {cloudEnabled && !loggedIn ? "Log in first, then " : "Start a fight and "}
+              press ▲ PUBLISH MY BOT in the editor.
             </div>
           )}
-          {cloudEnabled && loggedIn && code ? (
-            <Button
-              variant="quiet"
-              size="sm"
-              onClick={async () => {
-                setPublishMsg("checking your bot…");
-                const res = await publishBot(code, "MY BOT", [...BATTLE_API, ...BATTLE_EXTRA]);
-                setPublishMsg(res.ok ? "Published. It's fighting for you now, even when you're not here." : res.message);
-                if (res.ok) setBoard(await leaderboard(200));
-              }}
-            >
-              ▲ REPUBLISH
-            </Button>
-          ) : null}
           <Button size="sm" onClick={() => onFight({ kind: "preset", id: PRESETS[0].id })}>
-            TEST FIGHT
+            {published ? "TEST FIGHT" : "WRITE MY BOT"}
           </Button>
-          {publishMsg ? <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)" }}>{publishMsg}</div> : null}
         </Panel>
 
         <AwayCard onWatch={() => setWatching(featured.length === 2 ? { a: featured[0].fighter, b: featured[1].fighter } : null)} />

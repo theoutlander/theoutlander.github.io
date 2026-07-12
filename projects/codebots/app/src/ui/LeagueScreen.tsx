@@ -7,6 +7,7 @@ import { mountBattle, type MountedBattle } from "../view/mountBattle";
 import { runBattle } from "../sim/battle";
 import { PRESETS, BATTLE_API } from "../content/enemies";
 import { standings, board, matchSeed, type Fighter, type Standing } from "../rivals/league";
+import { seasonToken, seasonSalt } from "../rivals/leagueCache";
 import { fetchOpponents } from "../rivals/publish";
 
 /**
@@ -61,21 +62,27 @@ export function LeagueScreen({
 
   const fighters = useMemo(() => [...house, ...rivals], [house, rivals]);
 
+  // THIS season's boards. The Arena's ladder (leagueCache) ranks on the salted seeds; if this screen
+  // ranked on the unsalted ones, the same two bots would fight different maps here and a kid could be
+  // #3 in the Arena and #1 in the League in the same session. One salt, every consumer.
+  const salt = seasonSalt(seasonToken());
+
   /**
    * The whole table, computed on the spot. This is the moment the "no server" claim either holds or
    * doesn't: a round-robin over N bots is N² matchups, each a handful of tiny deterministic fights.
    * At the sizes this will ever see, it's milliseconds.
    */
-  const table: Standing[] = useMemo(() => (fighters.length > 1 ? standings(fighters) : []), [fighters]);
+  const table: Standing[] = useMemo(() => (fighters.length > 1 ? standings(fighters, salt) : []), [fighters, salt]);
 
   async function watch(aId: string, bId: string) {
     const a = fighters.find((f) => f.id === aId);
     const b = fighters.find((f) => f.id === bId);
     if (!a || !b || running) return;
 
-    // The SAME board the table was computed on. What you watch is the fight that made the standings —
-    // not a re-enactment of it, and not a different fight that happens to look similar.
-    const bd = board(matchSeed(a.id, b.id));
+    // The SAME board the table was computed on — season salt and all (playMatch's first board is
+    // seed + 0). What you watch is the fight that made the standings — not a re-enactment of it, and
+    // not a different fight that happens to look similar.
+    const bd = board(matchSeed(a.id, b.id) + salt);
     setRunning(true);
     setStatus(`${a.name} vs ${b.name}…`);
 

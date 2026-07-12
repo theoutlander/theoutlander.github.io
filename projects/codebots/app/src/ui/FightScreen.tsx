@@ -13,10 +13,11 @@ import { PRESETS, presetById, BATTLE_API } from "../content/enemies";
 import { desugarRepeat, findUnknownCalls, collectFunctionNames } from "../sandbox/transform";
 import { unknownCommandMessage } from "../sandbox/errors";
 import { analytics } from "../state/analytics";
-import { loadSave } from "../state/save";
+import { loadSave, saveSave } from "../state/save";
 import { computeStats } from "../content/parts";
 import { ALL_COMMANDS } from "../content/commandDocs";
-import type { PublishedBot } from "../rivals/publish";
+import { publishBot, type PublishedBot } from "../rivals/publish";
+import { currentAccount, cloudEnabled } from "../state/account";
 
 const BATTLE_EXTRA = ["enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight", "hurt"];
 
@@ -48,7 +49,9 @@ const ARENA: Arena = (() => {
 const PLAYER_START = { pos: { x: 0, y: 4 }, facing: "E" as const };
 const ENEMY_START = { pos: { x: 14, y: 4 }, facing: "W" as const };
 
-const STARTER =
+/** The first program a kid ever sees in the arena. Exported because App owns the working copy of her
+ *  source now (it has to survive this screen unmounting on REMATCH) — this is the initial value. */
+export const STARTER =
   "// FIGHT! Write your bot's brain, then press FIGHT — it battles on its own.\n" +
   "// enemyAhead() is true when a rival is in your sights. shoot() to fire!\n" +
   "while (!atBeacon()) {\n  if (enemyAhead()) {\n    shoot()\n  } else if (blocked()) {\n    right()\n  } else {\n    forward(1)\n  }\n}";
@@ -113,11 +116,20 @@ function CommandDrawer() {
 export function FightScreen({
   opponent,
   paint,
+  code,
+  onCodeChange,
+  botName,
   onDone,
   onExit,
 }: {
   opponent: Opponent;
   paint: { bodyColor: number; domeColor: number };
+  /** The kid's working program. Owned by App, because this screen unmounts the instant a fight ends
+   *  (onDone → Debrief) and REMATCH mounts a fresh one — local state here would wipe her code
+   *  between "read the debrief" and "fix your code", which is the entire loop. */
+  code: string;
+  onCodeChange: (next: string) => void;
+  botName: string;
   onDone: (record: FightRecord) => void;
   onExit: () => void;
 }) {
@@ -125,11 +137,15 @@ export function FightScreen({
   const battle = useRef<MountedBattle | null>(null);
   const sfx = useRef<Sfx | null>(null);
 
-  const [code, setCode] = useState(STARTER);
   const [running, setRunning] = useState(false);
-  const [result, setResult] = useState<BattleOutcome | null>(null);
   const [errorLine, setErrorLine] = useState<number | null>(null);
   const [status, setStatus] = useState("Write your bot's brain, then press FIGHT — once it starts, you can't steer it.");
+  const [accountId, setAccountId] = useState<string | null>(null);
+  const canPublish = cloudEnabled && accountId !== null;
+
+  useEffect(() => {
+    void currentAccount().then((a) => setAccountId(a?.id ?? null));
+  }, []);
 
   const preset = opponent.kind === "preset" ? presetById(opponent.id) : undefined;
   const enemy = preset
@@ -165,10 +181,31 @@ export function FightScreen({
     return null;
   }
 
+  /**
+   * PUBLISH — from the editor, because this is the only screen that holds her real, current program.
+   *
+   * A BROKEN BOT NEVER LEAVES THE BUILDING: publishBot validates first, and a failure points at the
+   * offending line right here, in the editor that can fix it. A bot that forfeits every fight in
+   * silence is the worst thing we could do to the kid who published it.
+   */
+  async function publish() {
+    if (!canPublish || running) return;
+    setStatus("checking your bot…");
+    setErrorLine(null);
+    const res = await publishBot(code, botName, [...BATTLE_API, ...BATTLE_EXTRA]);
+    if (res.ok) {
+      // Keep a copy of what she published: it's what we fight for her while she's away.
+      saveSave({ ...loadSave(), publishedSource: code });
+      setStatus("Published. It's fighting for you now, even when you're not here.");
+    } else {
+      setStatus(res.message);
+      if (res.line) setErrorLine(res.line);
+    }
+  }
+
   function fight() {
     const b = battle.current;
     if (!b || running) return;
-    setResult(null);
     setErrorLine(null);
     const err = lint();
     if (err) { setErrorLine(err.line); setStatus(err.message); return; }
@@ -202,7 +239,6 @@ export function FightScreen({
       },
       onDone: () => {
         setRunning(false);
-        setResult(res.outcome);
         analytics.battleResult?.(opponent.kind === "preset" ? opponent.id : opponent.bot.userId, res.outcome);
         onDone({
           opponentName: enemy.name,
@@ -231,11 +267,11 @@ export function FightScreen({
       <div style={{ width: "clamp(420px, 34vw, 620px)", flex: "none", display: "flex", flexDirection: "column", gap: 8 }}>
         <CommandDrawer />
         <div style={{ flex: 1, minHeight: 0 }}>
-          <Editor value={code} onChange={setCode} onRun={fight} errorLine={errorLine} world={4} extraApi={BATTLE_EXTRA} />
+          <Editor value={code} onChange={onCodeChange} onRun={fight} errorLine={errorLine} world={4} extraApi={BATTLE_EXTRA} />
         </div>
         <div style={{ display: "flex", gap: 8 }}>
           <Button onClick={fight} disabled={running} style={{ flex: 1 }}>
-            {running ? "■ FIGHTING…" : result ? "▶ REMATCH" : "▶ FIGHT"}
+            {running ? "■ FIGHTING…" : "▶ FIGHT"}
           </Button>
           {running ? (
             <Button variant="quiet" onClick={() => { battle.current?.scene.stop(); setRunning(false); setStatus("Stopped. Change your code and go again."); }}>
@@ -245,6 +281,20 @@ export function FightScreen({
             <Button variant="ghost" onClick={onExit}>‹ ARENA</Button>
           )}
         </div>
+        {/* Publishing is the retention loop: her bot keeps fighting while she's asleep, and she comes
+            back to find out what happened. Say plainly what it means — a kid should never be surprised
+            to discover strangers have been playing against something of hers. */}
+        {canPublish ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+            <Button variant="quiet" size="sm" onClick={() => void publish()} disabled={running}>
+              ▲ PUBLISH MY BOT
+            </Button>
+            <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", lineHeight: 1.5 }}>
+              Publish your bot and other kids will fight it while you're away. They see your code's
+              MOVES, never your code.
+            </div>
+          </div>
+        ) : null}
       </div>
     </div>
   );

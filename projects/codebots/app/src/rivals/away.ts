@@ -67,6 +67,10 @@ export function whileYouWereAway(
   mine: Fighter,
   rivals: Fighter[],
   seen: SeenRivals,
+  /** The CURRENT season's salt — the same one the ladder was ranked with (see rivals/leagueCache).
+   *  Skip it and this reports fights on last season's boards, so the card could announce a defeat the
+   *  standings never scored. Defaults to 0 (unsalted) so pure tests can pin the boards. */
+  seasonSalt = 0,
 ): AwayReport {
   const results: AwayResult[] = [];
 
@@ -75,7 +79,7 @@ export function whileYouWereAway(
     const fresh = seen[rival.id] !== fingerprint(rival.source);
     if (!fresh) continue; // already told her about this exact bot
 
-    const match = playMatch(mine, rival);
+    const match = playMatch(mine, rival, seasonSalt);
     results.push({
       rival,
       match,

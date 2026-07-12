@@ -6,7 +6,7 @@ import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { HQ } from "./ui/HQ";
 import { Profile } from "./ui/Profile";
 import { ArenaHub } from "./ui/ArenaHub";
-import { FightScreen, type Opponent, type FightRecord } from "./ui/FightScreen";
+import { FightScreen, STARTER, type Opponent, type FightRecord } from "./ui/FightScreen";
 import { Debrief } from "./ui/Debrief";
 import { GarageScreen } from "./ui/GarageScreen";
 import { DrillScreen } from "./ui/DrillScreen";
@@ -20,6 +20,7 @@ import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
 import { loadSave, saveSave } from "./state/save";
 import { analytics } from "./state/analytics";
 import { setEventUser } from "./state/events";
+import { recordOutcome } from "./rivals/publish";
 
 type Screen =
   | { name: "hq" }
@@ -48,6 +49,12 @@ export function App() {
   // the Opponent selector, so both are needed).
   const [lastFight, setLastFight] = useState<FightRecord | null>(null);
   const [lastOpponent, setLastOpponent] = useState<Opponent | null>(null);
+  // Her arena program lives HERE, not in FightScreen: that screen unmounts the moment a fight ends
+  // (onDone → Debrief), so a REMATCH out of the debrief — or a trip back to the hub to pick another
+  // opponent — would otherwise hand her a fresh STARTER and throw away the code she just came to fix.
+  // Losing, reading why, fixing it and going again is the whole loop; it cannot begin by deleting her
+  // work. She published a bot from an earlier session? Start her on that, not on the tutorial text.
+  const [arenaCode, setArenaCode] = useState(() => loadSave().publishedSource ?? STARTER);
   const [account, setAccount] = useState<Account | null>(null);
   // Tag events with the account id once she logs in, so a returning kid can be told apart from a new
   // one. Logged out, events stay genuinely anonymous.
@@ -84,7 +91,21 @@ export function App() {
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
   const toArenaHub = () => setScreen({ name: "arenaHub" });
   const toFight = (opponent: Opponent) => { setLastOpponent(opponent); setScreen({ name: "fight", opponent }); };
-  const toDebrief = (record: FightRecord) => { setLastFight(record); setScreen({ name: "debrief" }); };
+  /**
+   * A fight just ended. Fires exactly once per fight — FightScreen calls onDone from the playback's
+   * own onDone, which STOP aborts rather than triggers.
+   *
+   * When her bot beats another kid's, that kid isn't online to record her own loss, so we write the
+   * result to the OPPONENT's row (the database only lets us add one to a counter, never anything
+   * else). Nothing here touches HER save: a loss costs her no coins and no points, ever.
+   */
+  const toDebrief = (record: FightRecord) => {
+    if (record.opponentUserId && record.outcome !== "draw") {
+      void recordOutcome(record.opponentUserId, record.outcome === "lose");
+    }
+    setLastFight(record);
+    setScreen({ name: "debrief" });
+  };
   const toGarage = () => { refresh(); setScreen({ name: "garage" }); };
   const toAccount = () => setScreen({ name: "account" });
   const toDrill = () => setScreen({ name: "drill" });
@@ -180,6 +201,9 @@ export function App() {
           <FightScreen
             opponent={screen.opponent}
             paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
+            code={arenaCode}
+            onCodeChange={setArenaCode}
+            botName={bot.botName}
             onDone={toDebrief}
             onExit={toArenaHub}
           />
