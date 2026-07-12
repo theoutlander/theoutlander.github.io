@@ -111,9 +111,37 @@
 		});
 	}
 
+	/* ===== OWNER OPT-OUT =====
+	   Nick browsing his own site was showing up as an active user and drowning out the only
+	   person whose behaviour actually matters here. Visit any lab page once per device with
+	   ?ga=off to stop being counted; ?ga=on undoes it. The choice persists per browser, and
+	   because the games are same-origin iframes, setting it on the portal covers every game.
+
+	   Deliberately GA-only: his errors still reach Sentry. If Nick hits a broken game we want
+	   to know, and Sentry's value is correctness, not audience counting.
+
+	   Storage is wrapped, of course — reading it bare is the exact bug that started all this. */
+	var GA_OPTOUT_KEY = 'maya_ga_optout';
+	var OWNER_OPTED_OUT = (function () {
+		try {
+			var q = new URLSearchParams(window.location.search).get('ga');
+			if (q === 'off') window.localStorage.setItem(GA_OPTOUT_KEY, '1');
+			if (q === 'on') window.localStorage.removeItem(GA_OPTOUT_KEY);
+			return window.localStorage.getItem(GA_OPTOUT_KEY) === '1';
+		} catch (e) {
+			return false; // storage blocked (Maya's iPad) — she should always be counted
+		}
+	})();
+
 	function loadGA() {
 		if (window.__gaLoaded) return;
 		window.__gaLoaded = true;
+
+		if (OWNER_OPTED_OUT) {
+			// gtag's official kill switch, in case anything else on the page loads it.
+			window['ga-disable-' + MEASUREMENT_ID] = true;
+			return;
+		}
 
 		var s = document.createElement('script');
 		s.async = true;
@@ -138,10 +166,12 @@
 				if (Object.prototype.hasOwnProperty.call(params, k)) payload[k] = params[k];
 			}
 		}
-		loadGA();
-		window.gtag('event', name, payload);
-		// Same event as a Sentry breadcrumb, so a crash report shows the trail that led to it
-		// (game_loaded → game_first_input → …) instead of a bare stack trace.
+		if (!OWNER_OPTED_OUT) {
+			loadGA();
+			window.gtag('event', name, payload);
+		}
+		// Breadcrumbs still run for the owner: they're local to a Sentry error report, not an
+		// analytics hit, and they're what makes a crash legible.
 		if (window.Sentry && window.Sentry.addBreadcrumb) {
 			window.Sentry.addBreadcrumb({ category: 'maya', message: name, data: payload, level: 'info' });
 		}
@@ -166,6 +196,7 @@
 	// navigation/reload) so each game shows up as its own page_view in GA instead of
 	// collapsing into the portal's single initial-load hit.
 	window.mayaTrackPageView = function () {
+		if (OWNER_OPTED_OUT) return;
 		if (window.__gaLoaded) {
 			trackMayaPageView();
 		} else {
