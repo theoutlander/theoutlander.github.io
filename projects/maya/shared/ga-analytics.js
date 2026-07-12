@@ -1,6 +1,13 @@
 (function () {
 	var MEASUREMENT_ID = 'G-62FC7BDSGJ';
 
+	// Paste the DSN from sentry.io → your Browser JavaScript project. Empty = Sentry stays off
+	// and everything below degrades to GA-only, so shipping without it is safe.
+	var SENTRY_DSN = '';
+	var SENTRY_CDN = 'https://browser.sentry-cdn.com/10.65.0/bundle.replay.min.js';
+	var SENTRY_CDN_INTEGRITY =
+		'sha384-m0LuODIrq07DA4qkb96F8k7aKlJwiFXD01313Fl3KePAkg9SFqQfe6LklEB/oSI7';
+
 	window.dataLayer = window.dataLayer || [];
 	window.gtag =
 		window.gtag ||
@@ -115,6 +122,11 @@
 		}
 		loadGA();
 		window.gtag('event', name, payload);
+		// Same event as a Sentry breadcrumb, so a crash report shows the trail that led to it
+		// (game_loaded → game_first_input → …) instead of a bare stack trace.
+		if (window.Sentry && window.Sentry.addBreadcrumb) {
+			window.Sentry.addBreadcrumb({ category: 'maya', message: name, data: payload, level: 'info' });
+		}
 	}
 	window.mayaTrack = mayaTrack;
 
@@ -143,6 +155,61 @@
 			trackMayaPageView();
 		}
 	};
+
+	/* ===== SENTRY =====
+	   Errors, alerts, and a session replay of any session that broke. Replay is error-only
+	   (replaysSessionSampleRate 0): a replay is recorded when something actually goes wrong,
+	   not while she's happily playing. That keeps us far inside the free tier and means we
+	   aren't continuously recording a kid's screen. */
+
+	// Errors thrown before the Sentry bundle finishes downloading would otherwise be lost —
+	// and that is exactly when the interesting ones happen. Dust Chasers threw during initial
+	// script evaluation, before any async script could possibly have loaded. Buffer, then flush.
+	var earlyErrors = [];
+	var sentryReady = false;
+
+	function sentryTags() {
+		return {
+			game: gameSlug() || 'portal',
+			embedded: String(EMBEDDED),
+			storage_blocked: String(storageBlocked()),
+		};
+	}
+
+	function loadSentry() {
+		if (!SENTRY_DSN) return;
+		var s = document.createElement('script');
+		s.src = SENTRY_CDN;
+		s.crossOrigin = 'anonymous';
+		s.setAttribute('integrity', SENTRY_CDN_INTEGRITY);
+		s.onload = function () {
+			if (!window.Sentry) return;
+			window.Sentry.init({
+				dsn: SENTRY_DSN,
+				integrations: [window.Sentry.replayIntegration()],
+				replaysSessionSampleRate: 0,
+				replaysOnErrorSampleRate: 1.0,
+				// One game per document, so tagging at init covers everything this frame sends.
+				initialScope: { tags: sentryTags() },
+			});
+			sentryReady = true;
+			earlyErrors.forEach(function (err) {
+				window.Sentry.captureException(err);
+			});
+			earlyErrors = [];
+		};
+		s.onerror = function () {
+			/* offline or CDN blocked — telemetry must never break the game */
+		};
+		document.head.appendChild(s);
+	}
+	loadSentry();
+
+	function reportError(err) {
+		if (!SENTRY_DSN) return;
+		if (sentryReady && window.Sentry) window.Sentry.captureException(err);
+		else if (earlyErrors.length < 20) earlyErrors.push(err);
+	}
 
 	/* ===== AUTOMATIC INSTRUMENTATION =====
 	   Everything below works for all 18 games with no per-game code. Only game_start needs
@@ -177,6 +244,7 @@
 			error_line: (e && e.lineno) || 0,
 			fatal: true,
 		});
+		reportError((e && e.error) || new Error(String((e && e.message) || 'unknown')));
 	});
 	window.addEventListener('unhandledrejection', function (e) {
 		var r = e && e.reason;
@@ -184,6 +252,7 @@
 			error_message: String((r && r.message) || r || 'unhandled rejection').slice(0, 300),
 			fatal: false,
 		});
+		reportError(r instanceof Error ? r : new Error(String(r || 'unhandled rejection')));
 	});
 
 	// Does she actually hear anything? These games play raw WebAudio, which iOS treats as
