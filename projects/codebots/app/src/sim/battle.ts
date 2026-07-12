@@ -157,6 +157,19 @@ export function runBattle(
         return targets.has(key(ahead));
       case "atBeacon":
         return atBeacon(self);
+      /**
+       * "Am I in trouble?"
+       *
+       * The arena wasn't winnable by thinking, it was winnable by shooting first — and the reason was
+       * this: a bot had no way to KNOW it was losing, so retreating was literally unwritable. There
+       * was no word for it. Escaping wasn't a hard strategy, it was an impossible one.
+       *
+       * hurt() is that word. With it, "back off behind cover when you're hurt" and "kite the thing
+       * that has to get close" become programs a kid can actually write — which is the difference
+       * between a shoot-out and a fight.
+       */
+      case "hurt":
+        return self.armor <= self.maxArmor * 0.4;
       case "enemyAhead": {
         // any living other bot straight ahead within THIS bot's shot range (nothing solid between)
         let p = self.pos;
@@ -239,7 +252,7 @@ export function runBattle(
 
   const SENSORS = new Set([
     "blocked", "targetAhead", "atBeacon",
-    "enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight",
+    "enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight", "hurt",
   ]);
 
   /** Advance one bot until it performs a world action (or finishes). Sensors resolved inline. */

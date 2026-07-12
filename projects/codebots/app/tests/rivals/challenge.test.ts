@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { fight, replay, type FightSetup } from "../../src/pvp/challenge";
+import { fight, replay, type FightSetup } from "../../src/rivals/challenge";
 import { BATTLE_API } from "../../src/content/enemies";
 import type { Arena, CellKind } from "../../src/sim/types";
 

@@ -1,4 +1,5 @@
 import { sb, cloudEnabled, currentAccount } from "../state/account";
+import { validateBot, type Validation } from "./validate";
 
 /**
  * PLAYER VS PLAYER — the reason a kid comes back tomorrow.
@@ -52,18 +53,30 @@ const toBot = (r: Row): PublishedBot => ({
 /** Longest program we'll accept. Generous for a kid, small enough that nobody can use us as storage. */
 export const MAX_SOURCE = 4000;
 
+export type PublishResult =
+  | { ok: true }
+  | { ok: false; message: string; line: number | null };
+
 /**
  * Publish (or replace) this player's bot. One bot per account: publishing again replaces the old one,
  * because a leaderboard where one kid fields forty bots isn't a leaderboard.
  *
- * Returns false rather than throwing when she's logged out or offline — a failed publish must never
- * take the game down with it.
+ * A BROKEN BOT NEVER LEAVES THE BUILDING. The sim will let a broken rival forfeit rather than crash
+ * someone else's fight — that stays, as the last line of defence — but forfeiting is a wretched thing
+ * to happen to the kid who PUBLISHED it: her bot loses every fight without moving and she is never
+ * told why. She just sits at the bottom of a board wondering why everyone is better than her. We know
+ * at publish time, so we say so at publish time, while she's still in front of the editor that can
+ * fix it.
+ *
+ * Never throws. A failed publish must not take the game down with it.
  */
-export async function publishBot(source: string, botName: string): Promise<boolean> {
-  if (!cloudEnabled || !source.trim()) return false;
+export async function publishBot(source: string, botName: string, api: string[]): Promise<PublishResult> {
+  const check: Validation = validateBot(source, api);
+  if (!check.ok) return check;
+  if (!cloudEnabled) return { ok: false, message: "You're offline — try again when you're back.", line: null };
   try {
     const account = await currentAccount();
-    if (!account) return false;
+    if (!account) return { ok: false, message: "Log in first, then your bot can go out and fight.", line: null };
     const { error } = await sb()
       .from(TABLE)
       .upsert(
@@ -76,9 +89,11 @@ export async function publishBot(source: string, botName: string): Promise<boole
         },
         { onConflict: "user_id" },
       );
-    return !error;
+    return error
+      ? { ok: false, message: "Couldn't publish just now — try again in a moment.", line: null }
+      : { ok: true };
   } catch {
-    return false;
+    return { ok: false, message: "Couldn't publish just now — try again in a moment.", line: null };
   }
 }
 

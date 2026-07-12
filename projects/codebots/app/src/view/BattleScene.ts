@@ -35,6 +35,7 @@ export class BattleScene extends Phaser.Scene {
   private bots: Phaser.GameObjects.Container[] = [];
   private targets = new Map<string, Phaser.GameObjects.Container>();
   private playing = false;
+  private aborted = false;
 
   constructor() {
     super("battle");
@@ -68,8 +69,10 @@ export class BattleScene extends Phaser.Scene {
   play(events: readonly BattleEvent[], handlers: BattlePlayback = {}): void {
     if (this.playing) return;
     this.playing = true;
+    this.aborted = false;
     let i = 0;
     const advance = () => {
+      if (this.aborted) { this.playing = false; return; } // STOP was pressed; drop the rest on the floor
       if (i >= events.length) {
         this.playing = false;
         handlers.onDone?.();
@@ -80,6 +83,39 @@ export class BattleScene extends Phaser.Scene {
       this.animate(ev, advance);
     };
     advance();
+  }
+
+  /**
+   * Stop the fight NOW.
+   *
+   * There was no way to do this. Once a battle started it ran to the end, and a kid who could see her
+   * bot was losing — or who simply wanted to change something — had to sit and watch. A game you
+   * cannot interrupt is a game that is happening TO you.
+   */
+  stop(): void {
+    this.aborted = true;
+    this.playing = false;
+    this.tweens.killAll();
+  }
+
+  /**
+   * Put everything back where it started.
+   *
+   * The scene had no reset at all, which is why a rematch began with the wreckage of the last fight
+   * still lying on the floor: a dead bot, tipped over and half-transparent, in the middle of the new
+   * battle. Its ghost. Rematches now start clean.
+   */
+  reset(): void {
+    this.stop();
+    this.bots.forEach((b, i) => {
+      const d = this.defs[i];
+      const c = cellCenter(d.start.pos);
+      b.setPosition(c.x, c.y);
+      b.setRotation(facingRotation(d.start.facing));
+      b.setAlpha(1);
+      b.setScale(BOT_SCALE);
+      b.setVisible(true);
+    });
   }
 
   private animate(ev: BattleEvent, done: () => void): void {
