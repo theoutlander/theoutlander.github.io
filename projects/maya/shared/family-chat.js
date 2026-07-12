@@ -292,20 +292,13 @@ export function initFamilyChat(root, hooks = {}) {
 
 		loadHistory();
 
+		// The chat log shows ONLY real messages from the database. The portal's
+		// decorative "Dad" bubbles (6-second welcome, tap-title-5x easter egg) are
+		// canned client-side strings — injecting them here made them look like Dad
+		// was live-chatting when he wasn't. They still show as the corner peek
+		// bubble (that's clearly a UI flourish); they must never enter the chat.
 		if (hooks.setAppendDadNote) {
-			hooks.setAppendDadNote((body) => {
-				const text = String(body || '').trim();
-				if (!text) return;
-				addRow(
-					{
-						id: `local-${Date.now()}`,
-						author: 'dad',
-						body: text,
-						created_at: new Date().toISOString(),
-					},
-					false
-				);
-			});
+			hooks.setAppendDadNote(null);
 		}
 
 		form.addEventListener('submit', async (e) => {
