@@ -160,7 +160,13 @@ let W,H,mx=300,my=300;
 let dustPeople=[],particles=[],pops=[],shockwaves=[],floatingTexts=[];
 let score=0,timeLeft=60,vacuumed=0,combo=0,lastZapTime=0;
 let gameRunning=false,animId=null,timerInt=null;
-let best=parseInt(localStorage.getItem('dc3_best')||'0');
+// iPad Safari throws on localStorage when site data is blocked. Reading it bare here would
+// abort the whole script and leave "Enter the Room" dead, so every access goes through this.
+const store={
+  get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+  set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+};
+let best=parseInt(store.get('dc3_best')||'0');
 let frame=0,dangerNear=false,shockCooldown=0,SHOCK_MAX=280,flashLife=0;
 
 function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
@@ -698,7 +704,7 @@ function startGame(){
 
 function endGame(reason){
   gameRunning=false;cancelAnimationFrame(animId);clearInterval(timerInt);
-  if(score>best){best=score;localStorage.setItem('dc3_best',best);}
+  if(score>best){best=score;store.set('dc3_best',best);}
   document.getElementById('end-title').textContent=reason==='survived'?'You Survived! 👻':'Gotcha! 💨';
   document.getElementById('end-sub').textContent=reason==='survived'?'The room is clean... for now.':'A ghost touched your dot!';
   document.getElementById('escore').textContent=score;

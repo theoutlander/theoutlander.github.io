@@ -235,12 +235,18 @@ const SONGS=[
 ];
 
 /* ===== STATE ===== */
-let saves=JSON.parse(localStorage.getItem('ppiano')||'{"hs":0,"stars":{}}');
+// iPad Safari throws on localStorage when site data is blocked. Reading it bare here would
+// abort the whole script and leave the game unstartable, so every access goes through this.
+const store={
+  get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
+  set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+};
+let saves=JSON.parse(store.get('ppiano')||'{"hs":0,"stars":{}}');
 let mode='normal',song=null,ni,score,combo,streak,hp,over,da,nh,dropEl,dY,curE,isGolden,raf,swT,perfWindow,totalStars=0;
 let currentPinata='🪅',lastMissed=false;
 
 /* ===== SAVE ===== */
-function save(){localStorage.setItem('ppiano',JSON.stringify(saves));}
+function save(){store.set('ppiano',JSON.stringify(saves));}
 function getTotalStars(){return Object.values(saves.stars).reduce((a,b)=>a+b,0);}
 
 /* ===== SELECT SCREEN ===== */
