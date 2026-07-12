@@ -16,7 +16,7 @@ import { runInSandbox } from "../../src/sandbox/driver";
 /** the program the step's OWN text tells her to build — nothing more */
 const SOLUTION: Record<string, string> = {
   "what-is-code": "", // the lesson IS that an empty program does nothing
-  "a-command": "forward()",
+  "a-command": "forward", // a BARE word — it does nothing, and that silence is the lesson
   brackets: "forward()",
   numbers: "forward(3)",
   capitals: "forward(2)",
@@ -31,6 +31,12 @@ describe("FIRST STEPS — a beginner can actually finish every beat", () => {
     it(`${step.id} — the program the step asks for actually completes it`, () => {
       const source = SOLUTION[step.id];
       expect(source, `no expected solution written for ${step.id}`).toBeDefined();
+      // The bare-word beat deliberately isn't runnable code — a lone `forward` is a word, not a
+      // program, and the lesson is the silence. The screen never runs it.
+      if (step.bare) {
+        expect(stepDone(step, { x: 0, y: 0 })).toBe(true);
+        return;
+      }
       const m = stepMission(step);
       const res = runInSandbox(m, source);
       expect(

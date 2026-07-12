@@ -16,6 +16,7 @@
 			try {
 				var el = document.createElement('audio');
 				el.setAttribute('playsinline', '');
+				el.loop = true;
 				el.volume = 0.01;
 				el.src =
 					'data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAACAgICAgICAgA==';

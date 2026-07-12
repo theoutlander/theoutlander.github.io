@@ -69,6 +69,16 @@ export interface FirstStep {
   praise: string;
   /** on this beat she uses the keyboard */
   typing?: boolean;
+  /**
+   * Show the command as a BARE WORD, with no brackets.
+   *
+   * Beat 2's whole claim is "a word on its own is just a word — a button nobody pressed", and beat 3
+   * pays it off by adding the brackets. If beat 2 quietly wrote `forward()` for her, it would prove
+   * the opposite of what it says: the robot would move, and the brackets would look like decoration.
+   * So beat 2 really does put a bare `forward` in her program, and pressing GO really does nothing.
+   * The lesson is the silence.
+   */
+  bare?: boolean;
 }
 
 const cmd = (label: string): Chip => ({ label, emit: label, kind: "command" });
@@ -100,11 +110,12 @@ export const FIRST_STEPS: FirstStep[] = [
       "A word that DOES something is called a COMMAND.",
     ],
     show: "forward",
-    task: "Tap the forward chip to put that word in your program.",
+    task: "Tap the forward chip to put that word in your program — then press GO.",
     lane: 1,
+    bare: true,
     chips: [cmd("forward")],
-    nudge: "Tap the word forward down there.",
-    praise: "That's a command — a word that makes the robot do something.",
+    nudge: "Tap the word forward, then press GO.",
+    praise: "Nothing moved! The word is in there, but nothing happened. Next: why.",
   },
   {
     id: "brackets",

@@ -26,8 +26,8 @@ interface Line {
   arg?: string;
 }
 
-const render = (lines: Line[]): string =>
-  lines.map((l) => `${l.cmd}(${l.arg ?? ""})`).join("\n");
+const render = (lines: Line[], bare = false): string =>
+  lines.map((l) => (bare ? l.cmd : `${l.cmd}(${l.arg ?? ""})`)).join("\n");
 
 export function FirstStepsScreen({
   paint,
@@ -53,7 +53,7 @@ export function FirstStepsScreen({
   const [msg, setMsg] = useState<{ text: string; good: boolean } | null>(null);
   const [passed, setPassed] = useState(false);
 
-  const source = step.typing ? typed : step.prefill !== undefined && lines.length === 0 ? step.prefill : render(lines);
+  const source = step.typing ? typed : step.prefill !== undefined && lines.length === 0 ? step.prefill : render(lines, step.bare);
 
   // reset everything when the beat changes — she starts each idea with a clean slate
   useEffect(() => {
@@ -106,6 +106,19 @@ export function FirstStepsScreen({
     const c = client.current;
     const a = arena.current;
     if (!c || !a || running) return;
+
+    // The bare-word beat isn't a program — it's a word sitting on its own, and the entire lesson is
+    // that NOTHING HAPPENS. We don't run it. (In real JavaScript a bare `forward` evaluates to the
+    // function and quietly does nothing, which is exactly what we're claiming; our sandbox happens to
+    // throw on it, and a scary red error would teach her the opposite of the truth.)
+    if (step.bare) {
+      if (!lines.length) { setMsg({ text: step.nudge, good: false }); return; }
+      setPassed(true);
+      setMsg({ text: step.praise, good: true });
+      analytics.firstStepDone?.(step.id, i + 1);
+      return;
+    }
+
     setRunning(true);
     setMsg(null);
     a.scene.reset();
