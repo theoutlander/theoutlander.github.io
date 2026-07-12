@@ -5,6 +5,7 @@ import { Stars } from "./components/Stars";
 import { Coin } from "./components/Coin";
 import { BotAvatar } from "./components/BotAvatar";
 import { availableDrills } from "../content/drills";
+import { cloudEnabled, type Account } from "../state/account";
 import type { SaveData } from "../state/save";
 import type { Mission } from "../sim/missionSchema";
 
@@ -40,6 +41,7 @@ function Door({
 /** HQ — the hub. The bot rolls in; the doors lead out. */
 export function HQ({
   bot,
+  account,
   save,
   missions,
   onPlay,
@@ -53,6 +55,7 @@ export function HQ({
   onUnlockAll,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
+  account: Account | null;
   save: SaveData;
   missions: Mission[];
   onPlay: () => void;
@@ -70,6 +73,9 @@ export function HQ({
   const nextLevel = Math.min(cleared + 1, missions.length);
   const badgeCount = (save.badges ?? []).length;
   const drills = availableDrills();
+  // A device with cloud accounts on shouldn't greet-by-name until she's actually logged in — the
+  // local pilot name may be stale from a previous kid's guest session on this same browser.
+  const personalized = !cloudEnabled || !!account;
   // A kid who has never coded should not be choosing between six doors. Until she's done FIRST
   // STEPS, that IS the game — everything else can wait.
   const beginner = !save.firstStepsDone && cleared === 0;
@@ -99,7 +105,7 @@ export function HQ({
           <BotAvatar body={bot.bodyHex} dome={bot.domeHex} width={150} />
           <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: "var(--text-2xs)", letterSpacing: "var(--label-tracking)", color: "var(--text-dim)", fontWeight: 700 }}>
-              WELCOME BACK, {bot.playerName.toUpperCase()}
+              WELCOME BACK, {(personalized ? bot.playerName : "CADET").toUpperCase()}
             </div>
             <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-3xl)", color: "var(--cyan)" }}>
               {bot.botName}

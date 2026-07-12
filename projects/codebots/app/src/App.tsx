@@ -152,14 +152,14 @@ export function App() {
             <Chip color={account ? "green" : "amber"}>{account ? `◉ ${account.username}` : "LOG IN"}</Chip>
           </button>
         ) : null}
-        <Chip color="dim">PILOT: {bot.playerName}</Chip>
+        <Chip color="dim">PILOT: {!cloudEnabled || account ? bot.playerName : "GUEST"}</Chip>
         <Chip color="cyan">BOT: {bot.botName}</Chip>
         <Coin count={coins} />
       </div>
 
       <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
+          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (
