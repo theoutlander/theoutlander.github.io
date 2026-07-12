@@ -14,52 +14,23 @@ const COLOR_RIDDLES = [
   'a pirate\u2019s shiny gold \ud83e\ude99',
 ];
 
-const SPOTS = [
-  {id:'fireplace', emoji:'🔥', name:'Fireplace', wall:false,
-    riddle:'Crackle crackle! Look where the logs glow bright —\nthe key sleeps by the FIRE tonight!',
-    fail:'You poke around the fireplace... ash goes POOF in your face! 💨 Nothing here.'},
-  {id:'clock', emoji:'🕰️', name:'Old Clock', wall:false,
-    riddle:'Tick tock! Tick tock!\nThe key hides INSIDE the old CLOCK!',
-    fail:'You open the clock... CUCKOO! 🐦 A dusty bird boops your nose. No key.'},
-  {id:'books', emoji:'📚', name:'Bookshelf', wall:false,
-    riddle:'Shhh! Where the spooky stories stay —\nthe key is tucked between the BOOKS away!',
-    fail:'You flip through the books... a moth flies out! 🦋 Just old stories.'},
-  {id:'plant', emoji:'🪴', name:'Creepy Plant', wall:false,
-    riddle:'Dig dig dig where the green leaves grow —\nthe key is in the PLANT, down below!',
-    fail:'You dig in the plant... eww, a worm! 🪱 It waves at you. No key.'},
-  {id:'painting', emoji:'🖼️', name:'Painting', wall:true,
-    riddle:'Peek BEHIND the picture on the wall —\nthat\u2019s where the key waits after all!',
-    fail:'You peek behind the painting... a spider says hi! 🕷️ EEK! Nothing else.'},
-  {id:'piano', emoji:'🎹', name:'Piano', wall:false,
-    riddle:'Plink plonk! Lift the PIANO lid —\nthat\u2019s where the little key is hid!',
-    fail:'You press a key... PLONK! 🎵 A mouse scurries out. 🐭 Not that kind of key.'},
-];
-
-const FAKE_CLUES = [
-  'The key is on the MOON. Good luck getting there! 🌝',
-  'The key is guarded by a very small, very fierce hamster. 🐹⚔️',
-  'The key is in the fridge. (This mansion has no fridge.) 🤭',
-  'The key hitched a ride on a bat and flew out the window. 🦇',
-  'The key was swallowed by a goose. The goose is fine. 🪿',
-];
-
-const DUSTY_LINES = [
-  'Pfffft! 💨 Just a dusty old chair. That\u2019s one sit used!',
-  'Creeeak... nothing in this one. The chair giggles at you. 🪑',
-  'You sit down... a spring goes BOING! But no key here.',
-];
-
 const BOOK_EMOJI = ['📕','📗','📘','📙'];
 const BOOK_NAMES = ['RED','GREEN','BLUE','ORANGE'];
 const SHELF_NAMES = ['TOP','MIDDLE','BOTTOM'];
-const WRONG_BOOK_LINES = [
-  'Just pictures of cats. 🐱 Cute, but no key!',
-  'ACHOO! 🤧 So much dust. Nothing behind this one.',
-  'A moth flies out! 🦋 Keep looking...',
-  'This one\u2019s glued shut with... jam? 🍓 Ew. No key.',
-];
-
 const TOTAL_GEMS = 6;
+
+// Theme-driven content — populated by applyTheme() before each round.
+let THEME = null;
+let SPOTS, FAKE_CLUES, DUSTY_LINES, WRONG_BOOK_LINES;
+
+function applyTheme(id){
+  THEME = window.THEMES[id];
+  SPOTS = THEME.SPOTS;
+  FAKE_CLUES = THEME.FAKE_CLUES;
+  DUSTY_LINES = THEME.DUSTY_LINES;
+  WRONG_BOOK_LINES = THEME.WRONG_BOOK_LINES;
+  $('#owl').textContent = THEME.hintAnimal.emoji;
+}
 
 /* ---------------- State ---------------- */
 let S = null;
@@ -168,7 +139,7 @@ function updateHUD(){
   $('#gem-n').textContent = S.gems.length;
   $('#clue-btn').classList.toggle('show', S.cluesFound.length>0);
   $('#sits').style.display = (S.phase==='room1') ? 'flex':'none';
-  $('#room-name').textContent = {room1:'The Chair Parlor',secret:'The Secret Room 🤫',kitchen:'The Potion Kitchen',library:'The Spooky Library',room2:'The Mirror Room',room3:'Inside the Mirror'}[S.phase]||'';
+  $('#room-name').textContent = THEME.roomNames[S.phase] || '';
   const t=goalText(); $('#goal').textContent = t ? '🎯 '+t : '';
 }
 
@@ -193,8 +164,8 @@ function goalText(){
       if(S.spotFound) return 'Tap the glowing '+S.trueSpot.name.toLowerCase()+' and play the ghost\u2019s song! 🎹';
       return 'Tap 📜 Clues — but beware, some scrolls LIE! 🤥';
     }
-    if(!S.mirrorUnlocked) return 'You have the mirror key — tap the mirror! 🪞';
-    return 'Tap the mirror again to step through! ✨';
+    if(!S.mirrorUnlocked) return 'You have the '+THEME.exitPropName+' key — tap the '+THEME.exitPropName+'! 🪞';
+    return 'Tap the '+THEME.exitPropName+' again to step through! ✨';
   }
   if(S.phase==='room3') return 'Tap the glowing EXIT and solve the backwards lock!';
   return '';
@@ -211,7 +182,7 @@ function hintFor(){
   if(p==='secret') return '“Open the chest, silly! Treasure doesn\u2019t open itself! 🤫”';
   if(p==='kitchen') return '“Watch the recipe QUICK before the magic ink fades... then tap in order!”';
   if(p==='library'){
-    if(!S.key3) return '“The owl 🦉 saw where the key went. Tap it and LISTEN!”';
+    if(!S.key3) return '“The '+THEME.hintAnimal.name+' '+THEME.hintAnimal.emoji+' saw where the key went. Tap it and LISTEN!”';
     return '“Read the backwards word from RIGHT to LEFT... and dodge the 2 trick letters!”';
   }
   if(p==='room2'){
@@ -313,12 +284,12 @@ function doorClick(){
   const d=$('#door1');
   if(!S.key1){
     d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
-    sfx('bad'); msg('🔒 Locked! <i>Rattle rattle...</i> You need a key. Maybe try a chair? But be careful — only 3 sits!');
+    sfx('bad'); msg(THEME.door1LockedMsg);
     return;
   }
   if(S.lidsOpen && S.cluesFound.length<4){
     d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
-    sfx('bad'); msg('🔒 Not yet! The mirror ahead needs those <b>scrolls</b> — go tap every popped chair lid first! 📜', 4000);
+    sfx('bad'); msg(THEME.doorSealedMsg, 4000);
     return;
   }
   if(!S.door1Open){
@@ -386,15 +357,15 @@ function chestClick(){
 function enterKitchen(){
   S.phase='kitchen'; updateHUD();
   show('#s-kitchen');
-  msg('🍯 The Potion Kitchen! The next door is stuck shut with magic goo. Brew the <b>Goo-B-Gone potion</b> — tap the cauldron! 🫧', 4500);
+  msg(THEME.kitchenEnterMsg, 4500);
 }
 function cauldronClick(){
   if(S.phase!=='kitchen') return;
-  if(S.potionDone){ msg('🫧 The potion bubbles happily. The door is unstuck — go through! 🚪'); return; }
+  if(S.potionDone){ msg(THEME.kitchenAlreadyDoneMsg); return; }
   Puzzles.potionMix(()=>{
     S.potionDone=true; sfx('magic'); updateHUD();
     $('#door-k-lock').textContent='🔓';
-    msg('🫧✨ <b>SPLOOSH!</b> The potion melts the goo — the door is free! 🚪', 3500);
+    msg(THEME.kitchenDoneMsg, 3500);
   });
 }
 function doorKClick(){
@@ -402,7 +373,7 @@ function doorKClick(){
   const d=$('#door-k');
   if(!S.potionDone){
     d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
-    sfx('bad'); msg('🍯 Stuck tight with sticky goo! The <b>cauldron</b> knows the recipe — tap it! ⚗️');
+    sfx('bad'); msg(THEME.kitchenLockedMsg);
     return;
   }
   sfx('creakopen'); d.classList.add('open-anim');
@@ -430,19 +401,20 @@ function buildLibrary(){
     wall.appendChild(row);
   });
 }
-function owlRiddle(){
-  return '🦉 “Hoo! Hoo! The key sleeps behind the <b>'+BOOK_NAMES[S.bookTarget.color]+'</b> book on the <b>'+SHELF_NAMES[S.bookTarget.shelf]+'</b> shelf!”';
+function hintAnimalRiddle(){
+  const a = THEME.hintAnimal;
+  return a.emoji+' “'+a.call+' The key sleeps behind the <b>'+BOOK_NAMES[S.bookTarget.color]+'</b> book on the <b>'+SHELF_NAMES[S.bookTarget.shelf]+'</b> shelf!”';
 }
 function owlClick(){
   if(S.phase!=='library') return;
   S.owlTaps++;
   sfx('hoot');
   if(S.owlTaps===3 && !S.gems.includes('owl')){
-    addGem('owl','The owl was sitting on it! Hoo knew?');
-    setTimeout(()=>msg(owlRiddle(), 4500), 4200);
+    addGem('owl', THEME.hintAnimal.foundGemLine);
+    setTimeout(()=>msg(hintAnimalRiddle(), 4500), 4200);
     return;
   }
-  msg(owlRiddle(), 4500);
+  msg(hintAnimalRiddle(), 4500);
 }
 function bookClick(sIdx,cIdx,b){
   if(S.phase!=='library') return;
@@ -460,7 +432,7 @@ function bookClick(sIdx,cIdx,b){
 function enterLibrary(){
   S.phase='library'; updateHUD();
   show('#s-library');
-  msg('📚 The Spooky Library! The door needs a <b>hidden key</b> AND a <b>magic word</b>. The owl 🦉 saw everything...', 4500);
+  msg(THEME.libraryEnterMsg, 4500);
 }
 function updateLibDoor(){
   if(S.key3 && S.wordDone) $('#door-l-lock').textContent='🔓';
@@ -512,7 +484,7 @@ function buildRoom2(){
 function enterRoom2(){
   S.phase='room2'; updateHUD();
   show('#s-room2');
-  msg('🪞 A giant mirror... with a <b>tiny keyhole!</b> Your scrolls know where the key hides — but some scrolls LIE! 🤥', 4500);
+  msg(THEME.room2EnterMsg, 4500);
 }
 
 function spotClick(sp, el){
@@ -546,7 +518,7 @@ function mirrorClick(){
   const m=$('#mirror');
   if(!S.key2){
     m.classList.add('wiggle'); sfx('bad');
-    if(S.spotFound) msg('🔒 The ghost still has the mirror key! Tap the glowing '+S.trueSpot.name.toLowerCase()+' and play its song! 🎹', 4000);
+    if(S.spotFound) msg('🔒 The ghost still has the '+THEME.exitPropName+' key! Tap the glowing '+S.trueSpot.name.toLowerCase()+' and play its song! 🎹', 4000);
     else msg('🔒 Locked with a tiny keyhole! ONE of your scrolls 📜 tells the truth about where the key hides...', 4000);
     setTimeout(()=>m.classList.remove('wiggle'),450);
     return;
@@ -556,7 +528,7 @@ function mirrorClick(){
     sfx('magic'); updateHUD();
     $('#m-keyhole').textContent='🔓';
     m.classList.add('unlocked');
-    msg('🔓 The mirror <b>ripples like water...</b> Tap it again to step through!', 3500);
+    msg('🔓 The '+THEME.exitPropName+' <b>ripples like water...</b> Tap it again to step through!', 3500);
     return;
   }
   S.phase='entering';
@@ -584,6 +556,7 @@ function winGame(){
   clearInterval(timerInt);
   $('#hud').classList.remove('show'); $('#goal').classList.remove('show'); $('#hint-ghost').classList.remove('show');
   show('#s-win');
+  $('#win-sub').textContent = THEME.winSub;
   $('#win-time').textContent='⏱️ You escaped in '+fmt(S.elapsed)+'!';
   $('#win-gems').textContent='💎 Hidden gems found: '+S.gems.length+'/'+TOTAL_GEMS+(S.gems.length===TOTAL_GEMS?' — TREASURE MASTER!! 🏆':'');
   const best = Number(localStorage.getItem('mayaEscapeBest')||0);
@@ -612,7 +585,8 @@ $('#clue-btn').addEventListener('click',()=>{
 });
 
 /* ---------------- Flow ---------------- */
-function startGame(){
+function startGame(themeId){
+  applyTheme(themeId);
   setupRound();
   S.phase='room1';
   buildChairs(); buildRoom2(); buildLibrary();
@@ -629,14 +603,39 @@ function startGame(){
   updateHUD(); startTimer(); $('#timer').textContent='0:00';
   if(window.Snd) Snd.ambient('mansion');
   show('#s-room1');
-  msg('👻 Welcome to the Chair Parlor... Five chairs. One hides a key. You may only sit on <b>THREE!</b> Look around for help...', 4500);
+  msg(THEME.welcomeMsg, 4500);
 }
 
-$('#start-btn').addEventListener('click', startGame);
-$('#again-btn').addEventListener('click', startGame);
+function updateBestTimeDisplay(){
+  const best=Number(localStorage.getItem('mayaEscapeBest')||0);
+  $('#best-time').textContent = best ? '🏆 Best escape: '+fmt(best) : '';
+}
+
+function backToPicker(){
+  show('#s-title');
+  updateBestTimeDisplay();
+}
+
+function buildThemePicker(){
+  const box = $('#theme-picker'); box.innerHTML='';
+  window.THEME_ORDER.forEach(id=>{
+    const t = window.THEMES[id];
+    const el = document.createElement('button');
+    el.className='theme-card';
+    el.innerHTML = `<span class="tc-icon">${t.icon}</span><span class="tc-name">${t.name}</span><span class="tc-teaser">${t.cardTeaser}</span>`;
+    el.addEventListener('click', ()=>startGame(id));
+    box.appendChild(el);
+  });
+}
+buildThemePicker();
+$('#surprise-btn').addEventListener('click', ()=>{
+  const ids = window.THEME_ORDER;
+  startGame(ids[Math.floor(Math.random()*ids.length)]);
+});
+$('#again-btn').addEventListener('click', backToPicker);
 $('#retry-btn').addEventListener('click', ()=>{
   $('#net').classList.remove('show');
-  startGame();
+  startGame(THEME.id);
   msg('The net lets you go... this time. 😤 New round — everything moved! Only <b>3 sits!</b>', 4000);
 });
 $('#door1').addEventListener('click', doorClick);
@@ -662,7 +661,7 @@ $('#bm-close').addEventListener('click',()=>$('#bookmodal').classList.remove('sh
 $('#bookmodal').addEventListener('click',e=>{ if(e.target.id==='bookmodal') $('#bookmodal').classList.remove('show'); });
 $('#mirror').addEventListener('click', mirrorClick);
 $('#mghost').addEventListener('click', ()=>{
-  if(S.phase==='room2' && $('#mghost').classList.contains('boo')) addGem('mghost','You tapped the mirror ghost mid-haunt! So brave!');
+  if(S.phase==='room2' && $('#mghost').classList.contains('boo')) addGem('mghost','You tapped the ghost near the '+THEME.exitPropName+' mid-haunt! So brave!');
 });
 $('#float-chair').addEventListener('click', ()=>{ if(S.phase==='room3') addGem('floatchair','The upside-down floating chair was keeping it warm!'); });
 $('#exit-door').addEventListener('click', ()=>{
@@ -754,8 +753,5 @@ syncMute();
 })();
 
 // show best time on title
-(function(){
-  const best=Number(localStorage.getItem('mayaEscapeBest')||0);
-  if(best) $('#best-time').textContent='🏆 Best escape: '+fmt(best);
-})();
+updateBestTimeDisplay();
 })();
