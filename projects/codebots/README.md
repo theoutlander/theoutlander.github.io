@@ -79,7 +79,7 @@ handoff notes. If you find yourself editing it, stop and
 |---|---|
 | **Docs** | `game.md` ✅ · `pitch.html` ✅ · `map.html` ✅ · `design.md` ⬜ · `engine.md` ⬜ · `curriculum.md` ⬜ · `plan.md` ⬜ |
 | **Missions** | Worlds 1–4 authored and hand-verified on the grid; still to be split into one file each. **Worlds 5–8 are sketches — the largest remaining job.** |
-| **Code** | Not started. `sim/` and `sandbox/` will be **ported by copy** from `prototype/`; everything else is new. |
+| **Code** | Not started. `sim/` and `sandbox/` will be **ported by copy** from `codebots-prototype/`; everything else is new. |
 | **Design system** | Claude Design project `41e196e7-28e3-43ef-b7d2-74af999644cd` — created, empty. Blocked on `docs/design.md`. |
 
 Chief creative consultant: **Asha, age 10.**
