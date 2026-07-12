@@ -51,7 +51,7 @@
 		"puppeteer": "^25.2.1",
 		"tsx": "^4.23.0",
 		"typescript": "~5.9.3",
-		"vite": "^6.4.3",
+		"vite": "^8.1.4",
 		"vite-plugin-ssr-ssg": "^1.4.1",
 		"vite-ssg": "^28.3.0",
 		"viteFileRoutes": "link:@tanstack/router-plugin/viteFileRoutes",
