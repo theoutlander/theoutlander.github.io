@@ -44,17 +44,26 @@ serve(async (req) => {
 
   const messageBody = payload.record.body?.trim() || '(no message)';
 
+  // Publish via ntfy's JSON API, NOT its header API. HTTP header values must be
+  // Latin-1, so putting the 💕 in a `Title:` header made fetch() throw a TypeError
+  // before it ever hit the network — every push failed. In the JSON body, the
+  // emoji is just UTF-8 text and works fine.
   try {
-    await fetch(`https://ntfy.sh/${NTFY_TOPIC}`, {
+    const res = await fetch('https://ntfy.sh', {
       method: 'POST',
-      headers: {
-        Title: 'Maya sent you a message 💕',
-        Priority: 'high',
-        Tags: 'heart',
-        'Content-Type': 'text/plain',
-      },
-      body: messageBody,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        topic: NTFY_TOPIC,
+        title: 'Maya sent you a message 💕',
+        message: messageBody,
+        priority: 4, // high
+        tags: ['heart'],
+      }),
     });
+    if (!res.ok) {
+      console.error('ntfy push rejected:', res.status, await res.text());
+      return new Response('notify failed', { status: 502 });
+    }
   } catch (err) {
     console.error('ntfy push failed:', err);
     return new Response('notify failed', { status: 502 });
