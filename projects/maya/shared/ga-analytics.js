@@ -3,7 +3,8 @@
 
 	// Paste the DSN from sentry.io → your Browser JavaScript project. Empty = Sentry stays off
 	// and everything below degrades to GA-only, so shipping without it is safe.
-	var SENTRY_DSN = '';
+	var SENTRY_DSN =
+		'https://b9c577f427ad005a5b31897a3804fc2a@o4511723884314624.ingest.us.sentry.io/4511724000706560';
 	var SENTRY_CDN = 'https://browser.sentry-cdn.com/10.65.0/bundle.replay.min.js';
 	var SENTRY_CDN_INTEGRITY =
 		'sha384-m0LuODIrq07DA4qkb96F8k7aKlJwiFXD01313Fl3KePAkg9SFqQfe6LklEB/oSI7';
