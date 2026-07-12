@@ -557,6 +557,9 @@ function gameIframeUrl(file){
   return url+(url.indexOf('?')>=0?'&':'?')+'v='+Date.now();
 }
 function openGameInModal(file,title){
+  // Top of the funnel: she tapped Play. game_loaded / game_start follow from inside the game,
+  // so a game that opens but never starts shows up as a cliff rather than looking healthy.
+  if(window.mayaTrack)window.mayaTrack('game_open',{game:(file.match(/games\/([^/]+)\//)||[,file])[1]});
   document.getElementById('mt').textContent=title;
   document.body.classList.add('maya-game-open');
   document.title=title+' · '+MAYA_PAGE_TITLE;

@@ -570,6 +570,7 @@ function calcStars(){
 
 function win(){
   over=true;
+  if(window.mayaGameEnd)window.mayaGameEnd({song:song.id,mode:mode,score:score,outcome:'win'});
   document.getElementById('pi').classList.add('boom');
 
   for(let i=0;i<22;i++)setTimeout(()=>popCandy(120+Math.random()*460,60+Math.random()*200,CA[Math.floor(Math.random()*CA.length)]),i*55);
@@ -608,6 +609,7 @@ function win(){
 /* ===== GAME START ===== */
 function go(idx){
   song=SONGS[idx];ni=0;score=0;combo=0;streak=0;hp=100;over=false;da=false;nh=false;lastMissed=false;
+  if(window.mayaGameStart)window.mayaGameStart({song:song.id,mode:mode});
   currentPinata=PINATAS[Math.floor(Math.random()*PINATAS.length)];
   document.getElementById('sel').classList.remove('active');
   document.getElementById('game').classList.add('active');

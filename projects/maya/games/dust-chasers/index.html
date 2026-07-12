@@ -697,6 +697,7 @@ function startGame(){
   document.getElementById('vac-fill').style.width='0%';
   document.getElementById('combo-wrap').classList.remove('show');
   gameRunning=true;
+  if(window.mayaGameStart)window.mayaGameStart();
   clearInterval(timerInt);cancelAnimationFrame(animId);
   animId=requestAnimationFrame(loop);
   startTimer();
@@ -704,6 +705,7 @@ function startGame(){
 
 function endGame(reason){
   gameRunning=false;cancelAnimationFrame(animId);clearInterval(timerInt);
+  if(window.mayaGameEnd)window.mayaGameEnd({score:score,zapped:vacuumed,outcome:reason});
   if(score>best){best=score;store.set('dc3_best',best);}
   document.getElementById('end-title').textContent=reason==='survived'?'You Survived! 👻':'Gotcha! 💨';
   document.getElementById('end-sub').textContent=reason==='survived'?'The room is clean... for now.':'A ghost touched your dot!';
