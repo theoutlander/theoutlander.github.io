@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { unknownCommandHint } from "../../src/sandbox/errors";
 import { lockedAt, lockedName, UNLOCK_LEVEL } from "../../src/content/unlocks";
 import { apiForWorld } from "../../src/sandbox/api";
+import { WORLDS } from "../../src/content/missions";
 
 /**
  * DON'T LIE TO THE KID.
@@ -34,16 +35,20 @@ describe("a real command she hasn't unlocked yet", () => {
     expect(msg).toMatch(/Level \d+/);
   });
 
-  it("tells her the right level — shoot() arrives on Level 7", () => {
-    // 5 missions in World 1, and shoot is the 2nd thing taught in World 2
-    expect(UNLOCK_LEVEL.shoot).toBe(7);
-    expect(hint("shoot", 1)).toContain("Level 7");
+  it("tells her the RIGHT level — and stays right when the campaign changes shape", () => {
+    // Don't hardcode the number. The campaign was cut from 24 levels to 11 and every unlock shifted;
+    // a test that pinned "Level 7" would have failed for the crime of the game getting better, while
+    // a test that pins a stale number in the MESSAGE would let us lie to a kid without noticing.
+    // Derive it the same way the game does, and check the message agrees.
+    const expected = WORLDS[0].length + 2; // shoot is the 2nd thing World 2 teaches
+    expect(UNLOCK_LEVEL.shoot).toBe(expected);
+    expect(hint("shoot", 1)).toContain(`Level ${expected}`);
   });
 
   it("handles a locked command with the capitals wrong — teaches BOTH facts at once", () => {
     const msg = hint("Shoot", 1);
     expect(msg).toMatch(/capital/i); // the capitals rule
-    expect(msg).toMatch(/Level 7/); // and that it's real, just not yet
+    expect(msg).toMatch(new RegExp(`Level ${UNLOCK_LEVEL.shoot}`)); // and that it's real, just not yet
     expect(msg).not.toMatch(/I don't know/i);
   });
 

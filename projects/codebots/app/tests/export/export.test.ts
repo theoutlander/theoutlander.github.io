@@ -15,7 +15,7 @@ function importedNames(exported: string): string[] {
 
 describe("exportBot", () => {
   it("has author solutions to export", () => {
-    expect(MISSIONS.length).toBeGreaterThanOrEqual(24);
+    expect(MISSIONS.length).toBeGreaterThanOrEqual(10);
   });
 
   // The load-bearing claim of the whole feature: what she downloads is real JavaScript.

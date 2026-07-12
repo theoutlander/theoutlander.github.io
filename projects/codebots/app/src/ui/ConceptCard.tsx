@@ -75,6 +75,15 @@ export function ConceptCard({
             <span style={{ fontWeight: 700, color: "var(--amber)", letterSpacing: "1px" }}>WHEN: </span>
             {concept.whenToUse}
           </div>
+          {/* The campaign is the tutorial FOR the arena. An idea she can't use in a fight has no
+              business being a level, so every idea says here exactly what it buys her in one. */}
+          <div style={{
+            fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-body)",
+            borderTop: "1px dashed var(--line)", paddingTop: 8,
+          }}>
+            <span style={{ fontWeight: 700, color: "var(--green)", letterSpacing: "1px" }}>IN A FIGHT: </span>
+            {concept.inBattle}
+          </div>
           {onWatch && concept.demoCode ? (
             <button
               onClick={onWatch}

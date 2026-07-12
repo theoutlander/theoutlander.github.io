@@ -55,9 +55,11 @@ export const BADGES: Badge[] = [
     earned: (s) => worldCleared(s, 4) },
   { id: "perfectionist", title: "PERFECTIONIST", desc: "Earned all 3 stars in a whole world", kind: "milestone", icon: "crown",
     earned: (s) => [1, 2, 3, 4].some((w) => worldPerfect(s, w)) },
-  { id: "star-collector", title: "STAR COLLECTOR", desc: "Collected 50 stars", kind: "milestone", icon: "star",
-    earned: (s) => totalStars(s) >= 50 },
-  { id: "graduate", title: "GRADUATE", desc: "Cleared all 24 levels", kind: "milestone", icon: "cap",
+  { id: "star-collector", title: "STAR COLLECTOR", desc: "Collected 25 stars", kind: "milestone", icon: "star",
+    // The campaign is 11 levels now, so 33 stars is a perfect run. A 50-star badge would be a
+    // promise no child could ever keep — worse than no badge at all.
+    earned: (s) => totalStars(s) >= 25 },
+  { id: "graduate", title: "GRADUATE", desc: "Cleared every level", kind: "milestone", icon: "cap",
     earned: (s) => ALL.every((m) => cleared(s, m.id)) },
 ];
 

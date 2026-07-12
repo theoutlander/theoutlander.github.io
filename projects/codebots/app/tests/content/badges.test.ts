@@ -41,7 +41,7 @@ describe("badges", () => {
     expect(earnedBadges(save(w1ok))).not.toContain("perfectionist");
   });
 
-  it("clearing all 24 earns GRADUATE and STAR COLLECTOR at 3 stars", () => {
+  it("clearing every level earns GRADUATE and STAR COLLECTOR at 3 stars", () => {
     const all3 = cleared3(ALL.map((m) => m.id));
     const earned = earnedBadges(save(all3));
     expect(earned).toContain("graduate");
