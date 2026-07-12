@@ -5,7 +5,9 @@ import { MissionScreen } from "./ui/MissionScreen";
 import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { HQ } from "./ui/HQ";
 import { Profile } from "./ui/Profile";
-import { BattleScreen } from "./ui/BattleScreen";
+import { ArenaHub } from "./ui/ArenaHub";
+import { FightScreen, type Opponent, type FightRecord } from "./ui/FightScreen";
+import { Debrief } from "./ui/Debrief";
 import { GarageScreen } from "./ui/GarageScreen";
 import { DrillScreen } from "./ui/DrillScreen";
 import { FirstStepsScreen } from "./ui/FirstStepsScreen";
@@ -24,7 +26,9 @@ type Screen =
   | { name: "map" }
   | { name: "mission"; index: number }
   | { name: "profile" }
-  | { name: "battle" }
+  | { name: "arenaHub" }
+  | { name: "fight"; opponent: Opponent }
+  | { name: "debrief" }
   | { name: "garage" }
   | { name: "drill" }
   | { name: "first" }
@@ -39,6 +43,11 @@ export function App() {
   const [botConfig, setBotConfig] = useState(loadBotConfig);
   const [screen, setScreen] = useState<Screen>({ name: "hq" });
   const [coins, setCoins] = useState(() => loadSave().coins);
+  // lastFight is the just-finished fight's result for Debrief to render; lastOpponent is who it was
+  // against, so REMATCH can start the same fight again (a FightRecord only carries the result, not
+  // the Opponent selector, so both are needed).
+  const [lastFight, setLastFight] = useState<FightRecord | null>(null);
+  const [lastOpponent, setLastOpponent] = useState<Opponent | null>(null);
   const [account, setAccount] = useState<Account | null>(null);
   // Tag events with the account id once she logs in, so a returning kid can be told apart from a new
   // one. Logged out, events stay genuinely anonymous.
@@ -73,7 +82,9 @@ export function App() {
   const toHQ = () => { refresh(); setScreen({ name: "hq" }); };
   const toMap = () => { refresh(); setScreen({ name: "map" }); };
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
-  const toBattle = () => setScreen({ name: "battle" });
+  const toArenaHub = () => setScreen({ name: "arenaHub" });
+  const toFight = (opponent: Opponent) => { setLastOpponent(opponent); setScreen({ name: "fight", opponent }); };
+  const toDebrief = (record: FightRecord) => { setLastFight(record); setScreen({ name: "debrief" }); };
   const toGarage = () => { refresh(); setScreen({ name: "garage" }); };
   const toAccount = () => setScreen({ name: "account" });
   const toDrill = () => setScreen({ name: "drill" });
@@ -107,8 +118,12 @@ export function App() {
       ? { back: "‹ HQ", onBack: toHQ, current: "THE MAP" }
         : screen.name === "profile"
         ? { back: "‹ HQ", onBack: toHQ, current: "PROFILE" }
-        : screen.name === "battle"
-        ? { back: "‹ HQ", onBack: toHQ, current: "BATTLE ARENA" }
+        : screen.name === "arenaHub"
+        ? { back: "‹ HQ", onBack: toHQ, current: "ARENA" }
+        : screen.name === "fight"
+        ? { back: "‹ ARENA", onBack: toArenaHub, current: "FIGHT" }
+        : screen.name === "debrief"
+        ? { back: "‹ ARENA", onBack: toArenaHub, current: "DEBRIEF" }
         : screen.name === "garage"
         ? { back: "‹ HQ", onBack: toHQ, current: "GARAGE" }
         : screen.name === "account"
@@ -118,7 +133,7 @@ export function App() {
         : screen.name === "first"
         ? { back: "‹ HQ", onBack: toHQ, current: "FIRST STEPS" }
         : screen.name === "league"
-        ? { back: "‹ ARENA", onBack: toBattle, current: "THE LEAGUE" }
+        ? { back: "‹ ARENA", onBack: toArenaHub, current: "THE LEAGUE" }
         : mission
           ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
@@ -154,13 +169,31 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} onLeague={toLeague} />
+          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onArenaHub={toArenaHub} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} onLeague={toLeague} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "league" ? (
-          <LeagueScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onExit={toBattle} />
-        ) : screen.name === "battle" ? (
-          <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onLeague={toLeague} />
+          <LeagueScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onExit={toArenaHub} />
+        ) : screen.name === "arenaHub" ? (
+          <ArenaHub onFight={toFight} />
+        ) : screen.name === "fight" ? (
+          <FightScreen
+            opponent={screen.opponent}
+            paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
+            onDone={toDebrief}
+            onExit={toArenaHub}
+          />
+        ) : screen.name === "debrief" && lastFight ? (
+          <Debrief
+            record={lastFight}
+            save={save}
+            onRematch={() => { if (lastOpponent) toFight(lastOpponent); }}
+            onLearn={(missionId) => {
+              const idx = ALL.findIndex((m) => m.id === missionId);
+              if (idx >= 0) setScreen({ name: "mission", index: idx });
+            }}
+            onBackToHub={toArenaHub}
+          />
         ) : screen.name === "garage" ? (
           <GarageScreen save={save} onSave={applySave} />
         ) : screen.name === "drill" ? (

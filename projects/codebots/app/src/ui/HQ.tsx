@@ -46,7 +46,7 @@ export function HQ({
   missions,
   onPlay,
   onProfile,
-  onBattle,
+  onArenaHub,
   onGarage,
   onDrill,
   onFirstSteps,
@@ -59,7 +59,7 @@ export function HQ({
   missions: Mission[];
   onPlay: () => void;
   onProfile: () => void;
-  onBattle: () => void;
+  onArenaHub: () => void;
   onGarage: () => void;
   onDrill: () => void;
   onFirstSteps: () => void;
@@ -175,7 +175,7 @@ export function HQ({
               desc="Program your bot to fight. Once it starts, you can't help it — better code wins."
               chip="FIGHT →"
               chipColor="green"
-              onClick={onBattle}
+              onClick={onArenaHub}
             />
           ) : null}
         </div>
