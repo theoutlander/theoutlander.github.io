@@ -112,50 +112,45 @@
 	}
 
 	/* ===== WHO DOES NOT GET COUNTED =====
-	   GA should measure Maya, and only Maya. Two sources of noise are excluded automatically,
-	   with nothing for Nick to remember to do:
+	   GA should measure Maya, and only Maya.
 
-	     1. localhost / dev — any host that isn't a real lab domain. Development and testing
-	        must never show up as usage.
-	     2. Nick himself — detected via the family chat, which stores role 'dad' vs 'maya'.
-	        Any device where he has opened the chat as Dad is his device, so it stops counting.
+	   Excluded here: localhost and any host that isn't a real lab domain, so development and
+	   testing never show up as usage. Matches src/lib/analytics.ts on the main site.
 
-	   Manual override remains for a device where he hasn't signed into chat: visit any lab
-	   page once with ?ga=off (?ga=on to undo).
+	   Nick himself is excluded in GA's own settings (Admin → Data Filters → Internal Traffic,
+	   by IP), NOT in this file. An earlier version sniffed the family-chat 'dad' role to guess
+	   which device was his; that coupled analytics to an unrelated feature and would silently
+	   start counting him again whenever his chat session expired. GA's IP filter is the right
+	   tool for "who", and it needs no code.
+
+	   ?ga=off remains as a per-device manual override (?ga=on to undo), useful off his home IP.
 
 	   GA-only by design: his errors still reach Sentry. If Nick hits a broken game we want to
 	   know — Sentry is about correctness, not audience counting.
 
-	   Every storage read is wrapped. Reading it bare is the exact bug that started all this,
-	   and the fallback is deliberately "count them": if storage throws we are almost certainly
-	   on Maya's locked-down iPad, and she is the one person who must never be excluded. */
+	   The storage read is wrapped, and the fallback is deliberately "count them": if storage
+	   throws we are almost certainly on Maya's locked-down iPad, and she is the one person who
+	   must never be silently excluded. */
 	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
 	function isProd() {
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}
 
 	var GA_OPTOUT_KEY = 'maya_ga_optout';
-	var CHAT_SESSION_KEY = 'maya_family_chat_v3'; // set by shared/family-chat.js
 
-	function isNick() {
+	function manuallyOptedOut() {
 		try {
 			var q = new URLSearchParams(window.location.search).get('ga');
 			if (q === 'off') window.localStorage.setItem(GA_OPTOUT_KEY, '1');
 			if (q === 'on') window.localStorage.removeItem(GA_OPTOUT_KEY);
-			if (window.localStorage.getItem(GA_OPTOUT_KEY) === '1') return true;
-
-			// Signed into the family chat as Dad → this is Nick's device.
-			var raw = window.localStorage.getItem(CHAT_SESSION_KEY);
-			if (raw && JSON.parse(raw).role === 'dad') return true;
-
-			return false;
+			return window.localStorage.getItem(GA_OPTOUT_KEY) === '1';
 		} catch (e) {
 			return false; // storage blocked → assume Maya, always count her
 		}
 	}
 
-	// Skip GA for Nick, and for anything that isn't the real site (localhost, dev servers).
-	var SKIP_GA = !isProd() || isNick();
+	// Skip GA off the real site (localhost, dev servers), or on a device explicitly opted out.
+	var SKIP_GA = !isProd() || manuallyOptedOut();
 
 	function loadGA() {
 		if (window.__gaLoaded) return;
