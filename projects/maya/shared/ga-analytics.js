@@ -82,6 +82,7 @@
 			game: gameSlug() || 'portal',
 			embedded: EMBEDDED,
 			storage_blocked: storageBlocked(),
+			visitor: VISITOR, // 'maya' | 'nick' | 'unknown' — answers "was that her or me?"
 		};
 	}
 
@@ -111,32 +112,61 @@
 		});
 	}
 
-	/* ===== WHO DOES NOT GET COUNTED =====
-	   GA should measure Maya, and only Maya.
+	/* ===== WHO IS THIS =====
+	   The problem this solves: "I can't tell definitively if it's her playing or me showing up."
 
-	   Excluded here: localhost and any host that isn't a real lab domain, so development and
-	   testing never show up as usage. Matches src/lib/analytics.ts on the main site.
+	   We LABEL rather than silently drop. Every hit carries visitor = 'maya' | 'nick' |
+	   'unknown', so a report answers the question instead of hiding it. Exclusion is then GA's
+	   job, not this file's: 'nick' hits also carry traffic_type='internal', which GA's built-in
+	   Internal Traffic filter drops (Admin → Data Filters). That filter has a Testing mode that
+	   shows ONLY internal traffic — so Nick can actually LOOK at what's being excluded and
+	   confirm it's him, instead of trusting a silent client-side skip.
 
-	   Nick himself is excluded in GA's own settings (Admin → Data Filters → Internal Traffic,
-	   by IP), NOT in this file. An earlier version sniffed the family-chat 'dad' role to guess
-	   which device was his; that coupled analytics to an unrelated feature and would silently
-	   start counting him again whenever his chat session expired. GA's IP filter is the right
-	   tool for "who", and it needs no code.
+	   Identity comes from the family chat, which is PIN-authenticated and already stores
+	   role 'dad' | 'maya'. That's a real signal, not a guess. ?who=nick / ?who=maya overrides it
+	   on a device that never signs into chat (it persists).
 
-	   ?ga=off remains as a per-device manual override (?ga=on to undo), useful off his home IP.
+	   Why labelling beats excluding: if a flag is evicted (iOS Safari drops script storage after
+	   ~7 days idle) an excluded device silently reappears as "Maya". A labelled one shows up as
+	   'unknown' — a visible anomaly you can chase, not corrupted data you can't see.
 
-	   GA-only by design: his errors still reach Sentry. If Nick hits a broken game we want to
-	   know — Sentry is about correctness, not audience counting.
+	   'unknown' is also how a genuine stranger finding the site would appear, which is worth
+	   knowing on its own.
 
-	   The storage read is wrapped, and the fallback is deliberately "count them": if storage
-	   throws we are almost certainly on Maya's locked-down iPad, and she is the one person who
-	   must never be silently excluded. */
+	   Deliberately NOT IP-based: Maya's iPad shares Nick's home IP, so an IP rule would exclude
+	   the one person we exist to measure.
+
+	   Storage reads are wrapped, and every fallback favours counting: if storage throws we are
+	   almost certainly on Maya's locked-down iPad. */
 	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
 	function isProd() {
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}
 
 	var GA_OPTOUT_KEY = 'maya_ga_optout';
+	var WHO_KEY = 'maya_visitor';
+	var CHAT_SESSION_KEY = 'maya_family_chat_v3'; // written by shared/family-chat.js
+
+	var VISITOR = (function () {
+		try {
+			// Explicit tag wins, and sticks: maya.karnik.io/?who=nick once per device.
+			var q = new URLSearchParams(window.location.search).get('who');
+			if (q === 'nick' || q === 'maya') window.localStorage.setItem(WHO_KEY, q);
+			var tagged = window.localStorage.getItem(WHO_KEY);
+			if (tagged === 'nick' || tagged === 'maya') return tagged;
+
+			// Otherwise fall back to who is signed into the family chat.
+			var raw = window.localStorage.getItem(CHAT_SESSION_KEY);
+			if (raw) {
+				var role = JSON.parse(raw).role;
+				if (role === 'dad') return 'nick';
+				if (role === 'maya') return 'maya';
+			}
+			return 'unknown';
+		} catch (e) {
+			return 'unknown';
+		}
+	})();
 
 	function manuallyOptedOut() {
 		try {
@@ -149,7 +179,13 @@
 		}
 	}
 
-	// Skip GA off the real site (localhost, dev servers), or on a device explicitly opted out.
+	// Nick's hits are still SENT (so he can inspect them in the filter's Testing mode) but are
+	// marked internal so GA drops them once the Internal Traffic filter is Active.
+	function isInternal() {
+		return VISITOR === 'nick';
+	}
+
+	// Skip GA entirely only for non-prod hosts, or a hard ?ga=off mute.
 	var SKIP_GA = !isProd() || manuallyOptedOut();
 
 	function loadGA() {
@@ -168,7 +204,15 @@
 		document.head.appendChild(s);
 
 		window.gtag('js', new Date());
-		window.gtag('config', MEASUREMENT_ID, { send_page_view: false });
+		window.gtag('config', MEASUREMENT_ID, {
+			send_page_view: false,
+			// GA's built-in Internal Traffic filter keys off exactly this parameter. Setting it
+			// from the tag (rather than by IP) makes the exclusion device-level, so Maya's iPad
+			// on the same home wifi is unaffected.
+			traffic_type: isInternal() ? 'internal' : undefined,
+		});
+		// A user property, so any report can segment by who was actually playing.
+		window.gtag('set', 'user_properties', { visitor: VISITOR });
 		if (!EMBEDDED) trackMayaPageView();
 	}
 
@@ -241,6 +285,7 @@
 			game: gameSlug() || 'portal',
 			embedded: String(EMBEDDED),
 			storage_blocked: String(storageBlocked()),
+			visitor: VISITOR, // an error tells us WHO hit it — her, or Nick testing
 		};
 	}
 
