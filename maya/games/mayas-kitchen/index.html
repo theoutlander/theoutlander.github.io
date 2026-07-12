@@ -745,6 +745,41 @@ const ACHIEVEMENTS = [
 const SAVE_KEY = 'mayas-kitchen-v2';
 const SAVE_KEY_V1 = 'mayas-kitchen-v1';
 
+/* Per-player saves. Ari and Asha play on Maya's iPad; one shared key meant a sibling's shift in
+   the kitchen wiped her coins and recipes. Each key becomes `<key>:<visitor>`, with the visitor
+   derived exactly the way shared/ga-analytics.js derives it (?who= override in `maya_visitor`,
+   else the family-chat role in `maya_family_chat_v3`). A legacy un-namespaced value is adopted on
+   the first read for a player, so Maya keeps the shop she already built; the legacy key stays.
+   Every access is guarded — a bare localStorage read THROWS on her iPad with site data blocked
+   and would abort this whole script, leaving a dead start button (the Dust Chasers bug). */
+const MayaSave = (function(){
+  function raw(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function put(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  const who = (function(){
+    try {
+      const q = new URLSearchParams(location.search).get('who');
+      if (q === 'nick' || q === 'maya') put('maya_visitor', q);
+      const t = raw('maya_visitor');
+      if (t === 'nick' || t === 'maya') return t;
+      const s = raw('maya_family_chat_v3');
+      if (s) { const r = JSON.parse(s).role; if (r === 'dad') return 'nick'; if (r === 'maya') return 'maya'; }
+    } catch(e){}
+    return 'unknown';
+  })();
+  const nk = k => k + ':' + who;
+  return {
+    visitor: who,
+    get(k){
+      const v = raw(nk(k));
+      if (v !== null) return v;
+      const legacy = raw(k);
+      if (legacy !== null) { put(nk(k), legacy); return legacy; }
+      return null;
+    },
+    set(k,v){ put(nk(k), v); }
+  };
+})();
+
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 // STATE
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -951,16 +986,14 @@ function serialize() {
 }
 
 function saveGame() {
-  try {
-    localStorage.setItem(SAVE_KEY, JSON.stringify(serialize()));
-  } catch (e) {}
+  MayaSave.set(SAVE_KEY, JSON.stringify(serialize()));
 }
 
 function loadGame() {
   try {
-    let saved = JSON.parse(localStorage.getItem(SAVE_KEY));
+    let saved = JSON.parse(MayaSave.get(SAVE_KEY));
     if (!saved) {
-      const v1 = JSON.parse(localStorage.getItem(SAVE_KEY_V1));
+      const v1 = JSON.parse(MayaSave.get(SAVE_KEY_V1));
       if (v1) {
         saved = {
           coins: v1.coins,

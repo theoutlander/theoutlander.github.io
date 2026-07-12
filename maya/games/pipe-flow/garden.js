@@ -119,7 +119,9 @@ function completionPct(){
 let M=defaultMeta();
 function load(){
   try{
-    const raw=localStorage.getItem(META_KEY);
+    // MayaSave (defined in index.html, same global scope) namespaces the key per player and
+    // guards every access — see the comment there. Her garden must not be overwritten by a sibling.
+    const raw=window.MayaSave?window.MayaSave.get(META_KEY):null;
     if(!raw)return;
     const p=JSON.parse(raw);
     M=Object.assign(defaultMeta(),p);
@@ -130,7 +132,7 @@ function load(){
   }catch(e){}
 }
 function save(){
-  try{localStorage.setItem(META_KEY,JSON.stringify(M));}catch(e){}
+  if(window.MayaSave)window.MayaSave.set(META_KEY,JSON.stringify(M));
 }
 function owns(id){return !!M.owned[id];}
 function ownItem(id){if(!owns(id)){M.owned[id]=true;return true;}return false;}

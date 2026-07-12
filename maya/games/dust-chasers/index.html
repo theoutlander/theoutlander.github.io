@@ -164,10 +164,41 @@ let score=0,timeLeft=60,vacuumed=0,combo=0,lastZapTime=0;
 let gameRunning=false,animId=null,timerInt=null;
 // iPad Safari throws on localStorage when site data is blocked. Reading it bare here would
 // abort the whole script and leave "Enter the Room" dead, so every access goes through this.
-const store={
-  get(k){try{return localStorage.getItem(k);}catch(e){return null;}},
-  set(k,v){try{localStorage.setItem(k,v);}catch(e){}}
-};
+//
+// Saves are also keyed per player. Ari (14) and Asha (10) play on Maya's iPad, and a single
+// shared key meant whoever played last wiped her high score — "Dad, my stars are gone."
+// `dc3_best` therefore becomes `dc3_best:<visitor>`. The visitor is derived exactly the way
+// shared/ga-analytics.js derives it (a ?who= override persisted in `maya_visitor`, else the
+// family-chat role in `maya_family_chat_v3`), so the two always agree on who is playing.
+// On the FIRST read for a player, a legacy un-namespaced value is adopted into the namespaced
+// key — Maya's existing best must survive this fix — and the legacy key is left as a safety net.
+const store=(function(){
+  function raw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  const who=(function(){
+    try{
+      const q=new URLSearchParams(location.search).get('who');
+      if(q==='nick'||q==='maya')put('maya_visitor',q);
+      const t=raw('maya_visitor');
+      if(t==='nick'||t==='maya')return t;
+      const s=raw('maya_family_chat_v3');
+      if(s){const r=JSON.parse(s).role;if(r==='dad')return 'nick';if(r==='maya')return 'maya';}
+    }catch(e){}
+    return 'unknown';
+  })();
+  const nk=k=>k+':'+who;
+  return {
+    visitor:who,
+    get(k){
+      const v=raw(nk(k));
+      if(v!==null)return v;
+      const legacy=raw(k);                 // her score from before saves were per-player
+      if(legacy!==null){put(nk(k),legacy);return legacy;}
+      return null;
+    },
+    set(k,v){put(nk(k),v);}
+  };
+})();
 let best=parseInt(store.get('dc3_best')||'0');
 let frame=0,dangerNear=false,shockCooldown=0,SHOCK_MAX=280,flashLife=0;
 

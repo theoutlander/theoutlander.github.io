@@ -141,15 +141,50 @@
   };
 
   /* ---- save / load (localStorage + in-memory fallback) ---- */
+/* ===== Per-player saves (MayaSave) =====
+   Ari (14) and Asha (10) play on Maya's iPad. Progress used to live under one shared key, so a
+   sibling's game overwrote her stars — "Dad, my stars are gone." Keys become `<key>:<visitor>`.
+   The visitor is derived exactly the way shared/ga-analytics.js derives it (a ?who= override
+   persisted in `maya_visitor`, else the family-chat role in `maya_family_chat_v3`), so the two
+   always agree on who is playing. The FIRST read for a player adopts any legacy un-namespaced
+   value, so Maya keeps the progress she already earned; the legacy key is left as a safety net.
+   Every access is guarded: a bare localStorage read THROWS on her iPad when site data is blocked
+   and would abort this whole script, leaving a dead start button (that was the Dust Chasers bug). */
+var MayaSave=(function(){
+  function raw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  var who=(function(){
+    try{
+      var q=new URLSearchParams(location.search).get('who');
+      if(q==='nick'||q==='maya')put('maya_visitor',q);
+      var t=raw('maya_visitor');
+      if(t==='nick'||t==='maya')return t;
+      var s=raw('maya_family_chat_v3');
+      if(s){var r=JSON.parse(s).role;if(r==='dad')return 'nick';if(r==='maya')return 'maya';}
+    }catch(e){}
+    return 'unknown';
+  })();
+  function nk(k){return k+':'+who;}
+  return {
+    visitor:who,
+    get:function(k){var v=raw(nk(k));if(v!==null)return v;var legacy=raw(k);if(legacy!==null){put(nk(k),legacy);return legacy;}return null;},
+    set:function(k,v){put(nk(k),v);},
+    remove:function(k){try{localStorage.removeItem(nk(k));}catch(e){}},
+    /* Device preferences (mute/volume) are NOT progress: shared across players, still guarded. */
+    getPref:raw,setPref:put
+  };
+})();
+window.MayaSave=MayaSave;
+
   var KEY='buildon_save_v1', mem=null;
-  BO.load = function(){ try{ var s=localStorage.getItem(KEY); if(s) return JSON.parse(s); }catch(e){} return mem; };
-  BO.save = function(state){ mem=state; try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} };
-  BO.wipe = function(){ mem=null; try{ localStorage.removeItem(KEY); }catch(e){} };
+  BO.load = function(){ try{ var s=MayaSave.get(KEY); if(s) return JSON.parse(s); }catch(e){} return mem; };
+  BO.save = function(state){ mem=state; MayaSave.set(KEY, JSON.stringify(state)); };
+  BO.wipe = function(){ mem=null; MayaSave.remove(KEY); };
 
   /* ================= SOUND (Web Audio) ================= */
   var ctx=null, master=null, musicBus=null, ambBus=null, muted=false, vol=0.62;
-  try{ muted = localStorage.getItem('buildon_mute')==='1'; }catch(e){}
-  try{ var _sv=localStorage.getItem('buildon_vol'); if(_sv!=null){ vol=parseFloat(_sv); if(isNaN(vol)) vol=0.62; } }catch(e){}
+  muted = MayaSave.getPref('buildon_mute')==='1';
+  var _sv=MayaSave.getPref('buildon_vol'); if(_sv!=null){ vol=parseFloat(_sv); if(isNaN(vol)) vol=0.62; }
   function ac(){ if(window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock(); if(ctx) return ctx; try{
       ctx=new (window.AudioContext||window.webkitAudioContext)();
       master=ctx.createGain(); master.gain.value=muted?0:vol; master.connect(ctx.destination);
@@ -221,8 +256,8 @@
     resume(){ var c=ac(); if(c&&c.state==='suspended') c.resume(); if(!muted){ startMusic(); applyAmb(); } },
     isMuted(){ return muted; },
     getVolume(){ return vol; },
-    setVolume(v){ vol=Math.max(0,Math.min(1,v)); try{ localStorage.setItem('buildon_vol', vol); }catch(e){} if(v>0 && muted){ muted=false; try{ localStorage.setItem('buildon_mute','0'); }catch(e){} BO.audio.resume(); } if(master && !muted) master.gain.value=vol; return vol; },
-    toggle(){ muted=!muted; try{ localStorage.setItem('buildon_mute', muted?'1':'0'); }catch(e){}
+    setVolume(v){ vol=Math.max(0,Math.min(1,v)); MayaSave.setPref('buildon_vol', vol); if(v>0 && muted){ muted=false; try{ localStorage.setItem('buildon_mute','0'); }catch(e){} BO.audio.resume(); } if(master && !muted) master.gain.value=vol; return vol; },
+    toggle(){ muted=!muted; MayaSave.setPref('buildon_mute', muted?'1':'0');
       if(master) master.gain.value = muted?0:vol;
       if(muted){ stopMusic(); stopAmb(); } else { BO.audio.resume(); BO.sfx.click(); }
       return muted; }

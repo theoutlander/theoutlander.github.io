@@ -2,6 +2,58 @@
 (function(){
 'use strict';
 
+/* ===== Per-player saves (window.CDStore) =====
+   Ari (14) and Asha (10) play on Maya's iPad. Every game used to keep its progress under one
+   shared key, so whoever played last overwrote her stars — "Dad, my stars are gone."
+   So: key every save by WHO is playing. The visitor is derived exactly the way
+   shared/ga-analytics.js derives it (a ?who= override persisted in `maya_visitor`, else the
+   family-chat role in `maya_family_chat_v3`), so both agree on who this is.
+
+   MIGRATION: on the first read for a player, an un-namespaced legacy value is adopted into the
+   namespaced key. Maya has real saved progress; losing it while "fixing" this would be worse
+   than the bug. The legacy key is left in place as a safety net.
+
+   EVERY access is guarded. A bare localStorage read THROWS on her iPad with site data blocked
+   (Block All Cookies / Private Browsing) and aborts the whole script — that is how Dust Chasers
+   ended up with a dead start button. cd-audio.js used to do exactly that on line 5. */
+var CDStore = (function(){
+  function raw(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function put(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  var who = (function(){
+    try {
+      var q = new URLSearchParams(location.search).get('who');
+      if (q === 'nick' || q === 'maya') put('maya_visitor', q);
+      var tagged = raw('maya_visitor');
+      if (tagged === 'nick' || tagged === 'maya') return tagged;
+      var sess = raw('maya_family_chat_v3');
+      if (sess) {
+        var role = JSON.parse(sess).role;
+        if (role === 'dad') return 'nick';
+        if (role === 'maya') return 'maya';
+      }
+    } catch(e){}
+    return 'unknown';
+  })();
+  function nk(k){ return k + ':' + who; }
+  return {
+    visitor: who,
+    get: function(k){
+      var v = raw(nk(k));
+      if (v !== null) return v;
+      var legacy = raw(k);              // her existing save, from before saves were per-player
+      if (legacy !== null) { put(nk(k), legacy); return legacy; }
+      return null;
+    },
+    set: function(k,v){ put(nk(k), v); },
+    remove: function(k){ try { localStorage.removeItem(nk(k)); } catch(e){} },
+    // Device-level preferences (mute) stay shared — they are not progress and nobody loses
+    // anything if a sibling flips them. Still guarded.
+    getPref: raw,
+    setPref: put
+  };
+})();
+window.CDStore = CDStore;
+
 window.CD = {
   W: 960, H: 600, GROUND: 522,
   scene: null, game: null,
@@ -82,23 +134,21 @@ window.CD = {
 
   save(){
     const s = CD.state;
-    try {
-      localStorage.setItem('cdSaveV2', JSON.stringify({
-        day: s.day, wood: s.wood, weapons: s.weapons,
-        chopped: s.chopped, bonked: s.bonked, won: s.won
-      }));
-    } catch(e){}
+    CDStore.set('cdSaveV2', JSON.stringify({
+      day: s.day, wood: s.wood, weapons: s.weapons,
+      chopped: s.chopped, bonked: s.bonked, won: s.won
+    }));
   },
   loadSave(){
     try {
-      const raw = localStorage.getItem('cdSaveV2');
+      const raw = CDStore.get('cdSaveV2');
       if (!raw) return null;
       const d = JSON.parse(raw);
       if (!d || !d.day) return null;
       return d;
     } catch(e){ return null; }
   },
-  clearSave(){ try { localStorage.removeItem('cdSaveV2'); } catch(e){} },
+  clearSave(){ CDStore.remove('cdSaveV2'); },
 
   hasTool(id){
     const t = CD.TOOLS.find(t => t.id === id);

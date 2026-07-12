@@ -10,6 +10,12 @@
        `document`), so they load HERE, in the outer document. MAYA_GAME is what tells them this
        is a game page. -->
   <script>window.MAYA_GAME='games/maya-shop/index.html';</script>
+  <!-- Deliberately NO portal-bridge.js. The shop is not a portal game: it is not in the portal's
+       GLIST, and the portal reaches it with a plain <a href> ("🛒 Visit Shop"), as a normal
+       top-level page. portal-bridge redirects any top-level game load to index.html?play=<key>,
+       and the portal REJECTS a play key that is not in MAYA_GAME_FILES — so adding the bridge
+       here bounces her straight back to the portal and the shop can never open. Verified: it
+       does exactly that. back.js already handles "back to the lab" here without the bridge. -->
   <script src="../../shared/ga-analytics.js" defer></script>
 <script src="../../shared/sound.js" defer></script>
   <script src="../../shared/back.js" defer></script>

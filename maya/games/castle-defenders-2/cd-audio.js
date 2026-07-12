@@ -2,7 +2,11 @@
 (function(){
 'use strict';
 let AC=null, master=null, musTimer=null, musStep=0, musName=null;
-let muted = localStorage.getItem('cdMuted')==='1';
+/* Guarded: a bare localStorage read here THROWS on Maya's iPad with site data blocked and takes
+   this entire file down with it — no audio object, and the game's start flow dies with it.
+   CDStore comes from cd-data.js, which loads first. Mute is a device preference, not progress,
+   so it stays un-namespaced (but still guarded). */
+let muted = (window.CDStore ? CDStore.getPref('cdMuted') : null)==='1';
 
 function ctx(){
   if (window.MayaIOSAudioUnlock) window.MayaIOSAudioUnlock.unlock();
@@ -104,7 +108,7 @@ window.CDAudio={
   unlockCtx(){ ctx(); },
   get muted(){ return muted; },
   setMuted(m){
-    muted=m; localStorage.setItem('cdMuted',m?'1':'0');
+    muted=m; if (window.CDStore) CDStore.setPref('cdMuted', m?'1':'0');
     if(AC&&master) master.gain.value=m?0:0.5;
   }
 };

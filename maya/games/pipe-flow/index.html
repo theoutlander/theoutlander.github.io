@@ -686,13 +686,50 @@ let gardenBuckets=new Map(),leakBuckets=new Map();
 let hintGlow=null;
 let buildMode=false,routeMin=null,routeMax=null,buildInventory={I:0,L:0,T:0},selectedBuildPipe='I';
 const SAVE_KEY='pipeflow_save';
+
+/* Per-player saves. Ari and Asha play on Maya's iPad; one shared key meant a sibling's game
+   overwrote her stars. Every key becomes `<key>:<visitor>`, where the visitor is derived exactly
+   the way shared/ga-analytics.js derives it (?who= override in `maya_visitor`, else the
+   family-chat role in `maya_family_chat_v3`). A legacy un-namespaced value is adopted on the
+   first read for a player so Maya keeps the stars she already has; the legacy key stays put.
+   Everything is guarded: a bare localStorage read THROWS on her iPad with site data blocked and
+   would take this whole script — and the start button — down with it. Shared with garden.js. */
+const MayaSave=(function(){
+  function raw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  const who=(function(){
+    try{
+      const q=new URLSearchParams(location.search).get('who');
+      if(q==='nick'||q==='maya')put('maya_visitor',q);
+      const t=raw('maya_visitor');
+      if(t==='nick'||t==='maya')return t;
+      const s=raw('maya_family_chat_v3');
+      if(s){const r=JSON.parse(s).role;if(r==='dad')return 'nick';if(r==='maya')return 'maya';}
+    }catch(e){}
+    return 'unknown';
+  })();
+  const nk=k=>k+':'+who;
+  return {
+    visitor:who,
+    get(k){
+      const v=raw(nk(k));
+      if(v!==null)return v;
+      const legacy=raw(k);
+      if(legacy!==null){put(nk(k),legacy);return legacy;}
+      return null;
+    },
+    set(k,v){put(nk(k),v);}
+  };
+})();
+window.MayaSave=MayaSave;
+
 let saveData={nextLevel:0,stars:{},maxBeaten:-1};
-try{secretUnlocked=localStorage.getItem('pipeflow_secret')==='1';}catch(e){}
+secretUnlocked=MayaSave.get('pipeflow_secret')==='1';
 
 function loadSave(){
   saveData={nextLevel:0,stars:{},maxBeaten:-1};
   try{
-    const raw=localStorage.getItem(SAVE_KEY);
+    const raw=MayaSave.get(SAVE_KEY);
     if(!raw)return;
     const p=JSON.parse(raw);
     if(typeof p.nextLevel==='number')saveData.nextLevel=Math.max(0,Math.min(p.nextLevel,SHORTEST_IDX));
@@ -702,7 +739,7 @@ function loadSave(){
 }
 
 function persistSave(){
-  try{localStorage.setItem(SAVE_KEY,JSON.stringify(saveData));}catch(e){}
+  MayaSave.set(SAVE_KEY,JSON.stringify(saveData));
 }
 
 function starGrade(moves,par){
@@ -826,7 +863,7 @@ function showComboReaction(kind,n){
 
 function unlockSecret(){
   secretUnlocked=true;
-  try{localStorage.setItem('pipeflow_secret','1');}catch(e){}
+  MayaSave.set('pipeflow_secret','1');
   updateMenuSecretHint();
 }
 

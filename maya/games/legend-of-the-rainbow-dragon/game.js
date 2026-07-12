@@ -154,10 +154,45 @@ function addLog(msg, cls) {
 }
 
 /* ---------- save / load ---------- */
-function save() { try { localStorage.setItem(C.SAVE_KEY, JSON.stringify(state)); } catch (e) {} }
+/* ===== Per-player saves (MayaSave) =====
+   Ari (14) and Asha (10) play on Maya's iPad. Progress used to live under one shared key, so a
+   sibling's game overwrote her stars — "Dad, my stars are gone." Keys become `<key>:<visitor>`.
+   The visitor is derived exactly the way shared/ga-analytics.js derives it (a ?who= override
+   persisted in `maya_visitor`, else the family-chat role in `maya_family_chat_v3`), so the two
+   always agree on who is playing. The FIRST read for a player adopts any legacy un-namespaced
+   value, so Maya keeps the progress she already earned; the legacy key is left as a safety net.
+   Every access is guarded: a bare localStorage read THROWS on her iPad when site data is blocked
+   and would abort this whole script, leaving a dead start button (that was the Dust Chasers bug). */
+var MayaSave=(function(){
+  function raw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  var who=(function(){
+    try{
+      var q=new URLSearchParams(location.search).get('who');
+      if(q==='nick'||q==='maya')put('maya_visitor',q);
+      var t=raw('maya_visitor');
+      if(t==='nick'||t==='maya')return t;
+      var s=raw('maya_family_chat_v3');
+      if(s){var r=JSON.parse(s).role;if(r==='dad')return 'nick';if(r==='maya')return 'maya';}
+    }catch(e){}
+    return 'unknown';
+  })();
+  function nk(k){return k+':'+who;}
+  return {
+    visitor:who,
+    get:function(k){var v=raw(nk(k));if(v!==null)return v;var legacy=raw(k);if(legacy!==null){put(nk(k),legacy);return legacy;}return null;},
+    set:function(k,v){put(nk(k),v);},
+    remove:function(k){try{localStorage.removeItem(nk(k));}catch(e){}},
+    /* Device preferences (mute/volume) are NOT progress: shared across players, still guarded. */
+    getPref:raw,setPref:put
+  };
+})();
+window.MayaSave=MayaSave;
+
+function save() { MayaSave.set(C.SAVE_KEY, JSON.stringify(state)); }
 function load() {
   try {
-    const raw = localStorage.getItem(C.SAVE_KEY);
+    const raw = MayaSave.get(C.SAVE_KEY);
     if (!raw) return false;
     const s = JSON.parse(raw);
     if (!s || !s.created) return false;
