@@ -381,7 +381,82 @@ That is roughly a day of writing, not a rebuild — and under §2 it is exactly 
 
 ---
 
-## 15. What does not change
+## 15. The place — down
+
+> **The bot goes underground, and depth is the progression.** Eight worlds; eight levels deeper.
+
+This is the one setting where "no signal" is not a contrivance — **it is just physics.** Rock blocks radio. The deeper she sends the bot, the less she can know, and by the last world she is flying completely blind on a program written hours earlier. **The fiction gets more true as the game gets harder**, which is rare and worth protecting.
+
+It absorbs the existing spec without a fight:
+
+| Already specced | Under "down" |
+|---|---|
+| **Night sectors** | Not a gimmick world — just *deeper*. Of course it is dark. |
+| **HEADLIGHTS** part | Stops being an optional gizmo; becomes the thing she desperately wants. |
+| Mud · ice · water · streams · bushes | All native to a cave system. **Zero rework.** |
+| Chests · coins | Cores, cells, salvage — things worth going down for. |
+| The rival | Another outfit descending the same shafts, racing her to the bottom. |
+| Difficulty curve | **Is** the descent. World 8 is the deepest, darkest, most silent. |
+
+**And it sets up the sequels the premise generates:** once you have done *down*, you do Mars, the ocean floor, deep space. Same premise, new theme pack (§2).
+
+---
+
+## 16. Build strategy — start clean, port the good parts
+
+**Decision: a new project. The existing app becomes a read-only reference and is not refactored, not maintained, not dual-tracked.**
+
+### The evidence
+
+`projects/codebots/app` is **10,684 lines with zero tests.**
+
+| Area | LOC | Fate |
+|---|---|---|
+| `ui` | 4,075 | Rewritten anyway (two-zone system, new screens) |
+| `content` | 1,619 | Rewritten anyway — **this is the theme pack** |
+| `sim` | 994 | **Port**, renaming every themed noun |
+| `view` | 984 | Port mostly (Phaser mount) |
+| `rivals` | 836 | **Shelve.** A v1.5 feature built early; it has been distorting the project's centre of gravity |
+| `state` | 716 | Port mostly |
+| `sandbox` | 586 | **Port.** Genuinely fiddly, genuinely works |
+
+**~60% is rewritten or shelved regardless of what we decide.** The part worth preserving — `sim` + `sandbox` — is only ~1,580 lines. It comes across by copy, not by refactor.
+
+### What "correct from the first line" actually means
+
+Not a wish — five mechanisms. Two of them are only possible *because* of decisions already made.
+
+**1. TDD, from line one.** No implementation code before a failing test.
+
+**2. The 24 author solutions are the golden suite.** `CONTENT_SPEC` specifies, for every mission: the arena, the start position and facing, the furniture coordinates, the author's exact code, and the expected outcome. **Every one is an integration test that writes itself:**
+
+```
+run(authorSolution, arena) → assert objective reached
+                           → assert line count ≤ par
+                           → assert no furniture cell entered
+```
+
+This suite would have caught the drift on day one: a `TANK` kit that appears nowhere in the spec cannot pass a spec-derived test. It also closes `CONTENT_SPEC` §10 flags #2 and #9 — the windmill and patrol tick-phase checks that *"need the real engine"* — because now there is an engine to check them against.
+
+**3. A test that forbids themed nouns in core.** The §2 layer boundary must be **mechanically enforced**, not merely intended. A test greps `sim/` and `sandbox/` for a banned list — *wreck, kill, die, dead, destroy, tank, blaster, weapon, gun, sniper, pirate, treasure, damage* — and fails the build. **The architecture then defends itself**, and the vocabulary drift that produced this entire document becomes impossible rather than merely corrected.
+
+**4. A determinism test.** Run the same program with the same seed twice; assert byte-identical event logs. Plus a guard that `Math.random()`, `Date.now()` and `new Date()` appear nowhere in core — determinism is what makes replays, ghosts, fair battles and reproducible bugs all work, and it is silently broken by a single careless call.
+
+**5. Every bug becomes a test.** Determinism means every bug is perfectly reproducible from (program, seed). A bug report *is* a failing test case. Nothing regresses twice.
+
+### Order
+
+1. Port `sim` + `sandbox`, renaming themed nouns as they cross the boundary.
+2. Stand up the golden suite from `CONTENT_SPEC` — **before** any UI exists.
+3. Build the workbench (editor, HUD chrome).
+4. Build the world (Phaser view, the bot, juice, sound).
+5. Re-skin `CONTENT_SPEC` copy (§14) — geometry does not move.
+6. Author Worlds 5–8.
+7. **Only then:** battles, the toybox, dash, the panel loop.
+
+---
+
+## 17. What does not change
 
 - **The five laws** (`PRODUCT_SPEC` §2). All five survive. Law #1 (*parts add commands*) and Law #4 (*nothing dies*) are the backbone of this document, not casualties of it.
 - **The language ladder** and the real-JavaScript commitment (`PRODUCT_SPEC` §3).
