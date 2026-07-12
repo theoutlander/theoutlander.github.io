@@ -21,7 +21,11 @@
   font-size:26px;line-height:1;
   cursor:pointer;
   box-shadow:0 6px 24px rgba(0,0,0,.45),0 0 0 2px rgba(255,255,255,.12);
-  touch-action:manipulation;
+  /* NOT `manipulation` — that still lets the browser claim a touch as a page pan,
+     so a finger drifting a few px while tapping fired pointercancel and the chat
+     never opened. `none` means no gesture on this button is ever a scroll, so a
+     tap is always a tap. You don't scroll the page from a 56px button anyway. */
+  touch-action:none;
   -webkit-user-select:none;user-select:none;
   transition:transform .15s,box-shadow .15s;
   /* iOS Safari promotes the game <iframe> to its own compositing layer; without

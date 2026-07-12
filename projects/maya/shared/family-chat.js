@@ -257,10 +257,14 @@ export function initFamilyChat(root, hooks = {}) {
 
 		async function loadHistory() {
 			log.innerHTML = '<p class="chat-empty">Loading…</p>';
+			// Newest-first + limit, so the cap drops the OLDEST messages. Ascending +
+			// limit would have pinned the chat to the 120 oldest messages and hidden
+			// every new one the moment the history outgrew MAX_MESSAGES. paint() sorts
+			// back into chronological order for display.
 			const { data, error } = await client
 				.from('maya_chat_messages')
 				.select('id, author, body, created_at')
-				.order('created_at', { ascending: true })
+				.order('created_at', { ascending: false })
 				.limit(MAX_MESSAGES);
 			if (error) {
 				log.innerHTML =
@@ -508,11 +512,30 @@ function initChatWidget() {
 		setPanelOpen(!panelOpen);
 	}
 
+	// A tap must ALWAYS open the chat. Two things used to swallow it:
+	// a finger drifting off the 56px button between press and release (pointerup
+	// then lands on another element), and pointercancel firing when the browser
+	// guesses the gesture is a scroll. So: capture the pointer to keep pointerup
+	// on the button, and keep a click fallback for whatever still gets cancelled.
+	// toggleOnce() dedupes the two paths — a tap that fires both must not toggle twice.
+	const TOGGLE_DEDUPE_MS = 400;
 	let fabPointerDown = false;
+	let lastToggleAt = 0;
+
+	function toggleOnce(e) {
+		const now = Date.now();
+		if (now - lastToggleAt < TOGGLE_DEDUPE_MS) return;
+		lastToggleAt = now;
+		togglePanel(e);
+	}
+
 	fab.addEventListener(
 		'pointerdown',
 		(e) => {
 			fabPointerDown = true;
+			try {
+				fab.setPointerCapture(e.pointerId);
+			} catch (err) {}
 			if (e.pointerType !== 'mouse') e.preventDefault();
 		},
 		{ passive: false }
@@ -520,11 +543,17 @@ function initChatWidget() {
 	fab.addEventListener('pointerup', (e) => {
 		if (!fabPointerDown) return;
 		fabPointerDown = false;
+		try {
+			fab.releasePointerCapture(e.pointerId);
+		} catch (err) {}
 		if (e.pointerType === 'mouse' && e.button !== 0) return;
-		togglePanel(e);
+		toggleOnce(e);
 	});
 	fab.addEventListener('pointercancel', () => {
 		fabPointerDown = false;
+	});
+	fab.addEventListener('click', (e) => {
+		toggleOnce(e);
 	});
 
 	function bindTap(el, handler) {
