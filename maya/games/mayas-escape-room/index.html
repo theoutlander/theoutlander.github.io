@@ -303,6 +303,76 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 .bm-page .pnum{display:block;text-align:center;color:#a8854a;font-size:11px;margin-top:12px}
 #bm-close{grid-column:1/-1;background:#6a4a10;color:#f5e6c4;border:none;border-radius:10px;padding:12px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;margin-top:14px;min-height:48px}
 @media(max-width:520px){#bookpaper{grid-template-columns:1fr}#bookpaper::before{display:none}}
+
+/* ---------- Deluxe: satchel, trapdoor, cellar & attic ---------- */
+#satchel-btn{display:none;background:rgba(93,255,176,.08);border:1px solid rgba(93,255,176,.3);color:var(--green);font-size:14px;font-weight:900;padding:8px 12px;border-radius:10px;cursor:pointer;min-height:44px;align-items:center;gap:4px}
+#satchel-btn.show{display:flex}
+#satchel-btn b{font-family:'Fredoka One',cursive;font-size:13px}
+#satmodal{position:fixed;inset:0;background:rgba(6,4,10,.75);z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
+#satmodal.show{display:flex}
+#sat-paper{background:rgba(20,13,34,.98);border:1px solid rgba(93,255,176,.35);border-radius:20px;padding:22px 20px;max-width:440px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.7);animation:scrollin .35s cubic-bezier(.34,1.56,.64,1);max-height:80vh;overflow-y:auto}
+#sat-title{font-family:'Fredoka One',cursive;font-size:18px;color:var(--green);margin-bottom:12px;text-align:center}
+.sat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+.sat-item{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:10px 8px;text-align:center;cursor:pointer;min-height:44px;transition:transform .1s}
+.sat-item:active{transform:scale(.95)}
+.sat-item .si-em{font-size:30px;display:block}
+.sat-item .si-name{font-size:11px;font-weight:900;color:var(--text);display:block;margin-top:4px;line-height:1.3}
+.sat-item.empty{opacity:.22;cursor:default}
+#sat-note{min-height:36px;font-size:12.5px;color:var(--muted);text-align:center;margin-top:10px;line-height:1.5}
+#sat-close{margin-top:8px;width:100%;background:rgba(93,255,176,.14);color:var(--green);border:1px solid rgba(93,255,176,.3);border-radius:10px;padding:12px;font-family:'Fredoka One',cursive;font-size:15px;cursor:pointer;min-height:48px}
+/* Loose floorboard — a door that does NOT look like a door */
+#trapdoor{position:absolute;left:9%;bottom:12%;width:min(150px,30vw);height:44px;background:repeating-linear-gradient(90deg,#26170e 0px,#26170e 70px,#1f1209 70px,#1f1209 72px);border:none;border-radius:3px;transform:perspective(240px) rotateX(42deg) rotate(-2.5deg);cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 6px rgba(0,0,0,.6);transition:box-shadow .3s}
+#trapdoor .td-knot{font-size:12px;opacity:.55}
+#trapdoor.found{box-shadow:inset 0 0 6px rgba(0,0,0,.6),0 0 22px rgba(255,225,77,.45)}
+#trapdoor.found .td-knot{animation:foundpulse 1.6s ease-in-out infinite;opacity:1;font-size:16px}
+#trapdoor.wiggle{animation:doorshake .4s}
+#stage.shudder{animation:doorshake .45s}
+/* Lever sconce + hidden wall crack (the not-a-door in the library) */
+#lever-sconce{position:absolute;right:32%;top:40%;font-size:20px;cursor:pointer;filter:drop-shadow(0 0 10px rgba(255,179,71,.7));animation:flicker 2.2s ease-in-out infinite;transition:transform .5s cubic-bezier(.34,1.56,.64,1);transform-origin:50% 90%;padding:8px;z-index:2}
+#lever-sconce.pulled{transform:rotate(-48deg)}
+#wall-crack{position:absolute;right:24%;bottom:0;width:min(96px,18vw);height:64%;border:3px dashed rgba(255,225,77,.55);border-bottom:none;border-radius:40px 40px 0 0;display:none;cursor:pointer;align-items:flex-end;justify-content:center;padding-bottom:10px;background:rgba(255,225,77,.04);animation:shimmer 1.8s ease-in-out infinite}
+#wall-crack.show{display:flex}
+#wall-crack .wc-hole{font-size:20px}
+#wall-crack.wiggle{animation:doorshake .4s}
+/* Fake painted-on door (mirror room gag) */
+#fake-door{position:absolute;left:10%;bottom:0;width:min(100px,19vw);height:66%;background:linear-gradient(180deg,#4a2c1a,#31200e);border:4px solid #1c1005;border-bottom:none;border-radius:10px 10px 0 0;cursor:pointer;opacity:.85;filter:saturate(.7)}
+#fake-door::after{content:'';position:absolute;right:12px;top:48%;width:10px;height:10px;border-radius:50%;background:#8a6a30}
+#fake-door.wiggle{animation:doorshake .4s}
+#s-cellar .wall{background:linear-gradient(180deg,#120e0a 0%,#221a10 100%);border-bottom-color:#0a0704}
+#s-cellar .wall::before{background:repeating-linear-gradient(90deg,transparent 0 40px,rgba(255,255,255,.03) 40px 43px),repeating-linear-gradient(0deg,transparent 0 26px,rgba(0,0,0,.3) 26px 29px)}
+#s-cellar .floor{background:repeating-linear-gradient(90deg,#1a120a 0px,#1a120a 70px,#120c06 70px,#120c06 72px)}
+#s-attic .wall{background:linear-gradient(180deg,#2a1c0e 0%,#3a2814 100%);border-bottom-color:#160d05}
+#s-attic .wall::before{background:repeating-linear-gradient(0deg,transparent 0 34px,rgba(0,0,0,.22) 34px 37px)}
+#s-attic .floor{background:repeating-linear-gradient(90deg,#2e2012 0px,#2e2012 70px,#241808 70px,#241808 72px)}
+#cellar-floor{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-evenly;padding:0 6px 10px}
+#att-trunk{position:absolute;left:46%;bottom:14%;width:130px;height:104px;cursor:pointer;transition:transform .15s}
+#att-trunk:hover{transform:translateY(-3px)}
+#att-trunk.open .chest-lid{transform:rotate(-42deg)}
+#att-trunk.open .chest-glow{opacity:1}
+.page-spot .s-emoji{animation:foundpulse 2.2s ease-in-out infinite}
+#chandelier{pointer-events:auto;cursor:pointer}
+/* ---------- Jump scares ---------- */
+#jumpface{position:fixed;inset:0;z-index:95;display:none;align-items:center;justify-content:center;pointer-events:none;background:radial-gradient(circle at 50% 45%,rgba(6,4,10,0) 0%,rgba(6,4,10,.92) 72%)}
+#jumpface.go{display:flex;animation:jffade .95s ease-out forwards}
+#jumpface span{font-size:min(46vw,320px);filter:drop-shadow(0 0 46px rgba(255,140,0,.75))}
+#jumpface.go span{animation:jfpop .95s cubic-bezier(.2,1.4,.4,1) forwards}
+@keyframes jffade{0%{opacity:0}10%{opacity:1}78%{opacity:1}100%{opacity:0}}
+@keyframes jfpop{0%{transform:scale(.4) rotate(-8deg)}22%{transform:scale(1.14) rotate(3deg)}55%{transform:scale(1.02) rotate(-2deg)}100%{transform:scale(1.2) rotate(0)}}
+.sidehand{position:fixed;top:26%;font-size:min(24vw,110px);z-index:94;pointer-events:none;filter:drop-shadow(0 0 18px rgba(207,227,255,.5)) grayscale(.4) brightness(1.3)}
+.sidehand.l{left:calc(-.6*min(24vw,110px));animation:handin 1.5s ease-in-out forwards}
+.sidehand.r{right:calc(-.6*min(24vw,110px));transform:scaleX(-1);animation:handinr 1.5s ease-in-out forwards}
+@keyframes handin{0%{translate:0 0}30%{translate:calc(.8*min(24vw,110px)) 12px}60%{translate:calc(.72*min(24vw,110px)) 6px}100%{translate:0 0}}
+@keyframes handinr{0%{translate:0 0}30%{translate:calc(-.8*min(24vw,110px)) 12px}60%{translate:calc(-.72*min(24vw,110px)) 6px}100%{translate:0 0}}
+#darkout{position:fixed;inset:0;background:rgba(3,2,6,.94);z-index:94;opacity:0;pointer-events:none;transition:opacity .3s}
+#darkout.go{opacity:1}
+#darkout .do-eyes{position:absolute;width:34px;height:10px;background:radial-gradient(circle at 25% 50%,#ffcf5d 0 4px,transparent 4.5px),radial-gradient(circle at 75% 50%,#ffcf5d 0 4px,transparent 4.5px);filter:drop-shadow(0 0 6px rgba(255,207,93,.95));animation:doblink .4s ease-out}
+@keyframes doblink{0%{transform:scaleY(0)}100%{transform:scaleY(1)}}
+.mimic-rage{animation:mimicshake .8s !important}
+@keyframes mimicshake{0%,100%{transform:translate(0,0) rotate(0)}12%{transform:translate(-7px,3px) rotate(-7deg)}28%{transform:translate(7px,-4px) rotate(7deg)}44%{transform:translate(-8px,2px) rotate(-6deg)}60%{transform:translate(8px,-3px) rotate(8deg)}78%{transform:translate(-5px,2px) rotate(-4deg)}}
+.rattle{animation:mimicshake .6s}
+#rock-chair{position:absolute;left:12%;bottom:14%;font-size:clamp(40px,9vw,60px);cursor:pointer;transform-origin:50% 100%;animation:rockrock 2.6s ease-in-out infinite;filter:drop-shadow(0 6px 10px rgba(0,0,0,.55))}
+@keyframes rockrock{0%,100%{transform:rotate(-7deg)}50%{transform:rotate(9deg)}}
+.m-window{pointer-events:auto;cursor:pointer}
 </style>
 </head>
 <body>
@@ -313,6 +383,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
     <span id="sits"><span id="sits-label">Sits left</span><span class="sit-dot">🪑</span><span class="sit-dot">🪑</span><span class="sit-dot">🪑</span></span>
     <span id="hud-spacer"></span>
     <button id="clue-btn">📜 Clues</button>
+    <button id="satchel-btn" title="Your satchel">🎒<b id="item-n">0</b></button>
     <button id="mute-btn" title="Sound on/off">🔊</button>
     <span id="gemring">💎<b id="gem-n">0</b></span>
     <span id="keyring"><span class="kslot" id="k1">🗝️</span><span class="kslot" id="k2">🗝️</span></span>
@@ -336,7 +407,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
       <div class="wall">
         <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
         <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
-        <div class="chandelier"><span class="chain"></span><span class="arms">🕯️🕯️🕯️</span></div>
+        <div class="chandelier" id="chandelier"><span class="chain"></span><span class="arms">🕯️🕯️🕯️</span></div>
         <div class="m-window" style="left:35%;top:14%"><span class="moon">🌕</span><span class="bars"></span></div>
         <span class="candle" style="left:6%;top:18%">🕯️</span>
         <div class="glow" style="left:calc(6% - 75px);top:calc(18% - 70px)"></div>
@@ -357,6 +428,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
         <div class="shelf" style="left:6%;top:16%">🧪⚗️🫙</div>
         <div class="shelf" style="left:10%;top:44%">🍯🦴🍄</div>
         <span id="secret-jar">🫙</span>
+        <div class="spot-wall" id="kitchen-candle" style="left:26%;top:14%"><span class="s-emoji" style="font-size:clamp(24px,6vw,36px)">🕯️</span><span class="s-label" id="kitchen-candle-label">Wobbly Candle</span></div>
         <div class="m-window" style="left:44%;top:14%"><span class="moon">🌕</span><span class="bars"></span></div>
         <span class="sconce" style="right:32%;top:42%">🕯️</span>
         <div class="door" id="door-k" style="right:10%"><span class="lock" id="door-k-lock">🔒</span><span class="knob"></span></div>
@@ -364,6 +436,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
       <div class="floor">
         <div class="fog" style="left:-8%"></div>
         <span class="darkeyes" style="right:10%;bottom:44%;animation-delay:-6s"></span>
+        <div id="trapdoor"><span class="td-knot">🕳️</span></div>
         <div id="cauldron">
           <span class="brew"></span>
           <div class="pot"></div>
@@ -381,7 +454,8 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
         <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
         <div class="bigshelf" id="book-wall"></div>
         <span id="owl">🦉</span>
-        <span class="sconce" style="right:32%;top:40%">🕯️</span>
+        <div id="wall-crack"><span class="wc-hole" id="wc-hole">🔒</span></div>
+        <span id="lever-sconce">🕯️</span>
         <div class="door" id="door-l" style="right:10%"><span class="lock" id="door-l-lock">🔒</span><span class="knob"></span></div>
       </div>
       <div class="floor">
@@ -401,6 +475,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
         <span class="candle" style="left:4%;top:14%">🕯️</span>
         <div class="glow" style="left:calc(4% - 75px);top:calc(14% - 70px)"></div>
         <span class="candle" style="right:4%;top:14%">🕯️</span>
+        <div id="fake-door"></div>
         <div id="mirror"><span class="mghost" id="mghost">👻</span><span class="m-keyhole" id="m-keyhole">🔒</span></div>
         <div id="r2-wall-items"></div>
       </div>
@@ -424,17 +499,65 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
       <div class="wall">
         <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
         <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <span class="cobweb" style="left:30%;top:-12px;font-size:26px">🕸️</span>
         <p class="r3-note" style="color:#ffe14d;opacity:.85">🤫 The Secret Room! Shhh...</p>
-        <div class="shelf" style="left:8%;top:26%">🏺⚱️🕯️</div>
-        <span class="sconce" style="right:14%;top:30%">🕯️</span>
-        <div class="door" id="secret-back" style="left:6%"><span class="lock">🚪</span><span class="knob"></span></div>
+        <div class="m-window" style="left:10%;top:12%"><span class="moon">🌕</span><span class="bars"></span></div>
+        <div class="shelf" style="left:28%;top:30%">🏺⚱️🕯️</div>
+        <div class="shelf" style="left:24%;top:58%">📚🕰️🦴</div>
+        <div class="portrait" id="granny-portrait" style="right:28%;top:16%"><span class="eyes">👵</span></div>
+        <div class="spot-wall page-spot" id="secret-page" style="right:12%;top:44%"><span class="s-emoji">📜</span><span class="s-label">Old Page</span></div>
+        <span class="candle" style="left:52%;top:12%">🕯️</span>
+        <div class="glow" style="left:calc(52% - 75px);top:calc(12% - 70px)"></div>
+        <span class="sconce" style="right:5%;top:22%">🕯️</span>
+        <span class="darkeyes" style="left:48%;bottom:6%;animation-delay:-5s"></span>
+        <div class="door" id="secret-back" style="left:5%"><span class="lock">🚪</span><span class="knob"></span></div>
       </div>
       <div class="floor">
+        <div class="fog" style="left:-8%"></div>
+        <span class="darkeyes" style="right:8%;bottom:52%;animation-delay:-2s"></span>
+        <div id="rock-chair" title="It rocks by itself...">🪑</div>
         <div id="chest">
           <span class="chest-glow">💎✨</span>
           <div class="chest-lid"></div>
           <div class="chest-box"></div>
         </div>
+        <div class="spot" id="toy-pile" style="position:absolute;right:14%;bottom:10%"><span class="s-emoji">🪆</span><span class="s-label">Old Toys</span></div>
+      </div>
+    </div>
+
+    <div class="scene" id="s-cellar">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <span class="candle" style="left:30%;top:14%">🕯️</span>
+        <div class="glow" style="left:calc(30% - 75px);top:calc(14% - 70px)"></div>
+        <div class="shelf" style="left:40%;top:44%">🏺🕸️🫙</div>
+        <div class="spot-wall" id="furnace" style="left:58%;top:14%"><span class="s-emoji" id="furnace-emoji">🔥</span><span class="s-label" id="furnace-label">Mr. Thumps</span></div>
+        <div class="spot-wall" id="cellar-key" style="right:8%;top:22%"><span class="s-emoji" style="font-size:clamp(22px,6vw,34px)">🔑</span><span class="s-label">Shiny Thing</span></div>
+        <span class="darkeyes" style="right:26%;bottom:12%;animation-delay:-3s"></span>
+        <div class="door" id="cellar-back" style="left:5%"><span class="lock">🪜</span><span class="knob"></span></div>
+      </div>
+      <div class="floor">
+        <div class="fog" style="left:-8%"></div>
+        <span class="darkeyes" style="left:6%;bottom:46%;animation-delay:-7s"></span>
+        <div id="cellar-floor"></div>
+      </div>
+    </div>
+
+    <div class="scene" id="s-attic">
+      <div class="wall">
+        <span class="cobweb" style="left:-7px;top:-9px">🕸️</span>
+        <span class="cobweb" style="right:-7px;top:-9px;transform:scaleX(-1)">🕸️</span>
+        <div class="m-window" style="left:42%;top:10%"><span class="moon">🌕</span><span class="bars"></span></div>
+        <span class="floatprop" style="left:14%;top:30%;animation-duration:6s">🪁</span>
+        <span class="floatprop" style="right:12%;top:26%;animation-duration:7s;font-size:24px">🎩</span>
+        <div class="spot-wall page-spot" id="attic-page" style="right:28%;top:52%"><span class="s-emoji">📜</span><span class="s-label">Old Page</span></div>
+        <span class="darkeyes" style="left:34%;bottom:10%;animation-delay:-5s"></span>
+        <div class="door" id="attic-back" style="left:5%"><span class="lock">🪜</span><span class="knob"></span></div>
+      </div>
+      <div class="floor">
+        <div class="fog" style="right:-8%"></div>
+        <div id="att-trunk"><span class="chest-glow">🎼✨</span><div class="chest-lid"></div><div class="chest-box"></div></div>
       </div>
     </div>
 
@@ -443,6 +566,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
       <h1 class="w-title">YOU ESCAPED!</h1>
       <div class="w-time" id="win-time"></div>
       <div class="w-time" id="win-gems" style="color:#7de3ff;font-size:15px"></div>
+      <div class="w-time" id="win-items" style="color:#5dffb0;font-size:15px"></div>
       <p class="w-sub" id="win-sub">You outsmarted the chairs, brewed a potion, cast a spell, played the ghost's song, and walked right through a mirror. The mansion is VERY impressed. 👻</p>
       <button class="big-btn" id="again-btn">Choose Again 🔄</button>
     </div>
@@ -454,11 +578,20 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 <button id="hint-ghost" title="Hint ghost">👻</button>
 <div id="big-ghost">👻<b>BOO!</b></div>
 <div id="lightning"></div>
+<div id="jumpface"><span>🎃</span></div>
+<div id="darkout"></div>
 
 <div id="modal"><div id="scroll-paper">
   <div class="sp-title" id="sp-title">📜 A dusty scroll</div>
   <div id="sp-body" class="sp-text"></div>
   <button class="sp-close" id="sp-close">Got it!</button>
+</div></div>
+
+<div id="satmodal"><div id="sat-paper">
+  <div id="sat-title">🎒 Maya's Satchel</div>
+  <div class="sat-grid" id="sat-grid"></div>
+  <div id="sat-note">Tap a treasure to peek at it!</div>
+  <button id="sat-close">Close 🎒</button>
 </div></div>
 
 <div id="bookmodal"><div id="bookpaper">

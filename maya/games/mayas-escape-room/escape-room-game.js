@@ -17,7 +17,16 @@ const COLOR_RIDDLES = [
 const BOOK_EMOJI = ['📕','📗','📘','📙'];
 const BOOK_NAMES = ['RED','GREEN','BLUE','ORANGE'];
 const SHELF_NAMES = ['TOP','MIDDLE','BOTTOM'];
-const TOTAL_GEMS = 6;
+const TOTAL_GEMS = 11;
+const ITEM_ORDER = ['candle','brasskey','musicbox','teddy','page0','page1','page2'];
+const TOTAL_ITEMS = ITEM_ORDER.length;
+
+/* Guarded storage — iPad Safari THROWS on localStorage when site data is
+   blocked; never touch it bare (see CLAUDE.md hard rules). */
+const store = {
+  get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+  set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
+};
 
 // Theme-driven content — populated by applyTheme() before each round.
 let THEME = null;
@@ -30,6 +39,9 @@ function applyTheme(id){
   DUSTY_LINES = THEME.DUSTY_LINES;
   WRONG_BOOK_LINES = THEME.WRONG_BOOK_LINES;
   $('#owl').textContent = THEME.hintAnimal.emoji;
+  $('#furnace-emoji').textContent = THEME.furnace.emoji;
+  $('#furnace-label').textContent = THEME.furnace.name;
+  $('#kitchen-candle-label').textContent = THEME.items.candle.name;
 }
 
 /* ---------------- State ---------------- */
@@ -44,8 +56,13 @@ function newState(){
     door1Open:false, songDone:false, spotFound:false, exitOpen:false,
     potionDone:false, wordDone:false,
     gems:[], portraitTaps:0, jarTaps:0, owlTaps:0,
-    noteRead:false, chestOpen:false, hintUsed:{},
+    noteRead:false, chestOpen:false, chestRattled:false, hintUsed:{},
     bookShelves:[], bookTarget:{shelf:0,color:0},
+    items:[], diaryRead:[], diaryBonusPending:false, scares:0,
+    floorboardFound:false, leverPulled:false,
+    mimicCrate:0, cratesOpened:[], furnaceTaps:0,
+    trunkRattled:false, trunkOpen:false, trunkGemTaken:false,
+    chandTaps:0, toyTaps:0, grannyTaps:0, wallTaps:{}, moonTaps:0,
   };
 }
 
@@ -70,6 +87,7 @@ function setupRound(){
   // library books: 3 shelves, each with the 4 colors shuffled
   S.bookShelves = [0,1,2].map(()=>shuffle([0,1,2,3]));
   S.bookTarget = { shelf: Math.floor(Math.random()*3), color: Math.floor(Math.random()*4) };
+  S.mimicCrate = Math.floor(Math.random()*3);
 }
 
 /* ---------------- Helpers ---------------- */
@@ -101,25 +119,131 @@ function confetti(){
   }
 }
 
-/* ---------------- Spooks (wrong moves!) ---------------- */
+/* ---------------- Spooks & jump scares ---------------- */
+const JUMPFACES=['🎃','💀','👻','🕷️'];
+function scareFace(){
+  const jf=$('#jumpface');
+  jf.querySelector('span').textContent=JUMPFACES[Math.floor(Math.random()*JUMPFACES.length)];
+  jf.classList.remove('go'); void jf.offsetWidth; jf.classList.add('go');
+  sfx('stinger');
+  setTimeout(()=>jf.classList.remove('go'),1000);
+}
+function scareHands(){
+  sfx('growl'); sfx('whisper');
+  ['l','r'].forEach(side=>{
+    const h=document.createElement('span'); h.className='sidehand '+side;
+    h.textContent = side==='l' ? '🫱' : '🫲';
+    document.body.appendChild(h); setTimeout(()=>h.remove(),1600);
+  });
+}
+function scareEyes(){
+  const d=$('#darkout'); d.innerHTML='';
+  for(let i=0;i<6;i++){
+    const e=document.createElement('span'); e.className='do-eyes';
+    e.style.cssText=`left:${8+Math.random()*80}%;top:${12+Math.random()*70}%;animation-delay:${i*.14}s;transform:scale(${.7+Math.random()*.9})`;
+    d.appendChild(e);
+  }
+  d.classList.add('go'); sfx('whisper'); setTimeout(()=>sfx('growl'),500);
+  setTimeout(()=>{ d.classList.remove('go'); setTimeout(()=>d.innerHTML='',400); },1700);
+}
+function scareKnock(){
+  sfx('knock');
+  const st=$('#stage'); st.classList.remove('shudder'); void st.offsetWidth; st.classList.add('shudder');
+  setTimeout(()=>st.classList.remove('shudder'),500);
+}
+function scareBats(el){
+  const r=(el||$('#stage')).getBoundingClientRect();
+  sfx('screech');
+  for(let i=0;i<3;i++){
+    const b=document.createElement('span'); b.className='batburst'; b.textContent='🦇';
+    b.style.left=(r.left+r.width/2)+'px'; b.style.top=(r.top+r.height/2)+'px';
+    b.style.setProperty('--dx',(Math.random()*260-130)+'px');
+    b.style.setProperty('--dy',(-60-Math.random()*180)+'px');
+    document.body.appendChild(b); setTimeout(()=>b.remove(),1200);
+  }
+}
+function scareLightning(){
+  const L=$('#lightning'); L.classList.remove('flash'); void L.offsetWidth; L.classList.add('flash');
+  sfx('thunder');
+}
+function scareGhost(){
+  const g=$('#big-ghost'); g.classList.remove('swoop'); void g.offsetWidth; g.classList.add('swoop');
+  sfx('ghost');
+}
 function spook(el){
-  const kind=Math.floor(Math.random()*3);
-  if(kind===0){
-    const g=$('#big-ghost'); g.classList.remove('swoop'); void g.offsetWidth; g.classList.add('swoop');
-    sfx('ghost');
-  } else if(kind===1 && el){
-    const r=el.getBoundingClientRect();
-    sfx('screech');
-    for(let i=0;i<3;i++){
-      const b=document.createElement('span'); b.className='batburst'; b.textContent='🦇';
-      b.style.left=(r.left+r.width/2)+'px'; b.style.top=(r.top+r.height/2)+'px';
-      b.style.setProperty('--dx',(Math.random()*260-130)+'px');
-      b.style.setProperty('--dy',(-60-Math.random()*180)+'px');
-      document.body.appendChild(b); setTimeout(()=>b.remove(),1200);
+  S.scares++;
+  // first scare stays gentle; after that the REAL scares join the pool
+  const pool = S.scares<2
+    ? [scareGhost, ()=>scareBats(el), scareLightning, scareKnock]
+    : [scareGhost, ()=>scareBats(el), scareLightning, scareKnock, scareFace, scareHands, scareEyes];
+  pool[Math.floor(Math.random()*pool.length)]();
+}
+
+/* ---------------- Items & satchel ---------------- */
+function itemDef(id){
+  if(id.startsWith('page')){
+    const i=+id.slice(4);
+    return { emoji:'📜', name:THEME.diaryTitle+' — Page '+(i+1), flavor:'Tap to read it again!' };
+  }
+  return THEME.items[id];
+}
+function hasItem(id){ return S.items.includes(id); }
+function addItem(id, silent){
+  if(hasItem(id)) return;
+  S.items.push(id); sfx('key'); updateHUD();
+  if(!silent) msg(itemDef(id).takeMsg || ('🎒 You got the <b>'+itemDef(id).name+'</b>!'), 4200);
+}
+function buildSatchel(){
+  const g=$('#sat-grid'); g.innerHTML='';
+  ITEM_ORDER.forEach(id=>{
+    const owned=hasItem(id);
+    const el=document.createElement('div');
+    el.className='sat-item'+(owned?'':' empty');
+    const def=owned?itemDef(id):null;
+    el.innerHTML = owned
+      ? `<span class="si-em">${def.emoji}</span><span class="si-name">${def.name}</span>`
+      : '<span class="si-em">❓</span><span class="si-name">???</span>';
+    if(owned) el.addEventListener('click',()=>satchelItemTap(id, def));
+    g.appendChild(el);
+  });
+}
+function satchelItemTap(id, def){
+  if(id.startsWith('page')){
+    $('#satmodal').classList.remove('show');
+    diaryPage(+id.slice(4));
+    return;
+  }
+  if(id==='musicbox'){
+    sfx('musicbox');
+    if(S.phase==='room2' && !S.gems.includes('mghost')){
+      $('#satmodal').classList.remove('show');
+      const g=$('#mghost'); g.classList.remove('boo'); void g.offsetWidth; g.classList.add('boo');
+      setTimeout(()=>addGem('mghost','The ghost heard the music box and DANCED! It dropped this!'), 900);
+      return;
     }
-  } else {
-    const L=$('#lightning'); L.classList.remove('flash'); void L.offsetWidth; L.classList.add('flash');
-    sfx('thunder');
+    $('#sat-note').innerHTML='🎼 The music box plays its spooky little song... someone would love to hear this. 🪞';
+    return;
+  }
+  if(id==='candle'){ sfx('pop'); }
+  $('#sat-note').innerHTML = def.emoji+' <b>'+def.name+'</b> — '+def.flavor;
+}
+function openSatchel(){
+  buildSatchel();
+  $('#sat-note').textContent='Tap a treasure to peek at it!';
+  sfx('paper');
+  $('#satmodal').classList.add('show');
+}
+
+/* ---------------- Diary ---------------- */
+function diaryPage(i){
+  const p=THEME.diaryPages[i];
+  sfx('paper');
+  $('#bm-left').innerHTML=p.left;
+  $('#bm-right').innerHTML=p.right;
+  $('#bookmodal').classList.add('show');
+  if(!S.diaryRead.includes(i)){
+    S.diaryRead.push(i);
+    if(S.diaryRead.length===THEME.diaryPages.length) S.diaryBonusPending=true;
   }
 }
 
@@ -137,6 +261,8 @@ function updateHUD(){
   $('#k1').classList.toggle('got', S.key1);
   $('#k2').classList.toggle('got', S.key2);
   $('#gem-n').textContent = S.gems.length;
+  $('#item-n').textContent = S.items.length;
+  $('#satchel-btn').classList.toggle('show', S.items.length>0);
   $('#clue-btn').classList.toggle('show', S.cluesFound.length>0);
   $('#sits').style.display = (S.phase==='room1') ? 'flex':'none';
   $('#room-name').textContent = THEME.roomNames[S.phase] || '';
@@ -152,7 +278,9 @@ function goalText(){
     if(!S.door1Open) return 'Grab the scrolls 📜, then tap the door and crack its number locks!';
     return 'Go through the door! 🚪';
   }
-  if(S.phase==='secret') return S.chestOpen ? 'Take the back door when you\u2019re done exploring! 🚪' : 'A treasure chest! Open it!';
+  if(S.phase==='secret') return S.chestOpen ? 'Take the back door when you\u2019re done exploring! 🚪' : 'A treasure chest! It’s... moving?! Open it if you dare!';
+  if(S.phase==='cellar') return 'Explore everything — then take the ladder back up! 🪜';
+  if(S.phase==='attic') return 'Explore everything — then take the ladder back down! 🪜';
   if(S.phase==='kitchen') return S.potionDone ? 'The door is unstuck — go through! 🚪' : 'Tap the cauldron — memorize the recipe FAST! ⚗️';
   if(S.phase==='library'){
     if(!S.key3) return 'A key hides behind ONE book... the '+THEME.hintAnimal.name+' '+THEME.hintAnimal.emoji+' knows which!';
@@ -179,7 +307,9 @@ function hintFor(){
     if(!S.keyTaken) return '“The riddle is a COLOR. Look at each '+THEME.seatNoun+' and think hard!”';
     return '“The door lock loves math — TWO answers in a row. You\u2019ve got this!”';
   }
-  if(p==='secret') return '“Open the chest, silly! Treasure doesn\u2019t open itself! 🤫”';
+  if(p==='secret') return '“Open the chest, silly! Treasure doesn’t open itself! 🤫”';
+  if(p==='cellar') return '“Grab everything shiny down here, then head back up the ladder! 🪜”';
+  if(p==='attic') return '“Open the singing trunk, grab the old page, then back down the ladder! 🪜”';
   if(p==='kitchen') return '“Watch the recipe QUICK before the magic ink fades... then tap in order!”';
   if(p==='library'){
     if(!S.key3) return '“The '+THEME.hintAnimal.name+' '+THEME.hintAnimal.emoji+' saw where the key went. Tap it and LISTEN!”';
@@ -193,7 +323,23 @@ function hintFor(){
     return '“Play my cousin\u2019s song at the glowing spot! Listen first, then copy! 🎹”';
   }
   if(p==='room3') return '“Backwards land! The mystery number goes FIRST. Count carefully!”';
-  return '“Hee hee... I\u2019ve got nothing. You\u2019re on your own, brave one!”';
+  return '“Hee hee... I’ve got nothing. You’re on your own, brave one!”';
+}
+function secretHintFor(){
+  const p=S.phase;
+  if(p==='room1') return '“Wanna know a SECRET? That grumpy portrait 🧐 is terribly ticklish. Tap it three times! And the chandelier is hiding something...”';
+  if(p==='secret') return '“Poke EVERYTHING — the toys squeak, granny whispers, the chair rocks itself... and is that an old PAGE on the wall? 📜”';
+  if(p==='kitchen') return hasItem('candle')
+    ? '“One floorboard near the cauldron looks... crooked. You have a candle now, don’t you? 🕯️”'
+    : '“I smell secrets UNDER this floor. Find a light first — look around the shelves! 🕯️”';
+  if(p==='cellar') return '“Peek in ALL the crates... one of them is hungry, hee hee! And say hi to '+THEME.furnace.name+' for me!”';
+  if(p==='library') return S.leverPulled
+    ? (hasItem('brasskey') ? '“The glowing crack in the wall wants your little brass key! 🔑”' : '“That crack in the wall has a KEYHOLE. Brass keys love dark cellars, hee hee...”')
+    : '“Psst... one of the candle sconces on the wall is secretly a LEVER. Give it a pull! 🕯️”';
+  if(p==='attic') return '“The trunk sings when you tap it! And there’s an old page up here somewhere... 📜”';
+  if(p==='room2') return '“That door on the left is painted on, hee hee! And if you found a music box... the mirror ghost LOVES music. 🎼”';
+  if(p==='room3') return '“Tap the floating chair! It’s keeping something warm, hee hee!”';
+  return '“Hee hee... every room has secrets. Poke EVERYTHING!”';
 }
 
 /* ---------------- Room 1: chairs ---------------- */
@@ -337,18 +483,28 @@ function enterSecret(){
   S.phase='secret'; updateHUD();
   show('#s-secret');
   sfx('creakopen');
+  if(window.mayaTrack) mayaTrack('er_secret_room',{room:'secret'});
   msg('🤫 A <b>SECRET ROOM!</b> Nobody has been in here for a hundred years...', 4000);
 }
 
 function chestClick(){
   if(S.phase!=='secret') return;
   const ch=$('#chest');
+  if(!S.chestRattled){
+    S.chestRattled=true;
+    ch.classList.add('rattle'); setTimeout(()=>ch.classList.remove('rattle'),700);
+    sfx('growl'); sfx('creak');
+    msg(THEME.chestRattleMsg, 3500);
+    return;
+  }
   if(!S.chestOpen){
-    S.chestOpen=true; ch.classList.add('open'); sfx('magic'); updateHUD();
-    addGem('chest','It was inside the treasure chest!');
+    S.chestOpen=true; ch.classList.add('open'); updateHUD();
+    scareBats(ch); sfx('stinger');
+    setTimeout(()=>{ sfx('magic'); addGem('chest','It was inside the rattling treasure chest!'); }, 700);
     const sup={text:'🌟 SUPER CLUE: The '+THEME.exitPropName+' key hides in the '+S.trueSpot.name.toUpperCase()+'!', true:true};
     if(!S.cluesFound.some(x=>x.text===sup.text)) S.cluesFound.push(sup);
-    setTimeout(()=>{ updateHUD(); msg('📜 The chest also held a <b>GOLDEN SUPER CLUE!</b> Check your 📜 Clues — it\u2019ll help later!', 4500); }, 2000);
+    setTimeout(()=>{ updateHUD(); msg('📜 The chest also held a <b>GOLDEN SUPER CLUE!</b> Check your 📜 Clues — it will help later!', 4000); }, 2800);
+    setTimeout(()=>addItem('teddy'), 7000);
   } else {
     msg('🧰 Empty now... except for a hundred years of dust. ACHOO! 🤧');
   }
@@ -358,7 +514,89 @@ function chestClick(){
 function enterKitchen(){
   S.phase='kitchen'; updateHUD();
   show('#s-kitchen');
+  if(window.Snd) Snd.ambient('kitchen');
   msg(THEME.kitchenEnterMsg, 4500);
+}
+function candleClick(){
+  if(S.phase!=='kitchen' || hasItem('candle')) return;
+  const el=$('#kitchen-candle');
+  el.classList.add('found');
+  addItem('candle');
+  $('#trapdoor').classList.add('found');
+  setTimeout(()=>{ el.style.display='none'; }, 700);
+  setTimeout(()=>msg('🕯️ Hmm... in the candlelight, one <b>floorboard</b> near the cauldron looks crooked... 👀', 4200), 4500);
+}
+function trapdoorClick(){
+  if(S.phase!=='kitchen') return;
+  const td=$('#trapdoor');
+  td.classList.add('wiggle'); setTimeout(()=>td.classList.remove('wiggle'),450);
+  if(!S.floorboardFound){
+    S.floorboardFound=true;
+    sfx('creak'); sfx('skitter');
+    msg('🪵 This floorboard is <b>LOOSE!</b> Something skitters underneath... there’s a whole room down there!', 4200);
+    if(!hasItem('candle')) setTimeout(()=>msg(THEME.cellarDarkMsg, 4500), 4400);
+    return;
+  }
+  if(!hasItem('candle')){ sfx('bad'); msg(THEME.cellarDarkMsg, 4500); return; }
+  enterCellar();
+}
+
+/* ---------------- Cellar (secret room #2) ---------------- */
+function buildCellar(){
+  const row=$('#cellar-floor'); row.innerHTML='';
+  for(let i=0;i<3;i++){
+    const el=document.createElement('div'); el.className='spot';
+    el.innerHTML='<span class="s-emoji">📦</span><span class="s-label">Crate</span>';
+    el.addEventListener('click',()=>crateClick(i,el));
+    row.appendChild(el);
+  }
+  const pg=document.createElement('div'); pg.className='spot page-spot';
+  pg.innerHTML='<span class="s-emoji">📜</span><span class="s-label">Old Page</span>';
+  pg.addEventListener('click',()=>{ if(S.phase!=='cellar')return; addItem('page1',true); diaryPage(1); });
+  row.appendChild(pg);
+}
+function enterCellar(){
+  S.phase='cellar'; updateHUD();
+  show('#s-cellar');
+  sfx('creakopen');
+  if(window.Snd) Snd.ambient('cellar');
+  if(window.mayaTrack) mayaTrack('er_secret_room',{room:'cellar'});
+  msg(THEME.cellarEnterMsg, 4500);
+}
+function crateClick(i, el){
+  if(S.phase!=='cellar') return;
+  if(i===S.mimicCrate && !S.gems.includes('cellar')){
+    el.classList.add('mimic-rage');
+    el.querySelector('.s-emoji').textContent='👁️📦👁️';
+    sfx('screech'); sfx('growl'); scareKnock();
+    setTimeout(scareFace, 350);
+    setTimeout(()=>{
+      el.classList.remove('mimic-rage');
+      el.querySelector('.s-emoji').textContent='📦';
+      msg(THEME.mimicMsg, 4200);
+    }, 1300);
+    setTimeout(()=>addGem('cellar','The mimic coughed it up! 😝'), 5600);
+    return;
+  }
+  if(S.cratesOpened.includes(i)){ msg('📦 Just the same old stuff. The crate looks offended.'); return; }
+  S.cratesOpened.push(i);
+  el.classList.add('wiggle'); setTimeout(()=>el.classList.remove('wiggle'),450);
+  sfx('creak');
+  msg(THEME.crateLines[i%THEME.crateLines.length], 3800);
+}
+function furnaceClick(){
+  if(S.phase!=='cellar') return;
+  S.furnaceTaps++;
+  sfx('heartbeat');
+  if(S.furnaceTaps===1) msg(THEME.thumpExplainMsg, 4200);
+  else msg('💤 '+THEME.furnace.name+' snores louder. <i>Thump... thump...</i> Sweet dreams, big guy.', 3200);
+}
+function cellarKeyClick(){
+  if(S.phase!=='cellar' || hasItem('brasskey')) return;
+  const el=$('#cellar-key');
+  el.classList.add('found');
+  addItem('brasskey');
+  setTimeout(()=>{ el.style.display='none'; }, 800);
 }
 function cauldronClick(){
   if(S.phase!=='kitchen') return;
@@ -433,7 +671,68 @@ function bookClick(sIdx,cIdx,b){
 function enterLibrary(){
   S.phase='library'; updateHUD();
   show('#s-library');
+  if(window.Snd) Snd.ambient('library');
   msg(THEME.libraryEnterMsg, 4500);
+}
+function leverClick(){
+  if(S.phase!=='library') return;
+  const lv=$('#lever-sconce');
+  if(!S.leverPulled){
+    S.leverPulled=true;
+    lv.classList.add('pulled');
+    sfx('creak'); sfx('growl'); scareKnock();
+    setTimeout(()=>{
+      $('#wall-crack').classList.add('show');
+      sfx('magic');
+      msg('🕯️ <b>CLUNK!</b> That sconce is a LEVER! A glowing <b>crack</b> opens in the wall... with a tiny brass keyhole! 🔑', 5000);
+    }, 600);
+    return;
+  }
+  sfx('creak'); msg('🕯️ The lever wiggles. The secret crack is already open! 👀');
+}
+function crackClick(){
+  if(S.phase!=='library') return;
+  const c=$('#wall-crack');
+  if(!hasItem('brasskey')){
+    c.classList.add('wiggle'); setTimeout(()=>c.classList.remove('wiggle'),450);
+    sfx('bad');
+    msg(THEME.atticLockedMsg, 4500);
+    return;
+  }
+  enterAttic();
+}
+
+/* ---------------- Attic (secret room #3) ---------------- */
+function enterAttic(){
+  S.phase='attic'; updateHUD();
+  show('#s-attic');
+  sfx('creakopen'); sfx('wind');
+  if(window.Snd) Snd.ambient('attic');
+  if(window.mayaTrack) mayaTrack('er_secret_room',{room:'attic'});
+  msg(THEME.atticEnterMsg, 4500);
+}
+function trunkClick(){
+  if(S.phase!=='attic') return;
+  const tr=$('#att-trunk');
+  if(!S.trunkRattled){
+    S.trunkRattled=true;
+    tr.classList.add('rattle'); setTimeout(()=>tr.classList.remove('rattle'),700);
+    sfx('growl'); sfx('musicbox');
+    msg(THEME.trunkRattleMsg, 3500);
+    return;
+  }
+  if(!S.trunkOpen){
+    S.trunkOpen=true; tr.classList.add('open');
+    scareBats(tr); sfx('stinger');
+    setTimeout(()=>addItem('musicbox'), 700);
+    return;
+  }
+  if(!S.trunkGemTaken){
+    S.trunkGemTaken=true;
+    addGem('attic','It was under the trunk’s velvet lining!');
+    return;
+  }
+  msg('🧳 Just moth holes and memories now.');
 }
 function updateLibDoor(){
   if(S.key3 && S.wordDone) $('#door-l-lock').textContent='🔓';
@@ -485,6 +784,7 @@ function buildRoom2(){
 function enterRoom2(){
   S.phase='room2'; updateHUD();
   show('#s-room2');
+  if(window.Snd) Snd.ambient('mansion');
   msg(THEME.room2EnterMsg, 4500);
 }
 
@@ -560,13 +860,15 @@ function winGame(){
   $('#win-sub').textContent = THEME.winSub;
   $('#win-time').textContent='⏱️ You escaped in '+fmt(S.elapsed)+'!';
   $('#win-gems').textContent='💎 Hidden gems found: '+S.gems.length+'/'+TOTAL_GEMS+(S.gems.length===TOTAL_GEMS?' — TREASURE MASTER!! 🏆':'');
-  const best = Number(localStorage.getItem('mayaEscapeBest')||0);
+  $('#win-items').textContent='🎒 Treasures collected: '+S.items.length+'/'+TOTAL_ITEMS+(S.diaryRead.length>=3?' — you know the WHOLE story! 📔':'');
+  const best = Number(store.get('mayaEscapeBest')||0);
   if(!best || S.elapsed<best){
-    localStorage.setItem('mayaEscapeBest', String(S.elapsed));
+    store.set('mayaEscapeBest', String(S.elapsed));
     if(best) $('#win-time').textContent += ' 🏆 NEW BEST TIME!';
   }
   sfx('fanfare'); confetti(); setTimeout(confetti, 900);
   if(window.Snd) Snd.ambient(null);
+  if(window.mayaGameEnd) mayaGameEnd({score:S.gems.length, outcome:'win', theme:THEME.id, items:S.items.length, seconds:Math.round(S.elapsed/1000)});
 }
 
 /* ---------------- Scroll modal ---------------- */
@@ -599,6 +901,13 @@ function startGame(themeId){
   $('#portrait').classList.remove('swung');
   $('#secret-btn').classList.remove('show');
   $('#chest').classList.remove('open');
+  $('#trapdoor').classList.remove('found');
+  $('#lever-sconce').classList.remove('pulled');
+  $('#wall-crack').classList.remove('show');
+  $('#att-trunk').classList.remove('open');
+  const ck=$('#cellar-key'); ck.style.display=''; ck.classList.remove('found');
+  const kc=$('#kitchen-candle'); kc.style.display=''; kc.classList.remove('found');
+  buildCellar();
   const m=$('#mirror'); m.classList.remove('unlocked','enter-anim');
   $('#m-keyhole').textContent='🔒';
   $('#hud').classList.add('show'); $('#goal').classList.add('show'); $('#hint-ghost').classList.add('show');
@@ -609,7 +918,7 @@ function startGame(themeId){
 }
 
 function updateBestTimeDisplay(){
-  const best=Number(localStorage.getItem('mayaEscapeBest')||0);
+  const best=Number(store.get('mayaEscapeBest')||0);
   $('#best-time').textContent = best ? '🏆 Best escape: '+fmt(best) : '';
 }
 
@@ -655,17 +964,118 @@ $('#owl').addEventListener('click', owlClick);
 $('#storybook').addEventListener('click', ()=>{
   if(S.phase!=='library') return;
   sfx('paper');
-  $('#bm-left').innerHTML='<h3>The Ticklish Portrait</h3><span class="cap">O</span>nce upon a spooky night, a little ghost named <b>Lottie</b> lived in a grand old mansion. Her favorite game was hiding shiny treasures where nobody would ever look — and her BEST hiding place was behind the grumpy old <b>portrait</b> in the Chair Parlor.<span class="pnum">— 1 —</span>';
-  $('#bm-right').innerHTML='<h3>&nbsp;</h3>But the portrait had a secret: it was <b>terribly ticklish</b>. One tickle — a wiggle. Two tickles — a giggle. <b>THREE tickles</b> — and it swung wide open with a great big “HEE HEE!”, showing a little red button... and a room nobody had seen for a hundred years. <b>The End</b> 🌙<span class="pnum">— 2 —</span>';
+  $('#bm-left').innerHTML=THEME.storybook.left;
+  $('#bm-right').innerHTML=THEME.storybook.right;
   $('#bookmodal').classList.add('show');
 });
-$('#bm-close').addEventListener('click',()=>$('#bookmodal').classList.remove('show'));
-$('#bookmodal').addEventListener('click',e=>{ if(e.target.id==='bookmodal') $('#bookmodal').classList.remove('show'); });
+function closeBook(){
+  $('#bookmodal').classList.remove('show');
+  if(S && S.diaryBonusPending){
+    S.diaryBonusPending=false;
+    msg(THEME.diaryDoneMsg, 4200);
+    setTimeout(()=>addGem('diary','Reading the WHOLE story earned you this!'), 3200);
+  }
+}
+$('#bm-close').addEventListener('click',closeBook);
+$('#bookmodal').addEventListener('click',e=>{ if(e.target.id==='bookmodal') closeBook(); });
 $('#mirror').addEventListener('click', mirrorClick);
 $('#mghost').addEventListener('click', ()=>{
   if(S.phase==='room2' && $('#mghost').classList.contains('boo')) addGem('mghost','You tapped the ghost near the '+THEME.exitPropName+' mid-haunt! So brave!');
 });
 $('#float-chair').addEventListener('click', ()=>{ if(S.phase==='room3') addGem('floatchair','The upside-down floating chair was keeping it warm!'); });
+$('#chandelier').addEventListener('click', ()=>{
+  if(S.phase!=='room1') return;
+  S.chandTaps++;
+  if(S.gems.includes('chand')){ sfx('creak'); msg('🕯️ The chandelier sways... shadows dance on the walls. Spooky!'); return; }
+  if(S.chandTaps===1){ sfx('creak'); msg('🕯️ The chandelier <b>sways</b>... something up there glints! Tap it again!'); }
+  else { scareLightning(); addGem('chand','It was balanced up in the chandelier!'); }
+});
+$('#kitchen-candle').addEventListener('click', candleClick);
+$('#trapdoor').addEventListener('click', trapdoorClick);
+$('#furnace').addEventListener('click', furnaceClick);
+$('#cellar-key').addEventListener('click', cellarKeyClick);
+$('#cellar-back').addEventListener('click', ()=>{
+  if(S.phase!=='cellar') return;
+  S.phase='kitchen'; updateHUD(); show('#s-kitchen');
+  if(window.Snd) Snd.ambient('kitchen');
+  sfx('creakopen');
+  msg('🪜 Back up to the '+THEME.roomNames.kitchen+'!');
+});
+$('#lever-sconce').addEventListener('click', leverClick);
+$('#wall-crack').addEventListener('click', crackClick);
+$('#att-trunk').addEventListener('click', trunkClick);
+$('#attic-page').addEventListener('click', ()=>{ if(S.phase!=='attic')return; addItem('page2',true); diaryPage(2); });
+$('#attic-back').addEventListener('click', ()=>{
+  if(S.phase!=='attic') return;
+  S.phase='library'; updateHUD(); show('#s-library');
+  if(window.Snd) Snd.ambient('library');
+  sfx('creakopen');
+  msg('🪜 Back down to the '+THEME.roomNames.library+'!');
+});
+$('#fake-door').addEventListener('click', ()=>{
+  if(S.phase!=='room2') return;
+  const fd=$('#fake-door');
+  fd.classList.add('wiggle'); setTimeout(()=>fd.classList.remove('wiggle'),450);
+  if(!S.gems.includes('fakedoor')){
+    sfx('cackle');
+    msg('🖌️ This door is <b>PAINTED ON!</b> Who paints a door on a wall?! ...wait, something’s stuck in the paint!', 3400);
+    setTimeout(()=>addGem('fakedoor','It was stuck in the wet paint of the prank door!'), 2400);
+  } else {
+    sfx('knock'); msg('🚪 Knock knock. Nobody home. Because it’s PAINT. 😆');
+  }
+});
+$('#granny-portrait').addEventListener('click', ()=>{
+  if(S.phase!=='secret') return;
+  S.grannyTaps++;
+  sfx('whisper');
+  const lines=[
+    '👵 The old portrait whispers... “The <b>toys</b> still squeak, dearie. Give them a poke.”',
+    '👵 “The rocking chair rocks ALL BY ITSELF. Nobody knows why. I know why. Hee hee.”',
+    '👵 “Read the old <b>pages</b>, dearie. Then the spooky sounds won’t be spooky anymore.”',
+  ];
+  msg(lines[(S.grannyTaps-1)%lines.length], 4200);
+});
+$('#toy-pile').addEventListener('click', ()=>{
+  if(S.phase!=='secret') return;
+  S.toyTaps++;
+  if(S.toyTaps===1){ sfx('pop'); msg('🪆 SQUEAK! The old toys giggle. One winds itself up...'); }
+  else {
+    sfx('skitter');
+    const f=document.createElement('span'); f.className='scurry'; f.textContent='🐭';
+    $('#s-secret .floor').appendChild(f); setTimeout(()=>f.remove(),6000);
+    msg('🐭 A wind-up mouse zooms across the floor! ZOOM!');
+  }
+});
+$('#rock-chair').addEventListener('click', ()=>{
+  if(S.phase!=='secret') return;
+  sfx('creak');
+  if(Math.random()<.35){ spook($('#rock-chair')); msg('🪑 The chair rocks FASTER... okay, WHO is rocking this chair?!', 3600); }
+  else msg('🪑 It rocks all by itself. Creeeak... creeeak... Maybe a ghost is napping?', 3600);
+});
+$('#secret-page').addEventListener('click', ()=>{ if(S.phase!=='secret')return; addItem('page0',true); diaryPage(0); });
+$('#satchel-btn').addEventListener('click', openSatchel);
+$('#sat-close').addEventListener('click',()=>$('#satmodal').classList.remove('show'));
+$('#satmodal').addEventListener('click',e=>{ if(e.target.id==='satmodal') $('#satmodal').classList.remove('show'); });
+// moonlit windows: something howls outside...
+$$('.m-window').forEach(w=>w.addEventListener('click', ()=>{
+  if(!S || S.phase==='title' || S.phase==='win') return;
+  if(S.phase==='room3'){ sfx('whistle'); msg('🪞 Backwards wind whistles past the backwards sun. Even the weather is confused here!'); return; }
+  const i=S.moonTaps++ % 3;
+  sfx(i===2 ? 'scratch' : 'wolfhowl');
+  const lines=[
+    '🌕 Awooooo... wolves howl at the moon, somewhere far away. 🐺',
+    '🌕 The moon peeks through the clouds... something howls BACK. 🐺',
+    '🌕 <i>Scratch scratch...</i> is something climbing the wall OUTSIDE?! 🐾',
+  ];
+  msg(lines[i], 3800);
+}));
+// things in the walls (tap an empty bit of wall)
+$$('.wall').forEach(w=>w.addEventListener('click', e=>{
+  if(e.target!==w || !S || S.phase==='title' || S.phase==='win') return;
+  const n=(S.wallTaps[S.phase]||0)+1; S.wallTaps[S.phase]=n;
+  if(n===1){ sfx('skitter'); msg('🐁 <i>skitter skitter...</i> Something small is running around INSIDE the wall!', 3400); }
+  else if(n===2){ sfx('scratch'); msg('🐁 <i>scratch scratch...</i> It’s in the walls again! It sounds... fluffy?', 3400); }
+}));
 $('#exit-door').addEventListener('click', ()=>{
   if(S.exitOpen) return winGame();
   msg('🪞 The exit has one last <b>backwards puzzle...</b>', 2000);
@@ -676,12 +1086,10 @@ $('#exit-door').addEventListener('click', ()=>{
 $('#hint-ghost').addEventListener('click', ()=>{
   if(!S || S.phase==='title' || S.phase==='win') return;
   sfx('ghost');
-  if(S.hintUsed[S.phase]){
-    msg('👻 “Hee hee — I already helped you in this room! You can do it!” 💜', 3000);
-    return;
-  }
-  S.hintUsed[S.phase]=true;
-  msg('👻 '+hintFor(), 5000);
+  // alternate main hint / secret hint; re-taps always re-show (no refusing!)
+  const n = S.hintUsed[S.phase]||0;
+  S.hintUsed[S.phase]=n+1;
+  msg('👻 '+(n%2===0 ? hintFor() : secretHintFor()), 6500);
 });
 
 // home button — always visible (not gated on portal detection), so there's
@@ -707,7 +1115,7 @@ syncMute();
   });
   (function fly(){
     setTimeout(()=>{
-      const FLY={room1:['#s-room1 .wall','🦇'],kitchen:['#s-kitchen .floor','🐀'],library:['#s-library .wall','🦉'],room2:['#s-room2 .wall','👻']};
+      const FLY={room1:['#s-room1 .wall','🦇'],kitchen:['#s-kitchen .floor','🐀'],library:['#s-library .wall','🦉'],room2:['#s-room2 .wall','👻'],secret:['#s-secret .floor','🐭'],cellar:['#s-cellar .floor','🐀'],attic:['#s-attic .wall','🦇']};
       if(S && FLY[S.phase]){
         const [sel,em]=FLY[S.phase];
         const wall=$(sel);
@@ -720,20 +1128,25 @@ syncMute();
       fly();
     }, 9000+Math.random()*8000);
   })();
-  // ⚡ lightning + thunder
+  // ⚡ storm: close thunder, distant rumbles, wolves, whistling wind
   (function storm(){
     setTimeout(()=>{
       if(S && S.phase!=='title' && S.phase!=='win'){
-        const L=$('#lightning'); L.classList.remove('flash'); void L.offsetWidth; L.classList.add('flash');
-        sfx('thunder');
+        const r=Math.random();
+        if(r<.4){
+          const L=$('#lightning'); L.classList.remove('flash'); void L.offsetWidth; L.classList.add('flash');
+          sfx('thunder');
+        } else if(r<.7) sfx('rumble');
+        else if(r<.87) sfx('wolfhowl');
+        else sfx('whistle');
       }
       storm();
-    }, 25000+Math.random()*25000);
+    }, 14000+Math.random()*18000);
   })();
   // 🕷️ spider drops
   (function creep(){
     setTimeout(()=>{
-      const sel={room1:'#s-room1 .wall',kitchen:'#s-kitchen .wall',library:'#s-library .wall'}[S&&S.phase];
+      const sel={room1:'#s-room1 .wall',kitchen:'#s-kitchen .wall',library:'#s-library .wall',secret:'#s-secret .wall',cellar:'#s-cellar .wall',attic:'#s-attic .wall'}[S&&S.phase];
       if(sel){
         const sp=document.createElement('span'); sp.className='spiderdrop';
         sp.style.left=(15+Math.random()*70)+'%'; sp.textContent='🕷️';
