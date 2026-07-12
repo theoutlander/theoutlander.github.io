@@ -63,7 +63,7 @@ Test files (new):
   - `firstUnknownConstruct(save: SaveData, used: Construct[]): Construct | null`
   - `constructWorld(construct: Construct): number`
 
-The construct → mission mapping (verified against `content/missions/**/*.json`'s `world`/`index` fields and `src/content/commandDocs.ts`'s `since` values, which match exactly for these five — `while`/`for`/`if`/`else`/`function` are the only ones the handoff asks to track; "else if" as a distinct construct is NOT tracked, since `commandDocs.ts`'s `since:5` entry for it doesn't correspond to any currently-playable mission's actual `teaches` field post-trim):
+The construct → mission mapping (verified against `content/missions/**/*.json`'s `world`/`index`/`teaches` fields and `src/content/commandDocs.ts`'s `since` values, which match exactly for these five):
 
 | construct | mission | world |
 |---|---|---|
@@ -191,9 +191,9 @@ import { ALL } from "../content/missions";
  *
  * Feeds the Debrief's construct chips: green if she's cleared the mission that teaches it, dashed red
  * if she hasn't. The mapping below is verified against every currently-playable mission's own
- * `teaches` field, not just `commandDocs.ts`'s `since` numbers — those went stale for "else if" when
- * the campaign was trimmed from 24 levels to 11 (w3m3/w3m4/w3m6 dropped), so "else if" is deliberately
- * NOT tracked as its own construct here. The five below all still match a real, playable mission.
+ * `teaches` field, not just `commandDocs.ts`'s `since` numbers. "else if" as its own tracked construct
+ * is out of scope here — the handoff bundles if/else as one idea, not three — even though w3m5 now
+ * legitimately teaches it ("else if (a chain of choices)"); a future milestone could add it.
  */
 export type Construct = "if" | "else" | "while" | "for" | "function";
 export type Sensor = "enemyAhead" | "enemyNear" | "closerAhead" | "enemyLeft" | "enemyRight" | "hurt";
