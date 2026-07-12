@@ -39,7 +39,7 @@ const FAKE_CLUES = [
   'The key is on the MOON. Good luck getting there! 🌝',
   'The key is guarded by a very small, very fierce hamster. 🐹⚔️',
   'The key is in the fridge. (This mansion has no fridge.) 🤭',
-  'Try the 47th floor. This house has 1 floor. 🙃',
+  'The key hitched a ride on a bat and flew out the window. 🦇',
   'The key was swallowed by a goose. The goose is fine. 🪿',
 ];
 

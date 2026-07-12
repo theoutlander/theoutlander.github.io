@@ -13,6 +13,8 @@ import { ConceptCard } from "./ConceptCard";
 import { CommandList } from "./CommandList";
 import { RobotRules } from "./RobotRules";
 import { FeedbackButton } from "./FeedbackButton";
+import { ExportPanel } from "./ExportPanel";
+import { loadBotConfig } from "../state/botConfig";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -381,6 +383,11 @@ export function MissionScreen({
             before you ask me.
           </div>
         )}
+
+        {/* The payoff: her program leaves the game as a real, runnable JavaScript file. It only shows
+            up once she's actually cleared something — exporting an empty editor is a dead button, and
+            the point is "look what YOU wrote", not "here is a feature". */}
+        {result?.stars ? <ExportPanel source={code} botName={loadBotConfig().botName} /> : null}
 
         {/* She's stuck and looking at the hints. That is precisely the moment to let her tell us the
             level is the problem, not her. */}
