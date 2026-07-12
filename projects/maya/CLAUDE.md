@@ -238,4 +238,56 @@ Daily-turn RPG (LORD homage). Family nickname **LORD**; in-game console **Sparkl
 - Test logic in your head before writing — these games have had many bugs from rushed patches
 - When fixing bugs, read the full relevant function first, don't patch blindly
 - iPad: prefer `pointerup` delegation or both `click` and `touchend`; Phaser games use Phaser input
-- Never use `localStorage` as the only save mechanism without a fallback
+
+---
+
+## Hard Rules (learned the hard way — 2026-07-12)
+
+### The player cannot report bugs
+Maya is ~8, plays **alone, on an iPad**. She will not tell you what broke; the best you get is
+"it won't let me go in." **A change that works on Nick's Mac is not verified.** Dust Chasers was
+completely unplayable for her while looking perfect on desktop.
+
+### NEVER touch `localStorage` directly
+iPad Safari **throws** on any `localStorage` access when site data is blocked (Settings → Safari →
+Block All Cookies, or Private Browsing). A bare read at the top of a game's `<script>` aborts the
+**entire script**, leaving every `let` below it uninitialized — the start screen still renders
+(static HTML) but the start button is dead. This is exactly how Dust Chasers and Piñata Piano
+broke. Always go through the guarded `store` wrapper in `games/_template/index.html`.
+
+Corollary: **any unguarded top-level throw kills a whole game.** Be suspicious of anything at
+script top level that can throw on a locked-down browser.
+
+### Telemetry goes in `shared/`, never per-game
+All 18 games already load `shared/ga-analytics.js`, so it extends with **zero per-game edits**.
+Never add `gtag`/Sentry calls to an individual game. Games only call:
+- `mayaGameStart({...})` — when play actually begins (start screen goes away)
+- `mayaGameEnd({score, outcome})` — when a round ends
+- `mayaTrack(name, params)` — anything else
+
+Errors, storage state, sound state, and play duration are captured centrally and automatically.
+
+**Sound is a special case:** games play raw WebAudio, which iOS treats as "ambient" and silences
+with the hardware mute switch — the AudioContext reports `"running"` while nothing comes out.
+Every AudioContext-creating function must call `MayaIOSAudioUnlock.unlock()` as its first line.
+
+### Sentry: `website-ej / maya-game-lab`
+An issue in that inbox **means something actually broke for Maya** — dev/localhost events are
+suppressed by `beforeSend`. Replay keeps text masking ON (the portal hosts the family chat; an
+unmasked replay would ship her private messages to a third party). Don't disable it.
+
+### Titles are safe to change. Slugs and folders are NOT.
+Renaming a game folder breaks its URL, the service-worker precache list,
+`shared/offline-games.json`, Maya's bookmarks, and analytics continuity. Retitle freely; leave
+slugs alone. (`skyline-builder` is titled "City Builder" — that mismatch is known, don't "fix" it
+by renaming the folder.)
+
+### Grep the whole game folder, not just `index.html`
+Several games keep their logic in sibling `.js` files (`audio.js`, `game.js`, `*-data.js`). A
+`grep games/*/index.html` will silently miss them and produce **confidently wrong** conclusions —
+this cost real time today. Use `grep -r games/<slug>/`.
+
+### Verify in a real browser before claiming it works
+Every real bug this session was found by *driving the actual page* (blocking storage, clicking the
+button, reading `dataLayer`, checking the SW cache) — and two of my confident grep-based
+conclusions turned out to be flat wrong. Tests and greps are not evidence. Drive the flow.
