@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en" data-aesthetic="engineering" data-theme="dark" data-density="airy" data-typeface="editorial">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meet Sine, Cosine & Tangent</title>
+<meta name="description" content="The unit circle, sine, and cosine — draggable until they click. An interactive lesson that builds up trigonometry one idea at a time.">
+<link rel="canonical" href="https://nick.karnik.io/lab/trig/">
+<meta property="og:title" content="Meet Sine, Cosine & Tangent">
+<meta property="og:description" content="The unit circle, sine, and cosine — draggable until they click. An interactive lesson that builds up trigonometry one idea at a time.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nick.karnik.io/lab/trig/">
+<meta property="og:image" content="https://nick.karnik.io/assets/images/og/blog-og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Meet Sine, Cosine & Tangent">
+<meta property="og:site_name" content="Nick Karnik">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@theoutlander">
+<meta name="twitter:creator" content="@theoutlander">
+<meta name="twitter:title" content="Meet Sine, Cosine & Tangent">
+<meta name="twitter:description" content="The unit circle, sine, and cosine — draggable until they click. An interactive lesson that builds up trigonometry one idea at a time.">
+<meta name="twitter:image" content="https://nick.karnik.io/assets/images/og/blog-og.png">
+<meta name="twitter:image:alt" content="Meet Sine, Cosine & Tangent">
+<script src="../shared/ga-analytics.js" defer></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  body { padding: 0; }
+  .wrap { max-width: 76rem; margin: 0 auto; padding: 0 var(--gap-4) var(--gap-6); }
+
+  /* ---- header ---- */
+  .masthead {
+    padding: var(--gap-5) var(--gap-4) var(--gap-4);
+    max-width: 76rem; margin: 0 auto;
+  }
+  .masthead .title {
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    line-height: 1.0; letter-spacing: -0.035em; font-weight: 600;
+    margin: 0.4rem 0 0.6rem;
+  }
+  .masthead .title em { color: var(--accent); font-style: normal; }
+  .masthead .lede { max-width: 40rem; }
+
+  /* ---- machine layout ---- */
+  .machine {
+    display: grid;
+    grid-template-columns: 600px 1fr;
+    gap: var(--gap-5);
+    align-items: start;
+    margin-top: var(--gap-4);
+  }
+  @media (max-width: 1080px) {
+    .machine { grid-template-columns: 1fr; justify-items: center; }
+  }
+
+  /* ---- deck / plinth ---- */
+  .deck {
+    position: relative;
+    width: 600px; height: 560px;
+    background:
+      linear-gradient(145deg, var(--paper-3), var(--paper-2) 60%, var(--paper)) ;
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    box-shadow:
+      0 1px 0 oklch(1 0 0 / 0.04) inset,
+      0 30px 60px -30px oklch(0 0 0 / 0.7);
+    overflow: hidden;
+  }
+  .deck::after {
+    /* brushed-metal grain */
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background: repeating-linear-gradient(90deg, oklch(1 0 0 / 0.012) 0 2px, transparent 2px 4px);
+    opacity: 0.6;
+  }
+  .deck .brand {
+    position: absolute; left: 28px; bottom: 22px;
+    font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.04em;
+    color: var(--ink-3);
+  }
+  .deck .brand b { color: var(--ink-2); font-weight: 600; }
+  .deck .rpm-switch {
+    position: absolute; left: 28px; bottom: 64px;
+    font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.06em;
+    color: var(--ink-3); display:flex; gap: 0.5rem; align-items:center;
+  }
+  .deck .rpm-switch .lit { color: var(--accent); }
+
+  /* platter + disc */
+  .platter {
+    position: absolute; left: 40px; top: 56px;
+    width: 448px; height: 448px; border-radius: 50%;
+    background: radial-gradient(circle at 50% 50%, var(--paper-3), var(--paper-2) 70%, var(--paper));
+    box-shadow: 0 0 0 1px var(--rule), 0 20px 40px -20px oklch(0 0 0 / 0.8);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .disc {
+    position: relative; width: 432px; height: 432px; border-radius: 50%;
+    will-change: transform;
+  }
+  .disc canvas { position:absolute; inset:0; display:block; border-radius: 50%; width: 432px; height: 432px; }
+  #record { z-index: 1; }
+  #wave { z-index: 2; pointer-events:none; }
+
+  /* stylus read-point overlay (fixed in deck space, needle stays put) */
+  #stylusFx {
+    position:absolute; left:0; top:0; width:600px; height:560px;
+    pointer-events:none; z-index:4;
+  }
+
+  .deck .label {
+    position: absolute; left: 50%; top: 50%; width: 150px; height: 150px;
+    transform: translate(-50%,-50%); border-radius: 50%; z-index: 3;
+    background: var(--accent-pale);
+    border: 1px solid color-mix(in oklch, var(--accent) 50%, transparent);
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; gap: 0.45rem; box-shadow: 0 0 0 6px var(--paper) ;
+  }
+  .deck .label .l-title {
+    font-family: var(--mono); font-weight:600; font-size: 0.8rem;
+    color: var(--accent); letter-spacing: -0.01em; line-height: 1.08; padding: 0 0.35rem;
+    max-width: 100%;
+  }
+  .deck .label .l-sub {
+    font-family: var(--mono); font-size: 0.56rem; letter-spacing: 0.12em;
+    color: var(--ink-2); text-transform: uppercase;
+  }
+  .deck .label .spindle {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: var(--paper); box-shadow: 0 0 0 2px var(--ink-3) inset, 0 0 0 1px var(--rule);
+  }
+  /* stationary sheen over the disc */
+  .sheen {
+    position:absolute; left:40px; top:56px; width:448px; height:448px; border-radius:50%;
+    pointer-events:none; mix-blend-mode: screen; opacity: 0.10;
+    background: conic-gradient(from 220deg, transparent 0deg, oklch(1 0 0) 40deg, transparent 110deg, transparent 220deg, oklch(1 0 0) 250deg, transparent 320deg);
+  }
+
+  /* tonearm */
+  .tonearm {
+    position: absolute; left: 296px; top: 30px;
+    transform-origin: 232px 36px;
+    transform: rotate(-50deg);
+    transition: transform 1.15s cubic-bezier(.5,.05,.2,1);
+    z-index: 5; filter: drop-shadow(0 8px 10px oklch(0 0 0 / 0.5));
+  }
+  .playing-arm .tonearm { transform: rotate(-30deg); }
+
+  /* ---- instrument panel ---- */
+  .panel { width: 100%; max-width: 560px; }
+
+  .scope-card {
+    border: 1px solid var(--rule);
+    background: var(--paper-2);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .scope-head {
+    display:flex; align-items:center; gap: 0.8rem;
+    padding: 0.55rem 0.9rem; border-bottom: 1px solid var(--rule);
+    background: var(--paper-3);
+    font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.06em; color: var(--ink-3);
+    text-transform: uppercase;
+  }
+  .scope-head .dot {
+    width:7px;height:7px;border-radius:50%; background: var(--ink-3); box-shadow:none;
+  }
+  .playing .scope-head .dot { background: var(--accent); box-shadow: 0 0 8px var(--accent); animation: pulse 1.6s ease-in-out infinite; }
+  .scope-head .right { margin-left:auto; color: var(--ink-2); }
+  .scope-card canvas { display:block; width: 100%; background: var(--paper); }
+
+  .readout {
+    display:grid; grid-template-columns: 1.1fr 1fr; gap: 1px;
+    background: var(--rule); border:1px solid var(--rule); border-top:none;
+  }
+  .readout .cell { background: var(--paper-2); padding: 0.8rem 0.95rem; }
+  .readout .k { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-3); text-transform: uppercase; }
+  .readout .v { font-family: var(--mono); font-size: 1.5rem; font-weight:600; color: var(--ink); margin-top: 0.2rem; letter-spacing: -0.01em; }
+  .readout .v small { font-size: 0.8rem; color: var(--ink-3); font-weight: 400; }
+  .readout .eq { grid-column: 1 / -1; background: var(--paper-3); }
+  .readout .eq .v { color: var(--accent); font-size: 1.05rem; }
+
+  /* controls */
+  .controls { margin-top: var(--gap-3); display:flex; flex-direction:column; gap: var(--gap-3); }
+  .row { display:flex; align-items:center; gap: 0.8rem; flex-wrap: wrap; }
+  .play-btn {
+    font-family: var(--mono); font-size: 0.95rem; font-weight: 600; letter-spacing: 0.02em;
+    padding: 0.9em 1.5em; background: var(--accent); color: var(--paper);
+    border: none; cursor: pointer; border-radius: 3px; min-width: 150px;
+    display:inline-flex; align-items:center; justify-content:center; gap: 0.6em;
+    transition: filter 140ms ease, transform 80ms ease;
+  }
+  .play-btn:hover { filter: brightness(1.08); }
+  .play-btn:active { transform: translateY(1px); }
+  .play-btn .ico { width:0;height:0; }
+  .play-btn[data-state="play"] .ico { border-left: 11px solid var(--paper); border-top: 7px solid transparent; border-bottom: 7px solid transparent; }
+  .play-btn[data-state="stop"] .ico { width:12px;height:12px; background: var(--paper); border:none; }
+
+  .songs { display:flex; gap: 0.5rem; flex-wrap: wrap; }
+  .chip {
+    font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.01em;
+    padding: 0.55em 0.85em; border: 1px solid var(--rule); background: transparent;
+    color: var(--ink-2); cursor: pointer; border-radius: 2px; transition: all 140ms ease;
+  }
+  .chip:hover { border-color: var(--ink-3); color: var(--ink); }
+  .chip.active { border-color: var(--accent); color: var(--accent); background: var(--accent-pale); }
+
+  .field { display:flex; flex-direction:column; gap: 0.35rem; flex:1; min-width: 130px; }
+  .field label { font-family: var(--mono); font-size: 0.64rem; letter-spacing: 0.08em; color: var(--ink-3); text-transform: uppercase; display:flex; justify-content:space-between; }
+  .field label span { color: var(--accent); }
+  input[type="range"] {
+    -webkit-appearance: none; appearance: none; height: 3px; background: var(--rule); border-radius: 2px; cursor:pointer;
+  }
+  input[type="range"]::-webkit-slider-thumb { -webkit-appearance:none; width: 14px; height:14px; border-radius:50%; background: var(--ink); border: 2px solid var(--accent); }
+  input[type="range"]::-moz-range-thumb { width: 14px; height:14px; border-radius:50%; background: var(--ink); border: 2px solid var(--accent); }
+
+  .toggle {
+    display:flex; align-items:center; gap: 0.6rem; cursor:pointer;
+    font-family: var(--mono); font-size: 0.74rem; color: var(--ink-2); user-select:none;
+  }
+  .toggle .sw { width: 38px; height: 20px; border-radius: 20px; background: var(--paper-3); border:1px solid var(--rule); position:relative; transition: background 160ms ease; flex:none; }
+  .toggle .sw::after { content:""; position:absolute; top:1px; left:1px; width:16px; height:16px; border-radius:50%; background: var(--ink-3); transition: transform 160ms ease, background 160ms ease; }
+  .toggle.on .sw { background: var(--accent-pale); border-color: var(--accent); }
+  .toggle.on .sw::after { transform: translateX(18px); background: var(--accent); }
+
+  /* prose / explainer */
+  .explain { margin-top: var(--gap-6); }
+  .explain .grid3 { display:grid; grid-template-columns: repeat(3,1fr); gap: var(--gap-4); margin-top: var(--gap-3); }
+  @media (max-width: 880px){ .explain .grid3 { grid-template-columns: 1fr; } }
+  .explain h3 { font-family: var(--mono); font-size: 0.95rem; font-weight: 600; margin: 0 0 0.5rem; letter-spacing: -0.01em; }
+  .explain h3 .n { color: var(--accent); margin-right: 0.5em; }
+  .explain p { font-family: "Source Serif 4", Georgia, serif; font-size: 1rem; line-height: 1.6; color: var(--ink-2); margin: 0; }
+  .explain code { font-family: var(--mono); font-size: 0.86em; background: var(--paper-2); padding: 0.08em 0.35em; border-radius: 2px; color: var(--accent); }
+
+  .hint { font-family: var(--mono); font-size: 0.7rem; color: var(--ink-3); letter-spacing: 0.02em; }
+
+  /* ---- harmonic mixer ---- */
+  .mixer { margin-top: var(--gap-3); border-top: 1px solid var(--rule); padding-top: var(--gap-3); }
+  .mixer-head { display:flex; align-items:baseline; gap: 0.7rem; flex-wrap:wrap; }
+  .mixer-head h4 { font-family: var(--mono); font-size: 0.84rem; font-weight:600; margin:0; letter-spacing:-0.01em; }
+  .mixer-head .sub { font-family: "Source Serif 4", Georgia, serif; font-size: 0.86rem; color: var(--ink-3); }
+  .mixer-head .audition { margin-left:auto; }
+  .presets { display:flex; gap: 0.45rem; flex-wrap:wrap; margin: 0.75rem 0 0.2rem; }
+  .preset {
+    font-family: var(--mono); font-size: 0.72rem; padding: 0.5em 0.7em;
+    border:1px solid var(--rule); background:transparent; color: var(--ink-2); cursor:pointer;
+    border-radius:2px; transition: all 140ms ease; display:inline-flex; align-items:center; gap:0.5em;
+  }
+  .preset:hover { border-color: var(--ink-3); color: var(--ink); }
+  .preset.active { border-color: var(--accent); color: var(--accent); background: var(--accent-pale); }
+  .preset svg { display:block; }
+  .audition-btn {
+    font-family: var(--mono); font-size: 0.72rem; padding: 0.5em 0.8em; cursor:pointer;
+    border:1px solid var(--accent); color: var(--accent); background: var(--accent-pale);
+    border-radius:2px; transition: filter 140ms ease;
+  }
+  .audition-btn:hover { filter: brightness(1.08); }
+  .sliders { display:grid; grid-template-columns: repeat(6,1fr); gap: 0.4rem; align-items:end; padding: 0.7rem 0.2rem 0; }
+  .slcol { display:flex; flex-direction:column; align-items:center; gap: 0.45rem; }
+  .slcol input[type=range]{ writing-mode: vertical-lr; direction: rtl; width: 20px; height: 90px; }
+  .slcol .hn { font-family: var(--mono); font-size: 0.74rem; color: var(--ink); font-weight:600; }
+  .slcol .hn.fund { color: var(--accent); }
+  .slcol .hz { font-family: var(--mono); font-size: 0.56rem; color: var(--ink-3); letter-spacing:0.01em; }
+  .mixer-foot { display:flex; align-items:center; justify-content:space-between; gap:0.8rem; margin-top: 0.7rem; flex-wrap:wrap; }
+
+  /* ---- lessons ---- */
+  .lessons { margin-top: var(--gap-6); }
+  .lesson-rail { display:grid; grid-template-columns: repeat(5,1fr); gap: var(--gap-2); margin-top: var(--gap-3); }
+  @media (max-width: 980px){ .lesson-rail { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px){ .lesson-rail { grid-template-columns: 1fr; } }
+  .lesson {
+    text-align:left; background: var(--paper-2); border:1px solid var(--rule); border-radius:4px;
+    padding: 1rem 0.95rem; cursor:pointer; transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
+    display:flex; flex-direction:column; gap: 0.55rem; font: inherit;
+  }
+  .lesson:hover { border-color: var(--ink-3); transform: translateY(-2px); }
+  .lesson.active { border-color: var(--accent); background: var(--accent-pale); }
+  .lesson .ln { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.12em; color: var(--accent); }
+  .lesson h4 { font-family: var(--mono); font-size: 0.86rem; font-weight:600; margin:0; line-height:1.18; letter-spacing:-0.01em; }
+  .lesson p { font-family: "Source Serif 4", Georgia, serif; font-size: 0.86rem; line-height:1.5; color: var(--ink-2); margin:0; flex:1; }
+  .lesson .do { font-family: var(--mono); font-size: 0.66rem; color: var(--ink-3); }
+  .lesson:hover .do, .lesson.active .do { color: var(--accent); }
+
+  /* ---- unifying callout ---- */
+  .unify-row { display:grid; grid-template-columns: 1fr auto 1fr auto 1fr; align-items:stretch; gap: 0.7rem; margin-top: var(--gap-3); }
+  @media (max-width: 680px){ .unify-row { grid-template-columns: 1fr; } .unify-row .eqs { display:none; } }
+  .uv { border:1px solid var(--rule); border-radius:4px; background: var(--paper-2); padding: 1rem; display:flex; flex-direction:column; gap:0.45rem; align-items:flex-start; }
+  .uv .uvt { font-family: var(--mono); font-size: 0.92rem; font-weight:600; color: var(--ink); }
+  .uv .uvs { font-family: "Source Serif 4", Georgia, serif; font-size: 0.82rem; color: var(--ink-3); }
+  .uv svg { margin-top: 0.2rem; }
+  .unify-row .eqs { display:flex; align-items:center; justify-content:center; font-family: var(--mono); font-size: 1.5rem; color: var(--accent); }
+  .unify-note { font-family: "Source Serif 4", Georgia, serif; font-size: 1rem; line-height:1.6; color: var(--ink-2); margin: var(--gap-3) 0 0; max-width: 44rem; }
+
+  /* ---- quiz ---- */
+  .quiz { margin-top: var(--gap-6); }
+  .q { border-top: 1px solid var(--rule); padding: var(--gap-3) 0; }
+  .q:last-child { border-bottom: 1px solid var(--rule); }
+  .q .qq { font-family: var(--mono); font-size: 0.92rem; font-weight:600; margin: 0 0 0.7rem; color: var(--ink); }
+  .q .qq .qn { color: var(--accent); margin-right: 0.5em; }
+  .q .opts { display:flex; gap: 0.5rem; flex-wrap:wrap; }
+  .q .opt {
+    font-family: var(--mono); font-size: 0.76rem; padding: 0.55em 0.9em; border:1px solid var(--rule);
+    background:transparent; color: var(--ink-2); cursor:pointer; border-radius:2px; transition: all 140ms ease; font-weight:inherit;
+  }
+  .q .opt:hover:not(.locked) { border-color: var(--ink-3); color: var(--ink); }
+  .q.answered .opt { cursor: default; }
+  .q .opt.correct { border-color: var(--accent); color: var(--accent); background: var(--accent-pale); }
+  .q .opt.wrong { opacity: 0.4; }
+  .q .exp { font-family: "Source Serif 4", Georgia, serif; font-size: 0.88rem; line-height:1.5; color: var(--ink-3); margin: 0.7rem 0 0; min-height: 1.2em; transition: opacity 200ms ease; }
+
+  /* ---- lab stations ---- */
+  .lab-intro { margin-top: var(--gap-6); }
+  .lab-intro p { font-family:"Source Serif 4",Georgia,serif; font-size:1.05rem; line-height:1.62; color:var(--ink-2); max-width:46rem; margin: var(--gap-2) 0 0; }
+  .station { margin-top: var(--gap-5); }
+  .station-grid { display:grid; grid-template-columns: 1.12fr 0.88fr; gap: var(--gap-4); align-items:start; margin-top: var(--gap-3); }
+  @media (max-width: 940px){ .station-grid { grid-template-columns: 1fr; } }
+  .panel-card { border:1px solid var(--rule); background:var(--paper-2); border-radius:5px; padding: var(--gap-2); display:flex; flex-direction:column; gap: 0.8rem; }
+  .panel-card canvas { width:100%; height:auto; aspect-ratio: var(--ar, 1000/240); display:block; background:var(--paper); border:1px solid var(--rule); border-radius:3px; }
+  .readout-strip { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:3px; overflow:hidden; }
+  .readout-strip > div { background:var(--paper-2); padding:0.6rem 0.7rem; display:flex; flex-direction:column; gap:0.2rem; }
+  .readout-strip .rk { font-family:var(--mono); font-size:0.58rem; letter-spacing:0.09em; text-transform:uppercase; color:var(--ink-3); }
+  .readout-strip .rv { font-family:var(--mono); font-size:1.02rem; color:var(--ink); }
+  .readout-strip .rv b { color:var(--accent); font-weight:600; }
+  .ctl-row { display:flex; align-items:center; gap:0.8rem; flex-wrap:wrap; }
+  .lab-field { display:flex; flex-direction:column; gap:0.4rem; flex:1; min-width:160px; }
+  .lab-field > span { font-family:var(--mono); font-size:0.64rem; letter-spacing:0.05em; color:var(--ink-3); text-transform:uppercase; }
+  .play-mini { font-family:var(--mono); font-size:0.8rem; font-weight:600; padding:0.62em 1.1em; background:var(--accent); color:var(--paper); border:none; border-radius:3px; cursor:pointer; display:inline-flex; align-items:center; gap:0.55em; transition:filter 140ms ease; white-space:nowrap; }
+  .play-mini::before { content:""; border-left:9px solid var(--paper); border-top:6px solid transparent; border-bottom:6px solid transparent; }
+  .play-mini.on::before { border:none; width:9px; height:9px; background:var(--paper); }
+  .play-mini:hover { filter:brightness(1.08); }
+  .lab-btn { font-family:var(--mono); font-size:0.74rem; padding:0.55em 0.9em; border:1px solid var(--rule); background:transparent; color:var(--ink-2); border-radius:3px; cursor:pointer; transition:all 140ms ease; white-space:nowrap; }
+  .lab-btn:hover { border-color:var(--ink-3); color:var(--ink); }
+  .lab-btn.accent { border-color:var(--accent); color:var(--accent); background:var(--accent-pale); }
+  .lab-btn.sq { width:34px; padding:0.4em 0; font-size:1rem; line-height:1; text-align:center; }
+  .stepper { display:flex; align-items:center; gap:0.5rem; }
+  .stepper-out { font-family:var(--mono); font-size:0.78rem; color:var(--ink-2); white-space:nowrap; }
+  .stepper-out b { color:var(--accent); }
+  .formula-line { font-family:var(--mono); font-size:0.9rem; color:var(--accent); background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:0.6rem 0.8rem; overflow-x:auto; white-space:nowrap; }
+  .formula-line .frac { font-size:0.82em; }
+
+  /* keyboard */
+  .keys { position:relative; display:flex; height:160px; user-select:none; touch-action:none; }
+  .keys .key { flex:1; position:relative; background:var(--paper-3); border:1px solid var(--rule); border-radius:0 0 4px 4px; cursor:pointer; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; gap:0.2rem; padding-bottom:0.5rem; transition:background 90ms ease; }
+  .keys .key .kn { font-family:var(--mono); font-size:0.72rem; color:var(--ink-2); font-weight:600; }
+  .keys .key .kf { font-family:var(--mono); font-size:0.52rem; color:var(--ink-3); }
+  .keys .key:hover { background:var(--paper-2); }
+  .keys .key.lit { background:var(--accent-pale); }
+  .keys .key.black { position:absolute; top:0; width:calc(100% / var(--whites) * 0.6); height:62%; background:var(--paper); border:1px solid var(--rule); border-top:none; border-radius:0 0 3px 3px; z-index:3; flex:none; }
+  .keys .key.black .kn { color:var(--ink); }
+  .keys.hide-hz .kf { visibility:hidden; }
+  .kb-out { font-family:var(--mono); font-size:0.84rem; color:var(--ink-2); }
+  .kb-out b { color:var(--accent); }
+
+  /* station prose + "for the curious" */
+  .station-tell h3 { font-family:var(--mono); font-size:1.05rem; font-weight:600; margin:0 0 0.6rem; letter-spacing:-0.01em; }
+  .station-tell p { font-family:"Source Serif 4",Georgia,serif; font-size:1rem; line-height:1.62; color:var(--ink-2); margin:0 0 0.9rem; }
+  .station-tell strong { color:var(--ink); font-weight:600; }
+  .station-tell em { font-style:italic; color:var(--ink); }
+  .curious { border:1px solid var(--rule); border-radius:4px; background:var(--paper-2); }
+  .curious summary { font-family:var(--mono); font-size:0.72rem; letter-spacing:0.05em; color:var(--accent); cursor:pointer; padding:0.7rem 0.9rem; list-style:none; display:flex; align-items:center; gap:0.5em; text-transform:uppercase; }
+  .curious summary::-webkit-details-marker { display:none; }
+  .curious summary::before { content:"+"; font-weight:700; font-size:0.95rem; }
+  .curious[open] summary::before { content:"\2212"; }
+  .curious .curious-body { padding:0 0.9rem 0.9rem; }
+  .curious .curious-body p { font-family:"Source Serif 4",Georgia,serif; font-size:0.9rem; line-height:1.58; color:var(--ink-3); margin:0; }
+  .curious code { font-family:var(--mono); font-size:0.84em; color:var(--accent); background:var(--paper); padding:0.05em 0.3em; border-radius:2px; }
+
+  /* ---- step-by-step lesson ---- */
+  .ink-accent { color:var(--accent); font-weight:600; }
+  .ink-cyan { color:var(--tok-key); font-weight:600; }
+  .ink-amber { color:var(--tok-str); font-weight:600; }
+  .steps-intro { margin-top: var(--gap-5); }
+  .big-lede { font-family:"Source Serif 4",Georgia,serif; font-size:1.22rem; line-height:1.6; color:var(--ink-2); max-width:46rem; margin:0; }
+  .big-lede strong { color:var(--ink); font-weight:600; }
+  .big-lede em { font-style:italic; color:var(--ink); }
+  .step { margin-top: var(--gap-6); }
+  .step-head { display:flex; align-items:baseline; gap:1rem; border-top:2px solid var(--ink); padding-top:0.85rem; flex-wrap:wrap; }
+  .step-head .step-n { font-family:var(--mono); font-size:0.72rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); }
+  .step-head h2 { font-family:var(--mono); font-size:clamp(1.5rem,3vw,2rem); font-weight:600; letter-spacing:-0.02em; margin:0; color:var(--ink); }
+  .step-grid { display:grid; grid-template-columns: 0.92fr 1.08fr; gap: var(--gap-4); align-items:start; margin-top: var(--gap-3); }
+  .step-grid.wide { grid-template-columns: 1fr; }
+  @media (max-width: 940px){ .step-grid { grid-template-columns: 1fr; } }
+  .step-tell p { font-family:"Source Serif 4",Georgia,serif; font-size:1.05rem; line-height:1.65; color:var(--ink-2); margin:0 0 0.9rem; }
+  .step-tell p.lead-line { font-size:1.2rem; color:var(--ink); line-height:1.45; }
+  .step-tell strong { color:var(--ink); font-weight:600; }
+  .step-tell em { font-style:italic; color:var(--ink); }
+  .you-try { font-family:var(--mono); font-size:0.82rem; line-height:1.5; color:var(--accent); display:flex; gap:0.55em; align-items:flex-start; }
+  .you-try::before { content:"\25B8"; flex:none; }
+  .big-ratio { font-family:var(--mono); font-size:1.08rem; color:var(--ink); background:var(--paper); border:1px solid var(--rule); border-radius:3px; padding:0.75rem 0.9rem; margin:0 0 0.9rem; line-height:1.4; }
+  .big-ratio b { color:var(--accent); font-weight:600; }
+  .recap { display:flex; flex-direction:column; gap:1px; background:var(--rule); border:1px solid var(--rule); border-radius:4px; overflow:hidden; margin-top:var(--gap-3); }
+  .recap-row { display:grid; grid-template-columns: 130px 1fr auto; gap:1rem; align-items:center; background:var(--paper-2); padding:0.9rem 1.1rem; }
+  @media (max-width:600px){ .recap-row { grid-template-columns:1fr; gap:0.3rem; } }
+  .recap-row .rl { font-family:var(--mono); font-size:1.05rem; font-weight:600; }
+  .recap-row .rl.ac { color:var(--accent); }
+  .recap-row .rl.cy { color:var(--tok-key); }
+  .recap-row .rl.am { color:var(--tok-str); }
+  .recap-row .rf { font-family:var(--mono); font-size:0.92rem; color:var(--ink-2); }
+  .recap-row .rm { font-family:"Source Serif 4",Georgia,serif; font-style:italic; font-size:0.95rem; color:var(--ink-3); }
+
+  /* sound demo */
+  .sound-top { display:grid; grid-template-columns:150px 1fr; gap:var(--gap-2); align-items:center; }
+  @media (max-width:560px){ .sound-top{ grid-template-columns:1fr; justify-items:center; } }
+  .vinyl { width:150px; height:150px; border-radius:50%; background:#15171b; box-shadow:0 0 0 1px var(--rule), 0 12px 26px -14px rgba(0,0,0,.45); display:flex; align-items:center; justify-content:center; position:relative; flex:none; }
+  .vinyl::before { content:""; position:absolute; inset:9px; border-radius:50%; background:repeating-radial-gradient(circle at 50% 50%, #15171b 0 3px, #20242a 3px 4px); }
+  .vinyl-label { position:relative; z-index:1; width:50px; height:50px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:0.62rem; font-weight:600; letter-spacing:0.02em; }
+  .vinyl.spin { animation:vspin 1.8s linear infinite; }
+  @keyframes vspin { to { transform:rotate(360deg); } }
+
+  /* warm editorial skin (friendlier than the engineering theme, for the lab) */
+  [data-aesthetic="editorial"] { --tok-key: oklch(0.48 0.11 235); --tok-str: oklch(0.52 0.10 72); }
+  .masthead .title { font-family:var(--serif); font-weight:600; letter-spacing:-0.02em; text-transform:none; }
+  .step-head h2 { font-family:var(--serif); font-weight:600; letter-spacing:-0.015em; }
+  .step-tell h3, .station-tell h3 { font-family:var(--serif); }
+</style>
+</head>
+<body>
+  <div class="lab-topbar">
+    <div class="lab-topbar-brand">
+      <span class="lab-topbar-logo"></span>
+      <span class="lab-topbar-crumb"><a href="../">Lab</a><span class="sep"> / </span>Trigonometry</span>
+    </div>
+    <span class="lab-topbar-tag">an interactive lesson</span>
+  </div>
+
+  <header class="masthead">
+    <div class="eyebrow"><span class="num">01</span>TRIGONOMETRY · FROM SCRATCH</div>
+    <h1 class="title">Meet <em>Sine</em>, Cosine &amp; Tangent</h1>
+    <p class="lede">Sine, cosine, and tangent all come from one right triangle. This page builds them up one idea at a time, and every step has something to play with. By the end they should feel simple, because they are.</p>
+  </header>
+
+  <div class="wrap">
+    <section class="steps-intro">
+      <p class="big-lede">These three words scare a lot of people. They shouldn't. Sine, cosine, and tangent all come from one picture: a triangle with a square corner. We build them up <strong>one step at a time</strong>, and every step has a box to play with. You don't need any earlier math. By the end they will feel obvious.</p>
+    </section>
+
+    <!-- STEP 1: ANGLE -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 1</span><h2>An angle</h2></div>
+      <div class="step-grid">
+        <div class="step-tell">
+          <p class="lead-line">Before sine or cosine, we need one thing: an <strong>angle</strong>.</p>
+          <p>Picture two straight lines meeting at a point, like the hands of a clock. How far open they are is the angle, and we measure it in <strong>degrees</strong>. A square corner is <strong>90°</strong>, a flat straight line is 180°, and all the way around is 360°.</p>
+          <p class="you-try">Drag the slider, or tap a preset, and watch the opening grow.</p>
+          <details class="curious"><summary>for the curious</summary><div class="curious-body"><p>Mathematicians often use <em>radians</em> instead of degrees. A full turn is <code>2π</code> radians instead of 360 degrees. Same angle, different ruler. Radians come back at the circle in Step 6.</p></div></details>
+        </div>
+        <div class="panel-card" id="lab-angle">
+          <canvas data-canvas width="720" height="300" style="--ar:720/300"></canvas>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle = <b data-ang>40°</b></span><input type="range" data-angle min="0" max="160" value="40"></label>
+          </div>
+          <div class="ctl-row">
+            <button class="lab-btn" data-preset="0">0°</button>
+            <button class="lab-btn" data-preset="30">30°</button>
+            <button class="lab-btn" data-preset="45">45°</button>
+            <button class="lab-btn" data-preset="60">60°</button>
+            <button class="lab-btn" data-preset="90">90°</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 2: THE THREE SIDES -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 2</span><h2>The triangle's three sides</h2></div>
+      <div class="step-grid">
+        <div class="step-tell">
+          <p class="lead-line">Now draw a triangle with one <strong>square corner</strong>, the 90° kind. That is a <em>right triangle</em>.</p>
+          <p>Pick one of the other corners and call its angle <strong>θ</strong> ("theta"). From θ's point of view, the three sides get names:</p>
+          <p><span class="ink-amber">hypotenuse</span>: the long slanted side, always opposite the square corner.<br><span class="ink-accent">opposite</span>: the side that faces θ from across the triangle.<br><span class="ink-cyan">adjacent</span>: the side θ sits right next to.</p>
+          <p>The picture shows each side's length. We give the <span class="ink-amber">hypotenuse</span> a length of <strong>1</strong>, then measure the other two sides against it. Those two measurements are sine and cosine.</p>
+          <p class="you-try">Drag θ. The names never move. The opposite always faces θ, the adjacent always touches it.</p>
+        </div>
+        <div class="panel-card" data-triangle="sides">
+          <canvas data-canvas width="720" height="360" style="--ar:720/360"></canvas>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle θ = <b data-ang>35°</b></span><input type="range" data-angle min="10" max="80" value="35"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 3: SINE -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 3</span><h2>Sine</h2></div>
+      <div class="step-grid">
+        <div class="step-tell">
+          <p class="lead-line"><strong>Sine</strong> is a measurement. Set the longest side to length 1, then measure the <span class="ink-accent">opposite</span> side. That length is the sine.</p>
+          <div class="big-ratio">sin θ = <span class="ink-accent">opposite</span> ÷ <span class="ink-amber">hypotenuse</span> = <b data-opp>0.50</b> ÷ <b data-hyp>1</b> = <b data-val>0.50</b></div>
+          <p>The number comes straight off the triangle. When θ is small the opposite side is short, so sine is near <strong>0</strong>. When θ is close to a square corner the opposite side is almost the whole hypotenuse, so sine is near <strong>1</strong>.</p>
+          <p class="you-try">Drag θ and read the opposite side's length in the picture. That length is sin θ.</p>
+        </div>
+        <div class="panel-card" data-triangle="sine">
+          <canvas data-canvas width="720" height="360" style="--ar:720/360"></canvas>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle θ = <b data-ang>30°</b></span><input type="range" data-angle min="5" max="88" value="30"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 4: COSINE -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 4</span><h2>Cosine</h2></div>
+      <div class="step-grid">
+        <div class="step-tell">
+          <p class="lead-line"><strong>Cosine</strong> is the other measurement. Same triangle, longest side still 1. This time measure the <span class="ink-cyan">adjacent</span> side, the one right next to θ.</p>
+          <div class="big-ratio">cos θ = <span class="ink-cyan">adjacent</span> ÷ <span class="ink-amber">hypotenuse</span> = <b data-adj>0.87</b> ÷ <b data-hyp>1</b> = <b data-val>0.87</b></div>
+          <p>When θ is small the triangle is wide, so the adjacent side is long and cosine is near <strong>1</strong>. As θ opens up that side shrinks and cosine drops toward <strong>0</strong>. So as θ grows, sine goes up while cosine goes down.</p>
+          <p class="you-try">Drag θ and watch both numbers. One rises as the other falls.</p>
+        </div>
+        <div class="panel-card" data-triangle="cosine">
+          <canvas data-canvas width="720" height="360" style="--ar:720/360"></canvas>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle θ = <b data-ang>30°</b></span><input type="range" data-angle min="5" max="88" value="30"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 5: TANGENT -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 5</span><h2>Tangent</h2></div>
+      <div class="step-grid">
+        <div class="step-tell">
+          <p class="lead-line"><strong>Tangent</strong> is the steepness. It compares how fast the triangle rises against how far it runs.</p>
+          <p class="lead-line"><strong>Tangent</strong> compares the two sides directly: the <span class="ink-accent">opposite</span> divided by the <span class="ink-cyan">adjacent</span>. It tells you how steep the slope is.</p>
+          <div class="big-ratio">tan θ = <span class="ink-accent">opposite</span> ÷ <span class="ink-cyan">adjacent</span> = <b data-opp>0.50</b> ÷ <b data-adj>0.87</b> = <b data-val>0.58</b></div>
+          <p>This is the same as <code>sin θ ÷ cos θ</code>. A flat triangle has a small tangent. As θ nears a square corner the opposite side towers over the adjacent side, so tangent gets very large.</p>
+          <p class="you-try">Push θ toward 85° and watch tan θ shoot up.</p>
+          <details class="curious"><summary>for the curious</summary><div class="curious-body"><p>At exactly 90° the adjacent side is 0. Dividing by zero is undefined, so tangent has no value there. It is the only one of the three with a gap like this. You can understand waves without ever using it.</p></div></details>
+        </div>
+        <div class="panel-card" data-triangle="tan">
+          <canvas data-canvas width="720" height="360" style="--ar:720/360"></canvas>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle θ = <b data-ang>30°</b></span><input type="range" data-angle min="5" max="86" value="30"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- STEP 6: UNIT CIRCLE -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">Step 6</span><h2>The unit circle</h2></div>
+      <div class="step-tell" style="max-width:46rem; margin-bottom:var(--gap-3)">
+        <p class="lead-line">Put that same triangle inside a circle with a radius of <strong>1</strong>, so the hypotenuse is always 1. As θ turns, the dot slides around the circle.</p>
+        <p>The dot's <span class="ink-accent">height</span> above the middle is <strong>sin θ</strong>. Its <span class="ink-cyan">distance across</span> is <strong>cos θ</strong>. So the circle is just every angle's sine and cosine, shown at once.</p>
+        <p><strong>Where does the wave come from?</strong> Watch only the height, and ignore left and right. As the dot goes around, its height rises to the top, back to the middle, down to the bottom, and back again. Write that height down moment by moment, moving a little to the right each time. Those marks line up into the curve on the right.</p>
+        <p><strong>Why isn't it a circle?</strong> A circle needs two numbers, across and up. The wave keeps only one of them, the height, and spreads it out over time. One number over time cannot loop back into a circle. It just goes up and down. That up and down is a wave.</p>
+        <p class="you-try">Press Spin it. The dot's height gets carried to the right and drawn as the wave.</p>
+      </div>
+      <div class="step-grid wide">
+        <div class="panel-card" id="lab-circle">
+          <canvas data-canvas width="1000" height="440" style="--ar:1000/440"></canvas>
+          <div class="readout-strip">
+            <div><span class="rk">Angle θ</span><span class="rv"><b data-otheta>30°</b></span></div>
+            <div><span class="rk">sin θ (height)</span><span class="rv" data-osin>0.500</span></div>
+            <div><span class="rk">cos θ (across)</span><span class="rv" data-ocos>0.866</span></div>
+          </div>
+          <div class="ctl-row">
+            <button class="play-mini" data-play><span class="lbl">Spin it</span></button>
+            <div class="toggle" data-cos><span class="sw"></span><span>show cosine too</span></div>
+            <div class="toggle on" data-tri><span class="sw"></span><span>show triangle</span></div>
+            <div class="toggle" data-rad><span class="sw"></span><span>radians</span></div>
+          </div>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Angle θ (drag to move the dot)</span><input type="range" data-theta min="0" max="360" value="30"></label>
+            <label class="lab-field"><span>Spin speed</span><input type="range" data-speed min="10" max="100" value="45"></label>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- RECAP -->
+    <section class="step">
+      <div class="step-head"><span class="step-n">recap</span><h2>The whole story, in three lines</h2></div>
+      <div class="recap">
+        <div class="recap-row"><span class="rl ac">sine</span><span class="rf"><span class="ink-accent">opposite</span> ÷ <span class="ink-amber">hypotenuse</span></span><span class="rm">the height</span></div>
+        <div class="recap-row"><span class="rl cy">cosine</span><span class="rf"><span class="ink-cyan">adjacent</span> ÷ <span class="ink-amber">hypotenuse</span></span><span class="rm">the width</span></div>
+        <div class="recap-row"><span class="rl am">tangent</span><span class="rf"><span class="ink-accent">opposite</span> ÷ <span class="ink-cyan">adjacent</span> = sin ÷ cos</span><span class="rm">the steepness</span></div>
+      </div>
+      <p class="step-tell" style="margin-top:var(--gap-2); max-width:46rem;">Three ratios from one triangle. On the unit circle, sine is the height and cosine is the across. That lets them work for any angle, and drawn over time they make a wave. That is all there is to it.</p>
+    </section>
+
+    <!-- QUIZ -->
+    <section class="quiz">
+      <div class="section-tag">
+        <span class="num">check yourself</span>
+        <span class="label">five quick questions</span>
+      </div>
+      <div id="quizBox"></div>
+    </section>
+
+    <section class="step">
+      <div class="step-head"><span class="step-n">last idea</span><h2>A sine wave is also a sound</h2></div>
+      <div class="step-tell" style="max-width:48rem; margin-bottom:var(--gap-3)">
+        <p class="lead-line">The wave isn't only a shape you draw. It is also a sound you can hear.</p>
+        <p>A speaker pushes the air back and forth. If it pushes in the shape of a sine wave, a few hundred times a second, your ear hears a clear musical note. A faster wave is a higher note. A taller wave is a louder one.</p>
+        <p>Nothing here is recorded. The computer builds the wave from the same sine you just learned and sends it to your speaker. The line in the box is that exact wave, drawn as it plays.</p>
+      </div>
+      <div class="step-grid">
+        <div class="panel-card" id="lab-sound">
+          <div class="sound-top">
+            <div class="vinyl" data-disc><span class="vinyl-label">sine</span></div>
+            <canvas data-scope width="640" height="240" style="--ar:640/240"></canvas>
+          </div>
+          <div class="readout-strip">
+            <div><span class="rk">Note</span><span class="rv" data-note>A4</span></div>
+            <div><span class="rk">Wave repeats</span><span class="rv"><b data-hz>440</b> times / sec</span></div>
+          </div>
+          <div class="ctl-row">
+            <button class="play-mini" data-play><span class="lbl">Play a note</span></button>
+            <button class="lab-btn accent" data-tune>Play a little tune</button>
+          </div>
+          <div class="ctl-row">
+            <label class="lab-field"><span>Pitch (low to high)</span><input type="range" data-pitch min="130" max="660" value="440"></label>
+          </div>
+        </div>
+        <div class="step-tell">
+          <p>Press <strong>Play a note</strong>, then drag the pitch slider. The wave in the box gets tighter as the note goes higher. Tighter wave, faster repeat, higher sound.</p>
+          <p>Then press <strong>Play a little tune</strong>. Every note in it is just a sine wave at a different pitch, one after another.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+
+
+<!-- interactive figures -->
+<script src="lab/lab-audio.js"></script>
+<script src="lab/angle.js"></script>
+<script src="lab/triangle.js"></script>
+<script src="lab/unit-circle.js"></script>
+<script src="lab/sound.js"></script>
+<script src="lab/quiz.js"></script>
+</body>
+</html>

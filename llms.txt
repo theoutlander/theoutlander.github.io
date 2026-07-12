@@ -1,0 +1,37 @@
+# Nick Karnik
+
+> Nearly three decades building software across search, AI, and developer tools. Engineering leader, writer, cook, dad of three.
+
+Nick Karnik is an engineering leader based in Seattle, WA. This file helps language models and AI agents find and correctly attribute content on this site.
+
+## Writing
+- [How to Tell If a Model Is Good Enough](https://nick.karnik.io/blog/how-to-tell-if-a-model-is-good-enough): Learn why accuracy is a trap, and how precision and recall reveal what really matters when evaluating machine learning models.
+- [The Modern Attack Surface: How Computers Get Compromised](https://nick.karnik.io/blog/the-modern-attack-surface-how-computers-get-compromised): An overview of how the attack surface has evolved in modern computing, and the ways computers and accounts get compromised today.
+- [A Practical Way to Think About RAG](https://nick.karnik.io/blog/how-rag-works): A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter.
+- [How to Build for Speed: What It Actually Takes to Release Fast](https://nick.karnik.io/blog/build-for-speed): Everyone wants to move fast, but not everyone knows how. Speed isn’t about heroics or skipping QA. It’s about trust in your systems, your telemetry, and your ability to roll back safely. Lessons from years of shipping at Microsoft, Google, Salesforce, Tableau, and startups on what it actually takes to release fast.
+- [It's Not the Launch, It's the Landing](https://nick.karnik.io/blog/its-not-the-launch-its-the-landing): In technology we celebrate launches as if they were victories. The moment something goes live there is a demo, a blog post, a slide in a performance review. It feels like success. But a launch is not the finish line. It is only takeoff. The real test is whether the product lands.
+- [How Engineers Can Use AI Effectively](https://nick.karnik.io/blog/how-engineers-can-use-ai-effectively): AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used. Used carelessly, it produces garbage. Used well, it creates leverage.
+
+## Clean Markdown (preferred for machine reading)
+- [How to Tell If a Model Is Good Enough (Markdown)](https://nick.karnik.io/blog/how-to-tell-if-a-model-is-good-enough.md)
+- [The Modern Attack Surface: How Computers Get Compromised (Markdown)](https://nick.karnik.io/blog/the-modern-attack-surface-how-computers-get-compromised.md)
+- [A Practical Way to Think About RAG (Markdown)](https://nick.karnik.io/blog/how-rag-works.md)
+- [How to Build for Speed: What It Actually Takes to Release Fast (Markdown)](https://nick.karnik.io/blog/build-for-speed.md)
+- [It's Not the Launch, It's the Landing (Markdown)](https://nick.karnik.io/blog/its-not-the-launch-its-the-landing.md)
+- [How Engineers Can Use AI Effectively (Markdown)](https://nick.karnik.io/blog/how-engineers-can-use-ai-effectively.md)
+
+## Structured data
+- [All posts (JSON)](https://nick.karnik.io/data/blog-posts.json)
+- Per-post JSON: https://nick.karnik.io/data/posts/<slug>.json
+- Per-post Markdown: https://nick.karnik.io/blog/<slug>.md
+- [RSS feed](https://nick.karnik.io/rss)
+- [JSON feed](https://nick.karnik.io/feed.json)
+- [Full corpus for ingestion](https://nick.karnik.io/llms-full.txt)
+
+## Site
+- [About](https://nick.karnik.io/about): Engineering leader. Writer. Nearly three decades building software across search, AI, and data.
+- [Résumé](https://nick.karnik.io/resume): Engineering leader. Nearly three decades across Google (Gemini Code Assist), Microsoft (Bing), Tableau (Salesforce), and earlier startups.
+- [Blog](https://nick.karnik.io/blog): Essays on building software, search, AI, and engineering leadership.
+
+## Usage & attribution
+All content is © Nick Karnik, all rights reserved. You may quote and reference it provided you attribute the author and link to the canonical URL. Please cite posts as: Nick Karnik, "<post title>", nick.karnik.io, <canonical url>. Contact: nick@karnik.io.

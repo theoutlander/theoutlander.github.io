@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Maya's Sewing Museum 🏛️</title>
+<script>window.MAYA_GAME='games/mayas-sewing-museum/index.html';</script>
+<script src="portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
+<script src="../../shared/ga-analytics.js" defer></script>
+<script src="../../shared/sound.js" defer></script>
+<script src="../../shared/back.js" defer></script>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff6eb4;--yellow:#ffe14d;--green:#5dffb0;--blue:#5bc8ff;
+  --purple:#c77dff;--orange:#ff9a3c;
+  --bg:#0f0a1e;--card:#1e1440;--text:#f0e6ff;--muted:rgba(240,230,255,.5);
+  --border:rgba(255,255,255,.09);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;font-weight:800;
+  overflow:hidden;overscroll-behavior:none;-webkit-text-size-adjust:100%;
+  -webkit-touch-callout:none;-webkit-user-select:none;user-select:none;touch-action:none}
+button{font-family:inherit;cursor:pointer}
+
+#scene3d{position:fixed;inset:0;width:100%;height:100%;display:block;outline:none}
+
+/* ── overlay layer (bubbles, hearts, hints) ── */
+#overlay{position:fixed;inset:0;pointer-events:none;z-index:5;overflow:hidden}
+
+/* ── HUD ── */
+#hud{position:fixed;top:0;left:0;right:0;z-index:10;display:flex;align-items:center;gap:8px;
+  padding:calc(10px + env(safe-area-inset-top)) 14px 8px;pointer-events:none}
+html.maya-in-portal #hud{padding-left:74px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:rgba(15,10,30,.72);border:1px solid var(--border);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  border-radius:99px;padding:8px 14px;font-weight:900;font-size:15px;white-space:nowrap;pointer-events:auto}
+.chip.coins{color:var(--yellow);border-color:rgba(255,225,77,.35)}
+.chip.sales{color:var(--pink);border-color:rgba(255,110,180,.35)}
+.spacer{flex:1}
+.iconbtn{background:rgba(15,10,30,.72);border:1px solid var(--border);color:var(--text);
+  width:44px;height:44px;border-radius:50%;font-size:19px;flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;pointer-events:auto;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.iconbtn:active{background:rgba(255,255,255,.18)}
+
+/* ── speech bubbles ── */
+.bubble{position:fixed;transform:translate(-50%,-115%);background:#fff;color:#2a1745;
+  font-size:14px;font-weight:800;line-height:1.25;padding:8px 12px;border-radius:14px;
+  max-width:190px;text-align:center;box-shadow:0 4px 14px rgba(0,0,0,.35);pointer-events:none;z-index:6}
+.bubble::after{content:'';position:absolute;left:50%;bottom:-7px;transform:translateX(-50%);
+  border:8px solid transparent;border-top-color:#fff;border-bottom:0}
+.floatnote{position:fixed;transform:translate(-50%,-120%);background:var(--pink);color:#3a0f28;
+  font-size:14px;font-weight:900;padding:7px 12px;border-radius:12px;white-space:nowrap;
+  box-shadow:0 4px 12px rgba(0,0,0,.4);pointer-events:none;z-index:7}
+.heartfloat{position:fixed;font-size:22px;pointer-events:none;z-index:6;transform:translate(-50%,0)}
+.tapring{position:fixed;width:22px;height:22px;border-radius:50%;pointer-events:none;z-index:6;
+  border:3px solid rgba(255,225,77,.92);box-shadow:0 0 10px rgba(255,225,77,.5);transform:translate(-50%,-50%)}
+
+/* ── crosshair (desktop pointer-lock look mode) ── */
+#crosshair{position:fixed;left:50%;top:50%;width:22px;height:22px;transform:translate(-50%,-50%);
+  z-index:7;pointer-events:none;display:none}
+#crosshair::before,#crosshair::after{content:'';position:absolute;background:rgba(255,255,255,.85);
+  box-shadow:0 0 4px rgba(0,0,0,.6);border-radius:2px}
+#crosshair::before{left:50%;top:0;width:2px;height:100%;transform:translateX(-50%)}
+#crosshair::after{top:50%;left:0;height:2px;width:100%;transform:translateY(-50%)}
+
+/* ── tap hint over nearest exhibit ── */
+#taphint{position:fixed;display:none;transform:translate(-50%,-135%);z-index:6;pointer-events:none;
+  background:rgba(255,225,77,.95);color:#3a2360;font-size:13px;font-weight:900;
+  padding:6px 11px;border-radius:99px;box-shadow:0 4px 12px rgba(0,0,0,.4);
+  animation:hintbob 1.2s ease-in-out infinite}
+@keyframes hintbob{0%,100%{margin-top:0}50%{margin-top:-6px}}
+
+/* ── confetti ── */
+.conf{position:fixed;width:10px;height:13px;border-radius:3px;pointer-events:none;z-index:8;
+  transform:translate(-50%,-50%)}
+
+/* ── sell arrow (points at a waiting buyer) ── */
+#sellarrow{position:fixed;display:none;z-index:11;pointer-events:none;width:52px;height:52px;
+  align-items:center;justify-content:center;font-size:30px;color:var(--yellow);
+  text-shadow:0 0 12px rgba(255,225,77,.8),0 2px 6px rgba(0,0,0,.5)}
+
+/* ── toast ── */
+#toast{position:fixed;top:calc(64px + env(safe-area-inset-top));left:50%;transform:translate(-50%,-12px);
+  background:rgba(30,20,64,.95);border:1px solid rgba(255,225,77,.4);color:var(--text);
+  padding:10px 18px;border-radius:99px;font-size:15px;font-weight:900;white-space:nowrap;
+  opacity:0;transition:.3s;z-index:12;pointer-events:none;max-width:92vw;text-overflow:ellipsis;overflow:hidden}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ── twin joysticks ── */
+#joybase,#joyknob,#lookbase,#lookknob{position:fixed;display:none;pointer-events:none;z-index:9;transform:translate(-50%,-50%)}
+#joybase,#lookbase{width:116px;height:116px;border-radius:50%;background:rgba(255,255,255,.08);
+  border:2px solid rgba(255,255,255,.22)}
+#joyknob{width:54px;height:54px;border-radius:50%;background:rgba(255,110,180,.85);
+  box-shadow:0 2px 10px rgba(0,0,0,.4)}
+#lookknob{width:54px;height:54px;border-radius:50%;background:rgba(91,200,255,.85);
+  box-shadow:0 2px 10px rgba(0,0,0,.4)}
+
+/* ── small screens ── */
+@media (max-width:480px){
+  .chip{font-size:13px;padding:6px 10px}
+  .iconbtn{width:42px;height:42px;font-size:17px}
+  #hud{gap:6px;padding-left:10px;padding-right:10px}
+  .bubble{font-size:13px;max-width:160px}
+}
+
+/* ── item card ── */
+#card{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translate(-50%,130%);
+  width:min(440px,92vw);background:var(--card);border:1px solid rgba(255,255,255,.14);border-radius:24px;
+  padding:18px 20px 20px;z-index:20;transition:transform .35s cubic-bezier(.2,.9,.3,1.1);
+  box-shadow:0 12px 40px rgba(0,0,0,.5);pointer-events:auto}
+#card.open{transform:translate(-50%,0)}
+#cardClose{position:absolute;top:10px;right:10px;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.08);border:1px solid var(--border);color:var(--text);font-size:18px}
+#cardClose:active{background:rgba(255,255,255,.2)}
+.cardrow{display:flex;align-items:center;gap:16px}
+#cardEmoji{font-size:58px;line-height:1;filter:drop-shadow(0 4px 10px rgba(0,0,0,.4))}
+#cardName{font-family:'Fredoka One',cursive;font-size:26px;font-weight:400}
+#cardPrice{display:inline-flex;align-items:center;background:rgba(255,225,77,.14);border:1px solid rgba(255,225,77,.4);
+  color:var(--yellow);border-radius:99px;padding:4px 12px;font-size:15px;font-weight:900;margin-top:4px}
+#cardDesc{margin-top:12px;font-size:16px;font-weight:700;color:var(--text);line-height:1.4}
+.stamp{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
+.stamp span{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:900;
+  border-radius:99px;padding:5px 11px}
+#cardStamp{background:rgba(93,255,176,.12);border:1px dashed rgba(93,255,176,.5);color:var(--green)}
+#cardTreasure{background:rgba(255,225,77,.12);border:1px solid rgba(255,225,77,.5);color:var(--yellow)}
+#cardPriceless{background:rgba(255,110,180,.12);border:1px solid rgba(255,110,180,.5);color:var(--pink)}
+#cardShop{background:var(--pink);color:#3a0f28;text-decoration:none;font-size:14px !important;
+  padding:9px 16px !important;box-shadow:0 4px 14px rgba(255,110,180,.35)}
+#cardShop:active{transform:scale(.96)}
+#cardSales{margin-top:8px;font-size:13.5px;color:var(--pink);font-weight:900;min-height:0}
+
+/* ── splash ── */
+#splash{position:fixed;inset:0;z-index:30;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;text-align:center;padding:24px;transition:opacity .6s;
+  background:radial-gradient(ellipse at 50% 30%,#2a1a4a 0%,#170f2e 55%,#0f0a1e 100%)}
+#splash.hide{opacity:0;pointer-events:none}
+#splash .big{font-size:64px;line-height:1;filter:drop-shadow(0 6px 20px rgba(255,110,180,.35))}
+#splash h1{font-family:'Fredoka One',cursive;font-weight:400;font-size:clamp(30px,7vw,44px);
+  background:linear-gradient(90deg,var(--pink),var(--yellow),var(--green),var(--blue),var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+#splash p{font-size:16px;color:var(--muted);max-width:340px;line-height:1.45}
+#playBtn{margin-top:10px;background:linear-gradient(180deg,#ff8fc6,var(--pink));color:#3a0f28;border:none;
+  font-family:'Fredoka One',cursive;font-size:22px;padding:16px 52px;border-radius:99px;
+  box-shadow:0 8px 24px rgba(255,110,180,.4)}
+#playBtn:active{transform:scale(.96)}
+#splash .hint{font-size:13px;color:var(--muted);font-weight:700}
+</style>
+</head>
+<body>
+
+<canvas id="scene3d"></canvas>
+
+<div id="overlay"></div>
+<div id="taphint">👀 tap to peek!</div>
+<div id="crosshair"></div>
+
+<div id="root">
+<div id="hud" data-screen-label="Museum HUD">
+  <span class="chip coins"><span>🪙</span><span id="coins">0</span></span>
+  <span class="chip sales"><span>💖</span><span>sold: <span id="sales">0</span></span></span>
+  <span class="spacer"></span>
+  <button class="iconbtn" id="helpBtn" aria-label="How to play">❓</button>
+  <button class="iconbtn" id="camBtn" aria-label="Camera view">🎥</button>
+  <button class="iconbtn" id="dayBtn" aria-label="Day or night">🌙</button>
+  <button class="iconbtn" id="musicBtn" aria-label="Music on/off">🎵</button>
+</div>
+</div>
+
+<div id="toast"></div>
+<div id="sellarrow">➤</div>
+
+<div id="joybase"></div>
+<div id="joyknob"></div>
+<div id="lookbase"></div>
+<div id="lookknob"></div>
+
+<div id="card">
+  <button id="cardClose" aria-label="Close">✕</button>
+  <div class="cardrow">
+    <div id="cardEmoji">🧢</div>
+    <div>
+      <div id="cardName">Cap</div>
+      <span id="cardPrice">5 🪙</span>
+    </div>
+  </div>
+  <div id="cardDesc"></div>
+  <div class="stamp">
+    <span id="cardStamp">✂️ hand-sewn by Maya</span>
+    <span id="cardTreasure" style="display:none">👑 MUSEUM TREASURE</span>
+    <span id="cardPriceless" style="display:none">🌈 PRICELESS</span>
+    <a id="cardShop" style="display:none" href="../mayas-sewing-shop/index.html">🧵 Open the Sewing Shop</a>
+  </div>
+  <div id="cardSales"></div>
+</div>
+
+<div id="splash" data-screen-label="Title screen">
+  <div class="big">🏛️🧵✨</div>
+  <h1>Maya's Sewing Museum</h1>
+  <p>Three rooms of things Maya sewed — Cozy Wear, Fancy Things, and the Treasure Vault. Visitors will fall in love… walk over and SELL to them! And somewhere… a secret 🤫</p>
+  <button id="playBtn">Open the doors!</button>
+  <div class="hint">👆 tap where to go — or tap an exhibit to peek, a visitor to sell<br>🕹️ or hold &amp; drag to steer · ⌨️ WASD/arrows · 🎥 changes the camera</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/babylonjs@9.16.1/babylon.js"></script>
+<script>
+if (!window.BABYLON){
+  document.querySelector('#splash p').textContent = 'Hmm, the 3D magic didn\u2019t load. Check the internet and refresh! 🔄';
+  document.getElementById('playBtn').style.display = 'none';
+}
+</script>
+<script src="museum-data.js"></script>
+<script src="museum-world.js"></script>
+<script src="museum-game.js"></script>
+</body>
+</html>

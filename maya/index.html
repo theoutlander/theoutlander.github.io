@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Maya's Game Lab 🎮</title>
+
+<!-- Offline support: installable PWA + service worker (see sw.js) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0f0a1e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Maya's Games">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+
+<!-- Google Analytics -->
+<script src="shared/ga-analytics.js" defer></script>
+<script src="shared/sound.js" defer></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="shared/family-chat.css">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+:root{
+  --bg:#0f0a1e;--card:#1e1440;--border:rgba(255,255,255,0.07);
+  --pink:#ff6eb4;--yellow:#ffe14d;--green:#5dffb0;--blue:#5bc8ff;
+  --purple:#c77dff;--text:#f0e6ff;--muted:rgba(240,230,255,0.4);
+  --radius:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nunito',sans-serif;overflow-x:hidden;-webkit-text-size-adjust:100%}
+
+/* Stars */
+#stars{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.star{position:absolute;border-radius:50%;background:#fff;animation:twinkle var(--d,2s) infinite alternate}
+@keyframes twinkle{0%{opacity:.1}100%{opacity:var(--o,.8)}}
+
+/* Floaties */
+.floaty{position:fixed;pointer-events:none;animation:floatup linear infinite;opacity:0;z-index:0}
+@keyframes floatup{0%{transform:translateY(0) rotate(0deg);opacity:0}10%{opacity:.25}90%{opacity:.08}100%{transform:translateY(-110vh) rotate(360deg);opacity:0}}
+
+/* Confetti */
+.cp{position:fixed;top:-30px;pointer-events:none;z-index:500;animation:cf linear forwards}
+@keyframes cf{0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}100%{transform:translateY(110vh) rotate(720deg) scale(.5);opacity:0}}
+
+/* Layout */
+#app{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:0 16px 100px}
+
+/* Header */
+header{text-align:center;padding:48px 0 36px}
+.lab-title{font-family:'Fredoka One',cursive;font-size:clamp(44px,10vw,88px);line-height:1.05;background:linear-gradient(135deg,var(--pink) 0%,var(--yellow) 35%,var(--green) 65%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(255,110,180,.2));cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-block}
+.lab-title.pop{animation:pop .35s ease-out}
+@keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08) rotate(-2deg)}70%{transform:scale(.97) rotate(1deg)}100%{transform:scale(1) rotate(0)}}
+.lab-sub{font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:8px}
+.dad-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:99px;padding:6px 16px;font-size:12px;color:var(--muted);margin-top:12px}
+.heart{color:var(--pink);display:inline-block;animation:hb 1.4s ease-in-out infinite}
+@keyframes hb{0%,100%{transform:scale(1)}50%{transform:scale(1.35)}}
+.tap-hint{font-size:11px;color:rgba(255,255,255,.18);margin-top:6px;letter-spacing:.08em}
+
+/* Section heading */
+.sh{display:flex;align-items:center;gap:12px;margin:36px 0 18px}
+.sh h2{font-family:'Fredoka One',cursive;font-size:24px;color:var(--text);white-space:nowrap}
+.sl{flex:1;height:1px;background:var(--border)}
+
+/* Games grid */
+.gg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:640px){.gg{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:380px){.gg{grid-template-columns:1fr}}
+.gc{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:transform .15s,box-shadow .15s;display:flex;flex-direction:column}
+.gc:hover{transform:translateY(-4px);box-shadow:0 14px 44px rgba(0,0,0,.5)}
+.ga{height:120px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;overflow:hidden}
+.ga::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,var(--card))}
+.ga-p1{background:linear-gradient(135deg,#2d1260,#1a0a3c)}
+.ga-p2{background:linear-gradient(135deg,#0a2840,#0d4020)}
+.ga-p3{background:linear-gradient(135deg,#3d1a00,#1a0a00)}
+.ga-p4{background:linear-gradient(135deg,#0a1628,#1a2a4a)}
+.ga-p5{background:linear-gradient(135deg,#1a3a1a,#0a2010)}
+.ga-p6{background:linear-gradient(135deg,#2a0840,#4a1060)}
+.gb{flex:1;display:flex;flex-direction:column;padding:12px 14px 16px;min-height:168px}
+.gt{font-family:'Fredoka One',cursive;font-size:18px;line-height:1.1;margin-bottom:3px}
+.gd{flex:1;font-size:11px;color:var(--muted);line-height:1.5}
+.tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
+.tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
+.tn{background:rgba(255,225,77,.14);color:var(--yellow);border:1px solid rgba(255,225,77,.26)}
+.tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+.tags-row .tag{margin-top:0}
+.pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
+.pb:active{background:rgba(255,255,255,.2);transform:scale(.97)}
+
+/* Doodle */
+#doodle-wrap{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+#dtb{display:flex;align-items:center;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);flex-wrap:wrap;min-height:52px}
+.dlbl{font-size:10px;font-weight:900;color:var(--muted);letter-spacing:.08em;text-transform:uppercase}
+.cs{width:26px;height:26px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:transform .1s;flex-shrink:0;min-width:26px;min-height:26px}
+.cs.active{border-color:#fff;transform:scale(1.18)}
+.sb{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:7px;color:var(--text);font-size:11px;font-weight:900;padding:5px 10px;cursor:pointer;min-height:32px}
+.sb.active{background:rgba(255,255,255,.22)}
+.ds{flex:1}
+.cb{background:rgba(255,90,90,.1);border:1px solid rgba(255,90,90,.18);color:#ff7070;font-size:11px;font-weight:900;padding:5px 12px;border-radius:7px;cursor:pointer;font-family:'Nunito',sans-serif;min-height:32px}
+#dc{display:block;width:100%;touch-action:none;cursor:crosshair;background:#0a0718}
+
+/* Toast */
+#toast{position:fixed;bottom:100px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--green);color:#0f0a1e;font-weight:900;font-size:14px;padding:11px 22px;border-radius:99px;z-index:600;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* Game modal — slide up/down with CSS, no JS height hacks */
+#gm{
+  position:fixed;inset:0;z-index:200;
+  display:block;
+  background:#000;
+  transform:translateY(100%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  will-change:transform;
+  visibility:hidden;
+}
+#gm.open{transform:translateY(0);visibility:visible}
+/* Floating, translucent back button — no bulky top bar */
+#mb{
+  position:absolute;top:0;left:0;z-index:5;
+  padding:max(8px,env(safe-area-inset-top)) 10px 10px max(10px,env(safe-area-inset-left));
+  pointer-events:none;
+}
+#mc{
+  pointer-events:auto;
+  background:rgba(15,10,30,.55);border:1px solid rgba(255,255,255,.16);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  color:var(--text);font-size:13px;font-weight:900;
+  padding:7px 14px;border-radius:99px;cursor:pointer;
+  font-family:'Nunito',sans-serif;min-height:34px;
+  box-shadow:0 3px 10px rgba(0,0,0,.35);
+  touch-action:manipulation;transition:background .1s;
+}
+#mc:active{background:rgba(15,10,30,.8)}
+#mt{display:none}
+#gf{position:absolute;inset:0;width:100%;height:100%;border:none;background:#0f0a1e;display:block}
+/* Loading spinner inside the modal */
+#gm-load{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:#0f0a1e;z-index:2;transition:opacity .25s;pointer-events:none;
+}
+#gm-load.done{opacity:0}
+.spin{
+  width:44px;height:44px;border-radius:50%;
+  border:4px solid rgba(199,125,255,.15);border-top-color:var(--purple);
+  animation:spin .75s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+/* pull-to-refresh */
+#ptr{position:fixed;top:0;left:50%;transform:translate(-50%,-140%);z-index:550;
+  display:flex;align-items:center;gap:9px;
+  background:linear-gradient(135deg,#c77dff,#ff6eb4);color:#fff;
+  font-family:'Fredoka One',cursive;font-size:15px;
+  padding:10px 20px;border-radius:99px;box-shadow:0 6px 22px rgba(0,0,0,.4);
+  white-space:nowrap;pointer-events:none;will-change:transform}
+#ptr.snap{transition:transform .32s cubic-bezier(.2,.85,.3,1)}
+#ptr .ptr-ico{display:inline-block;font-size:19px;line-height:1;will-change:transform}
+#ptr.spin .ptr-ico{animation:spin .7s linear infinite}
+</style>
+</head>
+<body>
+<div id="ptr"><span class="ptr-ico">🔄</span><span class="ptr-txt">Pull down to refresh…</span></div>
+<div id="stars"></div>
+
+<div id="app">
+  <header>
+    <div class="lab-title" id="title">Maya's Game Lab</div>
+    <div class="lab-sub">✨ Your very own game studio ✨</div>
+    <div class="dad-badge">Made with Dad <span class="heart">💕</span> New games every week</div>
+    <div class="tap-hint">🤫 tap the title 5 times...</div>
+  </header>
+
+  <!-- ALL GAMES -->
+  <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
+  <div class="gg">
+    <div class="gc">
+      <div class="ga ga-p5">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders 2!</div>
+        <div class="gd">The bigger, better castle siege! Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
+        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Tower Defense</span></div>
+        <button class="pb" data-game="games/castle-defenders-2/index.html" data-title="Castle Defenders 2! 🏰">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🗝️</div>
+      <div class="gb">
+        <div class="gt">Maya's Escape Room 🗝️</div>
+        <div class="gd">Escape the spooky mansion! Pick the right chairs, crack the clues, play the ghost's song, and step through the magic mirror! 👻</div>
+        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Puzzle</span></div>
+        <button class="pb" data-game="games/mayas-escape-room/index.html" data-title="Maya's Escape Room 🗝️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">🏛️</div>
+      <div class="gb">
+        <div class="gt">Maya's Sewing Museum!</div>
+        <div class="gd">Walk through Maya's museum, peek at everything she sewed, and sell to visitors who fall in love! 🏛️</div>
+        <span class="tag tm">Shop Sim</span>
+        <button class="pb" data-game="games/mayas-sewing-museum/index.html" data-title="Maya's Sewing Museum 🏛️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p4">🧱</div>
+      <div class="gb">
+        <div class="gt">Build On! 🧱</div>
+        <div class="gd">Build anything in your own 3D world! Blocks, plants, pets, day &amp; night, space &amp; sea. 🌈</div>
+        <span class="tag tm">Sandbox</span>
+        <button class="pb" data-game="games/build-on/index.html" data-title="Build On! 🧱">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🌻</div>
+      <div class="gb">
+        <div class="gt">Garden Work! 🌻</div>
+        <div class="gd">Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻</div>
+        <span class="tag tm">Garden Sim</span>
+        <button class="pb" data-game="games/garden-work-update/index.html" data-title="Garden Work! 🌻">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">✨</div>
+      <div class="gb">
+        <div class="gt">Sparkle Duel 2!</div>
+        <div class="gd">Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!</div>
+        <span class="tag tm">Spell Duel</span>
+        <button class="pb" data-game="games/sparkle-duel/index.html" data-title="Sparkle Duel 2 ✨">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🧵</div>
+      <div class="gb">
+        <div class="gt">Maya's Sewing Shop!</div>
+        <div class="gd">Sew and design cute things, then chat with customers — sell to them or shoo them out!</div>
+        <span class="tag tm">Shop Sim</span>
+        <button class="pb" data-game="games/mayas-sewing-shop/index.html" data-title="Maya's Sewing Shop 🧵">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🚐</div>
+      <div class="gb">
+        <div class="gt">Maya's Delivery Service!</div>
+        <div class="gd">Drive deliveries, earn coins, and unlock new vans and pets!</div>
+        <span class="tag tm">Delivery Sim</span>
+        <button class="pb" data-game="games/mayas-delivery-service/index.html" data-title="Maya's Delivery Service 🚐">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p6">🐉</div>
+      <div class="gb">
+        <div class="gt">LORD! 🐉</div>
+        <div class="gd">Legend of the Rainbow Dragon — Dad's sparkly LORD! Daily turns, forest, beat the dragon.</div>
+        <span class="tag tm">Adventure</span>
+        <button class="pb" data-game="games/legend-of-the-rainbow-dragon/index.html" data-title="Legend of the Rainbow Dragon 🐉">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p2">💧</div>
+      <div class="gb">
+        <div class="gt">Pipe Flow!</div>
+        <div class="gd">Spin pipes to connect the hose to the garden field. Water the crops!</div>
+        <span class="tag tm">Puzzle</span>
+        <button class="pb" data-game="games/pipe-flow/index.html" data-title="Pipe Flow! 💧">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p3">🍳</div>
+      <div class="gb">
+        <div class="gt">Maya's Kitchen!</div>
+        <div class="gd">Cook yummy food, sell it, and grow your own kitchen business!</div>
+        <span class="tag tm">Cooking Sim</span>
+        <button class="pb" data-game="games/mayas-kitchen/index.html" data-title="Maya's Kitchen! 🍳">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p4">🏙️</div>
+      <div class="gb">
+        <div class="gt">City Builder!</div>
+        <div class="gd">Place bricks, windows, doors, and rooftops to build a glittering skyline!</div>
+        <span class="tag tm">City Sim</span>
+        <button class="pb" data-game="games/skyline-builder/index.html" data-title="City Builder! 🏙️">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🏰</div>
+      <div class="gb">
+        <div class="gt">Castle Defenders!</div>
+        <div class="gd">Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
+        <span class="tag tm">Tower Defense</span>
+        <button class="pb" data-game="games/castle-defenders/index.html" data-title="Castle Defenders! 🏰">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">🪅</div>
+      <div class="gb">
+        <div class="gt">Piñata Piano!</div>
+        <div class="gd">Play songs to pop candy and smash the piñata. Get 3 stars!</div>
+        <span class="tag tm">Music</span>
+        <button class="pb" data-game="games/pinata-piano/index.html" data-title="Piñata Piano! 🪅">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p1">👻</div>
+      <div class="gb">
+        <div class="gt">Dust Chasers!</div>
+        <div class="gd">Find invisible dust people in the dark! Vacuum them up!</div>
+        <span class="tag tm">Arcade</span>
+        <button class="pb" data-game="games/dust-chasers/index.html" data-title="Dust Chasers! 👻">▶ Play Now</button>
+      </div>
+    </div>
+    <div class="gc">
+      <div class="ga ga-p5">🌈</div>
+      <div class="gb">
+        <div class="gt">Spell It!</div>
+        <div class="gd">Letters rain down — tap them in order to spell the word! Grades 1–5.</div>
+        <span class="tag tm">Spelling</span>
+        <button class="pb" data-game="games/spell-it/index.html" data-title="Spell It! 🌈">▶ Play Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHOP BANNER -->
+  <div class="sh"><h2>🛍️ Maya's Shop</h2><div class="sl"></div></div>
+  <div style="background:linear-gradient(135deg,#2a0840,#1a1060);border:2px solid rgba(199,125,255,0.3);border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px">
+    <div style="font-size:52px;line-height:1">🛍️📚✨</div>
+    <div style="flex:1;min-width:180px">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
+      <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
+    </div>
+    <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
+  </div>
+
+  <!-- DOODLE -->
+  <div class="sh"><h2>🎨 Doodle Pad</h2><div class="sl"></div></div>
+  <div id="doodle-wrap">
+    <div id="dtb">
+      <span class="dlbl">Color</span>
+      <div class="cs active" style="background:#ff6eb4" data-c="#ff6eb4"></div>
+      <div class="cs" style="background:#ffe14d" data-c="#ffe14d"></div>
+      <div class="cs" style="background:#5dffb0" data-c="#5dffb0"></div>
+      <div class="cs" style="background:#5bc8ff" data-c="#5bc8ff"></div>
+      <div class="cs" style="background:#c77dff" data-c="#c77dff"></div>
+      <div class="cs" style="background:#fff" data-c="#ffffff"></div>
+      <span class="dlbl" style="margin-left:4px">Size</span>
+      <button class="sb active" data-s="4">S</button>
+      <button class="sb" data-s="11">M</button>
+      <button class="sb" data-s="24">L</button>
+      <div class="ds"></div>
+      <button class="cb" id="clr">🗑 Clear</button>
+    </div>
+    <canvas id="dc" height="260"></canvas>
+    <div id="doodle-footer" style="padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <button id="send-doodle-btn" onclick="sendDoodle()" style="flex:1;min-width:160px;padding:12px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:17px;color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35);min-height:46px">Send to Dad! 🎨</button>
+      <button class="cb" id="clr2" onclick="document.getElementById('clr').click()" style="padding:12px 16px;min-height:46px">🗑 Clear</button>
+    </div>
+    <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
+  </div>
+
+</div>
+
+<!-- Game modal -->
+<div id="gm">
+  <div id="mb">
+    <button id="mc" type="button">‹ Back</button>
+    <div id="mt"></div>
+  </div>
+  <iframe id="gf" allowfullscreen></iframe>
+  <div id="gm-load"><div class="spin"></div></div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Family chat + Dad notes — bottom-right -->
+<div id="family-chat-backdrop" aria-hidden="true"></div>
+<div id="family-chat-widget" aria-live="polite">
+  <div id="dad-peek" class="dad-peek" hidden>
+    <button type="button" class="dad-peek-close" id="dad-peek-close" aria-label="Dismiss">×</button>
+    <div class="dad-peek-from">💬 A message from Dad</div>
+    <p class="dad-peek-text" id="dad-peek-text"></p>
+    <button type="button" class="dad-peek-reply" id="dad-peek-reply">Reply 💕</button>
+  </div>
+  <button type="button" id="family-chat-fab" aria-expanded="false" aria-controls="family-chat-panel" title="Chat with Dad — tell him anything!">💬</button>
+  <span id="family-chat-badge" hidden aria-label="New messages"></span>
+  <div id="family-chat-panel" role="dialog" aria-label="Chat with Dad">
+    <div class="fcw-panel-head">
+      <span class="fcw-panel-title">💬 Chat with Dad</span>
+      <button type="button" class="fcw-panel-close" id="family-chat-close" aria-label="Close chat">×</button>
+    </div>
+    <div id="family-chat-root"></div>
+  </div>
+</div>
+
+<script>
+// ===== EMAILJS — replace these with your values from emailjs.com =====
+const EJS_KEY  = 'aobGgwT--7krdk9Qv';
+const EJS_SVC  = 'service_08wvsfl';
+const EJS_TPL  = 'template_b7g9ipp';
+
+// ===== STARS =====
+const se=document.getElementById('stars');
+for(let i=0;i<100;i++){
+  const s=document.createElement('div');s.className='star';
+  const z=Math.random()*2.5+.4;
+  s.style.cssText=`width:${z}px;height:${z}px;left:${Math.random()*100}%;top:${Math.random()*100}%;--d:${1.5+Math.random()*3}s;--o:${.15+Math.random()*.85};animation-delay:${Math.random()*4}s`;
+  se.appendChild(s);
+}
+
+// ===== FLOATIES =====
+['🍬','🎵','👻','⭐','🎮','🌈','💫','🎉','✨','🪄','🦄','🌟','🎀','💕'].forEach((em,i)=>{
+  const el=document.createElement('div');el.className='floaty';
+  el.textContent=em;el.style.fontSize=(16+Math.random()*14)+'px';
+  el.style.cssText+=`left:${3+Math.random()*94}%;bottom:-40px;animation-duration:${15+Math.random()*12}s;animation-delay:${i*1.4+Math.random()*5}s`;
+  document.body.appendChild(el);
+});
+
+// ===== CONFETTI =====
+const CE=['🎉','⭐','🎊','💫','🌈','🍬','✨','🎀','💕','🌟','🦄','🎮'];
+function confetti(n=24){
+  for(let i=0;i<n;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');el.className='cp';
+      el.textContent=CE[Math.floor(Math.random()*CE.length)];
+      el.style.cssText=`left:${Math.random()*100}%;animation-duration:${1.8+Math.random()*2}s;font-size:${14+Math.random()*20}px`;
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),4500);
+    },i*70);
+  }
+}
+setTimeout(confetti,600);
+
+// ===== SECRET (tap title 5x) =====
+const DAD_MESSAGES=[
+  "I think about you every single day, Maya. 💕",
+  "You are the best game designer in the whole galaxy! 🌟",
+  "Making games with you is my favourite thing ever. 🎮",
+  "I am SO proud of you. Always. 🦁",
+  "You make me smile just by being you. ☀️",
+  "Can't wait for our next call! I have so many ideas. 🪄",
+  "You are brilliant and creative and amazing. Did you know that? 💫",
+  "I love you more than all the stars up there. ⭐",
+  "Bet you can beat your high score today! 👀",
+  "You are my favourite person to make things with. 💕",
+  "No matter how far apart we are, you're always right here in my heart. 💛",
+  "Whenever I see a rainbow, I think of you. 🌈",
+  "If I could hug you through this screen, I'd never let go. 🤗",
+  "Being your dad is the best job I'll ever have. 💼💕",
+  "I believe in you on the easy days AND the hard ones. 🌟",
+  "Tell me everything tonight — I want to hear all of it. 📞",
+  "You'll always be my little star, no matter how big you grow. ⭐",
+  "When you laugh, it's my favourite sound in the whole world. 😄",
+  "You can do hard things, Maya. I've watched you do them. 💪",
+  "Goodnight, sweet Maya — dream the biggest dreams. 🌙",
+  "P.S. I love you. (I'll always sneak that in.) 💌",
+];
+let taps=0,tapT=null;
+document.getElementById('title').addEventListener('click',()=>{
+  taps++;
+  const t=document.getElementById('title');
+  t.classList.remove('pop');void t.offsetWidth;t.classList.add('pop');
+  clearTimeout(tapT);
+  if(taps>=5){
+    taps=0;
+    confetti(32);
+    showDadBubble(DAD_MESSAGES[Math.floor(Math.random()*DAD_MESSAGES.length)]);
+  } else {
+    tapT=setTimeout(()=>taps=0,2200);
+  }
+});
+
+// ===== DAD NOTES (peek + live chat — family-chat.js) =====
+function showDadBubble(msg){
+  if(window.mayaChat&&window.mayaChat.showDadNote)window.mayaChat.showDadNote(msg);
+}
+
+// Show a random message after 6 seconds on first visit
+setTimeout(()=>{
+  const msgs=[
+    "Hey Maya! 👋 So happy you're here!",
+    "Which game will you play first? 🎮",
+    "Dad made this just for you. 💕",
+    "You're the best! Have so much fun! 🌟",
+    "Welcome back, superstar! 🌟",
+    "I missed you today, Maya! 💕",
+    "Dad's thinking about you right now. 💭💛",
+    "Ready for an adventure? 🚐",
+  ];
+  showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
+},6000);
+
+const GLIST=[
+  {em:'🏰',title:'Castle Defenders 2! 🏰',desc:'The bigger, better castle siege — chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders-2/index.html'},
+  {em:'🗝️',title:"Maya's Escape Room 🗝️",desc:"Escape the spooky mansion — tricky chairs, ghost songs, math locks, and a magic mirror!",file:'games/mayas-escape-room/index.html'},
+  {em:'🏛️',title:"Maya's Sewing Museum 🏛️",desc:"Walk through three rooms of things Maya sewed, peek at every exhibit, and sell to visitors who fall in love!",file:'games/mayas-sewing-museum/index.html'},
+  {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html'},
+  {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html'},
+  {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html'},
+  {em:'🧵',title:"Maya's Sewing Shop 🧵",desc:'Sew and design cute things, then chat with customers — sell to them or shoo them out!',file:'games/mayas-sewing-shop/index.html'},
+  {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html'},
+  {em:'🐉',title:'Legend of the Rainbow Dragon 🐉',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'games/legend-of-the-rainbow-dragon/index.html'},
+  {em:'💧',title:'Pipe Flow! 💧',desc:'Spin pipes to connect the hose to the garden field!',file:'games/pipe-flow/index.html'},
+  {em:'🍳',title:"Maya's Kitchen! 🍳",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'games/mayas-kitchen/index.html'},
+  {em:'🏙️',title:'City Builder! 🏙️',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html'},
+  {em:'🏰',title:'Castle Defenders! 🏰',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders/index.html'},
+  {em:'🪅',title:'Piñata Piano! 🪅',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'games/pinata-piano/index.html'},
+  {em:'👻',title:'Dust Chasers! 👻',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'games/dust-chasers/index.html'},
+  {em:'🌈',title:'Spell It! 🌈',desc:'Tap falling letters in order to spell the mystery word!',file:'games/spell-it/index.html'},
+];
+const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
+
+// Wire up all play buttons with pointerdown (no 300ms tap delay on iPad)
+document.querySelectorAll('.pb[data-game]').forEach(function(btn){
+  btn.addEventListener('pointerdown',function(e){
+    e.preventDefault();
+    openGame(btn.dataset.game, btn.dataset.title);
+  });
+});
+
+// ===== GAME MODAL =====
+const MAYA_PAGE_TITLE=document.title;
+const gm=document.getElementById('gm');
+const gf=document.getElementById('gf');
+const gmLoad=document.getElementById('gm-load');
+
+// Anchor the lab base once at load. The portal is only ever served at the maya
+// root (game folders serve their own index.html), so this stays correct even
+// after we pushState a /maya/games/<slug>/index.html URL when a game opens —
+// resolveGameUrl always builds from this fixed base, never the live path.
+const MAYA_BASE=(function(){
+  let base=location.pathname;
+  if(!base.endsWith('/')){
+    if(/\.html?$/i.test(base))base=base.slice(0,base.lastIndexOf('/')+1);
+    else base=base+'/';
+  }
+  return base;
+})();
+// file is the GLIST key, e.g. 'games/pipe-flow/index.html'
+function resolveGameUrl(file){ return MAYA_BASE+file; }
+function pathnameGameFile(){
+  let p=location.pathname;
+  if(p.indexOf(MAYA_BASE)===0)p=p.slice(MAYA_BASE.length);
+  return MAYA_GAME_FILES.has(p)?p:null;
+}
+function playParamGameFile(){
+  try{
+    const play=new URLSearchParams(location.search).get('play');
+    if(!play||!MAYA_GAME_FILES.has(play))return null;
+    return play;
+  }catch(e){return null;}
+}
+function activeGameFile(){
+  return pathnameGameFile()||playParamGameFile();
+}
+function titleForGameFile(file){
+  const row=GLIST.find(function(g){return g.file===file;});
+  return row?row.title:file;
+}
+function gameIframeUrl(file){
+  var url=resolveGameUrl(file);
+  return url+(url.indexOf('?')>=0?'&':'?')+'v='+Date.now();
+}
+function openGameInModal(file,title){
+  // Top of the funnel: she tapped Play. game_loaded / game_start follow from inside the game,
+  // so a game that opens but never starts shows up as a cliff rather than looking healthy.
+  if(window.mayaTrack)window.mayaTrack('game_open',{game:(file.match(/games\/([^/]+)\//)||[,file])[1]});
+  document.getElementById('mt').textContent=title;
+  document.body.classList.add('maya-game-open');
+  document.title=title+' · '+MAYA_PAGE_TITLE;
+  updateModalBackLabel();
+  setModalBackVisible(true); // shown until this game says it has its own 🏠 (maya:back-ready)
+  document.documentElement.style.overflow='hidden';
+  document.body.style.overflow='hidden';
+  gm.style.visibility='';
+  gmLoad.classList.remove('done');
+  gf.onload=function(){
+    gmLoad.classList.add('done');
+    // Ask the game to re-announce, in case it mounted its back button before we were listening.
+    try{ gf.contentWindow.postMessage({type:'maya:back-ping'},'*'); }catch(e){}
+    // Focus the game, or keyboard events go to the portal document instead of the game. Dust
+    // Chasers' SPACEBAR shockwave (and any key a game listens for) was dead until you clicked
+    // inside the iframe first.
+    try{ gf.contentWindow.focus(); }catch(e){ gf.focus(); }
+  };
+  gf.src=gameIframeUrl(file);
+  gm.classList.add('open');
+}
+var mayaClosingGame=false;
+
+function closeGameCore(){
+  gm.classList.remove('open');
+  document.body.classList.remove('maya-game-open');
+  gm.style.visibility='';
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  document.title=MAYA_PAGE_TITLE;
+  gf.onload=null;
+  gmLoad.classList.remove('done');
+  function blankIframe(){
+    try{ gf.src='about:blank'; }catch(e){ gf.removeAttribute('src'); }
+  }
+  blankIframe();
+  gm.addEventListener('transitionend',function h(ev){
+    if(ev.target!==gm||ev.propertyName!=='transform')return;
+    gm.removeEventListener('transitionend',h);
+    blankIframe();
+  },{once:true});
+}
+function exitToLab(){
+  mayaClosingGame=true;
+  closeGameCore();
+  history.replaceState(null,'',MAYA_BASE);
+  setTimeout(function(){ mayaClosingGame=false; },150);
+}
+function openGame(file,title){
+  if(gm.classList.contains('open')){
+    closeGameCore();
+  }
+  openGameInModal(file,title);
+  var url=resolveGameUrl(file);
+  if(history.state&&history.state.mayaIframe&&history.state.file===file){
+    history.replaceState({mayaIframe:true,file:file},'',url);
+  }else{
+    history.pushState({mayaIframe:true,file:file},'',url);
+  }
+  if(window.mayaTrackPageView)window.mayaTrackPageView();
+}
+function updateModalBackLabel(){
+  const mc=document.getElementById('mc');
+  if(mc)mc.textContent='‹ Back';
+}
+function closeGame(){
+  exitToLab();
+}
+// Every game now mounts its own 🏠 button (shared/back.js) — one button, same corner, and it
+// sits above the game-over overlays that used to bury the way out. When a game tells us it has
+// one, we hide this modal's "‹ Back" pill so Maya never sees two.
+// Default is SHOWN: we only hide on the game's say-so. If a game's script fails to load, a
+// doubled button is a nuisance; no button at all would trap her in there.
+function setModalBackVisible(v){
+  const mb=document.getElementById('mb');
+  if(mb)mb.style.display=v?'':'none';
+}
+window.addEventListener('message',function(ev){
+  if(ev.data==='maya:leave-game'||(ev.data&&ev.data.type==='maya:leave-game')){
+    if(gm.classList.contains('open'))exitToLab();
+  }else if(ev.data&&ev.data.type==='maya:back-ready'){
+    if(gm.classList.contains('open'))setModalBackVisible(false);
+  }
+});
+function onGameModalPopState(){
+  if(mayaClosingGame)return;
+  var file=activeGameFile();
+  if(!file){
+    if(gm.classList.contains('open'))closeGameCore();
+  }else if(!gm.classList.contains('open')){
+    openGameInModal(file,titleForGameFile(file));
+    if(!history.state||!history.state.mayaIframe){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
+    if(window.mayaTrackPageView)window.mayaTrackPageView();
+  }
+}
+window.addEventListener('popstate',onGameModalPopState);
+
+function syncGameModalFromLocation(){
+  var file=activeGameFile();
+  if(file){
+    if(!gm.classList.contains('open')){
+      openGameInModal(file,titleForGameFile(file));
+    }
+    if(!history.state||!history.state.mayaIframe||history.state.file!==file){
+      history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
+    }
+    return;
+  }
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+  if(gm.classList.contains('open'))closeGameCore();
+}
+function unlockPageScroll(){
+  document.documentElement.style.overflow='';
+  document.body.style.overflow='';
+}
+window.addEventListener('pageshow',unlockPageScroll);
+window.addEventListener('visibilitychange',function(){
+  if(document.visibilityState==='visible'&&!gm.classList.contains('open'))unlockPageScroll();
+});
+syncGameModalFromLocation();
+
+// Close button — always returns to Game Lab (one tap, no trapped navigation)
+function onModalBack(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  exitToLab();
+}
+document.getElementById('mc').addEventListener('pointerdown',onModalBack);
+document.getElementById('mc').addEventListener('click',onModalBack);
+
+// ===== DOODLE PAD =====
+const dc=document.getElementById('dc');
+const dx=dc.getContext('2d');
+let dOn=false,dCol='#ff6eb4',dSz=4,dLast=null;
+
+function sizeDoodle(){
+  const prev=dx.getImageData(0,0,dc.width,dc.height);
+  dc.width=dc.offsetWidth||320;
+  dx.putImageData(prev,0,0);
+}
+sizeDoodle();
+window.addEventListener('resize',sizeDoodle);
+
+function dPt(e){
+  const r=dc.getBoundingClientRect();
+  const src=e.touches?e.touches[0]:e;
+  return{x:(src.clientX-r.left)*(dc.width/r.width),y:(src.clientY-r.top)*(dc.height/r.height)};
+}
+function dStart(e){e.preventDefault();dOn=true;dLast=dPt(e);dx.beginPath();dx.arc(dLast.x,dLast.y,dSz/2,0,Math.PI*2);dx.fillStyle=dCol;dx.fill();}
+function dMove(e){e.preventDefault();if(!dOn)return;const p=dPt(e);dx.beginPath();dx.moveTo(dLast.x,dLast.y);dx.lineTo(p.x,p.y);dx.strokeStyle=dCol;dx.lineWidth=dSz;dx.lineCap='round';dx.stroke();dLast=p;}
+function dEnd(e){e.preventDefault();dOn=false;}
+dc.addEventListener('mousedown',dStart);
+dc.addEventListener('mousemove',dMove);
+dc.addEventListener('mouseup',dEnd);dc.addEventListener('mouseleave',dEnd);
+dc.addEventListener('touchstart',dStart,{passive:false});
+dc.addEventListener('touchmove',dMove,{passive:false});
+dc.addEventListener('touchend',dEnd,{passive:false});
+document.querySelectorAll('.cs').forEach(s=>{
+  s.addEventListener('click',()=>{document.querySelectorAll('.cs').forEach(x=>x.classList.remove('active'));s.classList.add('active');dCol=s.dataset.c;});
+});
+document.querySelectorAll('.sb').forEach(b=>{
+  b.addEventListener('click',()=>{document.querySelectorAll('.sb').forEach(x=>x.classList.remove('active'));b.classList.add('active');dSz=parseInt(b.dataset.s);});
+});
+document.getElementById('clr').addEventListener('click',()=>dx.clearRect(0,0,dc.width,dc.height));
+
+/** Public JPEG URL for email <img> — Gmail blocks data: URLs; CID needs dashboard setup. Bytebin is free, no API key. */
+async function uploadDoodleForEmailUrl(jpegBlob){
+  try{
+    const r=await fetch('https://bytebin.lucko.me/post',{
+      method:'POST',
+      headers:{'Content-Type':'image/jpeg'},
+      body:jpegBlob
+    });
+    const raw=await r.text();
+    let j=null;
+    try{ j=JSON.parse(raw); }catch(_){ /* plain text error */ }
+    if(j&&j.key&&/^[\w-]+$/.test(j.key)) return 'https://bytebin.lucko.me/'+j.key;
+  }catch(e){ console.log('doodle host err',e); }
+  return null;
+}
+
+// ===== SEND DOODLE =====
+async function sendDoodle(){
+  const btn=document.getElementById('send-doodle-btn');
+  btn.disabled=true;btn.textContent='Sending... 🎨';
+
+  // Shrink canvas to stay under EmailJS 50KB limit
+  const tmp=document.createElement('canvas');
+  const MAX=400;
+  const scale=Math.min(1,MAX/Math.max(dc.width,dc.height));
+  tmp.width=Math.floor(dc.width*scale);
+  tmp.height=Math.floor(dc.height*scale);
+  const tx=tmp.getContext('2d');
+  tx.fillStyle='#0a0718';tx.fillRect(0,0,tmp.width,tmp.height);
+  tx.drawImage(dc,0,0,tmp.width,tmp.height);
+  const imgData=tmp.toDataURL('image/jpeg',0.6);
+  const jpegBlob=await new Promise(function(res){ tmp.toBlob(res,'image/jpeg',0.6); });
+
+  // Optional: new tab so Maya can screenshot/share on iPad
+  const doodleWindow=window.open();
+  if(doodleWindow){
+    doodleWindow.document.write(`<!DOCTYPE html><html><head><title>Maya's Doodle 🎨</title></head><body style="margin:0;background:#0a0718;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif">
+    <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:12px">🎨 Maya's Doodle!</h2>
+    <img src="${imgData}" style="max-width:90vw;border-radius:12px;border:3px solid #c77dff"/>
+    <p style="color:#c77dff;margin-top:16px">From Maya, with love 💕</p>
+  </body></html>`);
+    doodleWindow.document.close();
+  }
+
+  const hostedUrl=jpegBlob ? await uploadDoodleForEmailUrl(jpegBlob) : null;
+  const imgSrc=hostedUrl || imgData;
+  const doodleB64=(function(u){
+    const m=/^data:image\/\w+;base64,(.+)$/i.exec(u);
+    return m?m[1]:u;
+  })(imgData);
+
+  const msgLines=[
+    '🎨 Maya sent you a doodle!',
+    '',
+    'Here is what she drew for you today 💕'
+  ];
+  if(hostedUrl) msgLines.push('','Picture (tap / open in browser):',''+hostedUrl);
+  else msgLines.push('','If the picture does not show in Gmail, use the preview tab on her iPad after Send.');
+  const msgText=msgLines.join('\n');
+
+  const htmlBody=`<div style="background:#0f0a1e;padding:24px;font-family:sans-serif;text-align:center;border-radius:12px">
+    <h2 style="color:#ff6eb4;font-size:22px;margin-bottom:8px">🎨 Maya sent you a doodle!</h2>
+    <p style="color:#c8b8f0;margin-bottom:16px">Here is what she drew for you today 💕</p>
+    <img src="${imgSrc}" alt="Maya's doodle" width="400" style="max-width:100%;height:auto;border-radius:10px;border:2px solid #c77dff;display:block;margin:12px auto"/>
+    <p style="color:#c77dff;margin-top:16px;font-size:14px">From Maya, with love 💕</p>
+  </div>`;
+
+  const params={
+    message:msgText,
+    from_name:'Maya',
+    html_content:htmlBody,
+    html_message:htmlBody
+  };
+  if(!hostedUrl) params.doodle_image=doodleB64;
+
+  try{
+    emailjs.init(EJS_KEY);
+    await emailjs.send(EJS_SVC,EJS_TPL,params);
+  }catch(e){
+    console.log('email err',e);
+    showToast('Could not send email — try again');
+  }
+
+  btn.style.display='none';
+  document.getElementById('doodle-sent').style.display='block';
+  confetti(20);
+  showToast('🎨 Doodle sent to Dad!');
+
+  // Reset after 4 seconds so she can draw and send again
+  setTimeout(()=>{
+    btn.style.display='';btn.disabled=false;btn.textContent='Send to Dad! 🎨';
+    document.getElementById('doodle-sent').style.display='none';
+  },4000);
+}
+
+// ===== TOAST =====
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),3000);
+}
+
+// ===== PULL TO REFRESH (drag down at the top to get new games) =====
+(function(){
+  const ptr=document.getElementById('ptr');
+  if(!ptr) return;
+  const ico=ptr.querySelector('.ptr-ico');
+  const txt=ptr.querySelector('.ptr-txt');
+  const THRESH=64, MAXP=110;
+  let startY=0, active=false, armed=false, refreshing=false;
+
+  function atTop(){ return (window.scrollY||document.documentElement.scrollTop||0)<=0; }
+  function blocked(t){
+    if(refreshing) return true;
+    if(document.body.classList.contains('maya-game-open')) return true; // a game is open
+    if(!t||!t.closest) return true;
+    if(!t.closest('#app')) return true;   // chat/overlays live outside #app — ignore them
+    if(t.closest('#dc')) return true;     // let the doodle canvas draw
+    return false;
+  }
+  function reset(){ ptr.classList.add('snap'); ptr.classList.remove('spin'); ptr.style.transform=''; ico.style.transform=''; }
+
+  window.addEventListener('touchstart',function(e){
+    if(e.touches.length!==1||blocked(e.target)||!atTop()){ active=false; return; }
+    startY=e.touches[0].clientY; active=true; armed=false;
+    ptr.classList.remove('snap');
+  },{passive:true});
+
+  window.addEventListener('touchmove',function(e){
+    if(!active) return;
+    const dy=e.touches[0].clientY-startY;
+    if(dy<=0||!atTop()){ active=false; reset(); return; }  // scrolling normally — let go
+    if(dy<6) return;
+    e.preventDefault();  // hold the page still while she pulls
+    const pull=Math.min(dy*0.5,MAXP);
+    ptr.style.transform='translate(-50%,'+pull+'px)';
+    ico.style.transform='rotate('+(pull/MAXP*360)+'deg)';
+    armed=pull>=THRESH;
+    txt.textContent=armed?'Let go for new games! ✨':'Pull down to refresh…';
+  },{passive:false});
+
+  function end(){
+    if(!active) return;
+    active=false;
+    if(!armed){ reset(); return; }
+    localStorage.setItem('mayaPTRUsed','1');
+    refreshing=true;
+    ptr.classList.add('snap','spin');
+    ptr.style.transform='translate(-50%,18px)';
+    ico.style.transform='';
+    txt.textContent='Getting new games… 🎮';
+    try{ confetti(18); }catch(e){}
+    setTimeout(function(){ location.reload(); },550);
+  }
+  window.addEventListener('touchend',end,{passive:true});
+  window.addEventListener('touchcancel',function(){ active=false; reset(); },{passive:true});
+
+  // first-time tip: briefly show the pill on load so she discovers pull-to-refresh
+  if(!localStorage.getItem('mayaPTRUsed')){
+    setTimeout(function(){
+      if(active||document.body.classList.contains('maya-game-open')) return;
+      txt.textContent='Pull down for new games! ✨';
+      ptr.classList.add('snap');
+      ptr.style.transform='translate(-50%,18px)';
+      setTimeout(function(){
+        if(active) return;
+        reset();
+        txt.textContent='Pull down to refresh…';
+      },3200);
+    },1200);
+  }
+})();
+</script>
+<script type="module" src="shared/family-chat.js"></script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load',function(){
+    navigator.serviceWorker.register('sw.js').catch(function(err){
+      console.warn('[maya] service worker registration failed', err);
+    });
+  });
+}
+</script>
+</body>
+</html>

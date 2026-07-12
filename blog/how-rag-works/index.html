@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" data-aesthetic="engineering" data-theme="light" data-density="airy" data-typeface="editorial">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+		<meta
+			http-equiv="Content-Security-Policy"
+			content="upgrade-insecure-requests"
+		/>
+
+		<!-- Preload critical fonts -->
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=JetBrains+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&display=swap"
+			rel="stylesheet"
+		/>
+
+		<!-- SEO Meta Tags -->
+		<title>A Practical Way to Think About RAG - Nick Karnik</title>
+		<meta name="description" content="A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually…" />
+		<link rel="canonical" href="https://nick.karnik.io/blog/how-rag-works" />
+
+		<!-- Open Graph Meta Tags -->
+		<meta property="og:title" content="A Practical Way to Think About RAG - Nick Karnik" />
+		<meta property="og:description" content="A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually…" />
+		<meta property="og:type" content="article" />
+		<meta property="og:url" content="https://nick.karnik.io/blog/how-rag-works" />
+		<meta property="og:image" content="https://nick.karnik.io/assets/images/og/how-rag-works.jpg" />
+		<meta property="og:image:alt" content="A Practical Way to Think About RAG - Nick Karnik" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta property="og:image:type" content="image/jpeg" />
+		<meta property="og:site_name" content="Nick Karnik" />
+		<meta property="og:locale" content="en_US" />
+		
+
+		<!-- Twitter Card Meta Tags -->
+		<meta name="twitter:card" content="summary_large_image" />
+		<meta name="twitter:site" content="@theoutlander" />
+		<meta name="twitter:creator" content="@theoutlander" />
+		<meta name="twitter:title" content="A Practical Way to Think About RAG - Nick Karnik" />
+		<meta name="twitter:description" content="A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually…" />
+		<meta name="twitter:image" content="https://nick.karnik.io/assets/images/og/how-rag-works.jpg" />
+		<meta name="twitter:image:alt" content="A Practical Way to Think About RAG - Nick Karnik" />
+
+		<!-- Additional SEO Meta Tags -->
+		<meta name="robots" content="index, follow" />
+		<meta name="author" content="Nick Karnik" />
+		<meta name="theme-color" content="#ffffff" />
+		
+		<!-- Article-specific meta tags -->
+		<meta property="article:published_time" content="2025-12-12T10:00:00.000Z" />
+		<meta property="article:modified_time" content="2025-12-12T10:00:00.000Z" />
+		<meta property="article:author" content="https://nick.karnik.io" />
+		<meta property="article:section" content="Technology" />
+		<meta property="article:tag" content="Rag" />
+		<meta property="article:tag" content="Llm" />
+		
+		
+		<!-- Structured Data (JSON-LD) -->
+		<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "A Practical Way to Think About RAG",
+  "url": "https://nick.karnik.io/blog/how-rag-works",
+  "datePublished": "2025-12-12T10:00:00.000Z",
+  "dateModified": "2025-12-12T10:00:00.000Z",
+  "description": "A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually…",
+  "image": "https://nick.karnik.io/assets/images/blog/how-rag-works-cover.png",
+  "inLanguage": "en-US",
+  "isAccessibleForFree": true,
+  "articleSection": "AI",
+  "keywords": "RAG, LLM",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://nick.karnik.io/blog/how-rag-works"
+  },
+  "author": {
+    "@type": "Person",
+    "name": "Nick Karnik",
+    "url": "https://nick.karnik.io"
+  },
+  "copyrightYear": 2025,
+  "copyrightHolder": {
+    "@type": "Person",
+    "name": "Nick Karnik",
+    "url": "https://nick.karnik.io"
+  },
+  "copyrightNotice": "© 2025 Nick Karnik. All rights reserved.",
+  "creditText": "Nick Karnik, \"A Practical Way to Think About RAG\", nick.karnik.io. https://nick.karnik.io/blog/how-rag-works",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Nick Karnik",
+    "url": "https://nick.karnik.io",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://nick.karnik.io/assets/images/profile/nick-karnik.jpeg"
+    }
+  }
+}
+		</script>
+
+		<!-- Feeds -->
+		<link
+			rel="alternate"
+			type="application/rss+xml"
+			title="RSS"
+			href="https://nick.karnik.io/rss"
+		/>
+		<link
+			rel="alternate"
+			type="application/feed+json"
+			title="JSON Feed"
+			href="https://nick.karnik.io/feed.json"
+		/>
+
+		<!-- Favicon -->
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=2">
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon_32x32.png?v=2">
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon_16x16.png?v=2">
+
+		<script src="/ga-analytics.js" defer></script>
+
+		
+
+		<!-- External CSS -->
+		<link rel="stylesheet" href="/styles.9f44ee92.css" />
+	</head>
+	<body>
+		<div id="root">
+			<link rel="preload" as="image" href="/assets/images/blog/how-rag-works-cover.png"/><header class="ds-site-nav-bar"><nav class="ds-site-nav" aria-label="Main navigation"><a href="/" class="ds-brand-link" aria-label="Nick Karnik — home"><span class="ds-wordmark" style="font-size:20px">Nick Karnik</span></a><div class="ds-links"><a href="/blog">Writing</a><a href="/about">About</a><a href="/resume">Résumé</a><a href="/reviews">Reviews</a></div></nav></header><main><div class="ds-page ds-page-fade" style="max-width:62rem"><section style="padding:var(--gap-5) 0 var(--gap-3)"><a href="/blog" class="ds-plain" style="display:inline-block;margin-bottom:var(--gap-3)"><span class="ds-mono" style="color:var(--ink-3)">← Back to writing</span></a><div class="ds-rule-thick" style="padding-top:1rem"><span class="ds-eyebrow"><span class="ds-num">No. <!-- -->003</span>AI<!-- --> · <!-- -->Dec 12, 2025<!-- --> · <!-- -->7 min read</span></div><h1 class="ds-h1" style="margin:1rem 0 1rem;letter-spacing:-0.02em;max-width:22ch">A Practical Way to Think About RAG</h1><p class="ds-lede" style="margin:0;max-width:44ch">A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter.</p></section><section style="padding:var(--gap-3) 0"><div class="ds-blog-cover"><img src="/assets/images/blog/how-rag-works-cover.png" alt="A Practical Way to Think About RAG"/></div></section><section style="padding:var(--gap-3) 0 var(--gap-5)"><div class="ds-with-margin"><article class="ds-prose blog-post-content"><p>Retrieval-Augmented Generation (RAG) shows up constantly in conversations about LLM applications, especially once private or fast-changing data enters the picture. What I kept noticing was a gap between two kinds of explanations. Some stayed so abstract that it was hard to tell when RAG actually helped. Others jumped straight into tools and pipelines without first explaining what problem the system was really solving.</p>
+<p>This is the mental model I keep coming back to when evaluating RAG systems. It is not exhaustive, but it is enough to make informed design decisions and to recognize when RAG is likely to help and when it is likely to cause problems.</p>
+<h2>Why RAG exists</h2>
+<p>Language models are strong at reasoning over text, but they operate inside a fixed knowledge boundary. They do not know your internal documents, policies, or product details unless those are explicitly provided at inference time. They also do not update themselves as your information changes.</p>
+<p>When a question depends on knowledge outside the model’s training data, the model has no mechanism to retrieve it on its own. Without help, it fills in gaps using general patterns, which is often where hallucinations start.</p>
+<p>RAG exists to address this limitation. It gives the model access to relevant external information at the moment it generates an answer, without retraining or fine-tuning the model itself.</p>
+<p>That distinction matters. RAG does not make the model smarter. It makes the system more grounded.</p>
+<h2>A useful way to think about it</h2>
+<p>The simplest way to think about RAG is as a separation of responsibilities.</p>
+<p>The model is responsible for reasoning, synthesis, and language. The system around it is responsible for deciding what information the model should see.</p>
+<p>If you ask a question that depends on internal context, the quality of the answer depends almost entirely on whether the right reference material was placed in front of the model first. RAG is the mechanism that performs that selection.</p>
+<p>Once you frame it this way, most debates about RAG become debates about retrieval quality rather than model behavior. It explains why systems can feel unreliable even when the model is doing its job.</p>
+<h2>The basic flow, with emphasis on what matters</h2>
+<p>Most RAG systems follow the same general pattern, but not all parts are equally important.</p>
+<p>Documents are first split into chunks. These should be large enough to preserve meaning but small enough to be retrieved selectively. Chunking is one of the most underestimated parts of RAG, and it is where many systems quietly go wrong.</p>
+<p>In practice, chunk boundaries often need to respect document structure, such as sections or paragraphs, rather than arbitrary token counts. Some overlap between chunks is also common, not to improve recall in theory, but to avoid cutting important context in half.</p>
+<p>Each chunk is then converted into an embedding that represents its semantic meaning. When a user asks a question, the question is embedded as well, and the system retrieves the chunks that appear closest in meaning.</p>
+<p>Embedding quality matters, but it rarely compensates for poor chunking or unclear queries. Most retrieval failures show up well before vector similarity becomes the limiting factor.</p>
+<p>Those retrieved chunks are added to the prompt along with the user’s question. The model then generates a response based on that supplied context.</p>
+<p>The loop itself is simple. The difficulty comes from making each step reliable under real data.</p>
+<h2>A concrete example that usually works</h2>
+<p>Imagine an internal policy document that covers refunds, eligibility criteria, timelines, and edge cases. A user asks, “Can customers get a refund after 30 days?”</p>
+<p>With RAG, the retrieval step might surface three chunks: one defining eligibility, one describing standard timelines, and one listing exceptions. The model answers using those specific sections instead of relying on general knowledge about refunds.</p>
+<p>If the answer is correct, it is because retrieval surfaced the right material. If it is wrong, the problem is almost always that an important chunk was missed or that irrelevant context crowded out the relevant one.</p>
+<p>This pattern repeats across use cases.</p>
+<h2>A second example, where RAG often fails</h2>
+<p>A common failure case shows up in troubleshooting or operational knowledge bases.</p>
+<p>Suppose you have a long document describing how to debug a production issue, including prerequisites, conditional steps, and warnings. A user asks a targeted question like, “Why does service X fail only after a config reload?”</p>
+<p>Retrieval may return chunks that mention service X and config reloads, but miss a critical section explaining an ordering constraint or a hidden dependency. The model produces an answer that sounds reasonable, cites the retrieved context, and is still wrong in a way that is hard to detect.</p>
+<p>This kind of failure is subtle. The system appears to work. The answer is coherent. But an important constraint was never retrieved, so the model could not reason about it.</p>
+<p>This is one of the reasons RAG systems can feel unreliable in operational settings. They fail quietly when retrieval misses the one piece that actually matters.</p>
+<h2>What RAG does well, and what it does not</h2>
+<p>RAG works best when the task involves synthesizing information from a body of text that already contains the answer. It is well suited for policy questions, documentation lookup, and knowledge-based summarization.</p>
+<p>It is much less effective when correctness depends on precise values, strict ordering, or full coverage of edge cases. In those situations, missing context is not a minor issue. It invalidates the answer.</p>
+<p>This is also why prompt tuning rarely fixes weak RAG systems. If retrieval is off, prompting only rearranges the same incomplete inputs.</p>
+<h2>When RAG is the wrong choice</h2>
+<p>RAG is often treated as a default architecture, but in many cases it introduces more complexity than it removes.</p>
+<p>If your dataset is small and stable, fine-tuning or even simple in-prompt examples may be more reliable. If the task requires deterministic outputs, structured extraction, or exact correctness, a rules-based or programmatic approach is usually safer.</p>
+<p>RAG shines when the problem is about informed synthesis, not enforcement or computation.</p>
+<h2>A simple way to visualize the system</h2>
+<p>Here is the basic flow. Most complexity in real systems is layered on top of this, not a replacement for it.</p>
+<img src="/assets/images/blog/rag-user-question-flow.svg" alt="drawing" width="200" style="display: block; margin: auto;"/><h3>What each step does:</h3>
+<p><strong>User question</strong></p>
+<p>Someone asks something like &quot;Can customers get a refund after 30 days?&quot; This triggers the RAG pipeline. The system needs to find relevant information to answer this specific question.</p>
+<p><strong>Embed the question</strong></p>
+<p>The question gets converted into a vector embedding that captures its semantic meaning. This is not about matching keywords. It is about what the question actually means. &quot;Refund policy for late requests&quot; and &quot;Can I get my money back after a month?&quot; would produce similar embeddings even though the words are different.</p>
+<p><strong>Retrieve relevant chunks</strong></p>
+<p>The system compares the question&#39;s embedding against all the chunks in your document store and finds the ones that are semantically closest. These are the chunks most likely to contain relevant information. This usually returns somewhere between 3 and 10 chunks.</p>
+<p><strong>Add chunks to the prompt</strong></p>
+<p>The retrieved chunks get inserted into the prompt along with the original question. Instead of just asking &quot;Can customers get a refund after 30 days?&quot;, the system is now asking &quot;Given these policy sections: [chunk 1, chunk 2, chunk 3], can customers get a refund after 30 days?&quot;</p>
+<p><strong>Generate a response</strong></p>
+<p>The model reads the question and the context chunks, then generates an answer. It does the same reasoning it always does, but now it has the specific information it needs. The quality of this answer depends almost entirely on whether retrieval found the right chunks.</p>
+<h2>Closing</h2>
+<p>Keeping this flow in mind helps keep systems understandable, even as more advanced techniques are layered on top.</p>
+<p>RAG is best understood as a pattern, not a product or a feature. It is a way to control what information a language model sees at the moment it produces an answer.</p>
+<p>Many modern systems layer additional techniques on top of this pattern, such as hybrid retrieval, reranking, or multi-step queries. These can improve results, but they do not change the underlying shape of the system. Retrieval still determines what the model can reason about. Generation determines how that reasoning is expressed.</p>
+<p>As a starting point, this mental model is enough to decide whether RAG belongs in a system and where the real risks are. Once that’s clear, deeper implementation choices become easier to make and easier to question.</p>
+</article><aside class="ds-margin-note"><span class="ds-small-caps" style="color:var(--ink-2)">Topics.</span><div class="ds-blog-topics"><span class="ds-tag">RAG</span><span class="ds-tag">LLM</span></div></aside></div><div class="d_flex ai_center gap_3 mt_8 pt_6 bd-t_1px_solid bd-c_#e5e5e5"><span class="fs_14px c_#666 fw_500 mr_2">Share:</span><div class="d_flex gap_2 ai_center"><a href="https://twitter.com/intent/tweet?url=https%3A%2F%2Fnick.karnik.io%2Fblog%2Fhow-rag-works&amp;text=A%20Practical%20Way%20to%20Think%20About%20RAG" target="_blank" rel="noopener noreferrer" aria-label="Share on Twitter" class="d_flex ai_center jc_center w_36px h_36px bdr_6px cursor_pointer trs_all_0.2s_ease-in-out hover:trf_translateY(-2px) hover:bg_#f5f5f5 [@media_(prefers-reduced-motion:_reduce)]:trs_none [@media_(prefers-reduced-motion:_reduce)]:hover:trf_none focus:ring_2px_solid focus:ring-c_#6366f1 focus:ring-o_2px"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" style="color:#1DA1F2" class="hover:c_#0d8bd9" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"></path></svg></a><a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fnick.karnik.io%2Fblog%2Fhow-rag-works" target="_blank" rel="noopener noreferrer" aria-label="Share on LinkedIn" class="d_flex ai_center jc_center w_36px h_36px bdr_6px cursor_pointer trs_all_0.2s_ease-in-out hover:trf_translateY(-2px) hover:bg_#f5f5f5 [@media_(prefers-reduced-motion:_reduce)]:trs_none [@media_(prefers-reduced-motion:_reduce)]:hover:trf_none focus:ring_2px_solid focus:ring-c_#6366f1 focus:ring-o_2px"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 448 512" style="color:#0A66C2" class="hover:c_#004182" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z"></path></svg></a><a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fnick.karnik.io%2Fblog%2Fhow-rag-works" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook" class="d_flex ai_center jc_center w_36px h_36px bdr_6px cursor_pointer trs_all_0.2s_ease-in-out hover:trf_translateY(-2px) hover:bg_#f5f5f5 [@media_(prefers-reduced-motion:_reduce)]:trs_none [@media_(prefers-reduced-motion:_reduce)]:hover:trf_none focus:ring_2px_solid focus:ring-c_#6366f1 focus:ring-o_2px"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" style="color:#1877F2" class="hover:c_#166FE5" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M504 256C504 119 393 8 256 8S8 119 8 256c0 123.78 90.69 226.38 209.25 245V327.69h-63V256h63v-54.64c0-62.15 37-96.48 93.67-96.48 27.14 0 55.52 4.84 55.52 4.84v61h-31.28c-30.8 0-40.41 19.12-40.41 38.73V256h68.78l-11 71.69h-57.78V501C413.31 482.38 504 379.78 504 256z"></path></svg></a><button aria-label="Copy link" class="d_flex ai_center jc_center w_36px h_36px bdr_6px cursor_pointer bd_none bg_transparent trs_all_0.2s_ease-in-out hover:trf_translateY(-2px) hover:bg_#f5f5f5 [@media_(prefers-reduced-motion:_reduce)]:trs_none [@media_(prefers-reduced-motion:_reduce)]:hover:trf_none focus:ring_2px_solid focus:ring-c_#6366f1 focus:ring-o_2px"><svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 512 512" class="c_#666 trs_color_0.2s_ease-in-out" height="20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"></path></svg></button></div></div></section><section class="ds-blog-nav"><div class="ds-blog-nav-grid"><div><span class="ds-mono" style="color:var(--ink-3)">← Previous</span><h3 class="ds-h3 ds-blog-nav-title"><a href="/blog/build-for-speed" class="ds-plain">How to Build for Speed: What It Actually Takes to Release Fast</a></h3></div><div class="ds-blog-nav-next"><span class="ds-mono" style="color:var(--ink-3)">Next →</span><h3 class="ds-h3 ds-blog-nav-title"><a href="/blog/the-modern-attack-surface-how-computers-get-compromised" class="ds-plain">The Modern Attack Surface: How Computers Get Compromised</a></h3></div></div></section></div></main><footer class="ds-site-footer"><div class="ds-row"><div><h4>Elsewhere</h4><ul><li><a href="https://github.com/theoutlander" target="_blank" rel="noreferrer">GitHub</a></li><li><a href="https://www.linkedin.com/in/theoutlander" target="_blank" rel="noreferrer">LinkedIn</a></li><li><a href="https://x.com/theoutlander" target="_blank" rel="noreferrer">Twitter</a></li><li><a href="https://youtube.com/@nick-karnik" target="_blank" rel="noreferrer">YouTube</a></li><li><a href="https://stackoverflow.com/users/460472/nick" target="_blank" rel="noreferrer">Stack Overflow</a></li></ul></div><div><h4>The Newsletter</h4><p style="font-size:0.95rem;color:var(--ink-2);margin:0 0 0.75rem">A short letter, once a fortnight.</p></div><div><h4>Index</h4><ul><li><a href="/blog">Writing</a></li><li><a href="/resume">Résumé</a></li><li><a href="/reviews">Reviews</a></li></ul></div></div><div class="ds-colophon"><span>© MMXXVI · Nick Karnik · All rights reserved</span><span>Set in Newsreader &amp; JetBrains Mono</span></div></footer>
+		</div>
+		
+		<script id="__POST_DATA__" type="application/json">{"id":"how-rag-works","slug":"how-rag-works","title":"A Practical Way to Think About RAG","date":"2025-12-12T10:00:00.000Z","cover":"/assets/images/blog/how-rag-works-cover.png","excerpt":"A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter.","html":"\u003cp>Retrieval-Augmented Generation (RAG) shows up constantly in conversations about LLM applications, especially once private or fast-changing data enters the picture. What I kept noticing was a gap between two kinds of explanations. Some stayed so abstract that it was hard to tell when RAG actually helped. Others jumped straight into tools and pipelines without first explaining what problem the system was really solving.\u003c/p>\n\u003cp>This is the mental model I keep coming back to when evaluating RAG systems. It is not exhaustive, but it is enough to make informed design decisions and to recognize when RAG is likely to help and when it is likely to cause problems.\u003c/p>\n\u003ch2>Why RAG exists\u003c/h2>\n\u003cp>Language models are strong at reasoning over text, but they operate inside a fixed knowledge boundary. They do not know your internal documents, policies, or product details unless those are explicitly provided at inference time. They also do not update themselves as your information changes.\u003c/p>\n\u003cp>When a question depends on knowledge outside the model’s training data, the model has no mechanism to retrieve it on its own. Without help, it fills in gaps using general patterns, which is often where hallucinations start.\u003c/p>\n\u003cp>RAG exists to address this limitation. It gives the model access to relevant external information at the moment it generates an answer, without retraining or fine-tuning the model itself.\u003c/p>\n\u003cp>That distinction matters. RAG does not make the model smarter. It makes the system more grounded.\u003c/p>\n\u003ch2>A useful way to think about it\u003c/h2>\n\u003cp>The simplest way to think about RAG is as a separation of responsibilities.\u003c/p>\n\u003cp>The model is responsible for reasoning, synthesis, and language. The system around it is responsible for deciding what information the model should see.\u003c/p>\n\u003cp>If you ask a question that depends on internal context, the quality of the answer depends almost entirely on whether the right reference material was placed in front of the model first. RAG is the mechanism that performs that selection.\u003c/p>\n\u003cp>Once you frame it this way, most debates about RAG become debates about retrieval quality rather than model behavior. It explains why systems can feel unreliable even when the model is doing its job.\u003c/p>\n\u003ch2>The basic flow, with emphasis on what matters\u003c/h2>\n\u003cp>Most RAG systems follow the same general pattern, but not all parts are equally important.\u003c/p>\n\u003cp>Documents are first split into chunks. These should be large enough to preserve meaning but small enough to be retrieved selectively. Chunking is one of the most underestimated parts of RAG, and it is where many systems quietly go wrong.\u003c/p>\n\u003cp>In practice, chunk boundaries often need to respect document structure, such as sections or paragraphs, rather than arbitrary token counts. Some overlap between chunks is also common, not to improve recall in theory, but to avoid cutting important context in half.\u003c/p>\n\u003cp>Each chunk is then converted into an embedding that represents its semantic meaning. When a user asks a question, the question is embedded as well, and the system retrieves the chunks that appear closest in meaning.\u003c/p>\n\u003cp>Embedding quality matters, but it rarely compensates for poor chunking or unclear queries. Most retrieval failures show up well before vector similarity becomes the limiting factor.\u003c/p>\n\u003cp>Those retrieved chunks are added to the prompt along with the user’s question. The model then generates a response based on that supplied context.\u003c/p>\n\u003cp>The loop itself is simple. The difficulty comes from making each step reliable under real data.\u003c/p>\n\u003ch2>A concrete example that usually works\u003c/h2>\n\u003cp>Imagine an internal policy document that covers refunds, eligibility criteria, timelines, and edge cases. A user asks, “Can customers get a refund after 30 days?”\u003c/p>\n\u003cp>With RAG, the retrieval step might surface three chunks: one defining eligibility, one describing standard timelines, and one listing exceptions. The model answers using those specific sections instead of relying on general knowledge about refunds.\u003c/p>\n\u003cp>If the answer is correct, it is because retrieval surfaced the right material. If it is wrong, the problem is almost always that an important chunk was missed or that irrelevant context crowded out the relevant one.\u003c/p>\n\u003cp>This pattern repeats across use cases.\u003c/p>\n\u003ch2>A second example, where RAG often fails\u003c/h2>\n\u003cp>A common failure case shows up in troubleshooting or operational knowledge bases.\u003c/p>\n\u003cp>Suppose you have a long document describing how to debug a production issue, including prerequisites, conditional steps, and warnings. A user asks a targeted question like, “Why does service X fail only after a config reload?”\u003c/p>\n\u003cp>Retrieval may return chunks that mention service X and config reloads, but miss a critical section explaining an ordering constraint or a hidden dependency. The model produces an answer that sounds reasonable, cites the retrieved context, and is still wrong in a way that is hard to detect.\u003c/p>\n\u003cp>This kind of failure is subtle. The system appears to work. The answer is coherent. But an important constraint was never retrieved, so the model could not reason about it.\u003c/p>\n\u003cp>This is one of the reasons RAG systems can feel unreliable in operational settings. They fail quietly when retrieval misses the one piece that actually matters.\u003c/p>\n\u003ch2>What RAG does well, and what it does not\u003c/h2>\n\u003cp>RAG works best when the task involves synthesizing information from a body of text that already contains the answer. It is well suited for policy questions, documentation lookup, and knowledge-based summarization.\u003c/p>\n\u003cp>It is much less effective when correctness depends on precise values, strict ordering, or full coverage of edge cases. In those situations, missing context is not a minor issue. It invalidates the answer.\u003c/p>\n\u003cp>This is also why prompt tuning rarely fixes weak RAG systems. If retrieval is off, prompting only rearranges the same incomplete inputs.\u003c/p>\n\u003ch2>When RAG is the wrong choice\u003c/h2>\n\u003cp>RAG is often treated as a default architecture, but in many cases it introduces more complexity than it removes.\u003c/p>\n\u003cp>If your dataset is small and stable, fine-tuning or even simple in-prompt examples may be more reliable. If the task requires deterministic outputs, structured extraction, or exact correctness, a rules-based or programmatic approach is usually safer.\u003c/p>\n\u003cp>RAG shines when the problem is about informed synthesis, not enforcement or computation.\u003c/p>\n\u003ch2>A simple way to visualize the system\u003c/h2>\n\u003cp>Here is the basic flow. Most complexity in real systems is layered on top of this, not a replacement for it.\u003c/p>\n\u003cimg src=\"/assets/images/blog/rag-user-question-flow.svg\" alt=\"drawing\" width=\"200\" style=\"display: block; margin: auto;\"/>\u003ch3>What each step does:\u003c/h3>\n\u003cp>\u003cstrong>User question\u003c/strong>\u003c/p>\n\u003cp>Someone asks something like &quot;Can customers get a refund after 30 days?&quot; This triggers the RAG pipeline. The system needs to find relevant information to answer this specific question.\u003c/p>\n\u003cp>\u003cstrong>Embed the question\u003c/strong>\u003c/p>\n\u003cp>The question gets converted into a vector embedding that captures its semantic meaning. This is not about matching keywords. It is about what the question actually means. &quot;Refund policy for late requests&quot; and &quot;Can I get my money back after a month?&quot; would produce similar embeddings even though the words are different.\u003c/p>\n\u003cp>\u003cstrong>Retrieve relevant chunks\u003c/strong>\u003c/p>\n\u003cp>The system compares the question&#39;s embedding against all the chunks in your document store and finds the ones that are semantically closest. These are the chunks most likely to contain relevant information. This usually returns somewhere between 3 and 10 chunks.\u003c/p>\n\u003cp>\u003cstrong>Add chunks to the prompt\u003c/strong>\u003c/p>\n\u003cp>The retrieved chunks get inserted into the prompt along with the original question. Instead of just asking &quot;Can customers get a refund after 30 days?&quot;, the system is now asking &quot;Given these policy sections: [chunk 1, chunk 2, chunk 3], can customers get a refund after 30 days?&quot;\u003c/p>\n\u003cp>\u003cstrong>Generate a response\u003c/strong>\u003c/p>\n\u003cp>The model reads the question and the context chunks, then generates an answer. It does the same reasoning it always does, but now it has the specific information it needs. The quality of this answer depends almost entirely on whether retrieval found the right chunks.\u003c/p>\n\u003ch2>Closing\u003c/h2>\n\u003cp>Keeping this flow in mind helps keep systems understandable, even as more advanced techniques are layered on top.\u003c/p>\n\u003cp>RAG is best understood as a pattern, not a product or a feature. It is a way to control what information a language model sees at the moment it produces an answer.\u003c/p>\n\u003cp>Many modern systems layer additional techniques on top of this pattern, such as hybrid retrieval, reranking, or multi-step queries. These can improve results, but they do not change the underlying shape of the system. Retrieval still determines what the model can reason about. Generation determines how that reasoning is expressed.\u003c/p>\n\u003cp>As a starting point, this mental model is enough to decide whether RAG belongs in a system and where the real risks are. Once that’s clear, deeper implementation choices become easier to make and easier to question.\u003c/p>\n","url":"https://nick.karnik.io/blog/how-rag-works","category":"AI","tags":["RAG","LLM"]}</script>
+		<!-- Load client-side JavaScript bundle for routing -->
+		<script type="module" src="/assets/index-CUyUvojA.js"></script>
+		
+		<!-- Dark mode detection script - DISABLED for mobile compatibility -->
+		<!-- <script>
+			// Check for saved theme preference or default to 'light'
+			const theme = localStorage.getItem('theme') || 
+				(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+			
+			// Apply theme immediately to prevent flash
+			if (theme === 'dark') {
+				document.documentElement.classList.add('dark');
+			}
+			
+			// Listen for system theme changes
+			window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+				if (!localStorage.getItem('theme')) {
+					if (e.matches) {
+						document.documentElement.classList.add('dark');
+					} else {
+						document.documentElement.classList.remove('dark');
+					}
+				}
+			});
+		</script> -->
+	</body>
+</html>

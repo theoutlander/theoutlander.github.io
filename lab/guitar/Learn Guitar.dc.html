@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Guitar — A Hands-On Primer</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,500&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/soundfont-player@0.12.0/dist/soundfont-player.min.js"></script>
+<style>
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0}
+  a{color:inherit}
+  ::selection{background:#e7c3b2}
+  .app-grid{display:grid;grid-template-columns:262px minmax(0,1fr);gap:40px;align-items:start}
+  .side-nav{position:sticky;top:76px}
+  @media (max-width:920px){ .app-grid{grid-template-columns:1fr;gap:24px} .side-nav{position:static} }
+</style>
+</helmet>
+<div style="--accent:#b3582f;--ink:#2a2520;--soft:#6f665a;--paper:#fbfaf8;--panel:#f3f0e9;--line:#e8e4db;background:#fbfaf8;color:#2a2520;font-family:'Newsreader',system-ui,sans-serif;-webkit-font-smoothing:antialiased;min-height:100vh">
+
+  <header style="position:sticky;top:0;z-index:30;backdrop-filter:blur(10px);background:rgba(244,239,228,0.82);border-bottom:1px solid #e8e4db">
+    <div style="max-width:1080px;margin:0 auto;padding:13px 26px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <div style="display:flex;align-items:center;gap:11px">
+        <span style="width:24px;height:24px;border-radius:50%;background:#b3582f;display:inline-block;box-shadow:inset 0 0 0 3px #fbfaf8, inset 0 0 0 4px #b3582f"></span>
+        <span style="font-family:'Newsreader',serif;font-weight:600;font-size:18px;letter-spacing:.01em"><a href="../" style="color:#a99d89;text-decoration:none;font-weight:500">Lab</a><span style="color:#a99d89;font-weight:500"> / </span>Guitar</span>
+      </div>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:#6f665a;font-weight:600">A hands-on primer</span>
+    </div>
+  </header>
+
+  <section id="app" style="scroll-margin-top:70px;max-width:1200px;margin:0 auto;padding:34px 26px 90px">
+    <div class="app-grid">
+      <aside class="side-nav">{{ sideNav }}</aside>
+      <div style="min-width:0">{{ lessonView }}</div>
+    </div>
+  </section>
+
+  <footer style="background:#221e19;color:#8c8377;border-top:1px solid #3a342c;padding:34px 26px 48px;text-align:center;font-size:13px">
+    <div style="max-width:1080px;margin:0 auto">Built for absolute beginners · keep a guitar nearby and play along</div>
+  </footer>
+
+  <template id="__bundler_thumbnail">
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100" height="100" rx="20" fill="#b3582f"/>
+      <circle cx="50" cy="50" r="20" fill="none" stroke="#fbfaf8" stroke-width="2.4"/>
+      <g stroke="#fbfaf8" stroke-width="1.4" opacity="0.92">
+        <line x1="38" y1="24" x2="38" y2="76"/>
+        <line x1="46" y1="24" x2="46" y2="76"/>
+        <line x1="54" y1="24" x2="54" y2="76"/>
+        <line x1="62" y1="24" x2="62" y2="76"/>
+      </g>
+    </svg>
+  </template>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;tone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;steel&quot;,&quot;nylon&quot;],&quot;default&quot;:&quot;steel&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Sound&quot;},&quot;showFingerNumbers&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Chords&quot;},&quot;noteNaming&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sharps&quot;,&quot;flats&quot;],&quot;default&quot;:&quot;sharps&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Notes&quot;},&quot;startWithAllNotes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Fretboard&quot;}}">
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.ACCENT='#b3582f'; this.INK='#2a2520'; this.SOFT='#6f665a';
+    this.LINE='#e8e4db'; this.GREEN='#3f7d54'; this.WRONG='#b3402f';
+    this.SHARP=['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+    this.FLAT =['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+    this.openMidi=[40,45,50,55,59,64];          // low E .. high e
+    this.openNames=['E','A','D','G','B','e'];
+    this.CHORDS=[
+      {name:'C',  full:'C major', shape:['x',3,2,0,1,0], fingers:['','',3,2,'',1,''] },
+      {name:'A',  full:'A major', shape:['x',0,2,2,2,0], fingers:['','','',1,2,3,''] },
+      {name:'G',  full:'G major', shape:[3,2,0,0,0,3],   fingers:[2,1,'','','',3] },
+      {name:'E',  full:'E major', shape:[0,2,2,1,0,0],   fingers:['',2,3,1,'',''] },
+      {name:'D',  full:'D major', shape:['x','x',0,2,3,2],fingers:['','','',1,3,2] },
+      {name:'Am', full:'A minor', shape:['x',0,2,2,1,0], fingers:['','',2,3,1,''] },
+      {name:'Em', full:'E minor', shape:[0,2,2,0,0,0],   fingers:['',2,3,'','',''] },
+      {name:'Dm', full:'D minor', shape:['x','x',0,2,3,1],fingers:['','','',2,3,1] },
+    ];
+    this.RHYTHM={ labels:['1','&','2','&','3','&','4','&'], dirs:['D','','D','U','','U','D','U'] };
+    this.SONG=['Em','C','G','D'];
+    this.INTERVALS=['R','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'];
+    this.INTERVAL_FULL=['Unison','Minor 2nd','Major 2nd','Minor 3rd','Major 3rd','Perfect 4th','Tritone','Perfect 5th','Minor 6th','Major 6th','Minor 7th','Major 7th'];
+    this.QUALITIES=[
+      {id:'maj', name:'Major',         sym:'',     iv:[0,4,7]},
+      {id:'min', name:'Minor',         sym:'m',    iv:[0,3,7]},
+      {id:'7',   name:'Dominant 7th',  sym:'7',    iv:[0,4,7,10]},
+      {id:'maj7',name:'Major 7th',     sym:'maj7', iv:[0,4,7,11]},
+      {id:'m7',  name:'Minor 7th',     sym:'m7',   iv:[0,3,7,10]},
+      {id:'sus2',name:'Suspended 2nd', sym:'sus2', iv:[0,2,7]},
+      {id:'sus4',name:'Suspended 4th', sym:'sus4', iv:[0,5,7]},
+      {id:'6',   name:'Sixth',         sym:'6',    iv:[0,4,7,9]},
+      {id:'dim', name:'Diminished',    sym:'dim',  iv:[0,3,6]},
+      {id:'aug', name:'Augmented',     sym:'aug',  iv:[0,4,8]},
+    ];
+    this.SCALES=[
+      {id:'major', name:'Major (Ionian)',    iv:[0,2,4,5,7,9,11], steps:['W','W','H','W','W','W','H']},
+      {id:'minor', name:'Natural minor',     iv:[0,2,3,5,7,8,10], steps:['W','H','W','W','H','W','W']},
+      {id:'majpent',name:'Major pentatonic', iv:[0,2,4,7,9],      steps:['W','W','3','W','3']},
+      {id:'minpent',name:'Minor pentatonic', iv:[0,3,5,7,10],     steps:['3','W','W','3','W']},
+      {id:'blues', name:'Blues',             iv:[0,3,5,6,7,10],   steps:['3','W','H','H','3','W']},
+    ];
+    this.TRIAD_PATTERN=[[0,4,7],[0,3,7],[0,3,7],[0,4,7],[0,4,7],[0,3,7],[0,3,6]];
+    this.ROMANS=['I','ii','iii','IV','V','vi','vii°'];
+    // movable voicings: offsets from the barre fret on the anchor string (0=low E, 1=A); -1 = muted
+    this.SHAPES={
+      maj:  {anchor:0, frets:[0,2,2,1,0,0],  fingers:['',3,4,2,'','']},
+      min:  {anchor:0, frets:[0,2,2,0,0,0],  fingers:['',3,4,'','','']},
+      '7':  {anchor:0, frets:[0,2,0,1,0,0],  fingers:['',3,'',2,'','']},
+      maj7: {anchor:0, frets:[0,2,1,1,0,0],  fingers:['',3,1,2,'','']},
+      m7:   {anchor:0, frets:[0,2,0,0,0,0],  fingers:['',3,'','','','']},
+      sus4: {anchor:0, frets:[0,2,2,2,0,0],  fingers:['',2,3,4,'','']},
+      aug:  {anchor:0, frets:[0,3,2,1,1,0],  fingers:['',4,3,2,2,'']},
+      sus2: {anchor:1, frets:[-1,0,2,2,0,0], fingers:['','',2,3,'','']},
+      '6':  {anchor:1, frets:[-1,0,2,2,2,2], fingers:['','',1,1,1,1]},
+      dim:  {anchor:1, frets:[-1,0,1,2,1,-1],fingers:['','',1,3,2,'']},
+    };
+    this.SECTIONS=[
+      {id:'tuner',label:'Tune up'},{id:'fretboard',label:'The fretboard'},{id:'theory',label:'How music works'},
+      {id:'chords',label:'Open chords'},{id:'chordlab',label:'The chord lab'},{id:'scales',label:'Scales'},
+      {id:'notation',label:'Reading the staff'},{id:'tab',label:'Tablature'},{id:'rhythm',label:'Rhythm'},
+      {id:'song',label:'Your first song'},{id:'practice',label:'Switching chords'},
+    ];
+    this.PKEY='fc_progress_v1';
+    this.TAB=[ // {string index 0-5 (low E..high e), fret}
+      {s:1,f:0},{s:1,f:2},{s:1,f:3},{s:2,f:2},{s:2,f:0},{s:1,f:3},{s:1,f:2},{s:1,f:0}
+    ];
+    // guided path: the six core steps, shown one at a time
+    this.STEPS=[
+      {id:'tuner',    name:'Tune up',            view:'tuner',    why:'An out-of-tune guitar sounds wrong no matter what you play — so this is always step one. Tap each string\u2019s target pitch, low to high, and turn its peg to match.'},
+      {id:'fretboard',name:'Find the notes',     view:'fretboard',why:'Press behind a fret, pluck, and you get one exact note every time. Get a feel for how the neck is laid out before you shape anything.', tip:'Say each note out loud as you click it. Two minutes a day on just the low E and A strings goes a long way — those are the strings most chords get their name from.'},
+      {id:'chords',   name:'Your first chords',  view:'chords',   why:'A chord is a few notes played together. These open shapes are the backbone of thousands of songs — flip through and strum each one.', tip:'Press just behind the fret, not on top of it, and arch your fingers so the tips land on the strings. That\u2019s what stops the buzzing.'},
+      {id:'trainer',  name:'Switch between them',view:'trainer',  why:'Holding one chord is easy; changing between two in time is the wall every beginner hits. Pick two and drill the change at a slow tempo.', tip:'Switching clean beats switching fast. Keep the tempo slow until every change lands, then nudge it up.'},
+      {id:'rhythm',   name:'Keep time',          view:'rhythm',   why:'Chords are what you play; rhythm is when. Your strumming hand swings down-up the whole time — it just doesn\u2019t hit on every move.', tip:'Keep your hand swinging even on the strums you skip — it\u2019s a pendulum that never stops.'},
+      {id:'song',     name:'Play a song',        view:'song',     why:'Four chords you now know, looped in time — and suddenly it\u2019s music. Slow the tempo and strum along until the changes feel easy.'},
+    ];
+    // optional deeper material, tucked into an accordion
+    this.DEEPER=[
+      {id:'theory',   name:'How music works',     view:'theory',   blurb:'The math behind everything: how notes are counted, the one scale pattern, and where chords come from.'},
+      {id:'chordlab', name:'The chord lab',       view:'chordlab', blurb:'Build any chord from its formula and get a movable shape you can play in any key.'},
+      {id:'scales',   name:'Scales',              view:'scales',   blurb:'The step patterns that melodies and solos are built on — including the minor pentatonic.'},
+      {id:'notation', name:'Reading the staff',   view:'notation', blurb:'Standard notation: pitch on five lines. Optional — tab covers most of what you\u2019ll play.'},
+      {id:'tabtools', name:'Tab & paste-your-own',view:'tabtools', blurb:'Read tablature, then paste your own tab or note letters and hear the page play it back.'},
+    ];
+    // one flat, fully-visible outline: intro + basics + extras
+    this.WELCOME={id:'welcome', kind:'intro', short:'Meet your guitar', name:'Start with six strings.', view:'welcome', why:'Go from an untuned guitar to playing a real song in six clear steps \u2014 and you can hear all of it. No app, no account. Pluck the strings below to meet your guitar, then head to step one.'};
+    this.ITEMS=[this.WELCOME]
+      .concat(this.STEPS.map(function(s){ return Object.assign({kind:'basic'},s); }))
+      .concat(this.DEEPER.map(function(d){ return Object.assign({kind:'extra'},d); }));
+    this.state={
+      fbSel:null, fbAll: !!props.startWithAllNotes,
+      chordIdx:0,
+      staffSel:null,
+      strumPos:-1, strumPlaying:false,
+      tabPos:-1,
+      bpm:80,
+      songPlaying:false, songBar:-1, songBeat:-1,
+      trainerPlaying:false, trainerActive:0, trainerBeat:-1, trainerA:'Em', trainerB:'C',
+      tunerString:-1,
+      thRoot:0,
+      clRoot:0, clQual:'maj',
+      scRoot:9, scType:'minpent', scaleStep:-1,
+      neckNotes:false, clView:'shape', heroString:-1,
+      tabInput:'', tabUserPos:-1, tabUserPlaying:false, tabError:'',
+      step: this.loadStep(), deepOpen:null, item: this.loadItem(), done: this.loadDone(),
+      progress: this.loadProgress(),
+    };
+  }
+  componentDidMount(){
+    // preload real guitar samples so the first click already sounds natural
+    try{ this.initAudio(); }catch(e){}
+    if(!this.inst){ let n=0; const iv=setInterval(()=>{ this.loadInstrument(); if(this.inst||++n>40) clearInterval(iv); },300); }
+    this.startScope();
+  }
+  componentWillUnmount(){ clearInterval(this._strumTimer); clearInterval(this._tabTimer); clearInterval(this._songTimer); clearInterval(this._trnTimer); clearInterval(this._scaleTimer); clearInterval(this._userTimer); cancelAnimationFrame(this._scopeRAF); }
+
+  // ---------- audio ----------
+  freq(m){ return 440*Math.pow(2,(m-69)/12); }
+  noteName(m){ const a=this.props.noteNaming==='flats'?this.FLAT:this.SHARP; return a[((m%12)+12)%12]; }
+  initAudio(){
+    if(this.ac) return this.ac;
+    const C=window.AudioContext||window.webkitAudioContext; const ac=new C(); this.ac=ac;
+    this.master=ac.createGain(); this.master.gain.value=0.92;
+    this.analyser=ac.createAnalyser(); this.analyser.fftSize=2048; this.analyser.smoothingTimeConstant=0.55;
+    this.master.connect(this.analyser); this.analyser.connect(ac.destination);
+    this.loadInstrument();
+    return ac;
+  }
+  loadInstrument(){
+    if(this.inst || this._instLoading || !window.Soundfont || !this.ac) return;
+    this._instLoading=true;
+    const name = this.props.tone==='nylon' ? 'acoustic_guitar_nylon' : 'acoustic_guitar_steel';
+    window.Soundfont.instrument(this.ac, name, {soundfont:'MusyngKite', destination:this.master})
+      .then(inst=>{ this.inst=inst; this._instLoading=false; })
+      .catch(()=>{ this._instLoading=false; });
+  }
+  ensureAudio(){
+    const ac=this.initAudio();
+    if(ac.state==='suspended') ac.resume();
+    if(!this.inst) this.loadInstrument();
+    this.startScope();
+    return ac;
+  }
+  // public note: real sampled guitar when ready, warm synth as fallback
+  pluck(midi, when, gain){
+    when=when||0; gain=(gain==null?0.85:gain);
+    const ac=this.ensureAudio();
+    if(this.inst){ this.inst.play(midi, ac.currentTime+when, {gain:Math.min(1.4,gain*1.5), destination:this.master}); return; }
+    this.synthPluck(midi, when, gain);
+  }
+  synthPluck(midi, when, gain){
+    when=when||0; gain=(gain==null?0.8:gain);
+    const ac=this.ensureAudio(); const f=this.freq(midi); const sr=ac.sampleRate;
+    const dur=Math.min(3.4, 1.9+200/f); const len=Math.floor(sr*dur);
+    const buf=ac.createBuffer(1,len,sr); const data=buf.getChannelData(0);
+    const N=Math.max(2,Math.round(sr/f));
+    // warm, band-limited pluck excitation (one-pole lowpassed noise)
+    const exc=new Float32Array(N); let prev=0; const lpB=0.5;
+    for(let i=0;i<N;i++){ const w=Math.random()*2-1; prev=prev*lpB+w*(1-lpB); exc[i]=prev; }
+    // pick-position comb — adds body and tames the buzz
+    const pp=Math.max(1,Math.round(N*0.12)); const cur=new Float32Array(N);
+    for(let i=0;i<N;i++) cur[i]=exc[i]-0.85*exc[(i-pp+N)%N];
+    // frequency-dependent damping: high strings decay faster, like a real string
+    const damp=0.996-(f>300?Math.min(0.005,(f-300)/300*0.005):0);
+    let idx=0;
+    for(let i=0;i<len;i++){ const a=cur[idx], b=cur[(idx+1)%N]; const v=damp*(0.5*a+0.5*b); cur[idx]=v; data[i]=a; idx=(idx+1)%N; }
+    const fa=Math.min(90,len); for(let i=0;i<fa;i++) data[i]*=i/fa; // de-click attack
+    const src=ac.createBufferSource(); src.buffer=buf;
+    const hp=ac.createBiquadFilter(); hp.type='highpass'; hp.frequency.value=70;
+    const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=4600; lp.Q.value=0.4;
+    const g=ac.createGain(); const t0=ac.currentTime+when;
+    g.gain.setValueAtTime(gain,t0); g.gain.exponentialRampToValueAtTime(0.0005,t0+dur);
+    src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(this.master);
+    src.start(t0); src.stop(t0+dur);
+  }
+  strumShape(shape, dir, vel){
+    vel = vel==null?1:vel;
+    const order=[0,1,2,3,4,5];
+    let seq = dir==='up'? order.slice().reverse() : order;
+    // upstrokes naturally catch only the higher strings, and lighter
+    if(dir==='up') seq = seq.filter(s=> s>=2);
+    const playable = seq.filter(s=> shape[s]!=='x' && shape[s]!=null);
+    let t=0; const base = dir==='up'? 0.020 : 0.027;
+    playable.forEach((s,i)=>{
+      const fr=shape[s];
+      const jitter=(Math.random()-0.5)*0.011;            // human timing wobble
+      const frac=i/Math.max(1,playable.length-1);
+      // downstroke leans on the bass strings, upstroke on the treble
+      const accent = dir==='up' ? (0.82+0.2*frac) : (1.08-0.18*frac);
+      const level = (dir==='up'?0.4:0.62) * vel * accent * (0.85+Math.random()*0.3);
+      this.pluck(this.openMidi[s]+fr, Math.max(0,t+jitter), Math.max(0.1,level));
+      t += base*(0.8+Math.random()*0.45);
+    });
+  }
+  ord(n){ if(n===0) return 'open'; const s=['th','st','nd','rd'], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+
+  // ---------- fretboard ----------
+  fbClick(s,f){ this.pluck(this.openMidi[s]+f); this.setState({fbSel:{s,f}}); }
+  renderFretboard(){
+    const h=React.createElement; const frets=12;
+    const ml=58, mt=36, fw=54, sg=30;
+    const W=ml+frets*fw+34, H=mt+5*sg+44;
+    const sel=this.state.fbSel, all=this.state.fbAll;
+    const fx=f=> f===0? ml-30 : ml+(f-0.5)*fw;
+    const lx=f=> ml+f*fw;
+    const sy=s=> mt+s*sg;
+    const k=[];
+    k.push(h('rect',{key:'bg',x:ml,y:mt-3,width:frets*fw,height:5*sg+6,rx:5,fill:'#f3f0e9'}));
+    [3,5,7,9].forEach(f=> k.push(h('circle',{key:'mk'+f,cx:ml+(f-0.5)*fw,cy:mt+2.5*sg,r:5,fill:'#cdbfa4'})));
+    k.push(h('circle',{key:'m12a',cx:ml+11.5*fw,cy:mt+1.5*sg,r:5,fill:'#cdbfa4'}));
+    k.push(h('circle',{key:'m12b',cx:ml+11.5*fw,cy:mt+3.5*sg,r:5,fill:'#cdbfa4'}));
+    for(let s=0;s<6;s++){ k.push(h('line',{key:'s'+s,x1:ml,y1:sy(s),x2:ml+frets*fw,y2:sy(s),stroke:'#a99d89',strokeWidth:1.1+(5-s)*0.34})); }
+    for(let f=0;f<=frets;f++){ k.push(h('line',{key:'f'+f,x1:lx(f),y1:mt,x2:lx(f),y2:mt+5*sg,stroke:f===0?'#2a2520':'#c5b89f',strokeWidth:f===0?5:1.6})); }
+    for(let s=0;s<6;s++){
+      for(let f=0;f<=frets;f++){
+        const isSel=sel&&sel.s===s&&sel.f===f; const show=all||isSel;
+        k.push(h('rect',{key:'h'+s+'-'+f,x:f===0?0:lx(f-1),y:sy(s)-sg/2,width:f===0?ml:fw,height:sg,fill:'transparent',style:{cursor:'pointer'},onClick:()=>this.fbClick(s,f)}));
+        if(show){
+          const cx=fx(f), cy=sy(s), nm=this.noteName(this.openMidi[s]+f);
+          k.push(h('circle',{key:'d'+s+'-'+f,cx,cy,r:12.5,fill:isSel?this.ACCENT:'#fff',stroke:this.ACCENT,strokeWidth:1.6,style:{pointerEvents:'none'}}));
+          k.push(h('text',{key:'tx'+s+'-'+f,x:cx,y:cy+0.5,fontSize:11,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:isSel?'#fff':'#2a2520',textAnchor:'middle',dominantBaseline:'middle',style:{pointerEvents:'none'}},nm));
+        }
+      }
+    }
+    for(let s=0;s<6;s++) k.push(h('text',{key:'sl'+s,x:20,y:sy(s)+0.5,fontSize:13,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#6f665a',textAnchor:'middle',dominantBaseline:'middle'},this.openNames[s]));
+    for(let f=1;f<=frets;f++) k.push(h('text',{key:'fn'+f,x:ml+(f-0.5)*fw,y:mt+5*sg+24,fontSize:11.5,fontFamily:'JetBrains Mono,monospace',fill:[3,5,7,9,12].includes(f)?'#2a2520':'#a99d89',fontWeight:[3,5,7,9,12].includes(f)?600:400,textAnchor:'middle'},f));
+    const svg=h('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:{maxWidth:W,display:'block'}},k);
+
+    const readout = sel
+      ? h('div',{style:{display:'flex',alignItems:'baseline',gap:10}},
+          h('span',{style:{fontFamily:'Newsreader,serif',fontSize:28,fontWeight:600,color:this.ACCENT}},this.noteName(this.openMidi[sel.s]+sel.f)),
+          h('span',{style:{fontSize:14,color:this.SOFT}}, this.ord(6-sel.s)+' string · '+this.ord(sel.f)))
+      : h('span',{style:{fontSize:14,color:this.SOFT}},'Click any fret to hear its note');
+
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'20px 22px',boxShadow:'0 1px 0 rgba(0,0,0,.02)'}},
+      h('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:12,marginBottom:14,minHeight:40}},
+        readout,
+        this.btn(this.state.fbAll?'Hide all notes':'Show all notes',()=>this.setState({fbAll:!this.state.fbAll}), this.state.fbAll?'solid':'')),
+      h('div',{style:{overflowX:'auto'}}, svg)
+    );
+  }
+
+  // ---------- buttons ----------
+  btn(label,onClick,variant,extra){
+    const base={font:'inherit',fontFamily:"'Newsreader',sans-serif",fontSize:13.5,fontWeight:600,padding:'9px 16px',borderRadius:999,cursor:'pointer',transition:'all .12s',whiteSpace:'nowrap'};
+    let style;
+    if(variant==='solid') style={...base,border:'1px solid '+this.ACCENT,background:this.ACCENT,color:'#fff'};
+    else if(variant==='ghost') style={...base,border:'1px solid '+this.LINE,background:'transparent',color:this.INK};
+    else style={...base,border:'1px solid '+this.LINE,background:'#fff',color:this.INK};
+    return React.createElement('button',{onClick,style:{...style,...(extra||{})}},label);
+  }
+
+  // ---------- chords ----------
+  setChord(i){ this.setState({chordIdx:i},()=>this.strumShape(this.CHORDS[i].shape,'down')); }
+  renderChordDiagram(chord,opts){
+    opts=opts||{}; const h=React.createElement;
+    const showF = opts.showFingers!==false && this.props.showFingerNumbers!==false;
+    const sl=34, st=46, sgap=24, fgap=34, nf=4;
+    const W=sl+5*sgap+34, H=st+nf*fgap+30;
+    const sx=i=>sl+i*sgap, fy=f=>st+f*fgap;
+    const k=[];
+    k.push(h('line',{key:'nut',x1:sl-1,y1:st,x2:sx(5)+1,y2:st,stroke:'#2a2520',strokeWidth:5}));
+    for(let f=1;f<=nf;f++) k.push(h('line',{key:'fr'+f,x1:sl,y1:fy(f),x2:sx(5),y2:fy(f),stroke:'#c5b89f',strokeWidth:1.4}));
+    for(let i=0;i<6;i++) k.push(h('line',{key:'st'+i,x1:sx(i),y1:st,x2:sx(i),y2:fy(nf),stroke:'#a99d89',strokeWidth:1.1+(i<2?0.5:0)}));
+    for(let i=0;i<6;i++){
+      const v=chord.shape[i];
+      if(v==='x') k.push(h('text',{key:'x'+i,x:sx(i),y:st-12,fontSize:13,fontFamily:'JetBrains Mono,monospace',fill:'#9a8f7d',textAnchor:'middle',fontWeight:600},'✕'));
+      else if(v===0) k.push(h('circle',{key:'o'+i,cx:sx(i),cy:st-16,r:5.5,fill:'none',stroke:'#6f665a',strokeWidth:1.6}));
+      else {
+        const cy=fy(v)-fgap/2;
+        k.push(h('circle',{key:'dt'+i,cx:sx(i),cy,r:11,fill:this.ACCENT}));
+        if(showF && chord.fingers[i]) k.push(h('text',{key:'fg'+i,x:sx(i),y:cy+0.5,fontSize:11,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#fff',textAnchor:'middle',dominantBaseline:'middle'},chord.fingers[i]));
+      }
+    }
+    for(let i=0;i<6;i++) k.push(h('text',{key:'nm'+i,x:sx(i),y:fy(nf)+18,fontSize:11.5,fontFamily:'JetBrains Mono,monospace',fill:'#6f665a',textAnchor:'middle'},this.openNames[i]));
+    return h('svg',{viewBox:'0 0 '+W+' '+H,width:W,height:H,style:{display:'block'}},k);
+  }
+  renderChords(){
+    const h=React.createElement; const i=this.state.chordIdx; const c=this.CHORDS[i];
+    const chips=this.CHORDS.map((cc,idx)=> h('button',{key:cc.name,onClick:()=>this.setChord(idx),style:{font:'inherit',fontFamily:"'Newsreader',sans-serif",fontSize:14,fontWeight:600,minWidth:46,padding:'8px 12px',borderRadius:10,cursor:'pointer',border:'1px solid '+(idx===i?this.ACCENT:this.LINE),background:idx===i?this.ACCENT:'#fff',color:idx===i?'#fff':this.INK}},cc.name));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px',display:'flex',flexWrap:'wrap',gap:32,alignItems:'center',justifyContent:'center'}},
+      h('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',gap:14}},
+        h('div',{style:{display:'flex',alignItems:'center',gap:18}},
+          this.btn('‹',()=>this.setChord((i+this.CHORDS.length-1)%this.CHORDS.length),'ghost',{fontSize:20,padding:'4px 14px',lineHeight:1}),
+          h('div',{style:{textAlign:'center',minWidth:120}},
+            h('div',{style:{fontFamily:'Newsreader,serif',fontSize:40,fontWeight:600,lineHeight:1}},c.name),
+            h('div',{style:{fontSize:13,color:this.SOFT,marginTop:4}},c.full)),
+          this.btn('›',()=>this.setChord((i+1)%this.CHORDS.length),'ghost',{fontSize:20,padding:'4px 14px',lineHeight:1})),
+        this.renderChordDiagram(c),
+        h('div',{style:{display:'flex',gap:10}},
+          this.btn('Strum ↓',()=>this.strumShape(c.shape,'down'),'solid'),
+          this.btn('Strum ↑',()=>this.strumShape(c.shape,'up'),'ghost'))
+      ),
+      h('div',{style:{display:'flex',flexDirection:'column',gap:12,maxWidth:240}},
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12,letterSpacing:'.1em',textTransform:'uppercase',color:this.SOFT}},'Jump to a chord'),
+        h('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:8}},chips),
+        h('div',{style:{fontSize:13.5,color:this.SOFT,lineHeight:1.55,marginTop:4}},'Start with Em, Am, and C — they share fingers and cover a lot of ground.'))
+    );
+  }
+
+  // ---------- notation ----------
+  staffY(m){ const pc=((m%12)+12)%12; const oct=Math.floor(m/12)-1; const map={0:0,2:1,4:2,5:3,7:4,9:5,11:6}; const li=map[pc]; if(li==null) return null; const val=oct*7+li; return 98-(val-30)*6; }
+  playStaffNote(m){ this.pluck(m); this.setState({staffSel:m}); }
+  renderStaffEl(notes,opts){
+    opts=opts||{}; const h=React.createElement;
+    const x0=92, dx=notes.length>1?46:0, W=Math.max(220,x0+Math.max(1,notes.length)*46+30), H=160;
+    const lines=[50,62,74,86,98]; const k=[];
+    lines.forEach((y,idx)=> k.push(h('line',{key:'ln'+idx,x1:60,y1:y,x2:W-20,y2:y,stroke:'#bcae96',strokeWidth:1.3})));
+    k.push(h('text',{key:'clef',x:62,y:101,fontSize:62,fontFamily:'Newsreader,serif',fill:'#2a2520'},'\uD834\uDD1E'));
+    notes.forEach((n,idx)=>{
+      const x = notes.length===1 ? (W/2+8) : (x0+idx*dx);
+      const y=this.staffY(n.midi); const hl=n.highlight||(opts.selectable&&this.state.staffSel===n.midi);
+      const col=hl?this.ACCENT:'#2a2520';
+      if(y>=110) k.push(h('line',{key:'led'+idx,x1:x-13,y1:110,x2:x+13,y2:110,stroke:'#bcae96',strokeWidth:1.3}));
+      k.push(h('ellipse',{key:'nh'+idx,cx:x,cy:y,rx:7.6,ry:5.6,fill:col,transform:'rotate(-18 '+x+' '+y+')'}));
+      const up=y>74; if(up) k.push(h('line',{key:'sm'+idx,x1:x+7,y1:y-1,x2:x+7,y2:y-33,stroke:col,strokeWidth:1.6}));
+      else k.push(h('line',{key:'sm'+idx,x1:x-7,y1:y+1,x2:x-7,y2:y+33,stroke:col,strokeWidth:1.6}));
+      if(opts.showLabels) k.push(h('text',{key:'lb'+idx,x,y:132,fontSize:13,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:hl?this.ACCENT:'#6f665a',textAnchor:'middle'},this.noteName(n.midi)));
+      if(opts.selectable) k.push(h('rect',{key:'ht'+idx,x:x-18,y:14,width:36,height:124,fill:'transparent',style:{cursor:'pointer'},onClick:()=>this.playStaffNote(n.midi)}));
+    });
+    return h('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:{maxWidth:W,display:'block'}},k);
+  }
+  renderNotation(){
+    const h=React.createElement;
+    const notes=[60,62,64,65,67,69,71,72].map(m=>({midi:m}));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'22px'}},
+      h('div',{style:{overflowX:'auto'}}, this.renderStaffEl(notes,{showLabels:true,selectable:true})),
+      h('div',{style:{fontSize:13.5,color:this.SOFT,marginTop:10}},'Treble clef · Middle C (the low one, on its own short line) up to the C an octave higher. Click any note to play it.')
+    );
+  }
+
+  // ---------- TAB ----------
+  playTab(){
+    if(this.state.tabPos!==-1) return;
+    let p=-1; const seq=this.TAB;
+    this._tabTimer=setInterval(()=>{
+      p++; if(p>=seq.length){ clearInterval(this._tabTimer); this.setState({tabPos:-1}); return; }
+      const n=seq[p]; this.pluck(this.openMidi[n.s]+n.f,0,0.8); this.setState({tabPos:p});
+    },420);
+  }
+  renderTab(){
+    const h=React.createElement; const rows=['e','B','G','D','A','E']; // top..bottom (high e first)
+    const left=42, top=26, rg=24, x0=84, dx=46;
+    const W=x0+this.TAB.length*dx+24, H=top+5*rg+30;
+    const k=[];
+    for(let r=0;r<6;r++) k.push(h('line',{key:'l'+r,x1:left,y1:top+r*rg,x2:W-16,y2:top+r*rg,stroke:'#bcae96',strokeWidth:1.2}));
+    for(let r=0;r<6;r++) k.push(h('text',{key:'rl'+r,x:22,y:top+r*rg+0.5,fontSize:13,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#6f665a',dominantBaseline:'middle',textAnchor:'middle'},rows[r]));
+    this.TAB.forEach((n,idx)=>{
+      const rowFromTop=5-n.s; const x=x0+idx*dx; const y=top+rowFromTop*rg; const act=this.state.tabPos===idx;
+      k.push(h('rect',{key:'bx'+idx,x:x-12,y:y-10,width:24,height:20,rx:4,fill:act?this.ACCENT:'#fbfaf8'}));
+      k.push(h('text',{key:'fn'+idx,x,y:y+0.5,fontSize:13.5,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:act?'#fff':'#2a2520',textAnchor:'middle',dominantBaseline:'middle'},n.f));
+    });
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'22px'}},
+      h('div',{style:{overflowX:'auto'}}, h('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:{maxWidth:W,display:'block'}},k)),
+      h('div',{style:{display:'flex',alignItems:'center',gap:14,marginTop:14,flexWrap:'wrap'}},
+        this.btn(this.state.tabPos!==-1?'Playing…':'▶  Play line',()=>this.playTab(),'solid'),
+        h('span',{style:{fontSize:13.5,color:this.SOFT}},'A short melody on the A and D strings — numbers are frets, read left to right.'))
+    );
+  }
+
+  // ---------- rhythm ----------
+  toggleStrum(){
+    if(this.state.strumPlaying){ clearInterval(this._strumTimer); this.setState({strumPlaying:false,strumPos:-1}); return; }
+    this.setState({strumPlaying:true,strumPos:-1});
+    let p=-1; const R=this.RHYTHM; const chord=this.CHORDS[0];
+    this._strumTimer=setInterval(()=>{
+      p=(p+1)%8; const d=R.dirs[p];
+      if(p%2===0) this.click(0,p===0);
+      // beats 1 & 3 punch hardest, other downbeats medium, off-beat "&"s lightest
+      const vel = p===0?1.15 : p===4?1.05 : (p%2===0?0.95:0.72);
+      if(d) this.strumShape(chord.shape, d==='U'?'up':'down', vel);
+      this.setState({strumPos:p});
+    }, this.eighthMs());
+  }
+  renderRhythm(){
+    const h=React.createElement; const R=this.RHYTHM;
+    const slots=R.labels.map((lb,idx)=>{
+      const d=R.dirs[idx]; const act=this.state.strumPos===idx;
+      return h('div',{key:idx,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:8,flex:'1 1 0',minWidth:42}},
+        h('div',{style:{fontSize:24,fontWeight:700,height:30,lineHeight:'30px',color:d?(act?this.ACCENT:this.INK):'#c9bda7',transition:'color .1s'}}, d==='D'?'↓':d==='U'?'↑':'·'),
+        h('div',{style:{width:'100%',height:6,borderRadius:3,background:act?this.ACCENT:(d?'#e0d4bf':'#f3f0e9'),transition:'background .1s'}}),
+        h('div',{style:{fontSize:13,fontFamily:'JetBrains Mono,monospace',fontWeight:600,color:idx%2===0?this.INK:this.SOFT}},lb));
+    });
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:6,alignItems:'flex-end',marginBottom:20}},slots),
+      h('div',{style:{display:'flex',alignItems:'center',gap:14,flexWrap:'wrap'}},
+        this.btn(this.state.strumPlaying?'■  Stop':'▶  Play pattern',()=>this.toggleStrum(),'solid'),
+        this.renderTempo(),
+        h('span',{style:{fontSize:13.5,color:this.SOFT,maxWidth:'30ch'}},'Down on the numbers, up on the "ands". Strumming a C chord.'))
+    );
+  }
+
+  // ---------- tempo / metronome ----------
+  eighthMs(){ return 30000/this.state.bpm; }
+  beatMs(){ return 60000/this.state.bpm; }
+  chordByName(n){ return this.CHORDS.find(c=>c.name===n) || this.CHORDS[0]; }
+  click(when, accent){
+    const ac=this.ensureAudio();
+    const o=ac.createOscillator(); const g=ac.createGain();
+    o.type='square'; o.frequency.value=accent?2000:1300;
+    const t=ac.currentTime+(when||0);
+    g.gain.setValueAtTime(0.0001,t);
+    g.gain.exponentialRampToValueAtTime(accent?0.3:0.16,t+0.001);
+    g.gain.exponentialRampToValueAtTime(0.0001,t+0.045);
+    o.connect(g); g.connect(this.master||ac.destination); o.start(t); o.stop(t+0.06);
+  }
+  setBpm(v){
+    v=Math.max(50,Math.min(160,Math.round(v)));
+    const a=this.state.songPlaying, b=this.state.trainerPlaying, c=this.state.strumPlaying;
+    clearInterval(this._songTimer); clearInterval(this._trnTimer); clearInterval(this._strumTimer);
+    this.setState({bpm:v,songPlaying:false,trainerPlaying:false,strumPlaying:false,songBar:-1,songBeat:-1,trainerBeat:-1,strumPos:-1},()=>{
+      if(a) this.toggleSong(); if(b) this.toggleTrainer(); if(c) this.toggleStrum();
+    });
+  }
+  renderTempo(){
+    const h=React.createElement; const bpm=this.state.bpm;
+    return h('div',{style:{display:'flex',alignItems:'center',gap:9}},
+      h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:this.SOFT}},'Tempo'),
+      this.btn('–',()=>this.setBpm(bpm-5),'ghost',{padding:'3px 12px',fontSize:17,lineHeight:1}),
+      h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:14,fontWeight:600,minWidth:62,textAlign:'center'}},bpm+' BPM'),
+      this.btn('+',()=>this.setBpm(bpm+5),'ghost',{padding:'3px 12px',fontSize:17,lineHeight:1})
+    );
+  }
+
+  // ---------- your first song ----------
+  toggleSong(){
+    if(this.state.songPlaying){ clearInterval(this._songTimer); this.setState({songPlaying:false,songBar:-1,songBeat:-1}); return; }
+    this.ensureAudio(); this.setState({songPlaying:true});
+    const R=this.RHYTHM; let step=-1;
+    this._songTimer=setInterval(()=>{
+      step++; const bar=Math.floor(step/8)%this.SONG.length; const sub=step%8;
+      const chord=this.chordByName(this.SONG[bar]); const d=R.dirs[sub];
+      if(sub%2===0) this.click(0,sub===0);
+      if(d) this.strumShape(chord.shape, d==='U'?'up':'down', sub===0?1.12:0.9);
+      this.setState({songBar:bar,songBeat:sub});
+    }, this.eighthMs());
+  }
+  renderSong(){
+    const h=React.createElement; const R=this.RHYTHM; const bar=this.state.songBar;
+    const tiles=this.SONG.map((name,i)=>{
+      const act=bar===i;
+      return h('div',{key:i,style:{flex:'1 1 0',minWidth:64,textAlign:'center',padding:'14px 8px',borderRadius:12,border:'1px solid '+(act?this.ACCENT:this.LINE),background:act?this.ACCENT:'#fff',transition:'all .12s'}},
+        h('div',{style:{fontFamily:'Newsreader,serif',fontSize:30,fontWeight:600,lineHeight:1,color:act?'#fff':this.INK}},name),
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10.5,letterSpacing:'.1em',textTransform:'uppercase',color:act?'rgba(255,255,255,.82)':this.SOFT,marginTop:6}},'Bar '+(i+1)));
+    });
+    const pips=R.labels.map((lb,i)=>{
+      const d=R.dirs[i]; const act=bar>=0&&this.state.songBeat===i;
+      return h('div',{key:i,style:{display:'flex',flexDirection:'column',alignItems:'center',gap:5,flex:'1 1 0'}},
+        h('div',{style:{fontSize:18,height:22,lineHeight:'22px',color:d?(act?this.ACCENT:this.INK):'#c9bda7'}}, d==='D'?'↓':d==='U'?'↑':'·'),
+        h('div',{style:{width:'100%',height:5,borderRadius:3,background:act?this.ACCENT:(d?'#e0d4bf':'#efe7d6')}}));
+    });
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:10,marginBottom:16}},tiles),
+      h('div',{style:{display:'flex',gap:6,marginBottom:20,maxWidth:520}},pips),
+      h('div',{style:{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}},
+        this.btn(this.state.songPlaying?'■  Stop':'▶  Play song',()=>this.toggleSong(),'solid'),
+        this.renderTempo(),
+        h('span',{style:{fontSize:13.5,color:this.SOFT,maxWidth:'34ch'}},'Em → C → G → D, one bar each, looped — the progression behind a thousand songs.'))
+    );
+  }
+
+  // ---------- chord-change trainer ----------
+  setTrainer(which,name){ const o={}; o[which]=name; this.setState(o); }
+  toggleTrainer(){
+    if(this.state.trainerPlaying){ clearInterval(this._trnTimer); this.setState({trainerPlaying:false,trainerBeat:-1}); return; }
+    this.ensureAudio(); this.setState({trainerPlaying:true});
+    let step=-1;
+    this._trnTimer=setInterval(()=>{
+      step++; const barNo=Math.floor(step/4); const b=step%4; const active=barNo%2;
+      const chord=this.chordByName(active===0?this.state.trainerA:this.state.trainerB);
+      this.click(0,b===0);
+      if(b===0) this.strumShape(chord.shape,'down',1.05);
+      this.setState({trainerActive:active,trainerBeat:b});
+    }, this.beatMs());
+  }
+  renderTrainer(){
+    const h=React.createElement;
+    const playing=this.state.trainerPlaying; const active=this.state.trainerActive; const beat=this.state.trainerBeat;
+    const switchCue = playing && beat===3;
+    const sel=(which)=> h('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},
+      this.CHORDS.map(c=> h('button',{key:c.name,onClick:()=>this.setTrainer(which,c.name),style:{font:'inherit',fontFamily:'JetBrains Mono,monospace',fontSize:12.5,fontWeight:600,padding:'5px 10px',borderRadius:8,cursor:'pointer',border:'1px solid '+(this.state[which]===c.name?this.ACCENT:this.LINE),background:this.state[which]===c.name?this.ACCENT:'#fff',color:this.state[which]===c.name?'#fff':this.INK}},c.name)));
+    const pane=(name,isActive,label)=> h('div',{style:{flex:'1 1 200px',padding:'16px',borderRadius:14,border:'1px solid '+(playing&&isActive?this.ACCENT:this.LINE),background:playing&&isActive?'rgba(179,88,47,0.05)':'#fff',transition:'all .12s'}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:playing&&isActive?this.ACCENT:this.SOFT,marginBottom:10,fontWeight:600}},label+' · '+name),
+      h('div',{style:{display:'flex',justifyContent:'center'}}, this.renderChordDiagram(this.chordByName(name))));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:14,flexWrap:'wrap',marginBottom:18}}, pane(this.state.trainerA,active===0,'From'), pane(this.state.trainerB,active===1,'To')),
+      h('div',{style:{display:'flex',gap:9,marginBottom:switchCue?12:18,justifyContent:'center'}},
+        [0,1,2,3].map(i=> h('div',{key:i,style:{width:38,height:38,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontFamily:'JetBrains Mono,monospace',fontSize:15,fontWeight:600,border:'1px solid '+(playing&&beat===i?this.ACCENT:this.LINE),background:playing&&beat===i?this.ACCENT:'#fff',color:playing&&beat===i?'#fff':(i===3?this.ACCENT:this.SOFT),transition:'all .08s'}}, (i===3&&switchCue)?'↻':(i+1)))),
+      switchCue?h('div',{style:{textAlign:'center',fontFamily:'JetBrains Mono,monospace',fontSize:12,letterSpacing:'.16em',textTransform:'uppercase',color:this.ACCENT,marginBottom:16,fontWeight:600}},'Switch now'):null,
+      h('div',{style:{display:'flex',gap:24,flexWrap:'wrap',marginBottom:18}},
+        h('div',null, h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:this.SOFT,marginBottom:7}},'From chord'), sel('trainerA')),
+        h('div',null, h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:this.SOFT,marginBottom:7}},'To chord'), sel('trainerB'))),
+      h('div',{style:{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}},
+        this.btn(playing?'■  Stop':'▶  Start drill',()=>this.toggleTrainer(),'solid'),
+        this.renderTempo(),
+        h('span',{style:{fontSize:13.5,color:this.SOFT,maxWidth:'30ch'}},'Four beats per chord. Switching clean beats switching fast.'))
+    );
+  }
+
+  // ===== music-theory core =====
+  pcName(pc){ const a=this.props.noteNaming==='flats'?this.FLAT:this.SHARP; return a[((pc%12)+12)%12]; }
+  ivLabel(pc,root){ return this.INTERVALS[(((pc-root)%12)+12)%12]; }
+  qualById(id){ return this.QUALITIES.find(q=>q.id===id)||this.QUALITIES[0]; }
+  scaleById(id){ return this.SCALES.find(s=>s.id===id)||this.SCALES[0]; }
+  chipStyle(active){ return {font:'inherit',fontFamily:'JetBrains Mono,monospace',fontSize:12.5,fontWeight:600,padding:'6px 10px',borderRadius:8,cursor:'pointer',border:'1px solid '+(active?this.ACCENT:this.LINE),background:active?this.ACCENT:'#fff',color:active?'#fff':this.INK,transition:'all .1s'}; }
+  rootChips(stateKey){
+    const h=React.createElement;
+    return h('div',{style:{display:'flex',flexWrap:'wrap',gap:5}},
+      Array.from({length:12},(_,pc)=> h('button',{key:pc,onClick:()=>this.setState({[stateKey]:pc}),style:this.chipStyle(this.state[stateKey]===pc)}, this.pcName(pc))));
+  }
+  eyebrow(txt){ return React.createElement('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:this.SOFT,marginBottom:8,fontWeight:600}},txt); }
+
+  // generalized fretboard: pcs = {pitchClass: label}; root highlighted
+  renderNeck(pcs, rootPc){
+    const h=React.createElement; const frets=12;
+    const ml=46, mt=28, fw=50, sg=26, W=ml+frets*fw+26, H=mt+5*sg+34;
+    const lx=f=>ml+f*fw, fx=f=> f===0?ml-24:ml+(f-0.5)*fw, sy=s=>mt+s*sg;
+    const root=((rootPc%12)+12)%12; const showN=this.state.neckNotes; const k=[];
+    k.push(h('rect',{key:'bg',x:ml,y:mt-3,width:frets*fw,height:5*sg+6,rx:5,fill:'#f3f0e9'}));
+    [3,5,7,9].forEach(f=> k.push(h('circle',{key:'mk'+f,cx:ml+(f-0.5)*fw,cy:mt+2.5*sg,r:4.5,fill:'#d8cbb2'})));
+    k.push(h('circle',{key:'m12a',cx:ml+11.5*fw,cy:mt+1.5*sg,r:4.5,fill:'#d8cbb2'}));
+    k.push(h('circle',{key:'m12b',cx:ml+11.5*fw,cy:mt+3.5*sg,r:4.5,fill:'#d8cbb2'}));
+    for(let s=0;s<6;s++) k.push(h('line',{key:'s'+s,x1:ml,y1:sy(s),x2:ml+frets*fw,y2:sy(s),stroke:'#a99d89',strokeWidth:1+(5-s)*0.3}));
+    for(let f=0;f<=frets;f++) k.push(h('line',{key:'f'+f,x1:lx(f),y1:mt,x2:lx(f),y2:mt+5*sg,stroke:f===0?'#2a2520':'#c5b89f',strokeWidth:f===0?4.5:1.4}));
+    for(let s=0;s<6;s++){ for(let f=0;f<=frets;f++){
+      const pc=(((this.openMidi[s]+f)%12)+12)%12; const hit=Object.prototype.hasOwnProperty.call(pcs,pc);
+      k.push(h('rect',{key:'h'+s+'-'+f,x:f===0?0:lx(f-1),y:sy(s)-sg/2,width:f===0?ml:fw,height:sg,fill:'transparent',style:{cursor:'pointer'},onClick:()=>this.pluck(this.openMidi[s]+f)}));
+      if(hit){ const cx=fx(f), cy=sy(s), isR=pc===root;
+        k.push(h('circle',{key:'d'+s+'-'+f,cx,cy,r:11,fill:isR?this.ACCENT:'#2a2520',style:{pointerEvents:'none'}}));
+        k.push(h('text',{key:'t'+s+'-'+f,x:cx,y:cy+0.5,fontSize:9.5,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#fff',textAnchor:'middle',dominantBaseline:'middle',style:{pointerEvents:'none'}}, showN?this.pcName(pc):pcs[pc]));
+      }
+    }}
+    for(let s=0;s<6;s++) k.push(h('text',{key:'sl'+s,x:18,y:sy(s)+0.5,fontSize:11,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#6f665a',textAnchor:'middle',dominantBaseline:'middle'},this.openNames[s]));
+    for(let f=1;f<=frets;f++) k.push(h('text',{key:'fn'+f,x:ml+(f-0.5)*fw,y:mt+5*sg+20,fontSize:10,fontFamily:'JetBrains Mono,monospace',fill:[3,5,7,9,12].includes(f)?'#2a2520':'#a99d89',textAnchor:'middle'},f));
+    return h('div',{style:{background:'#fff',borderRadius:12,padding:'10px 12px',overflowX:'auto'}}, h('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:{maxWidth:W,display:'block'}},k));
+  }
+  neckToggle(){
+    const h=React.createElement;
+    return h('div',{style:{display:'inline-flex',border:'1px solid '+this.LINE,borderRadius:8,overflow:'hidden'}},
+      ['intervals','notes'].map((m,i)=>{ const on=(m==='notes')===this.state.neckNotes;
+        return h('button',{key:m,onClick:()=>this.setState({neckNotes:m==='notes'}),style:{font:'inherit',fontFamily:'JetBrains Mono,monospace',fontSize:11.5,fontWeight:600,padding:'6px 12px',cursor:'pointer',border:'none',background:on?this.ACCENT:'#fff',color:on?'#fff':this.SOFT}}, 'Show '+m); }));
+  }
+  pcsFrom(rootPc, iv){ const o={}; iv.forEach(i=>{ const pc=(((rootPc+i)%12)+12)%12; o[pc]=this.INTERVALS[((i%12)+12)%12]; }); return o; }
+  playChordPcs(rootPc, iv){ const base=48+(((rootPc%12)+12)%12); let t=0; iv.forEach(i=>{ this.pluck(base+i,t,0.7); t+=0.05; }); }
+  stopScale(){ clearInterval(this._scaleTimer); this.setState({scaleStep:-1}); }
+  playScaleSeq(rootPc, iv){
+    if(this.state.scaleStep>=0){ this.stopScale(); return; }
+    clearInterval(this._scaleTimer); const base=48+(((rootPc%12)+12)%12); const seq=iv.concat([12]);
+    let i=-1; this._scaleTimer=setInterval(()=>{ i++; if(i>=seq.length){ clearInterval(this._scaleTimer); this.setState({scaleStep:-1}); return; }
+      this.pluck(base+seq[i],0,0.85); this.setState({scaleStep:i}); }, this.beatMs()/1.2);
+  }
+
+  // movable, playable chord shape (CAGED-style barre/open voicing)
+  renderShapeDiagram(rootPc, q){
+    const h=React.createElement; const sh=this.SHAPES[q.id]||this.SHAPES.maj;
+    const root=((rootPc%12)+12)%12; const pcSet=q.iv.map(i=>(((rootPc+i)%12)+12)%12);
+    const anchorOpenPc=(((this.openMidi[sh.anchor])%12)+12)%12;
+    const barre=(((root-anchorOpenPc)%12)+12)%12;
+    const abs=sh.frets.map((off,j)=>{ if(off<0||j<sh.anchor) return null; const f=barre+off; const pc=(((this.openMidi[j]+f)%12)+12)%12; return pcSet.indexOf(pc)>=0?f:null; });
+    const open=barre===0;
+    const voiced=abs.map((f,j)=>({f,j})).filter(x=>x.f!=null&&x.f>0);
+    const winStart=open?0:(voiced.length?Math.min.apply(null,voiced.map(x=>x.f)):1);
+    const nf=5; const rowOf=f=> open? f : (f-winStart+1);
+    const sl=44, st=36, sgap=30, fgap=32, W=sl+5*sgap+30, H=st+nf*fgap+30;
+    const sx=i=>sl+i*sgap, fy=r=>st+r*fgap; const k=[];
+    if(open) k.push(h('line',{key:'nut',x1:sl-1,y1:st,x2:sx(5)+1,y2:st,stroke:'#2a2520',strokeWidth:5}));
+    else { k.push(h('line',{key:'top',x1:sl,y1:st,x2:sx(5),y2:st,stroke:'#c5b89f',strokeWidth:1.6}));
+      k.push(h('text',{key:'pos',x:sl-12,y:fy(1)-fgap/2,fontSize:12,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#6f665a',textAnchor:'end',dominantBaseline:'middle'}, winStart+'fr')); }
+    for(let r=1;r<=nf;r++) k.push(h('line',{key:'fr'+r,x1:sl,y1:fy(r),x2:sx(5),y2:fy(r),stroke:'#c5b89f',strokeWidth:1.4}));
+    for(let i=0;i<6;i++) k.push(h('line',{key:'st'+i,x1:sx(i),y1:st,x2:sx(i),y2:fy(nf),stroke:'#a99d89',strokeWidth:1.1+(i===0?0.4:0)}));
+    if(!open){ const bs=abs.map((f,j)=>({f,j})).filter(x=>x.f===barre); if(bs.length>=2){ const lo=Math.min.apply(null,bs.map(x=>x.j)), hi=Math.max.apply(null,bs.map(x=>x.j)); k.push(h('rect',{key:'barre',x:sx(lo)-9,y:fy(1)-fgap/2-9,width:sx(hi)-sx(lo)+18,height:18,rx:9,fill:this.INK})); } }
+    for(let i=0;i<6;i++){ const f=abs[i];
+      if(f==null) k.push(h('text',{key:'x'+i,x:sx(i),y:st-12,fontSize:13,fontFamily:'JetBrains Mono,monospace',fill:'#9a8f7d',textAnchor:'middle',fontWeight:600},'✕'));
+      else if(f===0) k.push(h('circle',{key:'o'+i,cx:sx(i),cy:st-16,r:5.5,fill:'none',stroke:'#6f665a',strokeWidth:1.6})); }
+    for(let i=0;i<6;i++){ const f=abs[i]; if(f==null||f===0) continue; const r=rowOf(f); if(r<1||r>nf) continue; const cy=fy(r)-fgap/2; const pc=(((this.openMidi[i]+f)%12)+12)%12; const isR=pc===root; const onBarre=!open&&f===barre;
+      if(onBarre){ if(isR) k.push(h('circle',{key:'rb'+i,cx:sx(i),cy,r:6,fill:this.ACCENT,stroke:'#fff',strokeWidth:1.6})); continue; }
+      k.push(h('circle',{key:'dt'+i,cx:sx(i),cy,r:11,fill:isR?this.ACCENT:this.INK}));
+      const fg=sh.fingers&&sh.fingers[i]; if(fg) k.push(h('text',{key:'fg'+i,x:sx(i),y:cy+0.5,fontSize:11,fontFamily:'JetBrains Mono,monospace',fontWeight:600,fill:'#fff',textAnchor:'middle',dominantBaseline:'middle'},fg)); }
+    for(let i=0;i<6;i++){ const f=abs[i]; k.push(h('text',{key:'nn'+i,x:sx(i),y:fy(nf)+18,fontSize:11,fontFamily:'JetBrains Mono,monospace',fill:f==null?'#bcae96':'#6f665a',textAnchor:'middle'}, f==null?'✕':this.pcName(this.openMidi[i]+f))); }
+    return h('svg',{viewBox:'0 0 '+W+' '+H,width:W,height:H,style:{display:'block',maxWidth:'100%'}},k);
+  }
+
+  // ===== tuner =====
+  playOpen(s){ this.pluck(this.openMidi[s],0,0.95); this.setState({tunerString:s}); }
+  playAllStrings(){ for(let s=0;s<6;s++) this.pluck(this.openMidi[s], s*0.5, 0.9); this.setState({tunerString:-1}); }
+  renderTuner(){
+    const h=React.createElement;
+    const tiles=[0,1,2,3,4,5].map(s=>{ const act=this.state.tunerString===s;
+      return h('button',{key:s,onClick:()=>this.playOpen(s),style:{flex:'1 1 0',minWidth:78,cursor:'pointer',padding:'18px 8px',borderRadius:14,border:'1px solid '+(act?this.ACCENT:this.LINE),background:act?this.ACCENT:'#fff',transition:'all .12s',textAlign:'center'}},
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10.5,letterSpacing:'.1em',textTransform:'uppercase',color:act?'rgba(255,255,255,.82)':this.SOFT}}, (6-s)+(s===0?'th (low)':s===5?'st (high)':'th')),
+        h('div',{style:{fontFamily:'Newsreader,serif',fontSize:34,fontWeight:600,lineHeight:1.1,color:act?'#fff':this.INK}}, this.openNames[s].toUpperCase()));
+    });
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap'}},tiles),
+      h('div',{style:{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap'}},
+        this.btn('▶  Play all six',()=>this.playAllStrings(),'solid'),
+        h('span',{style:{fontSize:13.5,color:this.SOFT,maxWidth:'44ch'}},'From thickest to thinnest the strings are E A D G B E. Click one to hear its target pitch, then turn the tuning peg until your string matches it.')));
+  }
+
+  // ===== hero "tone bench": live scope + playable strings =====
+  startScope(){
+    if(this._scopeRAF) return;
+    const draw=(ts)=>{ const c=this._scope;
+      if(c&&c.getContext){ const ctx=c.getContext('2d'); const W=c.width,H=c.height;
+        ctx.fillStyle='#16140f'; ctx.fillRect(0,0,W,H);
+        ctx.strokeStyle='rgba(244,239,228,0.05)'; ctx.lineWidth=1;
+        ctx.beginPath(); ctx.moveTo(0,H/2); ctx.lineTo(W,H/2); ctx.stroke();
+        for(let gx=0;gx<W;gx+=W/8){ ctx.beginPath(); ctx.moveTo(gx,0); ctx.lineTo(gx,H); ctx.stroke(); }
+        // read the live audio; decide whether there's real signal to draw
+        let live=false, buf=null, N=0; const an=this.analyser;
+        if(an){ N=an.fftSize; if(!this._scopeBuf||this._scopeBuf.length!==N) this._scopeBuf=new Uint8Array(N);
+          an.getByteTimeDomainData(this._scopeBuf); buf=this._scopeBuf;
+          let mn=255,mx=0; for(let i=0;i<N;i++){ const v=buf[i]; if(v<mn)mn=v; if(v>mx)mx=v; } live=(mx-mn)>6; }
+        ctx.lineWidth=2; ctx.lineJoin='round'; ctx.lineCap='round'; ctx.strokeStyle=this.ACCENT; ctx.beginPath();
+        if(live){ const g=1.6;
+          for(let i=0;i<N;i++){ const x=i/(N-1)*W; let y=H/2+((buf[i]-128)/128)*(H/2)*g; if(y<1)y=1; if(y>H-1)y=H-1; i?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+          ctx.globalAlpha=1; ctx.stroke();
+        } else { // idle: a gentle travelling wave so the bench always looks alive
+          const t=(ts||0)/1000, amp=H*0.11;
+          for(let x=0;x<=W;x+=2){ const ph=(x/W)*6.2*Math.PI+t*1.5; const y=H/2+Math.sin(ph)*amp*(0.55+0.45*Math.sin(t*0.6)); x?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+          ctx.globalAlpha=0.5; ctx.stroke(); ctx.globalAlpha=1;
+        }
+      }
+      this._scopeRAF=requestAnimationFrame(draw);
+    };
+    draw();
+  }
+  heroPluck(s){ this.pluck(this.openMidi[s],0,0.95); this.setState({heroString:s}); }
+  heroStrum(){ for(let s=0;s<6;s++) this.pluck(this.openMidi[s], s*0.06, 0.82); this.setState({heroString:5}); }
+  heroCell(k,v,big){ const h=React.createElement;
+    return h('div',{style:{background:'#fff',padding:'9px 13px'}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:9.5,letterSpacing:'.1em',textTransform:'uppercase',color:'#a99d89'}},k),
+      h('div',{style:{fontFamily:big?'Newsreader,serif':'JetBrains Mono,monospace',fontSize:big?27:13.5,fontWeight:600,color:big?this.ACCENT:this.INK,lineHeight:1.15,marginTop:3,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}},v)); }
+  renderHeroMachine(){
+    const h=React.createElement; const s=this.state.heroString;
+    const note=s>=0?this.noteName(this.openMidi[s]):'—';
+    const freq=s>=0?Math.round(this.freq(this.openMidi[s])):'—';
+    const strLabel=s>=0?((6-s)+(s===0?'th · low':s===5?'st · high':'th')):'—';
+    const strings=[0,1,2,3,4,5].map(i=>{ const act=s===i; const w=Math.max(1.4,2.6-i*0.3);
+      return h('button',{key:i,onClick:()=>this.heroPluck(i),title:'String '+(6-i)+' · '+this.openNames[i],style:{flex:'1 1 0',position:'relative',background:'transparent',border:'none',cursor:'pointer',padding:0,height:118}},
+        h('span',{style:{position:'absolute',left:'50%',top:6,bottom:24,width:w+'px',transform:'translateX(-50%)',background:act?this.ACCENT:'#bdb29c',boxShadow:act?'0 0 9px '+this.ACCENT:'none',transition:'background .12s, box-shadow .12s'}}),
+        h('span',{style:{position:'absolute',left:0,right:0,bottom:2,textAlign:'center',fontFamily:'JetBrains Mono,monospace',fontSize:11,fontWeight:600,color:act?this.ACCENT:this.SOFT}},this.openNames[i])); });
+    return h('div',{style:{borderRadius:16,overflow:'hidden',border:'1px solid '+this.LINE,background:'linear-gradient(158deg,#fdfcf9,#efe7d6)',boxShadow:'0 1px 0 rgba(255,255,255,.6) inset, 0 26px 52px -30px rgba(40,37,32,.62)'}},
+      h('div',{style:{display:'flex',alignItems:'center',gap:9,padding:'11px 16px',borderBottom:'1px solid '+this.LINE,background:'rgba(255,255,255,.42)'}},
+        h('span',{style:{width:7,height:7,borderRadius:'50%',background:this.ACCENT,boxShadow:'0 0 7px '+this.ACCENT}}),
+        h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',color:this.SOFT,fontWeight:600}},'Hear your guitar'),
+        h('span',{style:{marginLeft:'auto',fontFamily:'JetBrains Mono,monospace',fontSize:10.5,letterSpacing:'.06em',color:'#a99d89'}},'live signal')),
+      h('div',{style:{padding:'14px 16px 0'}},
+        h('canvas',{ref:el=>{this._scope=el;},width:520,height:150,style:{width:'100%',height:108,display:'block',borderRadius:8,background:'#16140f',border:'1px solid #2a2520'}})),
+      h('div',{style:{display:'grid',gridTemplateColumns:'1.25fr 1fr 1fr',gap:1,margin:'14px 16px 0',background:this.LINE,border:'1px solid '+this.LINE,borderRadius:8,overflow:'hidden'}},
+        this.heroCell('Note',note,true),this.heroCell('Frequency',freq+(s>=0?' Hz':'')),this.heroCell('String',strLabel)),
+      h('div',{style:{display:'flex',gap:7,padding:'16px 16px 4px'}},strings),
+      h('div',{style:{display:'flex',alignItems:'center',gap:12,padding:'2px 16px 18px'}},
+        this.btn('Strum all  ↓',()=>this.heroStrum(),'solid'),
+        h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11.5,color:this.SOFT}},'or pluck a string')));
+  }
+
+  // ===== how music works =====
+  renderTheory(){
+    const h=React.createElement; const root=this.state.thRoot; const base=48+root;
+    const major=this.scaleById('major');
+    // chromatic / interval row
+    const ivCells=Array.from({length:13},(_,i)=>{ const pc=(root+i)%12;
+      return h('button',{key:i,onClick:()=>this.pluck(base+i),style:{flex:'1 1 0',minWidth:48,cursor:'pointer',padding:'8px 4px',borderRadius:9,border:'1px solid '+this.LINE,background:i%12===0?'rgba(179,88,47,0.06)':'#fff',textAlign:'center'}},
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10,color:this.SOFT}}, '+'+i),
+        h('div',{style:{fontFamily:'Newsreader,serif',fontSize:18,fontWeight:600,color:this.INK,lineHeight:1.3}}, this.pcName(pc)),
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10.5,color:i%12===0?this.ACCENT:this.SOFT,fontWeight:600}}, this.INTERVALS[i%12])); });
+    // major scale build
+    const scaleNotes=major.iv.map((iv,d)=> h('div',{key:d,style:{display:'flex',alignItems:'center',gap:0}},
+      h('div',{style:{textAlign:'center',padding:'10px 6px',minWidth:46,border:'1px solid '+this.LINE,borderRadius:9,background:'#fff'}},
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10,color:this.SOFT}}, (d+1)),
+        h('div',{style:{fontFamily:'Newsreader,serif',fontSize:20,fontWeight:600}}, this.pcName(root+iv))),
+      d<6? h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,fontWeight:600,color:major.steps[d]==='H'?this.ACCENT:this.SOFT,padding:'0 7px'}}, major.steps[d]) : null ));
+    // harmonized chords
+    const dia=this.TRIAD_PATTERN.map((iv,d)=>{ const rpc=(root+major.iv[d])%12; const q=iv[1]-iv[0]===3?(iv[2]-iv[0]===6?'dim':'m'):'';
+      return h('button',{key:d,onClick:()=>this.playChordPcs(rpc,iv),style:{flex:'1 1 0',minWidth:62,cursor:'pointer',padding:'10px 4px',borderRadius:10,border:'1px solid '+this.LINE,background:'#fff',textAlign:'center'}},
+        h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,color:this.SOFT}}, this.ROMANS[d]),
+        h('div',{style:{fontFamily:'Newsreader,serif',fontSize:20,fontWeight:600,lineHeight:1.2}}, this.pcName(rpc)+q)); });
+    const lbl=(t)=>h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.12em',textTransform:'uppercase',color:this.ACCENT,fontWeight:600,margin:'0 0 4px'}},t);
+    const para=(kids)=>h('p',{style:{fontSize:15.5,lineHeight:1.62,color:'#4f483f',margin:'4px 0 0',maxWidth:'64ch'}},kids);
+    const block=(kids)=>h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'22px 24px'}},kids);
+    return h('div',{style:{display:'flex',flexDirection:'column',gap:18}},
+      h('div',{style:{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap'}}, this.eyebrow('Pick a starting note'), this.rootChips('thRoot')),
+      block([ lbl('1 · Every note is a number of steps'),
+        para(['Music has only twelve notes; after the twelfth you\'re back where you started, an octave higher. The distance between two notes is measured in ',h('strong',null,'semitones'),' (one fret = one semitone). Name a distance and you have an ',h('strong',null,'interval'),'. Click along — each step up is one fret.']),
+        h('div',{style:{display:'flex',gap:5,marginTop:14,flexWrap:'wrap'}}, ivCells) ]),
+      block([ lbl('2 · The major scale is one fixed pattern'),
+        para(['Almost everything comes from the ',h('strong',null,'major scale'),'. Starting on any note, follow the same step pattern — Whole, Whole, Half, Whole, Whole, Whole, Half (a whole step is two frets, a half is one). That gives seven notes. Memorise the pattern and you can build it from any root.']),
+        h('div',{style:{display:'flex',gap:0,marginTop:14,flexWrap:'wrap',alignItems:'center'}}, scaleNotes),
+        h('div',{style:{marginTop:14}}, this.btn(this.state.scaleStep>=0?'■  Stop':'▶  Hear the '+this.pcName(root)+' major scale',()=>this.playScaleSeq(root,major.iv),'solid')) ]),
+      block([ lbl('3 · Chords are notes from the scale, stacked'),
+        para(['Take the scale and stack every other note (1–3–5) and you get a ',h('strong',null,'chord'),'. Do it on each of the seven scale degrees and you get the chords that naturally belong together in that key. This is why songs feel "in tune with themselves" — the chords share one scale. Click any to hear it.']),
+        h('div',{style:{display:'flex',gap:6,marginTop:14,flexWrap:'wrap'}}, dia),
+        para([h('strong',null,'See it in action: '),'those four chords from the first song — Em, C, G, D — are all in the key of G major. That\'s not a coincidence; they\'re degrees vi, IV, I and V of one scale.']) ]) );
+  }
+
+  // ===== chord lab =====
+  renderChordLab(){
+    const h=React.createElement; const root=this.state.clRoot; const q=this.qualById(this.state.clQual);
+    const pcs=this.pcsFrom(root,q.iv);
+    const quals=this.QUALITIES.map(qq=> h('button',{key:qq.id,onClick:()=>this.setState({clQual:qq.id}),style:this.chipStyle(this.state.clQual===qq.id)}, qq.name));
+    const formula=q.iv.map((i,idx)=> h('span',{key:idx,style:{display:'inline-flex',flexDirection:'column',alignItems:'center',padding:'0 4px'}},
+      h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:18,fontWeight:600,color:idx===0?this.ACCENT:this.INK}}, this.INTERVALS[i%12]),
+      h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:10,color:this.SOFT}}, '+'+i)));
+    const notes=q.iv.map((i,idx)=> h('span',{key:idx,style:{fontFamily:'Newsreader,serif',fontSize:26,fontWeight:600,color:idx===0?this.ACCENT:this.INK}}, this.pcName(root+i)));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:18,flexWrap:'wrap',alignItems:'flex-start',marginBottom:18}},
+        h('div',{style:{flex:'0 0 auto'}}, this.eyebrow('Root'), this.rootChips('clRoot')),
+        h('div',{style:{flex:'1 1 260px'}}, this.eyebrow('Quality'), h('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},quals))),
+      h('div',{style:{display:'flex',gap:24,flexWrap:'wrap',alignItems:'center',padding:'16px 0',borderTop:'1px solid '+this.LINE,borderBottom:'1px solid '+this.LINE,marginBottom:18}},
+        h('div',null, h('div',{style:{fontFamily:'Newsreader,serif',fontSize:38,fontWeight:600,lineHeight:1}}, this.pcName(root)+q.sym), h('div',{style:{fontSize:13,color:this.SOFT,marginTop:2}}, q.name)),
+        h('div',null, this.eyebrow('Formula'), h('div',{style:{display:'flex',alignItems:'center'}}, formula)),
+        h('div',null, this.eyebrow('Notes'), h('div',{style:{display:'flex',gap:12}}, notes))),
+      h('p',{style:{fontSize:15,lineHeight:1.6,color:'#4f483f',margin:'0 0 16px',maxWidth:'62ch'}},
+        ['Here\'s one shape you can actually play. It\'s ',h('strong',null,'movable'),' — the same fingering slides up the neck to change the root, so learning it once covers all twelve keys. The ',h('span',{style:{color:this.ACCENT,fontWeight:600}},'orange'),' dot is the root; ✕ means don\'t play that string.']),
+      h('div',{style:{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap',marginBottom:16}},
+        this.btn('▶  Hear it',()=>this.playChordPcs(root,q.iv),'solid'),
+        h('div',{style:{display:'inline-flex',border:'1px solid '+this.LINE,borderRadius:8,overflow:'hidden'}},
+          [['shape','Shape to play'],['all','All positions']].map(v=>{ const on=this.state.clView===v[0];
+            return h('button',{key:v[0],onClick:()=>this.setState({clView:v[0]}),style:{font:'inherit',fontFamily:'JetBrains Mono,monospace',fontSize:11.5,fontWeight:600,padding:'7px 13px',cursor:'pointer',border:'none',background:on?this.ACCENT:'#fff',color:on?'#fff':this.SOFT}}, v[1]); })),
+        this.state.clView==='all'?this.neckToggle():null),
+      this.state.clView==='all'
+        ? this.renderNeck(pcs,root)
+        : h('div',{style:{display:'flex',gap:26,flexWrap:'wrap',alignItems:'center'}},
+            h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:14,padding:'16px 20px'}}, this.renderShapeDiagram(root,q)),
+            h('div',{style:{maxWidth:'30ch'}},
+              this.eyebrow('Reading the diagram'),
+              h('p',{style:{fontSize:14,lineHeight:1.6,color:'#4f483f',margin:0}},['Vertical lines are strings (low E on the left), horizontal lines are frets. Numbers in the dots are which finger to use (1 = index). A thick bar means one finger lies flat across several strings — a ',h('strong',null,'barre'),'. The number on the left (like "3fr") tells you which fret to start at.']))) );
+  }
+
+  // ===== scale explorer =====
+  renderScaleLab(){
+    const h=React.createElement; const root=this.state.scRoot; const sc=this.scaleById(this.state.scType);
+    const pcs=this.pcsFrom(root,sc.iv);
+    const types=this.SCALES.map(s=> h('button',{key:s.id,onClick:()=>this.setState({scType:s.id}),style:this.chipStyle(this.state.scType===s.id)}, s.name));
+    const notes=sc.iv.concat([12]).map((i,idx)=>{ const on=this.state.scaleStep===idx;
+      return h('span',{key:idx,style:{fontFamily:'Newsreader,serif',fontSize:24,fontWeight:600,padding:'4px 9px',borderRadius:8,background:on?this.ACCENT:'transparent',color:on?'#fff':(idx===0?this.ACCENT:this.INK),transition:'all .08s'}}, this.pcName(root+i)); });
+    const degs=sc.iv.map((i,idx)=> h('span',{key:idx,style:{fontFamily:'JetBrains Mono,monospace',fontSize:13,fontWeight:600,color:idx===0?this.ACCENT:this.SOFT,padding:'0 6px'}}, this.INTERVALS[i%12]));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{display:'flex',gap:18,flexWrap:'wrap',alignItems:'flex-start',marginBottom:18}},
+        h('div',null, this.eyebrow('Root'), this.rootChips('scRoot')),
+        h('div',{style:{flex:'1 1 240px'}}, this.eyebrow('Scale'), h('div',{style:{display:'flex',flexWrap:'wrap',gap:6}},types))),
+      h('div',{style:{display:'flex',gap:24,flexWrap:'wrap',alignItems:'center',padding:'16px 0',borderTop:'1px solid '+this.LINE,borderBottom:'1px solid '+this.LINE,marginBottom:18}},
+        h('div',null, this.eyebrow('Step pattern'), h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:15,fontWeight:600,letterSpacing:'.06em'}}, sc.steps.join(' – '))),
+        h('div',null, this.eyebrow('Degrees'), h('div',{style:{display:'flex'}}, degs))),
+      h('div',{style:{display:'flex',gap:2,flexWrap:'wrap',alignItems:'center',marginBottom:16}}, notes),
+      h('p',{style:{fontSize:15,lineHeight:1.6,color:'#4f483f',margin:'0 0 16px',maxWidth:'62ch'}},
+        ['The ',h('strong',null,'minor pentatonic'),' is the one most solos are built on — five notes that sound good over almost anything in the key. Learn this shape and you can improvise. Orange dots are the root note.']),
+      h('div',{style:{display:'flex',alignItems:'center',gap:12,flexWrap:'wrap',marginBottom:12}},
+        this.btn(this.state.scaleStep>=0?'■  Stop':'▶  Play ascending',()=>this.playScaleSeq(root,sc.iv),'solid'), this.neckToggle()),
+      this.renderNeck(pcs,root));
+  }
+
+  // ===== paste & play: ASCII tab or note-letter melodies =====
+  noteToMidi(tok){
+    const m=tok.match(/^([A-Ga-g])([#b]?)(\d?)$/); if(!m) return null;
+    const base={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[m[1].toUpperCase()];
+    const acc=m[2]==='#'?1:(m[2]==='b'?-1:0); const oct=m[3]===''?4:parseInt(m[3],10);
+    return (oct+1)*12+base+acc;
+  }
+  looksLikeTab(lines){ let t=0; lines.forEach(l=>{ const d=(l.match(/-/g)||[]).length; if(d>=2) t++; }); return t>=4; }
+  parsePlayable(text){
+    const lines=text.replace(/\r/g,'').split('\n').filter(l=>l.trim().length);
+    return this.looksLikeTab(lines)? this.parseTab(lines) : this.parseMelody(text);
+  }
+  parseMelody(text){
+    const toks=text.replace(/[|,]/g,' ').split(/\s+/).filter(Boolean); const events=[]; let bad=0;
+    toks.forEach(t=>{ if(t==='-'||t.toLowerCase()==='r'){ events.push([]); return; } const mi=this.noteToMidi(t); if(mi==null){ bad++; return; } events.push([mi]); });
+    if(!events.length) return {type:'melody',events:[],error:'No notes recognised. Try note letters like: C D E F G A B'};
+    return {type:'melody',events:events,note:bad?('skipped '+bad+' unrecognised token'+(bad>1?'s':'')):''};
+  }
+  parseTab(lines){
+    const tabLines=lines.filter(l=>(l.match(/-/g)||[]).length>=2);
+    const labMap={E:0,A:1,D:2,G:3,B:4,e:5}; const events=[];
+    for(let base=0;base+6<=tabLines.length;base+=6){
+      const sys=tabLines.slice(base,base+6);
+      const labels=sys.map(l=>{ const m=l.match(/^\s*([eEBGDAbgda])\s*[\|\-]/); return m?m[1]:null; });
+      let order;
+      if(labels.every(x=>x!=null)) order=labels.map(x=> labMap[x]!=null?labMap[x]:labMap[x.toUpperCase()]);
+      else order=[5,4,3,2,1,0];
+      const strip=sys.map(l=> l.replace(/^\s*[eEBGDAbgda]?\s*\|?/,''));
+      const W=Math.max.apply(null,strip.map(s=>s.length));
+      for(let c=0;c<W;c++){ const ev=[];
+        for(let li=0;li<6;li++){ const s=strip[li]||''; const ch=s[c];
+          if(ch && /\d/.test(ch)){ const prev=s[c-1]; if(prev && /\d/.test(prev)) continue; let num=ch, cc=c+1; while(s[cc]&&/\d/.test(s[cc])){ num+=s[cc]; cc++; } const oi=order[li]; if(oi!=null) ev.push(this.openMidi[oi]+parseInt(num,10)); } }
+        if(ev.length) events.push(ev);
+      }
+    }
+    if(!events.length) return {type:'tab',events:[],error:'Couldn\'t read any fret numbers. Paste 6 lines of standard ASCII tab.'};
+    return {type:'tab',events:events};
+  }
+  stopUser(){ clearInterval(this._userTimer); this.setState({tabUserPlaying:false,tabUserPos:-1}); }
+  playUser(){
+    if(this.state.tabUserPlaying){ this.stopUser(); return; }
+    const parsed=this.parsePlayable(this.state.tabInput||'');
+    if(parsed.error){ this.setState({tabError:parsed.error}); return; }
+    this.ensureAudio();
+    this.setState({tabError:parsed.note?('Playing — '+parsed.note):'', tabUserPlaying:true, tabUserPos:-1});
+    const events=parsed.events; let i=-1;
+    this._userTimer=setInterval(()=>{ i++; if(i>=events.length){ this.stopUser(); return; }
+      const ev=events[i]; ev.forEach((m,idx)=> this.pluck(m, idx*0.012, ev.length>1?0.7:0.92)); this.setState({tabUserPos:i});
+    }, this.eighthMs());
+  }
+  loadExample(kind){
+    const tab='e|-----------------------|\nB|-----------------------|\nG|-------------0--2--4----|\nD|------0--2--4----------|\nA|-0--3------------------|\nE|-----------------------|';
+    const mel='E E F G  G F E D  C C D E  E D D';
+    this.setState({tabInput: kind==='tab'?tab:mel, tabError:''});
+  }
+  renderPlayer(){
+    const h=React.createElement; const parsed=this.state.tabInput.trim()? this.parsePlayable(this.state.tabInput):null;
+    const count=parsed&&!parsed.error? parsed.events.length:0;
+    const detected=parsed? (parsed.error?null:(parsed.type==='tab'?'ASCII tab':'Melody')) : null;
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'24px'}},
+      h('div',{style:{fontFamily:'Newsreader,serif',fontSize:22,fontWeight:600,marginBottom:6}},'Paste your own and play it'),
+      h('p',{style:{fontSize:14.5,lineHeight:1.6,color:this.SOFT,margin:'0 0 14px',maxWidth:'60ch'}},'Drop in ASCII tab (six lines of dashes and fret numbers) or a line of note letters like ',h('span',{style:{fontFamily:'JetBrains Mono,monospace',color:this.INK}},'C D E F G A B'),'. It figures out which you pasted and plays it back.'),
+      h('div',{style:{display:'flex',gap:8,marginBottom:10,flexWrap:'wrap'}},
+        this.btn('Load tab example',()=>this.loadExample('tab'),'ghost',{fontSize:12.5,padding:'6px 12px'}),
+        this.btn('Load melody example',()=>this.loadExample('mel'),'ghost',{fontSize:12.5,padding:'6px 12px'})),
+      h('textarea',{value:this.state.tabInput,onChange:e=>this.setState({tabInput:e.target.value,tabError:''}),spellCheck:false,placeholder:'e|---0-2-3---|\nB|-----------|\n...    or    E G B C D E',
+        style:{width:'100%',minHeight:120,resize:'vertical',fontFamily:'JetBrains Mono,monospace',fontSize:13,lineHeight:1.5,color:this.INK,background:'#fbfaf8',border:'1px solid '+this.LINE,borderRadius:10,padding:'12px 14px',boxSizing:'border-box',whiteSpace:'pre',overflowX:'auto'}}),
+      h('div',{style:{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap',marginTop:14}},
+        this.btn(this.state.tabUserPlaying?'■  Stop':'▶  Play it',()=>this.playUser(),'solid'),
+        this.renderTempo(),
+        detected?h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12,color:this.SOFT}},'Detected: '+detected+' · '+count+' step'+(count===1?'':'s')):null),
+      this.state.tabError?h('div',{style:{marginTop:12,fontSize:13.5,color:this.state.tabUserPlaying?this.SOFT:this.WRONG}},this.state.tabError):null);
+  }
+
+  // ===== guided path + progress =====
+  loadProgress(){ try{ const r=localStorage.getItem(this.PKEY); return r?JSON.parse(r):{}; }catch(e){ return {}; } }
+  saveProgress(p){ try{ localStorage.setItem(this.PKEY,JSON.stringify(p)); }catch(e){} }
+  isDone(id){ return !!(this.state.progress&&this.state.progress[id]); }
+  doneCount(){ return this.SECTIONS.filter(s=>this.isDone(s.id)).length; }
+  setDone(id,val){ const p=Object.assign({},this.state.progress); if(val) p[id]=true; else delete p[id]; this.saveProgress(p); this.setState({progress:p}); }
+  firstIncomplete(){ const s=this.SECTIONS.find(x=>!this.isDone(x.id)); return s?s.id:this.SECTIONS[0].id; }
+  scrollToId(id){ const el=document.getElementById(id); if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-58,behavior:'smooth'}); else window.scrollTo({top:0,behavior:'smooth'}); }
+  renderProgressBar(){ const pct=Math.round(this.doneCount()/this.SECTIONS.length*100); return React.createElement('div',{style:{height:3,background:'#e8e4db'}},React.createElement('div',{style:{height:'100%',width:pct+'%',background:this.ACCENT,transition:'width .35s'}})); }
+  renderProgressHero(){ const h=React.createElement; const n=this.doneCount(),tot=this.SECTIONS.length; const done=n>=tot; const label=n===0?'Start the path':(done?'Review from the top':'Resume where you left off'); const target=done?this.SECTIONS[0].id:this.firstIncomplete();
+    return h('div',{style:{display:'flex',alignItems:'center',gap:16,flexWrap:'wrap',marginTop:26}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12.5,letterSpacing:'.06em',color:this.SOFT}}, n+' / '+tot+' sections complete'),
+      this.btn(label+'  →',()=>this.scrollToId(target),done?'':'solid')); }
+  sectionNav(id){ const h=React.createElement; const i=this.SECTIONS.findIndex(s=>s.id===id); const next=this.SECTIONS[i+1]; const done=this.isDone(id);
+    return h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:16,flexWrap:'wrap',marginTop:30,paddingTop:18,borderTop:'1px solid '+this.LINE}},
+      h('button',{onClick:()=>this.setDone(id,!done),style:{display:'inline-flex',alignItems:'center',gap:9,font:'inherit',fontFamily:"'Newsreader',serif",fontSize:15,fontWeight:600,cursor:'pointer',border:'none',background:'transparent',color:done?this.GREEN:this.SOFT,padding:0}},
+        h('span',{style:{width:22,height:22,borderRadius:'50%',border:'2px solid '+(done?this.GREEN:'#c9bda7'),background:done?this.GREEN:'transparent',color:'#fff',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:13,lineHeight:1}}, done?'✓':''),
+        done?'Comfortable with this':'Mark as comfortable'),
+      next? this.btn('Next · '+next.label+'  →',()=>{ this.setDone(id,true); this.scrollToId(next.id); },'solid')
+          : this.btn('Finish  ↑',()=>{ this.setDone(id,true); this.scrollToId('top'); },'solid')); }
+
+  // ===== guided path =====
+  loadStep(){ try{ const r=localStorage.getItem('fc_step_v1'); const n=r==null?0:parseInt(r,10); return isNaN(n)?0:Math.max(0,Math.min(5,n)); }catch(e){ return 0; } }
+  saveStep(i){ try{ localStorage.setItem('fc_step_v1',String(i)); }catch(e){} }
+  goStep(i){ i=Math.max(0,Math.min(this.STEPS.length-1,i)); this.saveStep(i); this.setState({step:i},()=>this.scrollToId('path')); }
+  widgetFor(v){
+    switch(v){
+      case 'welcome': return this.renderHeroMachine();
+      case 'tuner': return this.renderTuner();
+      case 'fretboard': return this.renderFretboard();
+      case 'chords': return this.renderChords();
+      case 'trainer': return this.renderTrainer();
+      case 'rhythm': return this.renderRhythm();
+      case 'song': return this.renderSong();
+      case 'theory': return this.renderTheory();
+      case 'chordlab': return this.renderChordLab();
+      case 'scales': return this.renderScaleLab();
+      case 'notation': return this.renderNotation();
+      case 'tabtools': return React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:20}}, this.renderTab(), this.renderPlayer());
+      default: return null;
+    }
+  }
+  renderStepBar(){ const pct=Math.round(this.basicsDone()/this.STEPS.length*100); return React.createElement('div',{style:{height:3,background:'#e8e4db'}}, React.createElement('div',{style:{height:'100%',width:pct+'%',background:this.ACCENT,transition:'width .35s'}})); }
+  renderPath(){
+    const h=React.createElement; const i=this.state.step; const st=this.STEPS[i]; const N=this.STEPS.length;
+    const prev=this.STEPS[i-1], next=this.STEPS[i+1];
+    const SHORT=['Tune','Notes','Chords','Switching','Rhythm','Song'];
+    // journey rail — the whole path is always visible, current highlighted, done ticked
+    const rail=h('div',{style:{display:'flex',gap:7,flexWrap:'wrap',marginBottom:26}},
+      this.STEPS.map((s,idx)=>{ const cur=idx===i; const done=idx<i;
+        return h('button',{key:s.id,onClick:()=>this.goStep(idx),style:{flex:'1 1 130px',minWidth:118,textAlign:'left',cursor:'pointer',font:'inherit',background:cur?this.ACCENT:'#fff',border:'1px solid '+(cur?this.ACCENT:this.LINE),borderRadius:12,padding:'11px 13px',transition:'all .12s'}},
+          h('div',{style:{display:'flex',alignItems:'center',gap:9}},
+            h('span',{style:{width:21,height:21,flex:'0 0 auto',borderRadius:'50%',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'JetBrains Mono,monospace',fontSize:11,fontWeight:600,border:'1px solid '+(cur?'rgba(255,255,255,.55)':done?this.GREEN:'#c9bda7'),background:done?this.GREEN:'transparent',color:cur?'#fff':done?'#fff':this.SOFT}}, done?'\u2713':(idx+1)),
+            h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11.5,fontWeight:600,color:cur?'#fff':this.INK,whiteSpace:'nowrap',overflow:'hidden',textOverflow:'ellipsis'}}, SHORT[idx]||s.name))); }));
+    const head=h('div',null,
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12.5,letterSpacing:'.16em',textTransform:'uppercase',color:this.ACCENT,fontWeight:600}}, 'Step '+(i+1)+' of '+N),
+      h('h2',{style:{fontFamily:'Newsreader,serif',fontWeight:600,fontSize:'clamp(28px,4.2vw,42px)',lineHeight:1.05,letterSpacing:'-.015em',margin:'12px 0 0'}}, st.name),
+      h('p',{style:{fontSize:17,lineHeight:1.6,color:'#4f483f',maxWidth:'62ch',margin:'14px 0 0'}}, st.why));
+    const widget=h('div',{style:{marginTop:26}}, this.widgetFor(st.view));
+    const tip = st.tip? h('div',{style:{marginTop:22,borderLeft:'2px solid '+this.ACCENT,paddingLeft:16}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',color:this.ACCENT,fontWeight:600,marginBottom:5}},'How to practice'),
+      h('p',{style:{fontSize:15,lineHeight:1.6,color:'#4f483f',margin:0,maxWidth:'60ch'}}, st.tip)) : null;
+    const nav=h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:14,flexWrap:'wrap',marginTop:28,paddingTop:20,borderTop:'1px solid '+this.LINE}},
+      prev? this.btn('\u2190  '+prev.name,()=>this.goStep(i-1),'ghost') : h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12,letterSpacing:'.08em',textTransform:'uppercase',color:this.SOFT,fontWeight:600}}, 'Start here'),
+      next? this.btn('Next \u00b7 '+next.name+'  \u2192',()=>this.goStep(i+1),'solid')
+          : this.btn('That\u2019s the basics \u2014 what\u2019s next  \u2193',()=>this.scrollToId('deeper'),'solid'));
+    return h('div',null, rail, h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:18,padding:'28px 30px',boxShadow:'0 1px 0 rgba(0,0,0,.02)'}}, head, widget, tip, nav));
+  }
+  renderDeeper(){
+    const h=React.createElement; const open=this.state.deepOpen;
+    const cards=this.DEEPER.map(d=>{ const isOpen=open===d.id;
+      return h('div',{key:d.id,style:{border:'1px solid '+this.LINE,borderRadius:16,background:'#fff',overflow:'hidden'}},
+        h('button',{onClick:()=>this.setState({deepOpen:isOpen?null:d.id}),style:{width:'100%',textAlign:'left',cursor:'pointer',font:'inherit',background:'transparent',border:'none',padding:'18px 22px',display:'flex',alignItems:'center',gap:16}},
+          h('div',{style:{flex:1}},
+            h('div',{style:{fontFamily:'Newsreader,serif',fontSize:22,fontWeight:600,color:this.INK}}, d.name),
+            h('div',{style:{fontSize:14.5,color:this.SOFT,marginTop:4,lineHeight:1.5,maxWidth:'64ch'}}, d.blurb)),
+          h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:22,color:this.ACCENT,lineHeight:1,transform:isOpen?'rotate(45deg)':'none',transition:'transform .15s'}}, '+')),
+        isOpen? h('div',{style:{padding:'2px 22px 24px'}}, this.widgetFor(d.view)) : null); });
+    return h('div',{style:{display:'flex',flexDirection:'column',gap:12}}, cards);
+  }
+
+  // ===== outline navigation =====
+  loadItem(){ try{ const r=localStorage.getItem('fc_item_v1'); return (r && this.ITEMS.some(x=>x.id===r)) ? r : 'welcome'; }catch(e){ return 'welcome'; } }
+  saveItem(id){ try{ localStorage.setItem('fc_item_v1',id); }catch(e){} }
+  loadDone(){ try{ const r=localStorage.getItem('fc_done_v1'); return r?JSON.parse(r):{}; }catch(e){ return {}; } }
+  markDone(id){ const d=Object.assign({},this.state.done); d[id]=true; try{ localStorage.setItem('fc_done_v1',JSON.stringify(d)); }catch(e){} this.setState({done:d}); }
+  itemById(id){ return this.ITEMS.find(x=>x.id===id)||this.ITEMS[0]; }
+  basicsDone(){ const d=this.state.done||{}; return this.STEPS.filter(s=>d[s.id]).length; }
+  goItem(id){ this.saveItem(id); this.setState({item:id},()=>this.scrollToId('app')); }
+  renderSideNav(){
+    const h=React.createElement; const cur=this.state.item;
+    const row=(it,num)=>{
+      const active=cur===it.id; const isBasic=it.kind==='basic';
+      const badge = isBasic
+        ? h('span',{style:{width:20,height:20,flex:'0 0 auto',borderRadius:'50%',display:'inline-flex',alignItems:'center',justifyContent:'center',fontFamily:'JetBrains Mono,monospace',fontSize:10.5,fontWeight:600,border:'1px solid '+(active?'rgba(255,255,255,.55)':'#c9bda7'),background:'transparent',color:active?'#fff':this.SOFT}}, num)
+        : h('span',{style:{width:20,height:20,flex:'0 0 auto',display:'inline-flex',alignItems:'center',justifyContent:'center',fontSize:12,color:active?'#fff':'#b9ad97'}}, it.kind==='intro'?'\u266A':'\u25CB');
+      return h('button',{key:it.id,onClick:()=>this.goItem(it.id),style:{display:'flex',alignItems:'center',gap:10,width:'100%',textAlign:'left',font:'inherit',cursor:'pointer',border:'none',borderRadius:10,padding:'8px 10px',background:active?this.ACCENT:'transparent',color:active?'#fff':this.INK,transition:'background .12s'}},
+        badge,
+        h('span',{style:{fontFamily:"'Newsreader',serif",fontSize:15,fontWeight:600,lineHeight:1.25}}, it.short||it.name));
+    };
+    const label=(t)=>h('div',{key:t,style:{fontFamily:'JetBrains Mono,monospace',fontSize:10.5,letterSpacing:'.16em',textTransform:'uppercase',color:this.SOFT,fontWeight:600,margin:'18px 0 6px 10px'}},t);
+    const kids=[];
+    kids.push(row(this.WELCOME,0));
+    kids.push(label('The basics'));
+    this.STEPS.forEach((s,i)=>kids.push(row(this.itemById(s.id), i+1)));
+    kids.push(label('Go deeper \u00b7 optional'));
+    this.DEEPER.forEach(dd=>kids.push(row(this.itemById(dd.id),0)));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:16,padding:'14px 12px 16px'}}, kids);
+  }
+  renderLesson(){
+    const h=React.createElement; const it=this.itemById(this.state.item);
+    const idx=this.ITEMS.findIndex(x=>x.id===it.id);
+    const prev=this.ITEMS[idx-1]||null, next=this.ITEMS[idx+1]||null;
+    const stepNo=it.kind==='basic' ? (this.STEPS.findIndex(s=>s.id===it.id)+1) : 0;
+    const kicker= it.kind==='basic' ? ('Step '+stepNo+' of '+this.STEPS.length) : (it.kind==='extra' ? 'Optional \u00b7 go deeper' : 'Start here');
+    const body=it.why||it.blurb||'';
+    const tip = it.tip? h('div',{style:{marginTop:22,borderLeft:'2px solid '+this.ACCENT,paddingLeft:16}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:11,letterSpacing:'.14em',textTransform:'uppercase',color:this.ACCENT,fontWeight:600,marginBottom:5}},'How to practice'),
+      h('p',{style:{fontSize:15,lineHeight:1.6,color:'#4f483f',margin:0,maxWidth:'60ch'}}, it.tip)) : null;
+    const nextLabel = next ? ((next.kind==='extra'&&it.kind!=='extra') ? ('Go deeper \u00b7 '+(next.short||next.name)+'  \u2192') : ('Next \u00b7 '+(next.short||next.name)+'  \u2192')) : null;
+    const nav=h('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between',gap:14,flexWrap:'wrap',marginTop:28,paddingTop:20,borderTop:'1px solid '+this.LINE}},
+      prev? this.btn('\u2190  '+(prev.short||prev.name),()=>this.goItem(prev.id),'ghost') : h('span',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12,letterSpacing:'.08em',textTransform:'uppercase',color:this.SOFT,fontWeight:600}},'Start here'),
+      next? this.btn(nextLabel,()=>this.goItem(next.id),'solid')
+          : this.btn('Back to the start  \u2191',()=>this.goItem('welcome'),'ghost'));
+    return h('div',{style:{background:'#fff',border:'1px solid '+this.LINE,borderRadius:18,padding:'28px 30px',boxShadow:'0 1px 0 rgba(0,0,0,.02)'}},
+      h('div',{style:{fontFamily:'JetBrains Mono,monospace',fontSize:12.5,letterSpacing:'.16em',textTransform:'uppercase',color:this.ACCENT,fontWeight:600}}, kicker),
+      h('h2',{style:{fontFamily:'Newsreader,serif',fontWeight:600,fontSize:'clamp(28px,4vw,42px)',lineHeight:1.05,letterSpacing:'-.015em',margin:'12px 0 0'}}, it.name),
+      h('p',{style:{fontSize:17,lineHeight:1.6,color:'#4f483f',maxWidth:'62ch',margin:'14px 0 0'}}, body),
+      h('div',{style:{marginTop:26}}, this.widgetFor(it.view)),
+      tip,
+      nav);
+  }
+
+  renderVals(){
+    return {
+      sideNav: this.renderSideNav(),
+      lessonView: this.renderLesson(),
+    };
+  }
+}
+</script>
+</body>
+</html>

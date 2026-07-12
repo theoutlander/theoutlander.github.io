@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<script>window.MAYA_GAME='games/build-on/index.html';</script>
+<script src="portal-bridge.js"></script>
+<script src="../../shared/ios-audio-unlock.js"></script>
+<script src="../../shared/ga-analytics.js" defer></script>
+<script src="../../shared/sound.js" defer></script>
+<script src="../../shared/back.js" defer></script>
+<title>Build On! 🧱</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#ff6eb4;--yellow:#ffe14d;--green:#5dffb0;--blue:#5bc8ff;--purple:#c77dff;--orange:#ff9a3c;
+  --bg:#0f0a1e;--card:#1e1440;--text:#f0e6ff;--muted:rgba(240,230,255,.55);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;color:var(--text);background:#bfe4ff;-webkit-text-size-adjust:100%;touch-action:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+
+#stage{position:fixed;inset:0;overflow:hidden}
+#view{width:100%;height:100%;display:block;outline:none;touch-action:none}
+body.grab-mode #view{cursor:grab}
+
+/* ===== HUD (top) ===== */
+#hud{position:fixed;top:0;left:0;right:0;z-index:20;display:flex;gap:8px;align-items:center;
+  padding:max(9px,env(safe-area-inset-top)) 12px 8px;pointer-events:none}
+html.maya-in-portal #hud{padding-left:74px}
+.chip{display:flex;align-items:center;gap:6px;background:rgba(20,12,44,.82);border:2px solid rgba(255,255,255,.14);
+  border-radius:99px;padding:6px 13px 6px 11px;font-weight:900;font-size:15px;color:#fff;white-space:nowrap;
+  box-shadow:0 4px 14px rgba(0,0,0,.28);pointer-events:auto;min-height:36px}
+.chip .em{font-size:17px}
+.chip.day{font-family:'Fredoka One',cursive;font-weight:400;background:rgba(255,154,60,.94);color:#3a1d00;border-color:rgba(255,255,255,.4)}
+.grow{flex:1}
+.icon-btn{pointer-events:auto;position:relative;width:44px;height:44px;border-radius:50%;background:rgba(20,12,44,.82);
+  border:2px solid rgba(255,255,255,.14);font-size:20px;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 14px rgba(0,0,0,.28)}
+.icon-btn:active{transform:scale(.92)}
+.icon-btn svg{width:22px;height:22px;display:block}
+.icon-btn.on{border-color:var(--purple);background:rgba(199,125,255,.26);box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px rgba(199,125,255,.55)}
+.icon-btn.hasnew::after{content:"";position:absolute;top:2px;right:2px;width:12px;height:12px;border-radius:50%;
+  background:var(--pink);border:2px solid #fff;animation:pipwig 1s infinite alternate}
+@keyframes pipwig{from{transform:scale(.7);opacity:.6}to{transform:scale(1.05);opacity:1}}
+
+/* ===== Right dock (tools) ===== */
+#dock{position:fixed;right:max(8px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);z-index:21;
+  display:flex;flex-direction:column;gap:9px;pointer-events:auto}
+.tool{width:56px;height:56px;border-radius:17px;background:rgba(20,12,44,.8);border:2px solid rgba(255,255,255,.14);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;box-shadow:0 5px 16px rgba(0,0,0,.32);
+  transition:transform .1s,border-color .12s,background .12s}
+.tool:active{transform:scale(.9)}
+.tool.on{border-color:var(--yellow);background:rgba(255,225,77,.2)}
+#toolBuild.on{border-color:var(--green);background:rgba(93,255,176,.22);box-shadow:0 5px 16px rgba(0,0,0,.32),0 0 0 2px rgba(93,255,176,.55)}
+#toolGrab.on{border-color:#ff7a9c;background:rgba(255,122,156,.22);box-shadow:0 5px 16px rgba(0,0,0,.32),0 0 0 2px rgba(255,122,156,.55)}
+.tool .te{font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center;color:#fff}
+.tool .te svg{width:24px;height:24px;display:block}
+.tool .tl{font-size:10.5px;font-weight:900;opacity:.95}
+
+/* ===== Palette (bottom) ===== */
+#tray{position:fixed;left:0;right:0;bottom:0;z-index:20;display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:8px 10px max(10px,env(safe-area-inset-bottom));pointer-events:none}
+#selLabel{pointer-events:auto;font-family:'Fredoka One',cursive;font-size:14px;color:#fff;background:rgba(20,12,44,.7);
+  padding:4px 16px;border-radius:99px;text-shadow:0 1px 2px rgba(0,0,0,.4);white-space:nowrap;max-width:92vw;overflow:hidden;text-overflow:ellipsis}
+#palette{pointer-events:auto;display:flex;flex-wrap:wrap;justify-content:center;gap:7px;overflow-y:auto;overflow-x:hidden;max-width:min(96vw,640px);max-height:33vh;
+  padding:9px 11px;background:rgba(20,12,44,.9);border:2px solid rgba(255,255,255,.14);border-radius:20px;
+  box-shadow:0 8px 28px rgba(0,0,0,.42);-webkit-overflow-scrolling:touch}
+#palette::-webkit-scrollbar{height:5px}
+#palette::-webkit-scrollbar-thumb{background:rgba(255,255,255,.3);border-radius:99px}
+.pc{position:relative;flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:rgba(255,255,255,.06);border:2px solid rgba(255,255,255,.12);border-radius:13px;padding:7px 6px 5px;
+  width:60px;min-height:64px;transition:transform .1s,border-color .12s,background .12s}
+.pc:active{transform:scale(.92)}
+.pc.sel{border-color:var(--yellow);background:rgba(255,225,77,.18)}
+.pc.locked{opacity:.34}
+.pc-ic{width:30px;height:30px;border-radius:9px;display:flex;align-items:center;justify-content:center;
+  box-shadow:inset 0 2px 4px rgba(255,255,255,.4),inset 0 -4px 6px rgba(0,0,0,.24)}
+.pc-ic.emoji{background:rgba(255,255,255,.1);font-size:20px;box-shadow:none}
+.pc-ic.rb{background:linear-gradient(135deg,#ff6eb4,#ffe14d,#5dffb0,#5bc8ff,#c77dff)}
+.pc-ic.glass{opacity:.6;border:1px solid rgba(255,255,255,.6);box-shadow:inset 0 2px 4px rgba(255,255,255,.5)}
+.pc-ct{font-size:11px;font-weight:900;color:#fff;opacity:.9;min-width:14px;text-align:center}
+.pc-nm{font-size:9px;font-weight:900;color:#fff;opacity:.82;max-width:54px;text-align:center;line-height:1.05;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ===== Today card ===== */
+.overlay{position:fixed;inset:0;z-index:40;background:rgba(10,6,24,.55);display:none;align-items:center;justify-content:center;padding:18px}
+.overlay.show{display:flex;animation:fade .2s}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.card{width:100%;max-width:400px;background:linear-gradient(180deg,#241046,#180a34);border:2px solid rgba(199,125,255,.4);
+  border-radius:24px;padding:22px 20px 20px;box-shadow:0 20px 60px rgba(0,0,0,.55);text-align:center}
+.tc-badge{font-family:'Fredoka One',cursive;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--yellow)}
+.tc-em{font-size:64px;line-height:1;margin:6px 0 2px;animation:bob 1.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.tc-name{font-family:'Fredoka One',cursive;font-size:28px;color:#fff}
+.tc-sub{font-size:13px;color:var(--muted);font-weight:900;margin-bottom:14px}
+#tcItems{display:flex;flex-direction:column;gap:7px;max-height:40vh;overflow:auto;margin-bottom:16px;text-align:left}
+.tc-item{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:7px 11px}
+.tc-nm{flex:1;font-weight:900;font-size:14px;color:#fff}
+.tc-x{font-family:'Fredoka One',cursive;font-size:16px;color:var(--yellow)}
+.card-btn{width:100%;background:linear-gradient(135deg,var(--green),#2fc888);color:#06351f;font-family:'Fredoka One',cursive;
+  font-size:21px;padding:15px;border-radius:16px;min-height:58px;box-shadow:0 5px 0 rgba(0,0,0,.3)}
+.card-btn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3)}
+
+/* ===== Menu sheet ===== */
+.sheet{position:fixed;inset:0;z-index:44;background:rgba(10,6,24,.55);display:none;align-items:flex-end;justify-content:center}
+.sheet.show{display:flex;animation:fade .2s}
+.sheet-card{width:100%;max-width:480px;background:linear-gradient(180deg,#241046,#180a34);border:2px solid rgba(255,255,255,.16);
+  border-radius:24px 24px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom));box-shadow:0 -12px 40px rgba(0,0,0,.5)}
+.sheet-h{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+.sheet-h h3{font-family:'Fredoka One',cursive;font-size:22px}
+.sheet-x{margin-left:auto;width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,.1);font-size:18px}
+.menu-row{display:flex;flex-direction:column;gap:10px}
+.menu-btn{display:flex;align-items:center;gap:12px;background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);
+  border-radius:14px;padding:14px 16px;font-weight:900;font-size:16px;min-height:54px}
+.menu-btn .me{font-size:23px}
+.menu-btn.danger{border-color:rgba(255,110,110,.4);color:#ff9a9a}
+.size-seg{background:rgba(255,255,255,.07);border:2px solid rgba(255,255,255,.12);border-radius:14px;padding:12px 13px}
+.size-lbl{font-weight:900;font-size:15px;margin-bottom:9px}
+.size-opts{display:flex;gap:7px}
+.size-opts button{flex:1;padding:10px 4px;border-radius:11px;background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.14);color:#fff;font-family:'Fredoka One',cursive;font-size:13px;min-height:46px;transition:transform .1s,border-color .12s,background .12s}
+.size-opts button.on{border-color:var(--yellow);background:rgba(255,225,77,.2)}
+.size-opts button:active{transform:scale(.93)}
+
+/* ===== Seed picker (plant pot) ===== */
+.seed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(72px,1fr));gap:10px}
+.seed-opt{display:flex;flex-direction:column;align-items:center;gap:4px;background:rgba(255,255,255,.07);
+  border:2px solid rgba(255,255,255,.14);border-radius:16px;padding:12px 6px 10px;min-height:84px;
+  transition:transform .1s,border-color .12s,background .12s}
+.seed-opt:active{transform:scale(.93);border-color:var(--yellow);background:rgba(255,225,77,.16)}
+.seed-opt .se{font-size:38px;line-height:1}
+.seed-opt .sn{font-size:11px;font-weight:900;color:#fff}
+
+/* ===== Toast ===== */
+#toast{position:fixed;left:50%;top:74px;bottom:auto;transform:translateX(-50%) translateY(-12px);z-index:30;
+  background:rgba(20,12,44,.95);border:2px solid rgba(255,255,255,.18);border-radius:14px;padding:11px 18px;
+  color:#fff;font-weight:900;font-size:14px;box-shadow:0 8px 24px rgba(0,0,0,.4);opacity:0;visibility:hidden;
+  transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;max-width:90vw;text-align:center}
+#toast.show{opacity:1;visibility:visible;transform:translateX(-50%) translateY(0)}
+
+/* ===== Splash ===== */
+#splash{position:fixed;inset:0;z-index:90;background:radial-gradient(circle at 50% 36%,#2a1556,#0f0a1e);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;text-align:center;padding:26px}
+#splash.gone{opacity:0;visibility:hidden;transition:opacity .5s,visibility .5s}
+#splash .s-em{font-size:82px;animation:bob 1.3s ease-in-out infinite}
+#splash h1{font-family:'Fredoka One',cursive;font-size:clamp(46px,13vw,84px);line-height:1;
+  background:linear-gradient(135deg,var(--pink),var(--yellow) 40%,var(--green) 70%,var(--blue));
+  -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+#splash p{color:var(--muted);font-weight:900;font-size:16px;max-width:360px;line-height:1.55}
+#startBtn{margin-top:8px;background:linear-gradient(135deg,var(--green),#2fc888);color:#06351f;font-family:'Fredoka One',cursive;
+  font-size:24px;padding:16px 42px;border-radius:20px;min-height:62px;box-shadow:0 6px 0 rgba(0,0,0,.3);animation:pulse 1.7s infinite}
+#startBtn:active{transform:translateY(3px);box-shadow:0 3px 0 rgba(0,0,0,.3)}
+@keyframes pulse{0%,100%{box-shadow:0 6px 0 rgba(0,0,0,.3),0 0 0 0 rgba(93,255,176,.5)}50%{box-shadow:0 6px 0 rgba(0,0,0,.3),0 0 0 16px rgba(93,255,176,0)}}
+.splash-hint{margin-top:2px;font-size:12.5px;color:rgba(255,255,255,.4);font-weight:900;letter-spacing:.02em}
+
+/* ===== Category tabs ===== */
+#tabs{pointer-events:auto;display:flex;gap:6px;background:rgba(20,12,44,.9);border:2px solid rgba(255,255,255,.14);border-radius:16px;padding:5px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.tab{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:11px;font-weight:900;font-size:13px;color:#fff;opacity:.55;min-height:38px;transition:opacity .12s,background .12s}
+.tab .tab-e{font-size:17px}
+.tab.on{opacity:1;background:rgba(255,225,77,.2);border:1px solid var(--yellow)}
+
+/* ===== Walk joystick ===== */
+#joystick{position:fixed;left:max(18px,env(safe-area-inset-left));bottom:calc(30px + env(safe-area-inset-bottom));z-index:22;width:120px;height:120px;border-radius:50%;background:rgba(20,12,44,.45);border:3px solid rgba(255,255,255,.28);display:none;touch-action:none;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#joyknob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,#c9b7f0);box-shadow:0 5px 14px rgba(0,0,0,.45);pointer-events:none}
+body.walking #joystick{display:block}
+#lookstick{position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(30px + env(safe-area-inset-bottom));z-index:22;width:120px;height:120px;border-radius:50%;background:rgba(20,12,44,.45);border:3px solid rgba(255,255,255,.28);display:none;touch-action:none;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#lookknob{position:absolute;left:50%;top:50%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:radial-gradient(circle at 38% 32%,#fff,#a9d4f0);box-shadow:0 5px 14px rgba(0,0,0,.45);pointer-events:none}
+body.walking #lookstick{display:block}
+body.walking.no-touch #joystick,body.walking.no-touch #lookstick{display:none}   /* real mouse+keyboard: no on-screen sticks */
+.stick-cap{position:absolute;left:50%;top:-20px;transform:translateX(-50%);font-family:'Fredoka One',cursive;font-size:12px;color:rgba(255,255,255,.9);text-shadow:0 1px 3px rgba(0,0,0,.55);pointer-events:none;white-space:nowrap}
+body.walking #selLabel{display:none}
+body.walking #tray{bottom:calc(150px + env(safe-area-inset-bottom))}
+body.walking #tabs{max-width:min(64vw,480px);overflow-x:auto;flex-wrap:nowrap}
+body.walking #palette{flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;max-height:none;max-width:min(64vw,480px)}
+#buildBtn{display:none;pointer-events:auto;width:70px;height:70px;border-radius:50%;background:radial-gradient(circle at 40% 34%,#8affce,#33cf94);color:#06351f;font-size:32px;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+#buildBtn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+body.walking #buildBtn{display:flex}
+#jumpBtn{display:none;position:fixed;left:50%;bottom:calc(100px + env(safe-area-inset-bottom));transform:translateX(-50%);z-index:22;pointer-events:auto;width:58px;height:58px;border-radius:50%;background:radial-gradient(circle at 40% 34%,#ffe9a8,#ffc93c);color:#5a3a00;font-size:26px;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+#jumpBtn:active{transform:translateX(-50%) translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+body.walking #jumpBtn{display:flex}
+#buildBtn.erase{background:radial-gradient(circle at 40% 34%,#ffc2d4,#ff6b8a);color:#3a0016}
+#reticle{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:15;width:14px;height:14px;border:2px solid rgba(255,255,255,.85);border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.35),0 0 6px rgba(0,0,0,.4);pointer-events:none;display:none}
+body.walking #reticle{display:block}
+body.walking.grab-mode #reticle{border-color:#ff6b8a;box-shadow:0 0 0 2px rgba(255,107,138,.65),0 0 8px rgba(0,0,0,.45)}
+#weather-tint{position:fixed;inset:0;z-index:13;pointer-events:none;background:rgba(40,58,88,0);transition:background 1.1s}
+body.rainy #weather-tint{background:rgba(40,58,88,.24)}
+#rainLayer{position:fixed;inset:0;z-index:14;overflow:hidden;pointer-events:none;display:none}
+body.rainy #rainLayer{display:block}
+#rainLayer i{position:absolute;top:-14%;width:2px;border-radius:2px;background:linear-gradient(rgba(190,228,255,0),rgba(190,228,255,.9));animation:raindrop linear infinite}
+@keyframes raindrop{to{transform:translateY(122vh)}}
+.tool.on#toolMode{border-color:var(--blue);background:rgba(91,200,255,.24);box-shadow:0 5px 16px rgba(0,0,0,.32),0 0 0 2px rgba(91,200,255,.6)}
+
+/* ===== Monsters (mobs) ===== */
+#petBtn.on{border-color:#7bd86b;background:rgba(123,216,107,.24);box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px rgba(123,216,107,.55)}
+#monsterBtn.on{border-color:#ff6b8a;background:rgba(255,107,138,.26);box-shadow:0 4px 14px rgba(0,0,0,.28),0 0 0 2px rgba(255,107,138,.6)}
+.chip.hearts{gap:0;font-size:15px;letter-spacing:1px;padding:6px 12px}
+.chip.hearts #heartsRow{line-height:1}
+#hurtFx{position:fixed;inset:0;z-index:16;pointer-events:none;box-shadow:inset 0 0 100px 34px rgba(255,42,64,0);transition:box-shadow .14s ease-out}
+#hurtFx.flash{box-shadow:inset 0 0 130px 50px rgba(255,42,64,.6)}
+#bonkBtn{display:none;position:fixed;z-index:22;right:calc(28px + env(safe-area-inset-right));bottom:calc(158px + env(safe-area-inset-bottom));width:66px;height:66px;border-radius:50%;background:radial-gradient(circle at 40% 34%,#ffb3c1,#ff5470);color:#3a0012;font-size:30px;align-items:center;justify-content:center;box-shadow:0 5px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+#bonkBtn:active{transform:translateY(2px);box-shadow:0 3px 0 rgba(0,0,0,.3),0 0 0 4px rgba(255,255,255,.28)}
+body.walking.monsters-on #bonkBtn{display:flex}
+#fightHint{display:none;position:fixed;z-index:23;left:50%;top:calc(64px + env(safe-area-inset-top));transform:translateX(-50%);background:rgba(255,107,138,.96);color:#3a0012;font-weight:800;font-size:14px;padding:8px 16px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.28);white-space:nowrap;pointer-events:none}
+body.monsters-on #fightHint.show{display:block;animation:hintPulse 1.3s ease-in-out infinite}
+@keyframes hintPulse{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(-3px)}}
+
+@media (max-width:560px){
+  .chip{font-size:13px;min-height:33px;padding:5px 11px 5px 9px}
+  .tool{width:50px;height:50px;border-radius:15px}
+  .tool .te{font-size:21px}
+  .pc{min-width:50px;min-height:54px}
+  #selLabel{font-size:13px}
+  .tab .tab-l{display:none}
+  .tab{padding:6px 11px}
+  #joystick,#lookstick{width:104px;height:104px}
+  #joyknob,#lookknob{width:48px;height:48px;margin:-24px 0 0 -24px}
+  #palette{padding:8px 9px;gap:7px}
+}
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <canvas id="view" touch-action="none"></canvas>
+</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div class="chip day"><span class="em">☀️</span><span id="dayNum">Day 1</span></div>
+  <button class="icon-btn hasnew" id="todayBtn" title="Today's pieces">📦</button>
+  <button class="icon-btn" id="worldBtn" title="World: time, weather, ground, sky">🌍</button>
+  <button class="icon-btn" id="petBtn" title="Animals — roaming wildlife on/off">🐾</button>
+  <button class="icon-btn" id="monsterBtn" title="Monster time — summon or send home">👾</button>
+  <div class="chip hearts" id="heartsChip" style="display:none"><span id="heartsRow">❤️❤️❤️❤️❤️</span></div>
+  <div class="grow"></div>
+  <button class="icon-btn" id="undoBtn" title="Undo" style="display:none">↩</button>
+  <button class="icon-btn" id="menuBtn" title="Menu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+</div>
+
+<!-- Right dock -->
+<div id="dock">
+  <button class="tool" id="toolMode"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v16M4 12h16"/><path d="M9.6 6.4L12 4l2.4 2.4M9.6 17.6L12 20l2.4-2.4M6.4 9.6L4 12l2.4 2.4M17.6 9.6L20 12l-2.4 2.4"/></svg></span><span class="tl">Walk</span></button>
+  <button class="tool on" id="toolBuild"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4.5v9L12 21l-8-4.5v-9z"/><path d="M12 12l8-4.5M12 12v9M12 12L4 7.5"/></svg></span><span class="tl">Build</span></button>
+  <button class="tool" id="toolGrab"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5.5A1.5 1.5 0 0 1 10.5 4h3A1.5 1.5 0 0 1 15 5.5V7M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7"/></svg></span><span class="tl">Erase</span></button>
+  <button class="tool" id="toolRotate"><span class="te" style="font-size:26px">↻</span><span class="tl">Turn</span></button>
+  <button class="tool" id="toolRecenter"><span class="te"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8V5a1 1 0 0 1 1-1h3M16 4h3a1 1 0 0 1 1 1v3M20 16v3a1 1 0 0 1-1 1h-3M8 20H5a1 1 0 0 1-1-1v-3"/><circle cx="12" cy="12" r="2.4"/></svg></span><span class="tl">Reset</span></button>
+</div>
+
+<!-- Palette -->
+<div id="tray">
+  <div id="tabs"></div>
+  <div id="selLabel">Building with: Pink Block</div>
+  <div id="palette"></div>
+  <button id="buildBtn" title="Build where you aim">🔨</button>
+</div>
+
+<!-- Walk controls: left = move, right = look -->
+<div id="weather-tint"></div>
+<div id="hurtFx"></div>
+<div id="fightHint">👊 Tap a monster to bonk it!</div>
+<div id="rainLayer"></div>
+<div id="reticle"></div>
+<button id="jumpBtn" title="Jump">🦘</button>
+<button id="bonkBtn" title="Bonk a monster!">👊</button>
+<div id="joystick"><div class="stick-cap">Move</div><div id="joyknob"></div></div>
+<div id="lookstick"><div class="stick-cap">Look</div><div id="lookknob"></div></div>
+
+<!-- Today's crate card -->
+<div class="overlay" id="todayCard">
+  <div class="card">
+    <div class="tc-badge">📦 <span id="tcDay">Day 1</span> — a crate arrived!</div>
+    <div class="tc-em" id="tcEmoji">🎁</div>
+    <div class="tc-name" id="tcName">Starter Kit</div>
+    <div class="tc-sub">Today's featured pieces — but you can build with anything, anytime! 🎨</div>
+    <div id="tcItems"></div>
+    <button class="card-btn" id="tcClose">🧱 Let's Build!</button>
+  </div>
+</div>
+
+<!-- Menu -->
+<div class="sheet" id="menuSheet">
+  <div class="sheet-card">
+    <div class="sheet-h"><span style="font-size:24px">🧱</span><h3>Build On</h3><button class="sheet-x" id="menuX">✕</button></div>
+    <div class="menu-row">
+      <div class="size-seg" id="sizeSeg">
+        <div class="size-lbl">🌍 Build area size</div>
+        <div class="size-opts">
+          <button data-half="14">Cozy</button>
+          <button data-half="20">Big</button>
+          <button data-half="28">Huge</button>
+          <button data-half="40">Giant</button>
+        </div>
+      </div>
+      <div class="menu-btn" style="gap:14px"><span class="me">🔊</span><input type="range" id="volSlider" min="0" max="100" value="62" style="flex:1;height:8px;accent-color:#5dffb0;cursor:pointer"></div>
+      <button class="menu-btn" id="muteBtn"><span class="me">🔊</span><span id="muteLbl">Sound: On</span></button>
+      <button class="menu-btn" id="labBtn"><span class="me">🏡</span>Back to Game Lab</button>
+      <button class="menu-btn danger" id="resetBtn"><span class="me">🔄</span>Start a brand new world</button>
+    </div>
+  </div>
+</div>
+
+<!-- World panel: time / weather / ground / sky -->
+<div class="sheet" id="worldSheet">
+  <div class="sheet-card">
+    <div class="sheet-h"><span style="font-size:24px">🌍</span><h3>World</h3><button class="sheet-x" id="worldX">✕</button></div>
+    <div class="menu-row">
+      <div class="size-seg"><div class="size-lbl">🕒 Time</div><div class="size-opts" id="segTime"><button data-v="day">☀️ Day</button><button data-v="night">🌙 Night</button></div></div>
+      <div class="size-seg"><div class="size-lbl">☔ Weather</div><div class="size-opts" id="segWeather"><button data-v="sunny">🌤️ Sunny</button><button data-v="rainy">🌧️ Rain</button></div></div>
+      <div class="size-seg"><div class="size-lbl">🗺️ Ground</div><div class="size-opts" id="segEnv"><button data-v="land">🏝️ Land</button><button data-v="water">🌊 Water</button><button data-v="space">🌌 Space</button></div></div>
+      <div class="size-seg"><div class="size-lbl">✨ Sky</div><div class="size-opts" id="segSky"><button data-v="clouds">☁️ Clouds</button><button data-v="stars">✨ Stars</button></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Seed picker (plant pot) -->
+<div class="sheet" id="seedSheet">
+  <div class="sheet-card">
+    <div class="sheet-h"><span style="font-size:24px">🪴</span><h3 id="seedTitle">What should we plant?</h3><button class="sheet-x" id="seedX">✕</button></div>
+    <div class="seed-grid" id="seedGrid"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="s-em">🧱</div>
+  <h1>Build On</h1>
+  <p>Build whatever you dream up, block by block. Every day a new crate of pieces lands in your yard — keep building on your world, forever! 🌈</p>
+  <button id="startBtn">🧱 Start Building!</button>
+  <div class="splash-hint">Tap to place • Drag to spin • Pinch to zoom</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/babylonjs@9.16.1/babylon.js"></script>
+<script src="build-on-data.js?v=20260704"></script>
+<script src="build-on-scene.js?v=20260704"></script>
+<script src="build-on-mobs.js?v=20260704"></script>
+<script src="build-on-critters.js?v=20260704"></script>
+<script src="build-on-game.js?v=20260704"></script>
+</body>
+</html>

@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 · not found · Nick Karnik</title>
+  <meta name="description" content="This page isn't here. Everything else works." />
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- set theme before first paint: remembered choice, else system preference -->
+  <script>
+    (function () {
+      try {
+        var s = localStorage.getItem("nk-theme");
+        var t = s || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400;1,6..72,500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --paper:   oklch(0.985 0.003 250);
+      --paper-2: oklch(0.96 0.004 250);
+      --paper-3: oklch(0.93 0.005 250);
+      --ink:     oklch(0.18 0.012 250);
+      --ink-2:   oklch(0.38 0.012 250);
+      --ink-3:   oklch(0.58 0.012 250);
+      --rule:    oklch(0.88 0.005 250);
+      --rule-2:  oklch(0.94 0.004 250);
+      --accent:  oklch(0.55 0.16 145);
+      --mono:  "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+      --serif: "Newsreader", Georgia, serif;
+    }
+    [data-theme="dark"] {
+      --paper:   oklch(0.16 0.008 250);
+      --paper-2: oklch(0.205 0.010 250);
+      --paper-3: oklch(0.245 0.012 250);
+      --ink:     oklch(0.965 0.008 250);
+      --ink-2:   oklch(0.78 0.012 250);
+      --ink-3:   oklch(0.55 0.014 250);
+      --rule:    oklch(0.28 0.012 250);
+      --rule-2:  oklch(0.22 0.010 250);
+      --accent:  oklch(0.82 0.18 145);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --paper: oklch(0.16 0.008 250); --paper-2: oklch(0.205 0.010 250); --paper-3: oklch(0.245 0.012 250);
+        --ink: oklch(0.965 0.008 250); --ink-2: oklch(0.78 0.012 250); --ink-3: oklch(0.55 0.014 250);
+        --rule: oklch(0.28 0.012 250); --rule-2: oklch(0.22 0.010 250); --accent: oklch(0.82 0.18 145);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      background: var(--paper); color: var(--ink);
+      font-family: var(--mono); font-size: 16px; line-height: 1.6;
+      -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+      min-height: 100vh; display: flex; flex-direction: column;
+    }
+    ::selection { background: var(--accent); color: var(--paper); }
+    a { color: inherit; }
+
+    .top {
+      display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--rule-2);
+    }
+    .wm { font-family: var(--serif); font-size: 1.05rem; letter-spacing: -0.01em; color: var(--ink-2); text-decoration: none; }
+    .wm i { font-style: italic; }
+    .wm:hover { color: var(--accent); }
+    .tool {
+      font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.02em;
+      background: none; border: 1px solid var(--rule); color: var(--ink-2);
+      padding: 0.4em 0.75em; cursor: pointer;
+      transition: color 140ms ease, border-color 140ms ease;
+    }
+    .tool:hover { color: var(--accent); border-color: var(--accent); }
+    .tool:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+    .tool b { color: var(--ink); font-weight: 500; }
+
+    main {
+      flex: 1; display: grid; place-content: center;
+      width: 100%; max-width: 42rem; margin: 0 auto;
+      padding: 3rem 1.5rem 4rem;
+    }
+    .eye { font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.06em; }
+    .eye .n { color: var(--accent); }
+    h1 {
+      font-family: var(--mono); font-style: normal; font-weight: 500;
+      font-size: clamp(2.6rem, 9vw, 4.25rem); line-height: 0.95; letter-spacing: -0.035em;
+      margin: 0.6rem 0 0.9rem;
+    }
+    .sub { margin: 0; font-size: 0.92rem; color: var(--ink-2); max-width: 38ch; text-wrap: pretty; }
+
+    /* request log */
+    .log {
+      margin: 2.4rem 0 2.6rem;
+      border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+      padding: 1.1rem 0 1.2rem;
+      font-size: 0.85rem; line-height: 1.9;
+    }
+    .log .method { color: var(--ink-3); }
+    .log .path { color: var(--ink); text-decoration: line-through; text-decoration-color: var(--ink-3); word-break: break-all; }
+    .log .res { color: var(--ink-2); }
+    .log .res::before { content: "\2514 "; color: var(--ink-3); }
+    .sug { opacity: 0; transition: opacity 350ms ease; }
+    .sug.on { opacity: 1; }
+    .sug::before { content: "\2514 "; color: var(--ink-3); }
+    .sug .q { color: var(--ink-3); }
+    .sug a { color: var(--accent); text-decoration-thickness: 1px; text-underline-offset: 3px; word-break: break-all; }
+    .sug a:hover { text-decoration-thickness: 2px; }
+    @media (prefers-reduced-motion: reduce) { .sug { transition: none; } }
+  </style>
+  <noscript><style>.log { display: none; }</style></noscript>
+  <style>
+
+    /* destinations */
+    .lbl { font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.06em; margin: 0 0 0.35rem; }
+    .dest { display: flex; flex-direction: column; }
+    .dest a {
+      display: flex; justify-content: space-between; align-items: baseline; gap: 1rem;
+      padding: 0.55rem 0; border-bottom: 1px solid var(--rule-2);
+      text-decoration: none; font-size: 0.88rem;
+    }
+    .dest a .name::before { content: "\2192 "; color: var(--ink-3); transition: color 140ms ease; }
+    .dest a .href { color: var(--ink-3); font-size: 0.78rem; }
+    .dest a:hover .name, .dest a:hover .name::before { color: var(--accent); }
+    .dest a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+    .foot {
+      display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+      padding: 0.9rem 1.5rem; border-top: 1px solid var(--rule-2);
+      font-size: 0.72rem; color: var(--ink-3); letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body data-screen-label="404">
+  <header class="top">
+    <a class="wm" href="/"><i>Nick</i> Karnik</a>
+    <button class="tool" id="themeBtn" type="button">theme: <b>light</b></button>
+  </header>
+
+  <main>
+    <div class="eye">// HTTP <span class="n">404</span></div>
+    <h1>This page isn't here.</h1>
+    <p class="sub">It may have moved. It may never have existed. Everything else works.</p>
+
+    <div class="log" aria-live="polite">
+      <div><span class="method">GET</span> <span class="path" id="path">/writing/how-to-tel</span></div>
+      <div class="res">404 · not found</div>
+      <div class="sug" id="sug" hidden><span class="q">did you mean</span> <a id="sugLink" href="/">/</a><span class="q"> ?</span></div>
+    </div>
+
+    <p class="lbl">PAGES THAT DO EXIST</p>
+    <nav class="dest" aria-label="Site pages">
+      <!-- ROUTES:NAV -->
+      <a href="/"><span class="name">home</span><span class="href">/</span></a>
+      <a href="/blog"><span class="name">writing</span><span class="href">/blog</span></a>
+      <a href="/about"><span class="name">about</span><span class="href">/about</span></a>
+      <a href="/resume"><span class="name">résumé</span><span class="href">/resume</span></a>
+      <a href="/reviews"><span class="name">reviews</span><span class="href">/reviews</span></a>
+      <a href="/lab/"><span class="name">lab</span><span class="href">/lab/</span></a>
+    <!-- /ROUTES:NAV -->
+    </nav>
+  </main>
+
+  <footer class="foot">
+    <span>© 2026 Nick Karnik</span>
+    <span>everything else returns 200</span>
+  </footer>
+
+  <script>
+    (function () {
+      "use strict";
+
+      // theme toggle
+      var btn = document.getElementById("themeBtn");
+      function syncTheme() {
+        btn.innerHTML = "theme: <b>" + (document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light") + "</b>";
+      }
+      btn.addEventListener("click", function () {
+        var t = document.documentElement.getAttribute("data-theme") === "dark" ? "light" : "dark";
+        document.documentElement.setAttribute("data-theme", t);
+        try { localStorage.setItem("nk-theme", t); } catch (e) {}
+        syncTheme();
+      });
+      syncTheme();
+
+      // the path that got us here (demo path when previewed directly)
+      function requestedPath() {
+        var p = "";
+        try { p = decodeURIComponent(location.pathname || ""); } catch (e) { p = location.pathname || ""; }
+        if (!p || p === "/" || /404(\.html)?$/i.test(p) || /\.html?$/i.test(p) || p.indexOf("/projects/") === 0) {
+          return "/writing/how-to-tel";
+        }
+        if (p.length > 48) p = p.slice(0, 47) + "\u2026";
+        return p;
+      }
+      var path = requestedPath();
+      document.getElementById("path").textContent = path;
+
+      // every real route on the site — generated at build time by
+      // scripts/inject-404-routes.ts (the default below is a fallback).
+      var ROUTES = /* ROUTES:LIST */["/","/blog","/about","/resume","/reviews","/lab/","/calendar","/lab/guitar/","/lab/hand/","/lab/trig/","/blog/how-to-tell-if-a-model-is-good-enough","/blog/the-modern-attack-surface-how-computers-get-compromised","/blog/how-rag-works","/blog/build-for-speed","/blog/its-not-the-launch-its-the-landing","/blog/how-engineers-can-use-ai-effectively"]/* /ROUTES:LIST */;
+
+      // edit distance, one-row DP
+      function lev(a, b) {
+        var m = a.length, n = b.length, i, j;
+        if (!m) return n; if (!n) return m;
+        var row = [], prev, tmp;
+        for (j = 0; j <= n; j++) row[j] = j;
+        for (i = 1; i <= m; i++) {
+          prev = row[0]; row[0] = i;
+          for (j = 1; j <= n; j++) {
+            tmp = row[j];
+            row[j] = Math.min(row[j] + 1, row[j - 1] + 1, prev + (a.charCodeAt(i - 1) === b.charCodeAt(j - 1) ? 0 : 1));
+            prev = tmp;
+          }
+        }
+        return row[n];
+      }
+      function lastSeg(p) {
+        var s = p.toLowerCase().split("/").filter(Boolean);
+        return s.length ? s[s.length - 1] : "/";
+      }
+      // compare last path segments; also credit "typed the start of a long slug"
+      function score(p, route) {
+        var a = lastSeg(p), b = lastSeg(route);
+        var whole = lev(a, b) / Math.max(a.length, b.length);
+        var prefix = lev(a, b.slice(0, a.length)) / Math.max(1, a.length) + 0.08;
+        return Math.min(whole, prefix);
+      }
+
+      var best = null, bestS = 1;
+      for (var i = 0; i < ROUTES.length; i++) {
+        var s = score(path, ROUTES[i]);
+        if (s < bestS) { bestS = s; best = ROUTES[i]; }
+      }
+      if (best && bestS <= 0.34 && best !== path) {
+        var sug = document.getElementById("sug");
+        var a = document.getElementById("sugLink");
+        a.href = best; a.textContent = best;
+        setTimeout(function () {
+          sug.hidden = false;
+          requestAnimationFrame(function () { sug.classList.add("on"); });
+        }, 350);
+      }
+    })();
+  </script>
+</body>
+</html>
