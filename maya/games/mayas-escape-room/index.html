@@ -265,6 +265,8 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 #chair-note:hover{transform:rotate(4deg) scale(1.15)}
 #hint-ghost{position:fixed;right:14px;bottom:14px;z-index:65;font-size:28px;background:rgba(20,13,34,.75);border:1px solid rgba(199,125,255,.45);border-radius:50%;width:58px;height:58px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.5);animation:bob 3s ease-in-out infinite}
 #hint-ghost.show{display:flex}
+#room-back{position:fixed;right:14px;bottom:84px;z-index:65;font-size:24px;background:rgba(20,13,34,.75);border:1px solid rgba(255,225,77,.45);border-radius:50%;width:58px;height:58px;cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,.5)}
+#room-back.show{display:flex}
 #big-ghost{position:fixed;top:30vh;left:-160px;font-size:100px;z-index:75;pointer-events:none;display:flex;align-items:center;gap:6px;opacity:0;filter:drop-shadow(0 0 30px rgba(207,227,255,.6))}
 #big-ghost b{font-family:'Fredoka One',cursive;font-size:40px;color:#fff;background:rgba(20,13,34,.8);padding:6px 14px;border-radius:14px;border:2px solid rgba(207,227,255,.5)}
 #big-ghost.swoop{animation:ghostswoop 1.7s ease-in-out forwards}
@@ -575,6 +577,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 </div>
 
 <div id="msg"></div>
+<button id="room-back" title="Go back a room">⬅️</button>
 <button id="hint-ghost" title="Hint ghost">👻</button>
 <div id="big-ghost">👻<b>BOO!</b></div>
 <div id="lightning"></div>

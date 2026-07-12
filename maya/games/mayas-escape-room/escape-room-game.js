@@ -263,6 +263,7 @@ function updateHUD(){
   $('#gem-n').textContent = S.gems.length;
   $('#item-n').textContent = S.items.length;
   $('#satchel-btn').classList.toggle('show', S.items.length>0);
+  $('#room-back').classList.toggle('show', !!BACK_MAP[S.phase]);
   $('#clue-btn').classList.toggle('show', S.cluesFound.length>0);
   $('#sits').style.display = (S.phase==='room1') ? 'flex':'none';
   $('#room-name').textContent = THEME.roomNames[S.phase] || '';
@@ -426,9 +427,26 @@ function trap(){
 }
 
 /* ---------------- Room 1: door, note, portrait, secret ---------------- */
+/* Backtracking — every unlocked door works both ways, so nothing (candle,
+   brass key, pages, gems) is ever permanently missable mid-run. */
+const BACK_MAP = {
+  kitchen: { phase:'room1',   scene:'#s-room1',   ambient:'mansion' },
+  library: { phase:'kitchen', scene:'#s-kitchen', ambient:'kitchen' },
+  room2:   { phase:'library', scene:'#s-library', ambient:'library' },
+};
+function goBackRoom(){
+  const b=BACK_MAP[S && S.phase]; if(!b) return;
+  S.phase=b.phase; updateHUD();
+  show(b.scene);
+  if(window.Snd) Snd.ambient(b.ambient);
+  sfx('creakopen');
+  msg('⬅️ Back to the '+THEME.roomNames[b.phase]+'! Every door you opened stays open.');
+}
+
 function doorClick(){
   if(S.phase!=='room1') return;
   const d=$('#door1');
+  if(S.door1Open){ sfx('creakopen'); enterKitchen(); return; }
   if(!S.key1){
     d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
     sfx('bad'); msg(THEME.door1LockedMsg);
@@ -1081,6 +1099,9 @@ $('#exit-door').addEventListener('click', ()=>{
   msg('🪞 The exit has one last <b>backwards puzzle...</b>', 2000);
   Puzzles.missingNumber(()=>{ S.exitOpen=true; winGame(); });
 });
+
+// back a room (only shows where a previous room exists)
+$('#room-back').addEventListener('click', goBackRoom);
 
 // hint ghost
 $('#hint-ghost').addEventListener('click', ()=>{
