@@ -57,9 +57,13 @@ codebots/
 ├── README.md      ← you are here
 ├── docs/          ← the specs (one doc per question)
 ├── levels/        ← the missions (one file per mission)
-├── app/           ← the game
-└── prototype/     ← the v1 code. Read-only reference. Not maintained, not refactored.
+├── app/           ← the game (not yet created)
+└── prototype/     ← the v1 iteration. Read-only reference. Not maintained, not refactored.
 ```
+
+Everything from the first iteration — the app, the old blueprint design system, the old
+handoff notes — lives under **`prototype/`** and nowhere else. If you're editing something
+in there, stop: [read why](prototype/README.md).
 
 ---
 
@@ -67,10 +71,10 @@ codebots/
 
 | | |
 |---|---|
-| **Design** | Settled. See `docs/`. |
-| **Missions** | Worlds 1–4 authored and hand-verified on the grid. Worlds 5–8 sketched — **the largest remaining job.** |
-| **Code** | Being rebuilt from the first line against these docs. |
-| **Design system** | Claude Design project `41e196e7-28e3-43ef-b7d2-74af999644cd` — created, empty. |
+| **Docs** | `game.md` ✅ · `pitch.html` ✅ · `map.html` ✅ · `design.md` ⬜ · `engine.md` ⬜ · `curriculum.md` ⬜ · `plan.md` ⬜ |
+| **Missions** | Worlds 1–4 authored and hand-verified on the grid; still to be split into one file each. **Worlds 5–8 are sketches — the largest remaining job.** |
+| **Code** | Not started. `sim/` and `sandbox/` will be **ported by copy** from `prototype/`; everything else is new. |
+| **Design system** | Claude Design project `41e196e7-28e3-43ef-b7d2-74af999644cd` — created, empty. Blocked on `docs/design.md`. |
 
 Chief creative consultant: **Asha, age 10.**
 
