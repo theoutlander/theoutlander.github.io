@@ -19,7 +19,12 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared/family-chat.css">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<!-- EmailJS is loaded LAZILY (see loadEmailJS below), not here.
+     @emailjs/browser@4 touches localStorage as it initialises, and on Maya's iPad Safari throws
+     SecurityError when site data is blocked. Loading it eagerly meant an uncaught error on EVERY
+     page load — which now also means a Sentry issue on every page load, drowning the one signal
+     that actually matters ("an issue in the inbox means something broke for Maya").
+     Loading it only when she sends a doodle or a wish keeps the lab quiet and loads faster. -->
 <style>
 :root{
   --bg:#0f0a1e;--card:#1e1440;--border:rgba(255,255,255,0.07);
@@ -394,6 +399,25 @@ header{text-align:center;padding:48px 0 36px}
 const EJS_KEY  = 'aobGgwT--7krdk9Qv';
 const EJS_SVC  = 'service_08wvsfl';
 const EJS_TPL  = 'template_b7g9ipp';
+
+/* Load EmailJS on demand, not at page load. The library touches localStorage while initialising
+   and THROWS on Maya's iPad when site data is blocked — an uncaught error on every single visit,
+   and now a Sentry issue on every visit too. Deferring it means the lab loads clean (and faster);
+   if the CDN is unreachable or it still throws, the caller's try/catch shows her the friendly
+   "Could not send email" toast instead of breaking anything. */
+let _emailjsLoading = null;
+function loadEmailJS(){
+  if (typeof emailjs !== 'undefined') return Promise.resolve();
+  if (_emailjsLoading) return _emailjsLoading;
+  _emailjsLoading = new Promise(function(resolve, reject){
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+    s.onload = function(){ typeof emailjs !== 'undefined' ? resolve() : reject(new Error('emailjs did not load')); };
+    s.onerror = function(){ reject(new Error('emailjs CDN unreachable')); };
+    document.head.appendChild(s);
+  });
+  return _emailjsLoading;
+}
 
 // ===== STARS =====
 const se=document.getElementById('stars');
@@ -804,6 +828,7 @@ async function sendDoodle(){
   if(!hostedUrl) params.doodle_image=doodleB64;
 
   try{
+    await loadEmailJS();
     emailjs.init(EJS_KEY);
     await emailjs.send(EJS_SVC,EJS_TPL,params);
   }catch(e){
@@ -832,6 +857,14 @@ function showToast(msg){
 
 // ===== PULL TO REFRESH (drag down at the top to get new games) =====
 (function(){
+  // iPad Safari THROWS on any localStorage access when site data is blocked. This block used to
+  // read it bare, which killed everything below it in this script — the same defect that made
+  // Dust Chasers unplayable for Maya (start screen drew, start button dead). Caught by the E2E
+  // suite's storage-blocked layer, in the portal itself.
+  const ptrStore = {
+    get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
+    set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} }
+  };
   const ptr=document.getElementById('ptr');
   if(!ptr) return;
   const ico=ptr.querySelector('.ptr-ico');
@@ -873,7 +906,7 @@ function showToast(msg){
     if(!active) return;
     active=false;
     if(!armed){ reset(); return; }
-    localStorage.setItem('mayaPTRUsed','1');
+    ptrStore.set('mayaPTRUsed','1');
     refreshing=true;
     ptr.classList.add('snap','spin');
     ptr.style.transform='translate(-50%,18px)';
@@ -886,7 +919,7 @@ function showToast(msg){
   window.addEventListener('touchcancel',function(){ active=false; reset(); },{passive:true});
 
   // first-time tip: briefly show the pill on load so she discovers pull-to-refresh
-  if(!localStorage.getItem('mayaPTRUsed')){
+  if(!ptrStore.get('mayaPTRUsed')){
     setTimeout(function(){
       if(active||document.body.classList.contains('maya-game-open')) return;
       txt.textContent='Pull down for new games! ✨';

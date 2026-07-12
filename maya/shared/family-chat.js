@@ -70,17 +70,25 @@ function loadSession() {
 	}
 }
 
+/* Every storage access here is guarded. On Maya's iPad, *touching* localStorage or
+   sessionStorage throws when site data is blocked — it doesn't return null, it throws — and an
+   unguarded call aborts the whole script. loadSession() was already guarded; these were not, so
+   signing in or out would have thrown and taken the chat down. */
 function saveSession(session) {
-	localStorage.setItem(
-		SESSION_KEY,
-		JSON.stringify({ ...session, at: Date.now() })
-	);
+	try {
+		localStorage.setItem(
+			SESSION_KEY,
+			JSON.stringify({ ...session, at: Date.now() })
+		);
+	} catch (e) {
+		// Storage blocked: she stays signed in for this page load, just not across reloads.
+	}
 }
 
 function clearSession() {
-	localStorage.removeItem(SESSION_KEY);
-	localStorage.removeItem('maya_family_chat_v2');
-	sessionStorage.removeItem('maya_family_chat_v1');
+	try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+	try { localStorage.removeItem('maya_family_chat_v2'); } catch (e) {}
+	try { sessionStorage.removeItem('maya_family_chat_v1'); } catch (e) {}
 }
 
 function supabaseForPin(pin) {
@@ -560,7 +568,11 @@ function initChatWidget() {
 			backdrop.setAttribute('aria-hidden', open ? 'false' : 'true');
 		}
 		fab.setAttribute('aria-expanded', open ? 'true' : 'false');
-		sessionStorage.setItem('maya_chat_panel_open', open ? '1' : '0');
+		// setPanelOpen() runs at init, and on Maya's iPad *touching* sessionStorage throws when
+		// site data is blocked — which aborted this whole script and took the chat widget with it.
+		// Same defect that made Dust Chasers unplayable. Remembering the panel state is a nicety;
+		// losing the chat is not.
+		try { sessionStorage.setItem('maya_chat_panel_open', open ? '1' : '0'); } catch (e) {}
 		if (open) {
 			hidePeek();
 			unread = 0;
