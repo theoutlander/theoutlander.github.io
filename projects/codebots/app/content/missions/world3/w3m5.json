@@ -3,7 +3,7 @@
   "world": 3,
   "index": 5,
   "title": "TWISTS AND BARRELS",
-  "teaches": "while + shoot + turn",
+  "teaches": "else if (a chain of choices)",
   "arena": {
     "cols": 8,
     "rows": 6,

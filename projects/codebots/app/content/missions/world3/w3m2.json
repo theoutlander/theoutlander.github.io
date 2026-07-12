@@ -2,10 +2,10 @@
   "id": "w3m2",
   "world": 3,
   "index": 2,
-  "title": "RUN THE BLOCKADE",
-  "teaches": "while + shoot",
+  "title": "REPEAT'S REAL NAME",
+  "teaches": "for loops",
   "arena": {
-    "cols": 9,
+    "cols": 16,
     "rows": 3,
     "cells": [
       [
@@ -17,6 +17,13 @@
         "floor",
         "floor",
         "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
         "floor"
       ],
       [
@@ -28,9 +35,23 @@
         "floor",
         "floor",
         "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
         "floor"
       ],
       [
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
+        "floor",
         "floor",
         "floor",
         "floor",
@@ -45,23 +66,76 @@
     "crates": [],
     "coins": [],
     "chests": [],
-    "gates": [],
-    "targets": [
+    "targets": [],
+    "gates": [
       {
-        "x": 2,
-        "y": 1
+        "pad": {
+          "x": 2,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 3,
+            "y": 1
+          }
+        ],
+        "open": false
       },
       {
-        "x": 3,
-        "y": 1
+        "pad": {
+          "x": 4,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 5,
+            "y": 1
+          }
+        ],
+        "open": false
       },
       {
-        "x": 6,
-        "y": 1
+        "pad": {
+          "x": 6,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 7,
+            "y": 1
+          }
+        ],
+        "open": false
+      },
+      {
+        "pad": {
+          "x": 8,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 9,
+            "y": 1
+          }
+        ],
+        "open": false
+      },
+      {
+        "pad": {
+          "x": 10,
+          "y": 1
+        },
+        "gateCells": [
+          {
+            "x": 11,
+            "y": 1
+          }
+        ],
+        "open": false
       }
     ],
     "beacon": {
-      "x": 8,
+      "x": 14,
       "y": 1
     }
   },
@@ -72,15 +146,15 @@
     },
     "facing": "E"
   },
-  "parLines": 7,
-  "starterCode": "// Same idea, but barrels in the way. Keep driving until you arrive —\n// blasting any barrel you meet.\n",
+  "parLines": 6,
+  "starterCode": "// Five gates. You KNOW the number — so count it out loud, in a for loop.\n",
   "hints": [
-    "Barrels are sitting in the lane between you and the goal. Blasting a barrel costs the bot a turn, and stepping costs a turn too. So the number of turns it takes to finish is not the same as the number of squares. What does that tell you about counting?",
-    "Every time around, the bot should look at the one square right in front of it. If a barrel is there, blast it. If the way is clear, take a step. Nothing else changes — it still keeps going until it reaches the goal.",
-    "while (!atBeacon()) { if ( ??? ) { ??? } else { forward(1) } } — what question tells the bot a barrel is right in front of it, and what should it do when the answer is yes?"
+    "You already know how to solve this with repeat. The moves don't change — only the way you write the loop does.",
+    "A for loop says three things out loud: where the count starts, how long to keep going, and how it grows each trip.",
+    "for (let i = 0; i < ??? ; i++) {\n  ??? // the same two moves you'd have put inside a repeat\n}\nforward( ??? )\nHow many gates are there, and how far past the last one is the beacon?"
   ],
-  "briefing": "Sprocket packed the runway with barrels — you can't count them all. Let while do the counting: keep going until atBeacon(), blasting whatever's in front.",
-  "authorSolution": "while (!atBeacon()) {\n  if (targetAhead()) {\n    shoot()\n  } else {\n    forward(1)\n  }\n}",
+  "briefing": "Time for the truth: repeat was a for loop all along. Every single run, the computer quietly rewrote your repeat into a for. Five gates, each one needs a honk from its pad — and you know exactly how many there are, so write the loop the way a real programmer writes it.",
+  "authorSolution": "for (let i = 0; i < 5; i++) {\n  forward(2)\n  honk()\n}\nforward(4)",
   "bonusStar": {
     "kind": "zeroBumps"
   }

@@ -28,7 +28,12 @@ describe("concept cards point at the RIGHT level", () => {
     const expectTeaches: Record<string, string> = {
       sequencing: "sequencing", repeat: "repeat", deciding: "blocked", shoot: "shoot",
       targetahead: "targetAhead", orelse: "else", arrived: "atBeacon",
-      keepgoing: "while", chain: "shoot", functions: "function",
+      keepgoing: "while", forloop: "for",
+      // the IDEA the level teaches, not the furniture that happens to be lying around in it: the
+      // chain level used to be labelled "while + shoot + turn", which named everything except the
+      // thing it was actually for.
+      chain: "else if",
+      functions: "function",
     };
     for (const c of CONCEPTS) {
       const mission = ALL.find((m) => m.world === c.world && m.index === c.level);

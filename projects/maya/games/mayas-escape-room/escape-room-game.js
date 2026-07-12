@@ -628,6 +628,16 @@ function buildThemePicker(){
   });
 }
 buildThemePicker();
+window.__DEBUG_JUMP=function(themeId, phase, flags){
+  startGame(themeId);
+  S.key1=true; S.door1Open=true; S.potionDone=true; S.key3=true; S.wordDone=true;
+  Object.assign(S, flags||{});
+  S.phase=phase; updateHUD();
+  if(phase==='library') show('#s-library');
+  if(phase==='room2') show('#s-room2');
+  if(phase==='room3') show('#s-room3');
+};
+window.__DEBUG_MSG=function(){ return document.getElementById('msg').textContent; };
 $('#surprise-btn').addEventListener('click', ()=>{
   const ids = window.THEME_ORDER;
   startGame(ids[Math.floor(Math.random()*ids.length)]);
