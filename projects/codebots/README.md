@@ -53,17 +53,23 @@ The bot grows more capable, the programs grow more powerful, the world pushes ba
 ## Repo layout
 
 ```
-codebots/
-├── README.md      ← you are here
-├── docs/          ← the specs (one doc per question)
-├── levels/        ← the missions (one file per mission)
-├── app/           ← the game (not yet created)
-└── prototype/     ← the v1 iteration. Read-only reference. Not maintained, not refactored.
+projects/
+├── codebots/              ← this project
+│   ├── README.md          ← you are here
+│   ├── CLAUDE.md          ← rules for agents working here
+│   ├── docs/              ← the specs (one doc per question)
+│   ├── levels/            ← the missions (one file per mission)
+│   └── app/               ← the game (not yet created)
+│
+└── codebots-prototype/    ← the v1 iteration. A SEPARATE project.
+                             Read-only reference. Not maintained, not refactored.
 ```
 
-Everything from the first iteration — the app, the old blueprint design system, the old
-handoff notes — lives under **`prototype/`** and nowhere else. If you're editing something
-in there, stop: [read why](prototype/README.md).
+**The prototype is deliberately a sibling, not a subfolder.** Nothing in this project can
+reach it by accident — no glob, no `tsconfig` include, no test config sweeps it in. It holds
+everything from the first attempt: the app, the retired blueprint design system, and the old
+handoff notes. If you find yourself editing it, stop and
+[read why](../codebots-prototype/README.md).
 
 ---
 

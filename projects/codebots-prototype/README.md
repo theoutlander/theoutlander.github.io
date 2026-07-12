@@ -1,9 +1,11 @@
-# Prototype — the v1 iteration
+# CodeBots Prototype — the v1 iteration
 
 > **This is a read-only reference. It is not maintained, not refactored, and not the product.**
-> The game is being rebuilt from the first line in `../app/` against the docs in `../docs/`.
+> The game is being rebuilt from the first line in **[`../codebots/`](../codebots/)**, against the docs in [`../codebots/docs/`](../codebots/docs/).
 
-Do not fix bugs here. Do not add features here. If you find yourself editing two codebases, the rebuild has failed.
+Do not fix bugs here. Do not add features here. **If you find yourself editing two codebases, the rebuild has failed.**
+
+This lives as a **separate sibling project** rather than a subfolder of `codebots/`, deliberately — so no glob, `tsconfig` include, or test config can pull it into the new project by accident.
 
 ---
 
