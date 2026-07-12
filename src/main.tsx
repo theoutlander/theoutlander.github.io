@@ -23,7 +23,7 @@ router.subscribe("onResolved", (event) => {
 	// Strip a trailing slash so "/blog" and "/blog/" report as the same GA path
 	const rawPathname = event.toLocation.pathname;
 	const pathname = rawPathname.length > 1 ? rawPathname.replace(/\/+$/, "") : rawPathname;
-	const search = event.toLocation.search ? `?${event.toLocation.search}` : '';
+	const search = event.toLocation.searchStr;
 	analytics.pageView(pathname + search, document.title);
 });
 

@@ -162,7 +162,6 @@ let score=0,timeLeft=60,vacuumed=0,combo=0,lastZapTime=0;
 let gameRunning=false,animId=null,timerInt=null;
 let best=parseInt(localStorage.getItem('dc3_best')||'0');
 let frame=0,dangerNear=false,shockCooldown=0,SHOCK_MAX=280,flashLife=0;
-let clickHintTimer=240;
 
 function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
 window.addEventListener('resize',resize);resize();
@@ -209,9 +208,11 @@ function updatePos(cx,cy){
 }
 document.getElementById('game').addEventListener('mousemove',e=>updatePos(e.clientX,e.clientY));
 document.getElementById('game').addEventListener('touchmove',e=>{
+  if(!gameRunning)return;
   e.preventDefault();updatePos(e.touches[0].clientX,e.touches[0].clientY);
 },{passive:false});
 document.getElementById('game').addEventListener('touchstart',e=>{
+  if(!gameRunning)return;  // let taps on the start/try-again button through as real clicks
   e.preventDefault();
   const t=e.touches[0];updatePos(t.clientX,t.clientY);
   const r=canvas.getBoundingClientRect();
@@ -560,19 +561,6 @@ function drawFlashlight(x,y){
   ctx.fillStyle=warm;ctx.beginPath();ctx.arc(x,y,180,0,Math.PI*2);ctx.fill();
 }
 
-// ===== CLICK HINT =====
-function drawClickHint(){
-  if(clickHintTimer<=0)return;
-  clickHintTimer--;
-  ctx.save();
-  ctx.globalAlpha=Math.min(1,clickHintTimer/60);
-  ctx.font='bold 14px Special Elite,serif';
-  ctx.fillStyle='rgba(90,255,200,0.75)';
-  ctx.textAlign='center';
-  ctx.fillText('👆 Click on a ghost to zap it!',W/2,H-55);
-  ctx.restore();
-}
-
 // ===== LOOP =====
 function loop(){
   if(!gameRunning)return;
@@ -657,8 +645,6 @@ function loop(){
     return true;
   });
 
-  drawClickHint();
-
   // Score tick
   if(frame%60===0)score+=5;
   document.getElementById('scn').textContent=score;
@@ -694,7 +680,7 @@ function startTimer(){
 // ===== START / END =====
 function startGame(){
   score=0;vacuumed=0;timeLeft=60;frame=0;combo=0;lastZapTime=0;
-  clickHintTimer=240;shockCooldown=0;flashLife=0;dangerNear=false;
+  shockCooldown=0;flashLife=0;dangerNear=false;
   dustPeople=[];pops=[];shockwaves=[];floatingTexts=[];
   document.getElementById('start-screen').classList.add('hidden');
   document.getElementById('end-screen').classList.add('hidden');
