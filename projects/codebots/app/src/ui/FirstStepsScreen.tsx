@@ -126,23 +126,47 @@ export function FirstStepsScreen({
     const res = await c.run(source, mission);
     if (!res.ok) {
       setRunning(false);
-      // Even a broken program is a teaching moment here — never a telling-off.
-      setMsg({ text: step.nudge, good: false });
+      // Tell her what ACTUALLY went wrong, not a canned line.
+      //
+      // This used to show step.nudge whatever happened, which meant a kid who built `forward(1)`
+      // perfectly but picked the wrong NUMBER was told her capital letters were wrong. The game
+      // blaming her for a mistake she didn't make — on the screen that teaches precision. The
+      // sandbox already writes a precise, kid-worded message (it's the one that explains capitals);
+      // we were throwing it away.
+      setMsg({ text: res.error.message, good: false });
       return;
     }
 
-    // Bank the outcome before the animation: she must never lose progress to a slow replay.
+    // Bank the outcome NOW, before a single pixel moves.
+    //
+    // The sim has already decided; the animation is just a retelling of it. Gating her progress on
+    // the replay finishing means a kid who switches tabs (browsers throttle animation in background
+    // tabs) or gets bored and clicks away has DONE the step and gets nothing for it — she's left
+    // staring at a screen with no way forward. On a six-year-old's first-ever coding screen, that is
+    // the worst bug we could ship.
     const ok = stepDone(step, res.run.finalState.pos);
+    setPassed(ok);
+    setMsg({ text: ok ? step.praise : step.nudge, good: ok });
+    if (ok) analytics.firstStepDone?.(step.id, i + 1);
+
+    // A watchdog on the button.
+    //
+    // `running` disables GO so she can't fire twice mid-replay — but it only cleared when the scene
+    // reported done. If the replay ever stalls (a backgrounded tab throttles animation to a crawl; a
+    // scene gets torn down), GO stays disabled as "WATCHING…" forever and she cannot try again. A kid
+    // with a dead button and no explanation is a kid who leaves. The outcome is already banked above,
+    // so releasing the button early costs nothing.
+    let released = false;
+    const release = () => { if (!released) { released = true; setRunning(false); } };
+    const watchdog = window.setTimeout(release, 12000);
+
     a.scene.play(res.run.events, {
       onEvent: (ev) => sfx.current?.play(ev),
-      onDone: () => {
-        setRunning(false);
-        setPassed(ok);
-        setMsg({ text: ok ? step.praise : step.nudge, good: ok });
-        if (ok) analytics.firstStepDone?.(step.id, i + 1);
-      },
+      onDone: () => { window.clearTimeout(watchdog); release(); },
     });
   }
+
+  const back = () => setI((n) => Math.max(0, n - 1));
 
   function next() {
     if (i + 1 < FIRST_STEPS.length) { setI(i + 1); return; }
@@ -250,6 +274,13 @@ export function FirstStepsScreen({
       ) : null}
 
       <div style={{ display: "flex", gap: 10 }}>
+        {/* Going BACK must always be possible. An idea she half-got is an idea she'll want to read
+            again, and a kid who can only ever go forwards learns to be afraid of pressing things. */}
+        {i > 0 ? (
+          <Button variant="quiet" onClick={back} disabled={running} style={{ padding: "14px 18px", fontSize: 15 }}>
+            ← BACK
+          </Button>
+        ) : null}
         {passed ? (
           <Button onClick={next} style={{ flex: 1, fontSize: 18, padding: "14px 0" }}>
             {i + 1 < FIRST_STEPS.length ? "NEXT →" : "I'M READY — START LEVEL 1"}

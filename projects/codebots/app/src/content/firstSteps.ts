@@ -154,15 +154,18 @@ export const FIRST_STEPS: FirstStep[] = [
     teach: [
       "Here's a strange one, and it catches everybody.",
       "To a robot, Forward and forward are two COMPLETELY different words.",
-      "A big F is not the same letter as a small f. It only knows the small one.",
+      "A big F is not the same letter as a small f. Sparkplug only knows the small one.",
     ],
-    show: "Forward(2)   ✗\nforward(2)   ✓",
-    task: "I wrote it with a big F, so it's broken. Press GO to see — then fix it.",
-    prefill: "Forward(2)",
-    lane: 2,
-    chips: [cmd("forward"), num(1), num(2)],
-    nudge: 'The robot doesn\'t know "Forward" with a big F. Build it again with the small one.',
-    praise: "That's it. Computers are fussy about capital letters — now you know before it bites you.",
+    show: "Forward()   ✗\nforward()   ✓",
+    // ONE variable, and nothing else. The beat used to also involve a number, so a kid who picked the
+    // right word but the wrong number got told her CAPITALS were wrong — the game blaming her for a
+    // mistake she didn't make, on the very screen that teaches precision. Two words, one tap, one
+    // idea. No numbers anywhere near it.
+    task: "Two words below. Only ONE of them is the word Sparkplug knows. Tap it, then press GO.",
+    lane: 1,
+    chips: [cmd("Forward"), cmd("forward")],
+    nudge: "Look closely at the first letter. Sparkplug only knows the small one.",
+    praise: "That's it. Big F and small f are different letters to a computer — now you know before it bites you.",
   },
   {
     id: "a-list",

@@ -37,9 +37,10 @@ const SPOTS = [
 
 const FAKE_CLUES = [
   'The key is on the MOON. Good luck getting there! 🌝',
-  'The key is right behind you!! ... Made you look. 😝',
+  'The key is guarded by a very small, very fierce hamster. 🐹⚔️',
   'The key is in the fridge. (This mansion has no fridge.) 🤭',
   'Try the 47th floor. This house has 1 floor. 🙃',
+  'The key was swallowed by a goose. The goose is fine. 🪿',
 ];
 
 const DUSTY_LINES = [
@@ -745,4 +746,11 @@ syncMute();
   const best=Number(localStorage.getItem('mayaEscapeBest')||0);
   if(best) $('#best-time').textContent='🏆 Best escape: '+fmt(best);
 })();
+
+window.__DEBUG_JUMP_ROOM3 = function(){
+  startGame();
+  S.mirrorUnlocked = true;
+  S.spotFound = true;
+  enterRoom3();
+};
 })();

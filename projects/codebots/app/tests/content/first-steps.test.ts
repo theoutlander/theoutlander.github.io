@@ -19,7 +19,7 @@ const SOLUTION: Record<string, string> = {
   "a-command": "forward", // a BARE word — it does nothing, and that silence is the lesson
   brackets: "forward()",
   numbers: "forward(3)",
-  capitals: "forward(2)",
+  capitals: "forward()", // ONE variable: the capital. No number to confound it.
   "a-list": "forward(2)\nhonk()",
   literal: "forward(3)",
   turn: "forward(2)\nleft()\nforward(1)",
