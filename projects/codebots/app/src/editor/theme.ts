@@ -9,16 +9,16 @@ export const codebotsTheme = EditorView.theme(
     "&": {
       color: "#B9C9E6",
       backgroundColor: "rgba(0,0,0,0.22)",
-      fontSize: "14px",
+      fontSize: "16px",
       borderRadius: "8px",
       height: "100%",
     },
     ".cm-scroller": { overflow: "auto" },
     ".cm-content": {
       fontFamily: "'IBM Plex Mono', ui-monospace, monospace",
-      lineHeight: "24px",
+      lineHeight: "28px",
       caretColor: "#FFB454",
-      padding: "12px 0",
+      padding: "14px 0",
     },
     ".cm-gutters": {
       backgroundColor: "transparent",

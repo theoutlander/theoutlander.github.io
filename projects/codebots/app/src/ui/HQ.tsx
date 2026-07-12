@@ -49,6 +49,7 @@ export function HQ({
   onBattle,
   onGarage,
   onDrill,
+  onFirstSteps,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   save: SaveData;
@@ -60,12 +61,16 @@ export function HQ({
   onBattle: () => void;
   onGarage: () => void;
   onDrill: () => void;
+  onFirstSteps: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
   const nextLevel = Math.min(cleared + 1, missions.length);
   const badgeCount = (save.badges ?? []).length;
   const drills = availableDrills();
+  // A kid who has never coded should not be choosing between six doors. Until she's done FIRST
+  // STEPS, that IS the game — everything else can wait.
+  const beginner = !save.firstStepsDone && cleared === 0;
 
   return (
     <div style={{ height: "100%", overflow: "auto", padding: "28px 24px" }}>
@@ -95,12 +100,30 @@ export function HQ({
         </button>
 
         <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+          {beginner ? (
+            <Door
+              title="START HERE"
+              desc="Never written code before? Start here. One idea at a time, nothing to type, and you can't get it wrong."
+              chip="FIRST STEPS →"
+              chipColor="amber"
+              onClick={onFirstSteps}
+            />
+          ) : null}
           <Door
             title="CAMPAIGN"
             desc={`${cleared}/${missions.length} levels cleared. The Rust Pirates await.`}
             chip={cleared === 0 ? "START →" : `CONTINUE · LEVEL ${nextLevel} →`}
             onClick={onPlay}
           />
+          {beginner ? null : (
+            <Door
+              title="FIRST STEPS"
+              desc="The basics, from the very beginning: what code is, commands, brackets, numbers, capitals."
+              chip="REPLAY →"
+              chipColor="cyan"
+              onClick={onFirstSteps}
+            />
+          )}
           <Door
             title="BOT MAKER"
             desc="Name your bot and paint it. Make it yours — the color lab is open."

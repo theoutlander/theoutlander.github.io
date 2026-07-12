@@ -29,6 +29,8 @@ export interface SaveData {
   loadout: Loadout;
   /** PROVE IT drills passed (see content/drills.ts) — one program, three random fields */
   drillsPassed?: string[];
+  /** finished the FIRST STEPS storybook — she's met code, commands, brackets, numbers and capitals */
+  firstStepsDone?: boolean;
 }
 
 const KEY = "codebots.save.v1";
@@ -92,6 +94,7 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
     unlocked: [...new Set([...a.unlocked, ...b.unlocked])],
     badges: [...new Set([...a.badges, ...b.badges])],
     drillsPassed: [...new Set([...(a.drillsPassed ?? []), ...(b.drillsPassed ?? [])])],
+    firstStepsDone: a.firstStepsDone || b.firstStepsDone,
     loadout: { chassis, equipped, bought },
   };
 }

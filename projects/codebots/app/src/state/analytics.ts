@@ -87,6 +87,17 @@ export const analytics = {
   problemReport(reason: string, level: number) {
     track("cb_problem", { reason, level });
   },
+  /** FIRST STEPS — the on-ramp. Where a beginner drops out of THIS is the most important funnel we
+   *  have: it is the difference between "coding isn't for me" and everything that comes after. */
+  firstStep(id: string, n: number) {
+    track("cb_first_step", { id, n });
+  },
+  firstStepDone(id: string, n: number) {
+    track("cb_first_step_done", { id, n });
+  },
+  firstStepsComplete() {
+    track("cb_first_steps_complete");
+  },
 };
 
 function track(event: string, params?: Params): void {

@@ -463,7 +463,7 @@ export function MissionScreen({
       {/* RIGHT: editor + controls + radio — the coding window. Collapsible so you can watch the
           arena full-size; a RUN button stays in the collapsed strip so you can still run it. */}
       {codeOpen ? (
-      <div style={{ ...col, width: narrow ? "100%" : briefOpen ? 460 : 540, flex: "none", minHeight: narrow ? 420 : 0 }}>
+      <div style={{ ...col, width: narrow ? "100%" : briefOpen ? 540 : 640, flex: "none", minHeight: narrow ? 420 : 0 }}>
         <Button variant="ghost" size="sm" onClick={() => setCodeOpen(false)}>
           HIDE CODE ▶
         </Button>

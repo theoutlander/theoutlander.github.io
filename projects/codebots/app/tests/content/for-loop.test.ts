@@ -46,9 +46,15 @@ describe("`repeat` and a real `for` loop are the same thing", () => {
     });
   }
 
-  it("a hand-written for loop clears w1m5 with three stars", () => {
-    const mission = ALL.find((m) => m.id === "m6" || m.world === 1)!;
-    expect(mission).toBeDefined();
+  it("THE LOOP (w1m5) still earns three stars when written as a real for loop", () => {
+    const mission = ALL.find((m) => m.id === "w1m5")!;
+    expect(mission, "w1m5 — the repeat level — is gone").toBeDefined();
+    const res = runInSandbox(
+      mission,
+      "for (let i = 0; i < 3; i++) {\n  forward(2)\n  honk()\n}\nforward(3)",
+    );
+    expect(res.cleared).toBe(true);
+    expect(res.stars, "the for-loop version must not be scored worse than repeat").toBe(3);
   });
 });
 
