@@ -85,31 +85,31 @@ const FX={
   thunder(){ const t=ctx().currentTime; whoosh(t,1.8,.14,140,50); osc('sine',52,28,t,1.6,.16); osc('sine',40,25,t+.4,1.2,.1); },
   gem(){ const t=ctx().currentTime; [880,1175,1568,2093].forEach((f,i)=>osc('triangle',f,0,t+i*.07,.3,.1)); whoosh(t,.35,.04,3000,7000); },
   screech(){ const t=ctx().currentTime; osc('sawtooth',1900,900,t,.18,.055); osc('sawtooth',1600,700,t+.12,.2,.05); },
-  distantcreak(){ const t=ctx().currentTime; const o=osc('sawtooth',60+Math.random()*40,0,t,.9,.018);
+  distantcreak(){ const t=ctx().currentTime; const o=osc('sawtooth',60+Math.random()*40,0,t,.9,.035);
     o.frequency.linearRampToValueAtTime(50+Math.random()*30,t+.9); },
   /* --- deluxe scary (but friendly) pack --- */
   knock(){ const t=ctx().currentTime; [0,.32,.64].forEach(at=>{ osc('sine',130,55,t+at,.16,.24); whoosh(t+at,.08,.07,400,150); }); },
   heartbeat(){ const t=ctx().currentTime; osc('sine',70,38,t,.22,.2); osc('sine',62,34,t+.32,.28,.15); },
-  drip(){ const t=ctx().currentTime; osc('sine',1400,320,t,.12,.07); osc('sine',900,2200,t+.14,.1,.03); },
+  drip(){ const t=ctx().currentTime; osc('sine',1400,320,t,.12,.09); osc('sine',900,2200,t+.14,.1,.05); },
   wind(){ const a=ctx(), t=a.currentTime; NB=NB||noiseBuf();
     const s=a.createBufferSource(); s.buffer=NB; s.loop=true;
     const f=a.createBiquadFilter(); f.type='bandpass'; f.Q.value=2.5;
     f.frequency.setValueAtTime(300,t); f.frequency.linearRampToValueAtTime(750,t+1.4); f.frequency.linearRampToValueAtTime(220,t+3);
-    const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.05,t+.9); g.gain.exponentialRampToValueAtTime(.0001,t+3.1);
+    const g=a.createGain(); g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.065,t+.9); g.gain.exponentialRampToValueAtTime(.0001,t+3.1);
     s.connect(f); f.connect(g); g.connect(master); s.start(t); s.stop(t+3.2); },
-  whisper(){ const t=ctx().currentTime; whoosh(t,.35,.035,1800,3400); whoosh(t+.4,.3,.03,2600,1500); whoosh(t+.78,.4,.028,2000,3800); },
+  whisper(){ const t=ctx().currentTime; whoosh(t,.35,.06,1800,3400); whoosh(t+.4,.3,.05,2600,1500); whoosh(t+.78,.4,.05,2000,3800); },
   cackle(){ const t=ctx().currentTime; [520,620,560,660,590,700,540].forEach((f,i)=>osc('square',f,f*.82,t+i*.11,.1,.028)); },
   belltoll(){ const t=ctx().currentTime; osc('sine',196,0,t,2.6,.07); osc('sine',392.5,0,t,1.8,.03); osc('triangle',589,0,t,1.1,.015); },
   musicbox(){ const t=ctx().currentTime;
     const mel=[1047,1319,1568,1319,1047,1568,2093,1568,1319,1047,1175,1047];
     mel.forEach((f,i)=>{ osc('triangle',f,0,t+i*.28,.5,.08); osc('sine',f*2,0,t+i*.28,.3,.02); }); },
-  bubble(){ const t=ctx().currentTime; osc('sine',180+Math.random()*160,500+Math.random()*400,t,.16,.04); },
-  rustle(){ const t=ctx().currentTime; whoosh(t,.22,.05,1000,2200); },
+  bubble(){ const t=ctx().currentTime; osc('sine',180+Math.random()*160,500+Math.random()*400,t,.16,.06); },
+  rustle(){ const t=ctx().currentTime; whoosh(t,.22,.08,1000,2200); },
   /* jump-scare stingers + storm & critter pack */
   stinger(){ const t=ctx().currentTime; osc('sawtooth',620,580,t,.5,.11); osc('sawtooth',664,600,t,.5,.09); osc('sine',110,60,t,.5,.16); whoosh(t,.3,.13,2400,300); },
   growl(){ const t=ctx().currentTime; osc('sawtooth',62,40,t,1.15,.09); osc('sawtooth',49,35,t+.06,1.2,.07); whoosh(t,1.1,.04,120,70); },
   wolfhowl(){ const a=ctx(), t=a.currentTime;
-    [[.06,0],[.03,.35]].forEach(([vol,at])=>{
+    [[.085,0],[.045,.35]].forEach(([vol,at])=>{
       const o=a.createOscillator(),g=a.createGain(),l=a.createOscillator(),lg=a.createGain();
       o.type='sine'; o.frequency.setValueAtTime(300,t+at);
       o.frequency.linearRampToValueAtTime(540,t+at+.55); o.frequency.setValueAtTime(540,t+at+.55);
@@ -121,14 +121,15 @@ const FX={
   whistle(){ const a=ctx(), t=a.currentTime; const o=a.createOscillator(),g=a.createGain();
     o.type='sine'; o.frequency.setValueAtTime(1300,t);
     o.frequency.linearRampToValueAtTime(2400,t+.7); o.frequency.linearRampToValueAtTime(1000,t+1.6);
-    g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.028,t+.4); g.gain.exponentialRampToValueAtTime(.0001,t+1.7);
+    g.gain.setValueAtTime(.0001,t); g.gain.linearRampToValueAtTime(.042,t+.4); g.gain.exponentialRampToValueAtTime(.0001,t+1.7);
     o.connect(g); g.connect(master); o.start(t); o.stop(t+1.8);
-    whoosh(t,1.6,.02,500,900); },
+    whoosh(t,1.6,.03,500,900); },
   rumble(){ const t=ctx().currentTime; whoosh(t,2.4,.11,90,40); osc('sine',42,26,t,2.2,.12); osc('sine',34,24,t+.6,1.6,.07); },
   scratch(){ const t=ctx().currentTime; const n=3+Math.floor(Math.random()*3);
-    for(let i=0;i<n;i++) whoosh(t+i*.11+Math.random()*.04,.06,.038,2600,1700); },
-  skitter(){ const t=ctx().currentTime;
-    for(let i=0;i<6;i++) whoosh(t+i*.055,.03,.03,1400,900); },
+    for(let i=0;i<n;i++){ whoosh(t+i*.13+Math.random()*.04,.09,.1,2600,1700); osc('sawtooth',2200,1400,t+i*.13,.07,.02); } },
+  skitter(){ const t=ctx().currentTime; // tiny claws: quick high tick-tick-ticks
+    for(let i=0;i<8;i++) osc('triangle',1700+Math.random()*900,800,t+i*.06,.045,.06);
+    whoosh(t,.5,.05,1300,900); },
 };
 
 function stopAmbient(){
@@ -155,24 +156,26 @@ function ambient(kind){
     for(const [fn,w] of arr){ if((r-=w)<0) return fn; }
     return arr[0][0];
   };
+  // Drones sit WELL under the one-shot critters — kids should clearly hear
+  // the mice/scratches over the room hum (feedback 2026-07-12).
   if(kind==='mansion'){
-    drone([55,55.7,82.5],.028);
-    loop(()=>pick([[FX.distantcreak,5],[FX.belltoll,2],[FX.scratch,3],[FX.wolfhowl,1]])(), 6000, 8000, 4000+Math.random()*4000);
+    drone([55,55.7,82.5],.014);
+    loop(()=>pick([[FX.distantcreak,4],[FX.belltoll,2],[FX.scratch,3],[FX.skitter,2],[FX.wolfhowl,1]])(), 5500, 7000, 3500+Math.random()*3500);
   } else if(kind==='mirror'){
-    drone([220,220.9,330],.016);
+    drone([220,220.9,330],.01);
     loop(FX.twinkle, 2200, 3500, 1200);
   } else if(kind==='kitchen'){
-    drone([65,65.6,98],.024);
-    loop(()=>pick([[FX.bubble,7],[FX.cackle,1],[FX.skitter,2]])(), 1600, 2600, 1200);
+    drone([65,65.6,98],.012);
+    loop(()=>pick([[FX.bubble,6],[FX.cackle,1],[FX.skitter,3]])(), 1600, 2600, 1200);
   } else if(kind==='library'){
-    drone([58,58.5,87],.022);
-    loop(()=>pick([[FX.whisper,4],[FX.rustle,3],[FX.scratch,3]])(), 5000, 7000, 3000);
+    drone([58,58.5,87],.011);
+    loop(()=>pick([[FX.whisper,4],[FX.rustle,2],[FX.scratch,3],[FX.skitter,1]])(), 4200, 6000, 2500);
   } else if(kind==='cellar'){
-    drone([48,48.4,72],.032);
+    drone([48,48.4,72],.017);
     let n=0;
-    loop(()=>{ n++; (n%2?FX.heartbeat:pick([[FX.drip,5],[FX.scratch,3],[FX.growl,1]]))(); }, 1400, 1800, 900);
+    loop(()=>{ n++; (n%2?FX.heartbeat:pick([[FX.drip,4],[FX.scratch,3],[FX.skitter,2],[FX.growl,1]]))(); }, 1400, 1800, 900);
   } else if(kind==='attic'){
-    drone([52,52.6,78],.024);
+    drone([52,52.6,78],.013);
     loop(()=>pick([[FX.wind,4],[FX.whistle,3],[FX.distantcreak,2],[FX.scratch,2],[FX.wolfhowl,1]])(), 4000, 5000, 800);
   }
 }
