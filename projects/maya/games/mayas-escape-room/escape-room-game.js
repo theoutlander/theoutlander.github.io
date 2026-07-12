@@ -188,7 +188,7 @@ function hintFor(){
   if(p==='room2'){
     if(!S.spotFound){
       if(S.cluesFound.some(c=>c.true)) return '“The GOLDEN scroll never lies! Search the spot IT names!”';
-      return '“One scroll is special... the portrait in the parlor whispered why. GOLDEN things tell the truth!”';
+      return '“One scroll is special... the portrait whispered why. GOLDEN things tell the truth!”';
     }
     return '“Play my cousin\u2019s song at the glowing spot! Listen first, then copy! 🎹”';
   }
@@ -237,7 +237,7 @@ function chairClick(i, el){
       S.keyTaken=true; S.key1=true; el.classList.add('taken');
       el.querySelector('.c-content').textContent='';
       sfx('key'); updateHUD();
-      msg('🗝️ You got the <b>parlor key!</b> The other lids popped — read those scrolls, then unlock the door!');
+      msg('🗝️ You got the <b>'+THEME.room1KeyName+' key!</b> The other lids popped — read those scrolls, then unlock the door!');
       openAllLids(false);
     } else if(c.type==='clue'){
       if(!S.cluesFound.some(x=>x.text===c.text)) S.cluesFound.push({text:c.text, true:!!c.true});
@@ -275,6 +275,7 @@ function chairClick(i, el){
 function trap(){
   sfx('net');
   $('#net').classList.add('show');
+  $('#net-card p').innerHTML = THEME.netTrapMsg;
   const mesh=$('#net-mesh'); mesh.style.animation='none'; void mesh.offsetWidth; mesh.style.animation='';
 }
 
