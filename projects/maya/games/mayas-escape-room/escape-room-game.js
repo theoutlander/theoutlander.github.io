@@ -345,7 +345,7 @@ function chestClick(){
   if(!S.chestOpen){
     S.chestOpen=true; ch.classList.add('open'); sfx('magic'); updateHUD();
     addGem('chest','It was inside the treasure chest!');
-    const sup={text:'🌟 SUPER CLUE: The mirror key hides in the '+S.trueSpot.name.toUpperCase()+'!', true:true};
+    const sup={text:'🌟 SUPER CLUE: The '+THEME.exitPropName+' key hides in the '+S.trueSpot.name.toUpperCase()+'!', true:true};
     if(!S.cluesFound.some(x=>x.text===sup.text)) S.cluesFound.push(sup);
     setTimeout(()=>{ updateHUD(); msg('📜 The chest also held a <b>GOLDEN SUPER CLUE!</b> Check your 📜 Clues — it\u2019ll help later!', 4500); }, 2000);
   } else {
@@ -510,7 +510,7 @@ function ghostHint(){ msg('👻 “My sooong!” — tap the glowing '+S.trueSpo
 
 function songWon(){
   S.songDone=true; S.key2=true; updateHUD(); sfx('key');
-  msg('🎶✨ The ghost claps! 👻 “Beautiful!” It drops the <b>MIRROR KEY!</b> Now unlock the mirror!', 4000);
+  msg('🎶✨ The ghost claps! 👻 “Beautiful!” It drops the <b>'+THEME.exitPropName.toUpperCase()+' KEY!</b> Now unlock the '+THEME.exitPropName+'!', 4000);
 }
 
 function mirrorClick(){

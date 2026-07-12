@@ -153,6 +153,22 @@ export function MissionScreen({
       return;
     }
 
+    // Bank the result BEFORE a single pixel moves.
+    //
+    // The sim has already decided. The animation is a retelling of it, and hanging her progress on
+    // that retelling means a kid who switches tabs mid-run (browsers throttle animation in background
+    // tabs), or who wanders back to the map, has BEATEN the level and gets nothing for it. She'd have
+    // to sit and watch her own replay to be allowed to keep the win. This is the screen she spends
+    // most of her time on, and it was the last one still doing it — the drill screen and FIRST STEPS
+    // were fixed weeks of bugs ago.
+    if (res.run.cleared) finish(res.run.stars);
+
+    // A watchdog on RUN. If the replay ever stalls — a backgrounded tab, a torn-down scene — the
+    // button must not stay dead as "RUNNING…" forever with no way to try again.
+    let released = false;
+    const release = () => { if (!released) { released = true; setRunning(false); } };
+    const watchdog = window.setTimeout(release, 15000);
+
     let armor = 100;
     a.scene.play(res.run.events, {
       onEvent: (ev) => {
@@ -172,9 +188,9 @@ export function MissionScreen({
         if (ev.type === "clear") addRadio("★ beacon reached!", "success");
       },
       onDone: () => {
-        setRunning(false);
-        if (res.run.cleared) finish(res.run.stars);
-        else {
+        window.clearTimeout(watchdog);
+        release();
+        if (!res.run.cleared) {
           bumpFails();
           addRadio("didn't reach the beacon — try a different route", "dim");
         }
