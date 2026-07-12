@@ -194,6 +194,14 @@
 		};
 	}
 
+	// The DSN is public (it's in a public repo, and browser DSNs are write-only by design).
+	// Anyone could point it at their own page and burn the free-tier quota, so only accept
+	// events that actually originate from Nick's domains.
+	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
+	function isProd() {
+		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
+	}
+
 	function loadSentry() {
 		if (!SENTRY_DSN) return;
 		var s = document.createElement('script');
@@ -204,9 +212,34 @@
 			if (!window.Sentry) return;
 			window.Sentry.init({
 				dsn: SENTRY_DSN,
+				environment: isProd() ? 'production' : 'development',
+
+				// Replay keeps Sentry's default text masking ON. Do not turn it off: the portal
+				// hosts the family chat with Dad, so an unmasked replay of an error there would
+				// ship a kid's private messages to a third party. Masked replay still shows the
+				// thing we actually need — her tapping a button and nothing happening.
 				integrations: [window.Sentry.replayIntegration()],
 				replaysSessionSampleRate: 0,
 				replaysOnErrorSampleRate: 1.0,
+
+				// Only report errors whose code came from our own pages.
+				allowUrls: [/nick\.karnik\.io/, /maya\.karnik\.io/],
+				// Errors thrown by her iPad's extensions/injected scripts are not our bugs.
+				denyUrls: [/extensions\//i, /^chrome:\/\//i, /^chrome-extension:\/\//i, /^safari-extension:\/\//i],
+				// Known browser noise that is never actionable.
+				ignoreErrors: [
+					'ResizeObserver loop limit exceeded',
+					'ResizeObserver loop completed with undelivered notifications',
+					'Non-Error promise rejection captured',
+				],
+
+				// Never let local development or my own testing pollute her error inbox — the
+				// whole value of this project is that an issue appearing MEANS something broke
+				// for Maya.
+				beforeSend: function (event) {
+					return isProd() ? event : null;
+				},
+
 				// One game per document, so tagging at init covers everything this frame sends.
 				initialScope: { tags: sentryTags() },
 			});
