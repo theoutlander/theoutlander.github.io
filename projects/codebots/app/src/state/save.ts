@@ -31,6 +31,8 @@ export interface SaveData {
   drillsPassed?: string[];
   /** finished the FIRST STEPS storybook — she's met code, commands, brackets, numbers and capitals */
   firstStepsDone?: boolean;
+  /** "I already know how to code" — every room open, no ramp. For older kids and returning players. */
+  skipAhead?: boolean;
 }
 
 const KEY = "codebots.save.v1";
@@ -42,12 +44,22 @@ export function loadSave(): SaveData {
     const raw = localStorage.getItem(KEY);
     if (!raw) return { ...FRESH, loadout: { ...FRESH_LOADOUT } };
     const parsed = JSON.parse(raw) as Partial<SaveData>;
+    // Every field must be listed here. This function whitelists what it reads back, so a field added
+    // to SaveData and written by saveSave() but forgotten HERE is silently dropped on every load —
+    // it persists to disk and then evaporates. That bug shipped: firstStepsDone (so the game forgot
+    // she'd ever done the tutorial), drillsPassed (so the same drill could be re-farmed for coins
+    // forever), and skipAhead (so "unlock everything" did nothing) were all being written and thrown
+    // straight away. If you add a field to SaveData, add it here too — tests/state/save-roundtrip
+    // will fail if you don't.
     return {
       missions: parsed.missions ?? {},
       coins: parsed.coins ?? 0,
       unlocked: parsed.unlocked ?? [],
       badges: parsed.badges ?? [],
       loadout: { ...FRESH_LOADOUT, ...(parsed.loadout ?? {}) },
+      drillsPassed: parsed.drillsPassed ?? [],
+      firstStepsDone: parsed.firstStepsDone ?? false,
+      skipAhead: parsed.skipAhead ?? false,
     };
   } catch {
     return { ...FRESH, loadout: { ...FRESH_LOADOUT } };
@@ -95,6 +107,7 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
     badges: [...new Set([...a.badges, ...b.badges])],
     drillsPassed: [...new Set([...(a.drillsPassed ?? []), ...(b.drillsPassed ?? [])])],
     firstStepsDone: a.firstStepsDone || b.firstStepsDone,
+    skipAhead: a.skipAhead || b.skipAhead,
     loadout: { chassis, equipped, bought },
   };
 }

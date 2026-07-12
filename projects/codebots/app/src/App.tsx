@@ -78,6 +78,9 @@ export function App() {
   const toAccount = () => setScreen({ name: "account" });
   const toDrill = () => setScreen({ name: "drill" });
   const toFirst = () => setScreen({ name: "first" });
+  /** "I already know how to code" — open every room. For older kids and returning players; the ramp
+   *  is for people who want it, never a toll gate. */
+  const unlockAll = () => { applySave({ ...loadSave(), skipAhead: true }); refresh(); };
 
   /** Garage purchases/equips write straight to the save, then repaint coins + screens. */
   function applySave(next: ReturnType<typeof loadSave>) {
@@ -152,7 +155,7 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} />
+          <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "field" ? (

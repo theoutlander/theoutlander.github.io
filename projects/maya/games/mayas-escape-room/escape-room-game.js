@@ -316,6 +316,11 @@ function doorClick(){
     sfx('bad'); msg('🔒 Locked! <i>Rattle rattle...</i> You need a key. Maybe try a chair? But be careful — only 3 sits!');
     return;
   }
+  if(S.lidsOpen && S.cluesFound.length<4){
+    d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
+    sfx('bad'); msg('🔒 Not yet! The mirror ahead needs those <b>scrolls</b> — go tap every popped chair lid first! 📜', 4000);
+    return;
+  }
   if(!S.door1Open){
     msg('🔐 The key fits... but <b>number padlocks</b> guard the door too!', 2500);
     Puzzles.mathLock(
