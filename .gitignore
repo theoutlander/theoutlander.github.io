@@ -28,3 +28,13 @@ supabase/.temp/storage-version
 .judgement-state/
 projects/judgement/server/.wrangler/
 .temp/
+
+# Never commit these again.
+# Local mkcert dev certs — a private key has no business in a repo (was public until 2026-07-12).
+.cert/
+*.pem
+*.key
+
+# Ghost blog exports contain the users table: a bcrypt hash of the admin password
+# plus API secrets. Archive them outside the repo.
+content/ghost/
