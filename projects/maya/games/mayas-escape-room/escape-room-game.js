@@ -146,8 +146,8 @@ function updateHUD(){
 function goalText(){
   if(S.phase==='room1'){
     if(!S.keyTaken){
-      if(!S.noteRead) return 'Five chairs, only THREE sits... that pinned note 📌 might help!';
-      return 'The note\u2019s riddle is a COLOR — sit on that chair!';
+      if(!S.noteRead) return THEME.room1GoalMsg;
+      return THEME.room1ColorGoalMsg;
     }
     if(!S.door1Open) return 'Grab the scrolls 📜, then tap the door and crack its number locks!';
     return 'Go through the door! 🚪';
@@ -155,7 +155,7 @@ function goalText(){
   if(S.phase==='secret') return S.chestOpen ? 'Take the back door when you\u2019re done exploring! 🚪' : 'A treasure chest! Open it!';
   if(S.phase==='kitchen') return S.potionDone ? 'The door is unstuck — go through! 🚪' : 'Tap the cauldron — memorize the recipe FAST! ⚗️';
   if(S.phase==='library'){
-    if(!S.key3) return 'A key hides behind ONE book... the owl 🦉 knows which!';
+    if(!S.key3) return 'A key hides behind ONE book... the '+THEME.hintAnimal.name+' '+THEME.hintAnimal.emoji+' knows which!';
     if(!S.wordDone) return 'Key found! Now tap the glowing book 📖 and break the magic seal!';
     return 'The door is open — go through! 🚪';
   }
@@ -175,8 +175,8 @@ function goalText(){
 function hintFor(){
   const p=S.phase;
   if(p==='room1'){
-    if(!S.keyTaken && !S.noteRead) return '“Psst! See that pinned note 📌 on the wall? It knows WHICH chair!”';
-    if(!S.keyTaken) return '“The riddle is a COLOR. Look at each chair and think hard!”';
+    if(!S.keyTaken && !S.noteRead) return '“Psst! See that pinned note 📌 on the wall? It knows WHICH '+THEME.seatNoun+'!”';
+    if(!S.keyTaken) return '“The riddle is a COLOR. Look at each '+THEME.seatNoun+' and think hard!”';
     return '“The door lock loves math — TWO answers in a row. You\u2019ve got this!”';
   }
   if(p==='secret') return '“Open the chest, silly! Treasure doesn\u2019t open itself! 🤫”';
@@ -260,7 +260,7 @@ function chairClick(i, el){
       msg('Wait... you hear a <b>click</b> under the seat! The lid popped open! 👀');
     } else if(c.magic){
       sfx('boing');
-      msg('✨ <b>WHOA!</b> A magic chair — all the SCROLL lids popped open! (The key chair stays shut... sneaky!)', 4000);
+      msg('✨ <b>WHOA!</b> A magic '+THEME.seatNoun+' — all the SCROLL lids popped open! (The key '+THEME.seatNoun+' stays shut... sneaky!)', 4000);
       openAllLids(true);
     } else {
       el.classList.add('dusty'); setTimeout(()=>el.classList.remove('dusty'),450);
@@ -311,7 +311,7 @@ function noteClick(){
   if(S.phase!=='room1') return;
   S.noteRead=true; updateHUD();
   showScroll('📌 A pinned note',
-    'The key sleeps on the chair the color of...<br><b>'+COLOR_RIDDLES[S.keyChairIdx]+'</b><em>Solve the color riddle, then sit on THAT chair!</em>');
+    'The key sleeps on the '+THEME.seatNoun+' the color of...<br><b>'+COLOR_RIDDLES[S.keyChairIdx]+'</b><em>Solve the color riddle, then sit on THAT '+THEME.seatNoun+'!</em>');
 }
 
 function portraitClick(){
@@ -442,7 +442,7 @@ function booksClick(){
   if(S.wordDone){ msg('📖 The book purrs like a cat. Wait — books don\u2019t purr?! 🚪'); return; }
   Puzzles.wordSpell(()=>{
     S.wordDone=true; sfx('magic'); updateHUD(); updateLibDoor();
-    msg(S.key3 ? '📖✨ <b>ZING!</b> The seal breaks — the door swings open! 🚪' : '📖✨ <b>ZING!</b> The seal breaks! Now find the key behind a book — ask the owl! 🦉', 4000);
+    msg(S.key3 ? '📖✨ <b>ZING!</b> The seal breaks — the door swings open! 🚪' : '📖✨ <b>ZING!</b> The seal breaks! Now find the key behind a book — ask the '+THEME.hintAnimal.name+'! '+THEME.hintAnimal.emoji, 4000);
   });
 }
 function doorLClick(){
@@ -452,7 +452,7 @@ function doorLClick(){
     d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
     sfx('bad');
     if(!S.key3 && !S.wordDone) msg('🔒 Double-locked! It needs a <b>hidden key</b> (behind a book 📚) and the <b>magic word</b> (glowing book 📖)!', 4200);
-    else if(!S.key3) msg('🔒 The magic seal is broken, but the keyhole is empty! A key hides behind ONE book — the owl 🦉 knows!', 4200);
+    else if(!S.key3) msg('🔒 The magic seal is broken, but the keyhole is empty! A key hides behind ONE book — the '+THEME.hintAnimal.name+' '+THEME.hintAnimal.emoji+' knows!', 4200);
     else msg('🔒 You have the key, but a <b>magic seal</b> remains! Tap the glowing book 📖 and spell its word!', 4200);
     return;
   }
@@ -628,16 +628,6 @@ function buildThemePicker(){
   });
 }
 buildThemePicker();
-window.__DEBUG_JUMP=function(themeId, phase, flags){
-  startGame(themeId);
-  S.key1=true; S.door1Open=true; S.potionDone=true; S.key3=true; S.wordDone=true;
-  Object.assign(S, flags||{});
-  S.phase=phase; updateHUD();
-  if(phase==='library') show('#s-library');
-  if(phase==='room2') show('#s-room2');
-  if(phase==='room3') show('#s-room3');
-};
-window.__DEBUG_MSG=function(){ return document.getElementById('msg').textContent; };
 $('#surprise-btn').addEventListener('click', ()=>{
   const ids = window.THEME_ORDER;
   startGame(ids[Math.floor(Math.random()*ids.length)]);
@@ -652,7 +642,7 @@ $('#door1').addEventListener('click', doorClick);
 $('#chair-note').addEventListener('click', noteClick);
 $('#portrait').addEventListener('click', portraitClick);
 $('#secret-btn').addEventListener('click', ()=>{ if(S.phase==='room1') enterSecret(); });
-$('#secret-back').addEventListener('click', ()=>{ S.phase='room1'; updateHUD(); show('#s-room1'); msg('Back to the Chair Parlor!'); });
+$('#secret-back').addEventListener('click', ()=>{ S.phase='room1'; updateHUD(); show('#s-room1'); msg('Back to the '+THEME.roomNames.room1+'!'); });
 $('#chest').addEventListener('click', chestClick);
 $('#door-k').addEventListener('click', doorKClick);
 $('#cauldron').addEventListener('click', cauldronClick);

@@ -38,8 +38,8 @@ CTA is replaced by a "what almost beat you" callout instead (see Debrief section
 Wraps `league.ts#standings()` with a localStorage cache:
 
 - **Cache key:** `(season token, sorted list of "botId:sourceHash")`. Season token is an ISO week
-  string (e.g. `2026-W29`); source hash is a cheap non-crypto hash (same style as `matchSeed`'s FNV
-  loop) so an edited-and-republished bot invalidates correctly.
+  string (e.g. `2026-W29`); source hash reuses `src/rivals/away.ts#fingerprint` (already exists for
+  exactly this purpose — detecting a republished/edited bot) rather than writing a second hash.
 - **Cache value:** the computed `Standing[]`, plus the *previous* cached `Standing[]` (kept one level
   deep) so the Hub can diff current vs. previous for trend arrows and the away-record delta.
 - Recomputes only on a cache miss (new/changed roster, or Friday's season rollover). This bounds the
@@ -70,8 +70,10 @@ Replaces the opponent-picker portion of today's `BattleScreen`. Contents:
   which would mean a kid never appears on her own ladder) with a generously high limit so the pool
   reads as "every published bot," not an order-dependent slice that could differ between two kids'
   browsers.
-- **Your-bot panel:** publish state, away-record delta (this bot's points/W-L-D now vs. the last
-  cached snapshot the player saw), REPUBLISH and TEST FIGHT actions.
+- **Your-bot panel:** publish state, REPUBLISH and TEST FIGHT actions, plus the existing `AwayCard`
+  (`src/ui/AwayCard.tsx` + `src/rivals/away.ts#whileYouWereAway`) relocated in from HQ — that's already
+  the "what changed since you were last here" mechanism (new/changed rivals who fought your published
+  bot, with a replay), so the away-record delta is a reuse, not a new build.
 - **"How the ladder works"** — 3 kid-worded lines (fixed copy, not derived).
 - **Fresh-results ticker** — most recent matchups pulled from the standings computation, each a watch
   link.
