@@ -48,9 +48,12 @@ Wraps `league.ts#standings()` with a localStorage cache:
 
 ### Season rotation
 
-`matchSeed(a, b)` gains a season salt: mix in the ISO week token before hashing. This lives in
-`league.ts` (not the sim engine) — boards rotate Fridays, standings recompute automatically because
-the cache key changes, and there is no separate "reset" code path.
+`matchSeed(a, b)` itself is untouched (existing tests call it directly and assert its
+order-independence). Instead, `playMatch`/`standings` gain an optional `seasonSalt` parameter
+(default `0`, so existing 2-arg calls are byte-identical to today) that's added at the `board()` call
+site: `board(matchSeed(a, b) + seasonSalt + i * BOARDS_PER_MATCH_OFFSET)`. `leagueCache` computes the
+salt from the ISO week token and passes it through. Boards rotate Fridays, standings recompute
+automatically because the cache key changes, and there is no separate "reset" code path.
 
 ## Screens
 
@@ -62,7 +65,11 @@ Replaces the opponent-picker portion of today's `BattleScreen`. Contents:
   `leagueCache`, board 1 of their matchup, replayed via the same scene/event-log playback
   `mountBattle`/`BattleScene` already provide.
 - **Ladder:** `leagueCache` standings, rendered as points + W-L-D + a trend arrow (vs. the cached
-  previous snapshot). Every row has a WATCH button that replays board 1 of that pairing.
+  previous snapshot). Every row has a WATCH button that replays board 1 of that pairing. The fighter
+  pool is `publish.ts#leaderboard()` (not `fetchOpponents()` — that excludes the caller's own bot,
+  which would mean a kid never appears on her own ladder) with a generously high limit so the pool
+  reads as "every published bot," not an order-dependent slice that could differ between two kids'
+  browsers.
 - **Your-bot panel:** publish state, away-record delta (this bot's points/W-L-D now vs. the last
   cached snapshot the player saw), REPUBLISH and TEST FIGHT actions.
 - **"How the ladder works"** — 3 kid-worded lines (fixed copy, not derived).
@@ -88,13 +95,21 @@ Shown after every fight, win or lose:
 - **CTA:** if any chip is dashed red, one amber "LEARN `<construct>` — WORLD `<n>`" button deep-linking
   to that mission. If every chip is green, show "what almost beat you" instead — the closest key
   moment (see below), no CTA.
-- **Replay scrubber:** derived from the existing `SimEvent` log — amber diamonds at wasted shots
-  (`shoot` events where `hit === null`) and the first `hit` event against the player; a red diamond at
-  `targetDestroyed`/wreck. (The handoff's fourth moment type, "charge exhausted," has no matching game
-  mechanic — there's no charge/cooldown/energy system in `sim/events.ts` — so it's dropped rather than
+- **Replay scrubber:** derived from the existing `BattleEvent` log (`src/sim/battle.ts` — battles use
+  this, not the campaign's `SimEvent`/`tick` log). Amber diamonds at wasted shots (`shoot` events
+  where `hit === null`) and the first `hit` event against the player (`hit.target === playerIndex`);
+  a red diamond at `wreck`. (The handoff's fourth moment type, "charge exhausted," has no matching game
+  mechanic — there's no charge/cooldown/energy system anywhere in the sim — so it's dropped rather than
   faked.)
 - **Stats row:** rounds survived, hits landed/attempted, wasted shots, damage dealt — all computed by
   reducing the event log, no new tracking needed.
+- **Construct chips beyond the campaign-taught five** (`while`/`for`/`if`/`else`/`function`): the six
+  battle-only sensors (`enemyAhead`, `enemyNear`, `closerAhead`, `enemyLeft`, `enemyRight`, `hurt`)
+  aren't gated behind any campaign mission — they're introduced directly in the Fight drawer, available
+  from the first fight. So they can never be "unlearned" in the badge/mission sense. Sensor chips are
+  shown in a neutral style (not green/not dashed-red) reading "the opponent used this" rather than
+  implying mastery; only the five campaign-taught control constructs participate in the
+  known/unlearned + CTA logic.
 - Copy tone: "WRECKED — BUT LOOK WHY" on a loss. **Losses never cost points or coins** — this screen
   only ever adds information, never takes anything away.
 
