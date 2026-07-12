@@ -4,6 +4,25 @@
   const { Avatar, TopBar, Segmented } = window.JUI;
   const { PLAYER_COLORS, AVATARS } = window.JThemes;
 
+  // Bots draw from this pool so no two tables feel like the same four opponents.
+  // Sampled without replacement per game, so a table never seats two Ninas.
+  const BOT_NAMES = [
+    'Priya', 'Arjun', 'Rohan', 'Neha', 'Kiran', 'Ravi', 'Asha', 'Tara',
+    'Meera', 'Karan', 'Riya', 'Dev', 'Anika', 'Amit', 'Sonia', 'Nikhil',
+    'Clara', 'Marco', 'Elena', 'Diego', 'Nora', 'Felix', 'Iris', 'Hugo',
+    'Lena', 'Theo', 'Mia', 'Sofia', 'Grace', 'Simon', 'Alice', 'Julia',
+    'Ruby', 'Adam', 'Nadia', 'Leo', 'Vera', 'Rosa', 'Emil', 'Olivia',
+  ];
+
+  function pickBotNames(count) {
+    const pool = BOT_NAMES.slice();
+    for (let i = pool.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      const t = pool[i]; pool[i] = pool[j]; pool[j] = t;
+    }
+    return pool.slice(0, count);
+  }
+
   function Wordmark({ size = 1 }) {
     return e('div', { className: 'col center', style: { gap: 6 } },
       e('div', { className: 'row', style: { gap: 10, fontSize: 18 * size } },
@@ -50,6 +69,7 @@
   }
 
   function HomeScreen({ go, roster }) {
+    const live = !!(window.JConfig && window.JConfig.multiplayerLive);
     return e('div', { className: 'screen home-screen' },
       e('div', { className: 'home-inner' },
         e('div', { className: 'safe-top' }),
@@ -57,11 +77,15 @@
         e('div', { className: 'home-center' },
           e('div', { className: 'col center', style: { padding: '0 22px' } }, e(Wordmark, null)),
           e('div', { className: 'home-actions' },
-            e('button', { className: 'btn btn-primary btn-block btn-lg', onClick: () => go('host') }, 'Start a game'),
-            e('button', { className: 'btn btn-outline btn-block btn-lg', onClick: () => go('join') }, 'Join a game'),
+            e('button', { className: 'btn btn-primary btn-block btn-lg', onClick: () => go('setup') }, '▶  Play vs bots'),
+            live
+              ? e('button', { className: 'btn btn-outline btn-block btn-lg', onClick: () => go('host') }, 'Start a game')
+              : null,
+            live
+              ? e('button', { className: 'btn btn-outline btn-block btn-lg', onClick: () => go('join') }, 'Join a game')
+              : e('p', { className: 'on-felt tiny', style: { opacity: .65, textAlign: 'center', marginTop: 14, marginBottom: 0 } },
+                  'Online multiplayer isn’t live yet — for now it’s you against the bots.'),
             e('div', { className: 'home-foot' },
-              e('button', { className: 'foot-link', onClick: () => go('setup') }, 'Practice alone'),
-              e('span', { className: 'foot-sep' }, '·'),
               e('button', { className: 'foot-link', onClick: () => go('howto') }, 'How to play'),
               e('span', { className: 'foot-sep' }, '·'),
               e('button', { className: 'foot-link', onClick: () => go('standings') }, 'Leaderboard'),
@@ -81,7 +105,7 @@
     function begin() {
       const you = roster.find((r) => r.you) || { id: 'you', name: 'You', color: PLAYER_COLORS[0], avatar: AVATARS[0], you: true };
       const seats = [you];
-      const botNames = ['Sam', 'Maya', 'Arjun', 'Priya', 'Leo', 'Nina', 'Omar'];
+      const botNames = pickBotNames(size - 1);
       while (seats.length < size) {
         const i = seats.length;
         seats.push({ id: 'bot' + i, name: botNames[i - 1] || ('Bot ' + i), color: PLAYER_COLORS[i % PLAYER_COLORS.length], avatar: AVATARS[i % AVATARS.length], isBot: true });
@@ -90,7 +114,7 @@
       start(seats, { startCards: maxCards, scoring: 'classic', faceStyle: settings.faceStyle });
     }
     return e('div', { className: 'screen' },
-      e(TopBar, { title: 'Practice alone', onBack: () => go('home') }),
+      e(TopBar, { title: 'Play vs bots', onBack: () => go('home') }),
       e('div', { className: 'scroll pad' },
         e('div', { className: 'field-label', style: { color: 'var(--felt-text)', opacity: .7, marginTop: 8 } }, 'How many players?'),
         e('div', { className: 'numpick' },
@@ -121,7 +145,7 @@
         right: e('button', { className: 'icon-btn', onClick: () => setEditing('new') }, '+') }),
       e('div', { className: 'scroll pad' },
         e('p', { className: 'on-felt tiny', style: { opacity: .7, marginTop: 0, marginBottom: 14 } },
-          'Save everyone who plays. Pick them into games and track them on the leaderboard. (Syncs to your database once Claude Code wires it up.)'),
+          'Save everyone who plays. Pick them into games and track them on the leaderboard. Stored on this device.'),
         roster.length === 0 ? e('div', { className: 'on-felt', style: { opacity: .6, textAlign: 'center', padding: 30 } }, 'No players yet, tap + to add your family.') : null,
         e('div', { className: 'col', style: { gap: 10 } },
           roster.map((r, i) => e('button', { key: r.id, className: 'roster-row', onClick: () => setEditing(i) },

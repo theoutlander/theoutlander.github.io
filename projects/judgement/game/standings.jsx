@@ -5,10 +5,12 @@
   const { TABLES, BACKS, PLAYER_COLORS, AVATARS } = window.JThemes;
   const Card = window.Card;
 
+  // Bots sit at the table but they don't rank — the board is people only, so a
+  // practice run can't stack it with opponents the game invented.
   function aggregate(history) {
     const map = {};
     history.forEach((g) => {
-      g.players.forEach((p) => {
+      g.players.filter((p) => !p.isBot).forEach((p) => {
         const k = p.name;
         if (!map[k]) map[k] = { name: p.name, color: p.color, avatar: p.avatar, games: 0, wins: 0, points: 0, bidsHit: 0, bidsTotal: 0 };
         map[k].games++; map[k].points += p.score;

@@ -9,6 +9,11 @@
    Reconnect: a stable token (localStorage) identifies the player; on an
    unexpected socket drop we retry and re-join, and the server reseats us. */
 (function () {
+  // The lobby/table code below is fully wired, but it needs a server answering
+  // /ws (and /api/*) on this origin. The static site has none, so multiplayer is
+  // hidden until a backend is actually deployed. Flip this to true then.
+  window.JConfig = window.JConfig || { multiplayerLive: false };
+
   // Per-TAB identity (sessionStorage), not per-browser. Two tabs in the same
   // browser are two distinct players (so testing — and two people on one
   // machine — works), while a reload of the SAME tab keeps its token so

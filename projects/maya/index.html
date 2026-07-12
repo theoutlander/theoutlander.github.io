@@ -568,7 +568,13 @@ function openGameInModal(file,title){
   document.body.style.overflow='hidden';
   gm.style.visibility='';
   gmLoad.classList.remove('done');
-  gf.onload=function(){ gmLoad.classList.add('done'); };
+  gf.onload=function(){
+    gmLoad.classList.add('done');
+    // Focus the game, or keyboard events go to the portal document instead of the game. Dust
+    // Chasers' SPACEBAR shockwave (and any key a game listens for) was dead until you clicked
+    // inside the iframe first.
+    try{ gf.contentWindow.focus(); }catch(e){ gf.focus(); }
+  };
   gf.src=gameIframeUrl(file);
   gm.classList.add('open');
 }

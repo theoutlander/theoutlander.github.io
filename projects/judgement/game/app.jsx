@@ -19,20 +19,9 @@
     { id: 'p3', name: 'Priya', color: PLAYER_COLORS[4], avatar: AVATARS[4] },
   ];
 
-  const SAMPLE_HISTORY = [
-    { date: 'May 31, 2026', players: [
-      { name: 'Priya', color: PLAYER_COLORS[4], avatar: AVATARS[4], score: 78, place: 1, bidsHit: 9, bidsTotal: 13 },
-      { name: 'You', color: PLAYER_COLORS[0], avatar: AVATARS[0], score: 64, place: 2, bidsHit: 8, bidsTotal: 13 },
-      { name: 'Dad', color: PLAYER_COLORS[2], avatar: AVATARS[2], score: 52, place: 3, bidsHit: 6, bidsTotal: 13 },
-      { name: 'Mom', color: PLAYER_COLORS[1], avatar: AVATARS[1], score: 41, place: 4, bidsHit: 5, bidsTotal: 13 },
-    ] },
-    { date: 'May 24, 2026', players: [
-      { name: 'You', color: PLAYER_COLORS[0], avatar: AVATARS[0], score: 71, place: 1, bidsHit: 9, bidsTotal: 13 },
-      { name: 'Mom', color: PLAYER_COLORS[1], avatar: AVATARS[1], score: 69, place: 2, bidsHit: 8, bidsTotal: 13 },
-      { name: 'Priya', color: PLAYER_COLORS[4], avatar: AVATARS[4], score: 55, place: 3, bidsHit: 7, bidsTotal: 13 },
-      { name: 'Dad', color: PLAYER_COLORS[2], avatar: AVATARS[2], score: 48, place: 4, bidsHit: 6, bidsTotal: 13 },
-    ] },
-  ];
+  // The leaderboard shows games you actually played — it starts empty rather than
+  // seeded with invented results.
+  const SAMPLE_HISTORY = [];
 
   function GameMenu({ onResume, onScorecard, onInvite, onSettings, onQuit, settings, setSettings, online, autopilot, onToggleAutopilot }) {
     return e('div', { className: 'overlay center', onClick: onResume },
@@ -147,7 +136,7 @@
         date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
         players: order.map((o, k) => {
           let hit = 0; game.roundScores.forEach((rs) => { if (rs[o.i].pts > 0) hit++; });
-          return { name: o.p.name, color: o.p.color, avatar: o.p.avatar, score: o.t, place: k + 1, bidsHit: hit, bidsTotal: game.roundScores.length };
+          return { name: o.p.name, color: o.p.color, avatar: o.p.avatar, isBot: !!o.p.isBot, score: o.t, place: k + 1, bidsHit: hit, bidsTotal: game.roundScores.length };
         }),
       };
       const h = history.concat([rec]); setHistory(h); LS.set('history', h);
