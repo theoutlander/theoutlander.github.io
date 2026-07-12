@@ -1,0 +1,144 @@
+/* Maya's Escape Room — theme packs. Each theme reskins the same 5 puzzle
+   mechanics (find-the-key, brew, word+key, find-the-spot, exit) with
+   different room names, objects, riddles, and jokes. See
+   docs/superpowers/specs/2026-07-11-escape-room-themes-design.md. */
+(function(){
+'use strict';
+
+window.THEMES = {
+
+  mansion: {
+    id: 'mansion',
+    name: 'Haunted Mansion',
+    icon: '👻',
+    cardTeaser: 'Ghosts, chairs, and a magic mirror 👻',
+    roomNames: {
+      room1: 'The Chair Parlor',
+      secret: 'The Secret Room 🤫',
+      kitchen: 'The Potion Kitchen',
+      library: 'The Spooky Library',
+      room2: 'The Mirror Room',
+      room3: 'Inside the Mirror',
+    },
+    welcomeMsg: '👻 Welcome to the Chair Parlor... Five chairs. One hides a key. You may only sit on <b>THREE!</b> Look around for help...',
+    door1LockedMsg: '🔒 Locked! <i>Rattle rattle...</i> You need a key. Maybe try a chair? But be careful — only 3 sits!',
+    doorSealedMsg: '🔒 Not yet! The mirror ahead needs those <b>scrolls</b> — go tap every popped chair lid first! 📜',
+    kitchenEnterMsg: '🍯 The Potion Kitchen! The next door is stuck shut with magic goo. Brew the <b>Goo-B-Gone potion</b> — tap the cauldron! 🫧',
+    kitchenLockedMsg: '🍯 Stuck tight with sticky goo! The <b>cauldron</b> knows the recipe — tap it! ⚗️',
+    kitchenAlreadyDoneMsg: '🫧 The potion bubbles happily. The door is unstuck — go through! 🚪',
+    kitchenDoneMsg: '🫧✨ <b>SPLOOSH!</b> The potion melts the goo — the door is free! 🚪',
+    libraryEnterMsg: '📚 The Spooky Library! The door needs a <b>hidden key</b> AND a <b>magic word</b>. The owl 🦉 saw everything...',
+    room2EnterMsg: '🪞 A giant mirror... with a <b>tiny keyhole!</b> Your scrolls know where the key hides — but some scrolls LIE! 🤥',
+    exitPropName: 'mirror',
+    winSub: 'You outsmarted the chairs, brewed a potion, cast a spell, played the ghost's song, and walked right through a mirror. The mansion is VERY impressed. 👻',
+    hintAnimal: { emoji: '🦉', name: 'owl', call: 'Hoo! Hoo!', foundGemLine: 'The owl was sitting on it! Hoo knew?' },
+    SPOTS: [
+      {id:'fireplace', emoji:'🔥', name:'Fireplace', wall:false,
+        riddle:'Crackle crackle! Look where the logs glow bright —\nthe key sleeps by the FIRE tonight!',
+        fail:'You poke around the fireplace... ash goes POOF in your face! 💨 Nothing here.'},
+      {id:'clock', emoji:'🕰️', name:'Old Clock', wall:false,
+        riddle:'Tick tock! Tick tock!\nThe key hides INSIDE the old CLOCK!',
+        fail:'You open the clock... CUCKOO! 🐦 A dusty bird boops your nose. No key.'},
+      {id:'books', emoji:'📚', name:'Bookshelf', wall:false,
+        riddle:'Shhh! Where the spooky stories stay —\nthe key is tucked between the BOOKS away!',
+        fail:'You flip through the books... a moth flies out! 🦋 Just old stories.'},
+      {id:'plant', emoji:'🪴', name:'Creepy Plant', wall:false,
+        riddle:'Dig dig dig where the green leaves grow —\nthe key is in the PLANT, down below!',
+        fail:'You dig in the plant... eww, a worm! 🪱 It waves at you. No key.'},
+      {id:'painting', emoji:'🖼️', name:'Painting', wall:true,
+        riddle:'Peek BEHIND the picture on the wall —\nthat's where the key waits after all!',
+        fail:'You peek behind the painting... a spider says hi! 🕷️ EEK! Nothing else.'},
+      {id:'piano', emoji:'🎹', name:'Piano', wall:false,
+        riddle:'Plink plonk! Lift the PIANO lid —\nthat's where the little key is hid!',
+        fail:'You press a key... PLONK! 🎵 A mouse scurries out. 🐭 Not that kind of key.'},
+    ],
+    FAKE_CLUES: [
+      'The key is on the MOON. Good luck getting there! 🌝',
+      'Lottie's pet hamster guards it fiercely. He is very small. 🐹⚔️',
+      'Lottie tucked it inside her teapot — mind the steam! 🫖👻',
+      'The key hitched a ride on one of Lottie's bats. 🦇',
+      'A goose swallowed it. Lottie says the goose is fine. 🪿',
+    ],
+    DUSTY_LINES: [
+      'Pfffft! 💨 Just a dusty old chair — Lottie sneezes somewhere nearby.',
+      'Creeeak... nothing in this one. The chair giggles at you. 🪑',
+      'You sit down... a spring goes BOING! Lottie laughs from behind a wall. 🫣',
+    ],
+    WRONG_BOOK_LINES: [
+      'Just pictures of cats — must be Lottie's. 🐱 No key.',
+      'ACHOO! 🤧 Lottie hasn't dusted in a hundred years. No key here.',
+      'A moth flies out! 🦋 Keep looking...',
+      'This one's glued shut with... jam? 🍓 Ew. No key.',
+    ],
+  },
+
+  pirate: {
+    id: 'pirate',
+    name: 'Pirate Ship',
+    icon: '🏴‍☠️',
+    cardTeaser: 'Barrels, grog, and a haunted porthole 🏴‍☠️',
+    roomNames: {
+      room1: 'The Captain's Cabin',
+      secret: 'The Secret Hold 🤫',
+      kitchen: 'The Ship's Galley',
+      library: 'The Map Room',
+      room2: 'The Crow's Nest',
+      room3: 'Through the Porthole',
+    },
+    welcomeMsg: '⚓ Welcome to the Captain's Cabin... Five barrels. One hides a key. You may only sit on <b>THREE!</b> Look around for help...',
+    door1LockedMsg: '🔒 Locked! <i>Creeeak...</i> You need a key. Maybe try a barrel? But be careful — only 3 sits!',
+    doorSealedMsg: '🔒 Not yet! The porthole ahead needs those <b>scrolls</b> — go tap every popped barrel lid first! 📜',
+    kitchenEnterMsg: '🍯 The Ship's Galley! The next door is rusted shut. Brew the <b>Rust-Be-Gone grog</b> — tap the cauldron! 🫧',
+    kitchenLockedMsg: '🍯 Stuck tight with rust! The <b>cauldron</b> knows the recipe — tap it! ⚗️',
+    kitchenAlreadyDoneMsg: '🫧 The grog bubbles happily. The door is unstuck — go through! 🚪',
+    kitchenDoneMsg: '🫧✨ <b>SPLOOSH!</b> The grog melts the rust — the door is free! 🚪',
+    libraryEnterMsg: '🗺️ The Map Room! The door needs a <b>hidden key</b> AND a <b>magic word</b>. The parrot 🦜 saw everything...',
+    room2EnterMsg: '🔮 A giant enchanted porthole, shaped just like an old mirror... with a <b>tiny keyhole!</b> Your scrolls know where the key hides — but some scrolls LIE! 🤥',
+    exitPropName: 'porthole',
+    winSub: 'You outsmarted the barrels, brewed grog, cracked the map room's lock, played the parrot's shanty, and swam right through the porthole. The ship is VERY impressed. 🏴‍☠️',
+    hintAnimal: { emoji: '🦜', name: 'parrot', call: 'Squawk! Squawk!', foundGemLine: 'The parrot was sitting on it! Squawk knew?' },
+    SPOTS: [
+      {id:'chest', emoji:'📦', name:'Treasure Chest', wall:false,
+        riddle:'Yo ho ho! Where gold doubloons hide tight —\nthe key sleeps in the CHEST tonight!',
+        fail:'You creak open the chest... just old rope and a rubber duck! 🦆 No key.'},
+      {id:'compass', emoji:'🧭', name:'Old Compass', wall:false,
+        riddle:'Spin spin spin! It points true north —\nthe key hides INSIDE the compass, henceforth!',
+        fail:'You crack open the compass... it just spins in circles. 🌀 No key.'},
+      {id:'barrel', emoji:'🛢️', name:'Rum Barrel', wall:false,
+        riddle:'Glug glug glug! Where the grog is stored —\nthe key is tucked inside the BARREL, aboard!',
+        fail:'You dunk your hand in the barrel... a fish jumps out! 🐟 Splashy, but no key.'},
+      {id:'hammock', emoji:'🛏️', name:'Hammock', wall:false,
+        riddle:'Swing swing swing where sailors sleep and snore —\nthe key is hiding in the HAMMOCK, for sure!',
+        fail:'You dig through the hammock... just a sleepy sock. 🧦 No key.'},
+      {id:'flag', emoji:'🏴‍☠️', name:'Ship's Flag', wall:true,
+        riddle:'Peek BEHIND the flag up on the mast —\nthat's where the key waits, hidden at last!',
+        fail:'You peek behind the flag... a seagull squawks and flies off! 🐦 Nothing else.'},
+      {id:'telescope', emoji:'🔭', name:'Telescope', wall:false,
+        riddle:'Look look look through the spyglass eye —\nthe key is hidden INSIDE, way up high!',
+        fail:'You peer through the telescope... just clouds and sky. ☁️ Not that kind of key.'},
+    ],
+    FAKE_CLUES: [
+      'Salty buried it on a DIFFERENT island entirely. Oops. 🏝️',
+      'Salty's pet parrot swallowed it. The parrot is fine. 🦜',
+      'Salty tucked it inside his eye patch. It's very itchy. 🏴‍☠️',
+      'The key hitched a ride on a flying fish and jumped overboard. 🐟',
+      'Salty traded it to a mermaid for a shiny shell. 🧜‍♀️',
+    ],
+    DUSTY_LINES: [
+      'Splash! 💦 Just an empty old barrel. That's one sit used!',
+      'Creeeak... nothing in this one. The barrel burps a bubble at you. 🫧',
+      'You sit down... the barrel WOBBLES! But no key here.',
+    ],
+    WRONG_BOOK_LINES: [
+      'Just a doodle of a sea monster. 🐙 Cute, but no key!',
+      'ACHOO! 🤧 So much sea salt dust. Nothing behind this one.',
+      'A crab scuttles out! 🦀 Keep looking...',
+      'This one's glued shut with... old jam? 🍓 Ew. No key.',
+    ],
+  },
+
+};
+
+window.THEME_ORDER = ['mansion', 'pirate'];
+
+})();

@@ -4,6 +4,7 @@ import { Chip } from "./components/Chip";
 import { Stars } from "./components/Stars";
 import { Coin } from "./components/Coin";
 import { BotAvatar } from "./components/BotAvatar";
+import { AwayCard } from "./AwayCard";
 import { cloudEnabled, type Account } from "../state/account";
 import type { SaveData } from "../state/save";
 import type { Mission } from "../sim/missionSchema";
@@ -50,6 +51,7 @@ export function HQ({
   onDrill,
   onFirstSteps,
   onUnlockAll,
+  onLeague,
 }: {
   bot: { playerName: string; botName: string; bodyHex: string; domeHex: string };
   account: Account | null;
@@ -62,6 +64,7 @@ export function HQ({
   onDrill: () => void;
   onFirstSteps: () => void;
   onUnlockAll: () => void;
+  onLeague: () => void;
 }) {
   const totalStars = missions.reduce((n, m) => n + (save.missions[m.id]?.stars ?? 0), 0);
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
@@ -111,6 +114,9 @@ export function HQ({
             </div>
           </div>
         </button>
+
+        {/* The reason she came back. Renders nothing at all unless something actually happened. */}
+        <AwayCard onWatch={onLeague} />
 
         {/*
           THE BOARD OPENS AS SHE GROWS INTO IT.

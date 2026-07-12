@@ -100,6 +100,11 @@ export const analytics = {
   partBought(kit: string) {
     track("cb_kit_bought", { kit });
   },
+  /** The return hook firing. If this event exists and cb_game_open the next day doesn't, the hook
+   *  isn't hooking — which is a thing we could never learn by guessing. */
+  awayResults(fights: number, wins: number, losses: number) {
+    track("cb_away_results", { fights, wins, losses });
+  },
   firstStepsComplete() {
     track("cb_first_steps_complete");
   },

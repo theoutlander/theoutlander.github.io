@@ -154,7 +154,7 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
+          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} onLeague={toLeague} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
         ) : screen.name === "league" ? (

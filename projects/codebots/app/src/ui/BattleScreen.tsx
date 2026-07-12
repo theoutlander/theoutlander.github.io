@@ -11,7 +11,7 @@ import { PRESETS, presetById, BATTLE_API } from "../content/enemies";
 import { desugarRepeat, findUnknownCalls, collectFunctionNames } from "../sandbox/transform";
 import { unknownCommandMessage } from "../sandbox/errors";
 import { analytics } from "../state/analytics";
-import { loadSave } from "../state/save";
+import { loadSave, saveSave } from "../state/save";
 import { computeStats } from "../content/parts";
 import { fetchOpponents, leaderboard, publishBot, recordOutcome, type PublishedBot } from "../rivals/publish";
 import { currentAccount, cloudEnabled } from "../state/account";
@@ -257,6 +257,9 @@ export function BattleScreen({ paint, onLeague }: { paint: { bodyColor: number; 
                 // worst thing we could do to the kid who published it — she'd never find out why.
                 const res = await publishBot(code, "MY BOT", [...BATTLE_API, ...BATTLE_EXTRA]);
                 if (res.ok) {
+                  // Keep a copy of what she published: it's what we fight for her while she's away.
+                  const sv = loadSave();
+                  saveSave({ ...sv, publishedSource: code });
                   setPublishMsg("Published. It's fighting for you now, even when you're not here.");
                   setRivals(await fetchOpponents());
                   setBoard(await leaderboard());

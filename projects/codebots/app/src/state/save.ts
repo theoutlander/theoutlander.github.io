@@ -27,6 +27,12 @@ export interface SaveData {
   firstStepsDone?: boolean;
   /** "I already know how to code" — every room open, no ramp. For older kids and returning players. */
   skipAhead?: boolean;
+  /** the program she last published, so we can fight it for her while she's away */
+  publishedSource?: string;
+  /** rivals she's already been told about (id → fingerprint of their code). Stops us reporting the
+   *  same "new challenger!" every single time she opens the game, which is how a return hook turns
+   *  into noise she learns to ignore. */
+  seenRivals?: Record<string, string>;
 }
 
 const KEY = "codebots.save.v1";
@@ -64,6 +70,8 @@ export function loadSave(): SaveData {
       drillsPassed: parsed.drillsPassed ?? [],
       firstStepsDone: parsed.firstStepsDone ?? false,
       skipAhead: parsed.skipAhead ?? false,
+      publishedSource: parsed.publishedSource,
+      seenRivals: parsed.seenRivals ?? {},
     };
   } catch {
     return { ...FRESH, loadout: { ...FRESH_LOADOUT } };
@@ -111,6 +119,8 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
     drillsPassed: [...new Set([...(a.drillsPassed ?? []), ...(b.drillsPassed ?? [])])],
     firstStepsDone: a.firstStepsDone || b.firstStepsDone,
     skipAhead: a.skipAhead || b.skipAhead,
+    publishedSource: a.publishedSource ?? b.publishedSource,
+    seenRivals: { ...(b.seenRivals ?? {}), ...(a.seenRivals ?? {}) },
     loadout: { kit, owned },
   };
 }
