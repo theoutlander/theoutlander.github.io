@@ -1,20 +1,22 @@
 (function () {
   'use strict';
 
-  var LAB_INDEX = 'index.html';
-
-  function currentGameFile() {
-    var last = (location.pathname.split('/').filter(Boolean).pop()) || '';
-    if (!/\.html?$/i.test(last)) return null;
-    if (/^index\.html?$/i.test(last)) return null;
-    return last;
+  // Each game lives in its own folder (/maya/games/<slug>/index.html) and declares
+  // its play-key via window.MAYA_GAME (e.g. 'games/pipe-flow/index.html') before
+  // loading this script. We strip that key off the current path to find the lab
+  // root, so "back to lab" works no matter how deep the game folder is.
+  function currentGameKey() {
+    return (typeof window.MAYA_GAME === 'string' && window.MAYA_GAME) || null;
   }
+
+  var gameKey = currentGameKey();
 
   function labIndexUrl() {
     var p = location.pathname;
-    var i = p.lastIndexOf('/');
-    var base = i >= 0 ? p.slice(0, i + 1) : '/';
-    return base + LAB_INDEX;
+    if (gameKey && p.length >= gameKey.length && p.slice(-gameKey.length) === gameKey) {
+      return p.slice(0, -gameKey.length) + 'index.html';
+    }
+    return '../../index.html'; // fallback: games/<slug>/index.html is two levels deep
   }
 
   function inMayaPortal() {
@@ -26,11 +28,10 @@
     }
   }
 
-  var gameFile = currentGameFile();
-  if (gameFile && window.parent === window) {
+  if (gameKey && window.parent === window) {
     try {
       if (new URLSearchParams(location.search).get('standalone') !== '1') {
-        var target = labIndexUrl() + '?play=' + encodeURIComponent(gameFile);
+        var target = labIndexUrl() + '?play=' + encodeURIComponent(gameKey);
         if (location.hash) target += location.hash;
         location.replace(target);
         return;
@@ -75,6 +76,7 @@
     leaveToLab: leaveToLab,
     notifyScreen: notifyScreen,
     labIndexUrl: labIndexUrl,
-    gameFile: gameFile,
+    gameKey: gameKey,
+    gameFile: gameKey,
   };
 })();

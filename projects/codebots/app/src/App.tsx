@@ -18,6 +18,7 @@ import { syncNow, initCloudSync } from "./state/cloudSync";
 import { loadBotConfig, resolveHex, resolveInt } from "./state/botConfig";
 import { loadSave, saveSave } from "./state/save";
 import { analytics } from "./state/analytics";
+import { setEventUser } from "./state/events";
 
 type Screen =
   | { name: "hq" }
@@ -41,6 +42,9 @@ export function App() {
   const [screen, setScreen] = useState<Screen>({ name: "hq" });
   const [coins, setCoins] = useState(() => loadSave().coins);
   const [account, setAccount] = useState<Account | null>(null);
+  // Tag events with the account id once she logs in, so a returning kid can be told apart from a new
+  // one. Logged out, events stay genuinely anonymous.
+  useEffect(() => { setEventUser(account?.id ?? null); }, [account]);
   const [, force] = useState(0); // re-read the save after a clear (unlocks the next level)
 
   useEffect(() => {

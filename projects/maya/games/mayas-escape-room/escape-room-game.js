@@ -632,6 +632,11 @@ function startGame(){
   msg('👻 Welcome to the Chair Parlor... Five chairs. One hides a key. You may only sit on <b>THREE!</b> Look around for help...', 4500);
 }
 
+window.__DEBUG_JUMP_ROOM2 = function(){
+  startGame();
+  S.phase='room2'; S.key2=true;
+  updateHUD(); show('#s-room2');
+};
 $('#start-btn').addEventListener('click', startGame);
 $('#again-btn').addEventListener('click', startGame);
 $('#retry-btn').addEventListener('click', ()=>{
@@ -681,6 +686,13 @@ $('#hint-ghost').addEventListener('click', ()=>{
   }
   S.hintUsed[S.phase]=true;
   msg('👻 '+hintFor(), 5000);
+});
+
+// home button — always visible (not gated on portal detection), so there's
+// always a way back to the Lab even if that detection fails on some device
+$('#home-btn').addEventListener('click', ()=>{
+  if(window.MayaPortal) MayaPortal.leaveToLab();
+  else window.location.href = '../../index.html';
 });
 
 // mute button
@@ -751,11 +763,4 @@ syncMute();
   const best=Number(localStorage.getItem('mayaEscapeBest')||0);
   if(best) $('#best-time').textContent='🏆 Best escape: '+fmt(best);
 })();
-
-window.__DEBUG_JUMP_ROOM3 = function(){
-  startGame();
-  S.mirrorUnlocked = true;
-  S.spotFound = true;
-  enterRoom3();
-};
 })();

@@ -1,3 +1,4 @@
+import { logEvent } from "./events";
 /**
  * CodeBots analytics — thin wrapper over the site's Google Analytics (gtag, loaded in index.html).
  * Every event is prefixed `cb_` so the game's data is easy to isolate in GA. No-ops if gtag isn't
@@ -102,6 +103,9 @@ export const analytics = {
 
 function track(event: string, params?: Params): void {
   gtag()?.("event", event, params);
+  // ...and keep our own copy. Every event already funnels through here, so mirroring at this one
+  // choke point means a new event can never be added and silently left out of the funnel we read.
+  logEvent(event, params as Record<string, unknown> | undefined);
 }
 
 /**

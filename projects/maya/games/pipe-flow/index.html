@@ -369,7 +369,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
 <body>
 <div id="root">
   <div id="hud">
-    <button type="button" id="games-btn" class="maya-portal-hide" title="Back to Maya's Game Lab">← Games</button>
+    <button type="button" id="games-btn" class="back-visible" title="Back to Maya's Game Lab">← Games</button>
     <div class="hpill">🔧 <span class="hval" id="moves">0</span></div>
     <div class="hpill" id="garden-pill">🌻 <span class="hval" id="garden-fill">0/1</span></div>
     <div class="hpill hidden" id="route-pill">🛤 <span class="hval" id="route-val">0</span></div>
@@ -426,7 +426,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
   </div>
   <div id="menu-secret-hint"></div>
   <button class="sec-btn hidden" id="new-game-btn">Start from Level 1</button>
-  <button class="sec-btn maya-portal-hide" id="menu-games-btn">← All Games</button>
+  <button class="sec-btn back-visible" id="menu-games-btn">← All Games</button>
 </div>
 
 <div class="meta-ov hidden" id="garden-ov">
@@ -541,7 +541,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
   <div class="btn-row">
     <button class="big-btn" id="next-btn">Next Level ➡️</button>
     <button class="sec-btn" id="menu-btn">Level Menu 🏠</button>
-    <button class="sec-btn maya-portal-hide" id="win-games-btn">← All Games</button>
+    <button class="sec-btn back-visible" id="win-games-btn">← All Games</button>
   </div>
 </div>
 
@@ -552,7 +552,7 @@ html,body{width:100%;height:100%;height:100dvh;background:var(--bg);color:var(--
   <div class="btn-row">
     <button class="big-btn" id="retry-btn">Try Again 🔄</button>
     <button class="sec-btn" id="lose-menu-btn">Level Menu 🏠</button>
-    <button class="sec-btn maya-portal-hide" id="lose-games-btn">← All Games</button>
+    <button class="sec-btn back-visible" id="lose-games-btn">← All Games</button>
   </div>
 </div>
 

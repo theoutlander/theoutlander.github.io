@@ -23,9 +23,8 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 #game{position:fixed;inset:0;display:flex;flex-direction:column}
 
 /* ---------- HUD ---------- */
-#hud{display:none;align-items:center;gap:10px;padding:10px 14px;background:rgba(13,10,20,.92);border-bottom:1px solid rgba(255,255,255,.08);z-index:20;min-height:56px}
+#hud{display:none;align-items:center;gap:10px;padding:10px 14px 10px 64px;background:rgba(13,10,20,.92);border-bottom:1px solid rgba(255,255,255,.08);z-index:20;min-height:56px}
 #hud.show{display:flex}
-html.maya-in-portal #hud{padding-left:74px}
 #room-name{font-family:'Fredoka One',cursive;font-size:15px;color:var(--candle);white-space:nowrap}
 #sits{display:flex;gap:4px;align-items:center}
 #sits .sit-dot{font-size:20px;transition:opacity .3s,transform .3s}
@@ -41,6 +40,7 @@ html.maya-in-portal #hud{padding-left:74px}
 #goal{display:none;padding:7px 14px;background:rgba(255,225,77,.06);border-bottom:1px solid rgba(255,255,255,.06);font-size:12.5px;font-weight:900;color:var(--key);text-align:center}
 #goal.show{display:block}
 #mute-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);font-size:16px;padding:8px 10px;border-radius:10px;cursor:pointer;min-height:44px;min-width:44px}
+#home-btn{position:fixed;top:max(10px,env(safe-area-inset-top));left:max(10px,env(safe-area-inset-left));z-index:50;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:var(--text);font-size:16px;padding:8px 10px;border-radius:10px;cursor:pointer;min-height:44px;min-width:44px}
 #mute-btn.off{opacity:.4}
 #timer{font-size:13px;font-weight:900;color:var(--muted);font-variant-numeric:tabular-nums}
 
@@ -106,7 +106,7 @@ html.maya-in-portal #hud{padding-left:74px}
 .chair.taken .c-content{opacity:.25}
 
 /* ---------- Room 2 furniture ---------- */
-#r2-wall-items{position:absolute;inset:0}
+#r2-wall-items{position:absolute;inset:0;pointer-events:none}
 #r2-floor-items{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:space-evenly;padding:0 6px 10px}
 .spot{position:relative;cursor:pointer;text-align:center;transition:transform .15s;-webkit-user-select:none;user-select:none;padding:6px;min-width:52px;min-height:52px}
 .spot:hover{transform:translateY(-4px)}
@@ -114,7 +114,7 @@ html.maya-in-portal #hud{padding-left:74px}
 .spot .s-label{font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:4px}
 .spot.wiggle{animation:doorshake .4s}
 .spot.found .s-emoji{filter:drop-shadow(0 0 18px rgba(255,225,77,.9))}
-.spot-wall{position:absolute;cursor:pointer;text-align:center;transition:transform .15s;padding:6px;min-width:52px;min-height:52px}
+.spot-wall{position:absolute;cursor:pointer;text-align:center;transition:transform .15s;padding:6px;min-width:52px;min-height:52px;pointer-events:auto}
 .spot-wall:hover{transform:scale(1.06)}
 .spot-wall .s-emoji{font-size:clamp(34px,9vw,54px);line-height:1;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.5))}
 .spot-wall .s-label{font-size:9px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);margin-top:2px}
@@ -297,6 +297,7 @@ html.maya-in-portal #hud{padding-left:74px}
 </style>
 </head>
 <body>
+<button id="home-btn" title="Back to Game Lab">🏠</button>
 <div id="game">
   <div id="hud">
     <span id="room-name">The Chair Parlor</span>
