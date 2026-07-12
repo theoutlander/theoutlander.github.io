@@ -44,7 +44,7 @@
 		"@types/react-dom": "^19.2.3",
 		"@vitejs/plugin-react": "^5.2.0",
 		"@vitejs/plugin-react-swc": "^4.3.1",
-		"@vitest/coverage-v8": "^3.2.4",
+		"@vitest/coverage-v8": "^4.1.10",
 		"baseline-browser-mapping": "^2.10.42",
 		"concurrently": "^10.0.3",
 		"jsdom": "^29.1.1",
