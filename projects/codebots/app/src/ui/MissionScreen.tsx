@@ -14,6 +14,7 @@ import { CommandList } from "./CommandList";
 import { RobotRules } from "./RobotRules";
 import { FeedbackButton } from "./FeedbackButton";
 import { ExportPanel } from "./ExportPanel";
+import { drillForConcept } from "../content/drills";
 import { loadBotConfig } from "../state/botConfig";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
@@ -51,6 +52,7 @@ export function MissionScreen({
   onCoins,
   onExit,
   onNext,
+  onProveIt,
   hasNext,
 }: {
   mission: Mission;
@@ -58,6 +60,7 @@ export function MissionScreen({
   onCoins: (total: number) => void;
   onExit: () => void;
   onNext: () => void;
+  onProveIt: () => void;
   hasNext: boolean;
 }) {
   const arenaHost = useRef<HTMLDivElement>(null);
@@ -383,6 +386,29 @@ export function MissionScreen({
             before you ask me.
           </div>
         )}
+
+        {/*
+          PROVE IT is no longer a room.
+
+          It was its own door on the board, which is a chore with a name: no child wakes up wanting to
+          "prove" something. But it's the only thing that can tell us she LEARNED the idea rather than
+          counted the squares — every campaign arena is fixed and visible, so a sensor level can be
+          beaten without ever using a sensor.
+
+          So it lives here instead: the last beat of the level that taught the concept. You've just
+          done it on the board you can see; now do it on three you can't.
+        */}
+        {result?.stars && concept && drillForConcept(concept.key) ? (
+          <Panel label="PROVE YOU'VE GOT IT">
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-body)", marginBottom: 8 }}>
+              You did it on a board you could SEE. Now do it on fields you've never seen — same
+              program, and no counting squares.
+            </div>
+            <Button variant="quiet" size="sm" onClick={onProveIt}>
+              ▶ PROVE IT
+            </Button>
+          </Panel>
+        ) : null}
 
         {/* The payoff: her program leaves the game as a real, runnable JavaScript file. It only shows
             up once she's actually cleared something — exporting an empty editor is a dead button, and

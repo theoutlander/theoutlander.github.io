@@ -34,7 +34,7 @@ const FULL: SaveData = {
   coins: 140,
   unlocked: ["blaster"],
   badges: ["first-loop"],
-  loadout: { chassis: "scout", equipped: ["armor-plate"], bought: ["armor-plate"] },
+  loadout: { kit: "scout", owned: ["scout"] },
   drillsPassed: ["drill:barrel-run"],
   firstStepsDone: true,
   skipAhead: true,

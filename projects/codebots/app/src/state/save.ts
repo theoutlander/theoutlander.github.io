@@ -10,15 +10,9 @@ export interface MissionProgress {
   stars: number;
 }
 
-/** What the kid has built in the Garage. Capability parts come from `unlocked` (learning); `bought`
- *  is what coins have paid for; `equipped` is the current loadout (only bites in the Arena). */
-export interface Loadout {
-  chassis: string;
-  equipped: string[];
-  bought: string[];
-}
-
-export const FRESH_LOADOUT: Loadout = { chassis: "scout", equipped: [], bought: [] };
+import { FRESH_LOADOUT, type Loadout } from "../content/parts";
+export { FRESH_LOADOUT };
+export type { Loadout };
 
 export interface SaveData {
   missions: Record<string, MissionProgress>;
@@ -36,6 +30,13 @@ export interface SaveData {
 }
 
 const KEY = "codebots.save.v1";
+
+function migrateLoadout(raw: unknown): Loadout {
+  const l = (raw ?? {}) as Partial<Loadout> & { chassis?: string };
+  const owned = Array.isArray(l.owned) && l.owned.length ? l.owned : ["scout"];
+  const kit = typeof l.kit === "string" && owned.includes(l.kit) ? l.kit : "scout";
+  return { kit, owned: [...new Set(["scout", ...owned])] };
+}
 
 const FRESH: SaveData = { missions: {}, coins: 0, unlocked: [], badges: [], loadout: { ...FRESH_LOADOUT } };
 
@@ -56,7 +57,10 @@ export function loadSave(): SaveData {
       coins: parsed.coins ?? 0,
       unlocked: parsed.unlocked ?? [],
       badges: parsed.badges ?? [],
-      loadout: { ...FRESH_LOADOUT, ...(parsed.loadout ?? {}) },
+      // The garage used to be chassis + slots + weights. Anyone mid-flight has that shape saved, and
+      // a kid opening the game to a crash because we changed our minds is unacceptable. Old saves fall
+      // back to the stock kit and keep every coin they earned.
+      loadout: migrateLoadout(parsed.loadout),
       drillsPassed: parsed.drillsPassed ?? [],
       firstStepsDone: parsed.firstStepsDone ?? false,
       skipAhead: parsed.skipAhead ?? false,
@@ -92,13 +96,12 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
       stars: Math.max(ma?.stars ?? 0, mb?.stars ?? 0),
     };
   }
-  // Loadout: never lose a purchase. Bought parts union; keep the frame with the most slots; keep
-  // whichever loadout has more equipped (an empty one never wipes a built bot).
+  // Loadout: never lose a purchase. Two devices, two kits — she keeps both, and drives whichever she
+  // was last driving on the more-advanced save.
   const la = a.loadout ?? FRESH_LOADOUT;
   const lb = b.loadout ?? FRESH_LOADOUT;
-  const bought = [...new Set([...la.bought, ...lb.bought])];
-  const chassis = slotsOf(la.chassis) >= slotsOf(lb.chassis) ? la.chassis : lb.chassis;
-  const equipped = la.equipped.length >= lb.equipped.length ? la.equipped : lb.equipped;
+  const owned = [...new Set([...(la.owned ?? []), ...(lb.owned ?? []), "scout"])];
+  const kit = owned.includes(la.kit) ? la.kit : lb.kit;
 
   return {
     missions,
@@ -108,36 +111,10 @@ export function mergeSaves(a: SaveData, b: SaveData): SaveData {
     drillsPassed: [...new Set([...(a.drillsPassed ?? []), ...(b.drillsPassed ?? [])])],
     firstStepsDone: a.firstStepsDone || b.firstStepsDone,
     skipAhead: a.skipAhead || b.skipAhead,
-    loadout: { chassis, equipped, bought },
+    loadout: { kit, owned },
   };
 }
 
-// Kept local (not imported from content/parts) so save.ts stays free of content deps.
-const CHASSIS_SLOTS: Record<string, number> = { scout: 2, ranger: 3, hauler: 4 };
-const slotsOf = (id: string) => CHASSIS_SLOTS[id] ?? 0;
-
-/** Spend coins on a chassis. Returns null if it can't be afforded / already owned. */
-export function buyChassis(save: SaveData, id: string, cost: number): SaveData | null {
-  if (save.loadout.chassis === id || save.coins < cost) return null;
-  return { ...save, coins: save.coins - cost, loadout: { ...save.loadout, chassis: id } };
-}
-
-/** Spend coins on a part. Returns null if it can't be afforded / already owned. */
-export function buyPart(save: SaveData, id: string, cost: number): SaveData | null {
-  if (save.loadout.bought.includes(id) || save.coins < cost) return null;
-  return {
-    ...save,
-    coins: save.coins - cost,
-    loadout: { ...save.loadout, bought: [...save.loadout.bought, id] },
-  };
-}
-
-/** Equip / unequip a part (no coin cost). */
-export function toggleEquip(save: SaveData, id: string): SaveData {
-  const on = save.loadout.equipped.includes(id);
-  const equipped = on ? save.loadout.equipped.filter((p) => p !== id) : [...save.loadout.equipped, id];
-  return { ...save, loadout: { ...save.loadout, equipped } };
-}
 
 /**
  * Record a mission result. Coins are paid only for NEW stars (replays don't re-pay), matching

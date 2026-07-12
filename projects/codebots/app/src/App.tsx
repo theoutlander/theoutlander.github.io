@@ -4,9 +4,7 @@ import { Coin } from "./ui/components/Coin";
 import { MissionScreen } from "./ui/MissionScreen";
 import { CampaignMap, isUnlocked } from "./ui/CampaignMap";
 import { HQ } from "./ui/HQ";
-import { BotMaker } from "./ui/BotMaker";
 import { Profile } from "./ui/Profile";
-import { OpenFieldScreen } from "./ui/OpenFieldScreen";
 import { BattleScreen } from "./ui/BattleScreen";
 import { GarageScreen } from "./ui/GarageScreen";
 import { DrillScreen } from "./ui/DrillScreen";
@@ -24,9 +22,7 @@ type Screen =
   | { name: "hq" }
   | { name: "map" }
   | { name: "mission"; index: number }
-  | { name: "botmaker" }
   | { name: "profile" }
-  | { name: "field" }
   | { name: "battle" }
   | { name: "garage" }
   | { name: "drill" }
@@ -74,9 +70,7 @@ export function App() {
 
   const toHQ = () => { refresh(); setScreen({ name: "hq" }); };
   const toMap = () => { refresh(); setScreen({ name: "map" }); };
-  const toBotMaker = () => setScreen({ name: "botmaker" });
   const toProfile = () => { refresh(); setScreen({ name: "profile" }); };
-  const toField = () => setScreen({ name: "field" });
   const toBattle = () => setScreen({ name: "battle" });
   const toGarage = () => { refresh(); setScreen({ name: "garage" }); };
   const toAccount = () => setScreen({ name: "account" });
@@ -108,12 +102,8 @@ export function App() {
   const crumb =
     screen.name === "map"
       ? { back: "‹ HQ", onBack: toHQ, current: "THE MAP" }
-      : screen.name === "botmaker"
-        ? { back: "‹ HQ", onBack: toHQ, current: "BOT MAKER" }
         : screen.name === "profile"
         ? { back: "‹ HQ", onBack: toHQ, current: "PROFILE" }
-        : screen.name === "field"
-        ? { back: "‹ HQ", onBack: toHQ, current: "OPEN FIELD" }
         : screen.name === "battle"
         ? { back: "‹ HQ", onBack: toHQ, current: "BATTLE ARENA" }
         : screen.name === "garage"
@@ -159,11 +149,9 @@ export function App() {
 
       <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
-          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
+          <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
-        ) : screen.name === "field" ? (
-          <OpenFieldScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
         ) : screen.name === "battle" ? (
           <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
         ) : screen.name === "garage" ? (
@@ -182,13 +170,12 @@ export function App() {
             onAccount={(a) => { setAccount(a); setCoins(loadSave().coins); refresh(); }}
             onDone={toHQ}
           />
-        ) : screen.name === "botmaker" ? (
-          <BotMaker onExit={toHQ} onSaved={() => setBotConfig(loadBotConfig())} />
         ) : screen.name === "mission" ? (
           <MissionScreen
             key={ALL[screen.index].id}
             mission={ALL[screen.index]}
             paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }}
+            onProveIt={toDrill}
             onCoins={setCoins}
             onExit={toMap}
             onNext={nextMission}

@@ -96,6 +96,10 @@ export const analytics = {
   firstStepDone(id: string, n: number) {
     track("cb_first_step_done", { id, n });
   },
+  /** she spent coins on a kit — the only purchase in the game */
+  partBought(kit: string) {
+    track("cb_kit_bought", { kit });
+  },
   firstStepsComplete() {
     track("cb_first_steps_complete");
   },

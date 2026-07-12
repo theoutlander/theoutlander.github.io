@@ -4,7 +4,6 @@ import { Chip } from "./components/Chip";
 import { Stars } from "./components/Stars";
 import { Coin } from "./components/Coin";
 import { BotAvatar } from "./components/BotAvatar";
-import { availableDrills } from "../content/drills";
 import { cloudEnabled, type Account } from "../state/account";
 import type { SaveData } from "../state/save";
 import type { Mission } from "../sim/missionSchema";
@@ -45,9 +44,7 @@ export function HQ({
   save,
   missions,
   onPlay,
-  onBotMaker,
   onProfile,
-  onOpenField,
   onBattle,
   onGarage,
   onDrill,
@@ -59,9 +56,7 @@ export function HQ({
   save: SaveData;
   missions: Mission[];
   onPlay: () => void;
-  onBotMaker: () => void;
   onProfile: () => void;
-  onOpenField: () => void;
   onBattle: () => void;
   onGarage: () => void;
   onDrill: () => void;
@@ -72,7 +67,6 @@ export function HQ({
   const cleared = missions.filter((m) => save.missions[m.id]?.cleared).length;
   const nextLevel = Math.min(cleared + 1, missions.length);
   const badgeCount = (save.badges ?? []).length;
-  const drills = availableDrills();
   // A device with cloud accounts on shouldn't greet-by-name until she's actually logged in — the
   // local pilot name may be stale from a previous kid's guest session on this same browser.
   const personalized = !cloudEnabled || !!account;
@@ -84,15 +78,12 @@ export function HQ({
   const all = !!save.skipAhead;
   const showFirstSteps = true;                       // always available, to start or to re-read
   const showCampaign = all || save.firstStepsDone || cleared > 0;
-  const showMaker = all || cleared >= 1;             // paint it once it's yours
   // Once a room opens, it STAYS open. Gating the Garage on `coins > 0` meant it vanished the moment
   // she spent her coins in it — a room that disappears after you use it is worse than one that never
   // opened. One cleared level always pays coins, so that's the honest threshold.
-  const showGarage = all || cleared >= 1 || save.coins > 0;
-  const showField = all || cleared >= 2;
-  const showDrills = all || drills.length > 0;       // literally unwinnable before atBeacon()
+  const showGarage = all || cleared >= 1 || save.coins > 0;  // name it, paint it, choose how it fights
   const showArena = all || cleared >= 8;             // needs sensors to write a bot worth fighting with
-  const locked = [showCampaign, showMaker, showGarage, showField, showDrills, showArena].filter((v) => !v).length;
+  const locked = [showCampaign, showGarage, showArena].filter((v) => !v).length;
 
   return (
     <div style={{ height: "100%", overflow: "auto", padding: "28px 24px" }}>
@@ -162,43 +153,13 @@ export function HQ({
             />
           ) : null}
 
-          {showMaker ? (
-            <Door
-              title="BOT MAKER"
-              desc="Name your bot and paint it. Make it yours — the color lab is open."
-              chip="PAINT & NAME"
-              chipColor="cyan"
-              onClick={onBotMaker}
-            />
-          ) : null}
-
           {showGarage ? (
             <Door
               title="GARAGE"
-              desc="Spend your coins. Bolt on gear, pick a frame — but weight is destiny, so choose."
-              chip={save.coins > 0 ? `SPEND ${save.coins} →` : "BUILD YOUR BOT"}
+              desc="Name it, paint it, and choose how it fights. Your code still decides who wins."
+              chip="MAKE IT YOURS →"
               chipColor="amber"
               onClick={onGarage}
-            />
-          ) : null}
-
-          {showField ? (
-            <Door
-              title="OPEN FIELD"
-              desc="Endless random challenges — no stars, no par. Just reach the beacon, get a new one."
-              chip="FREE PLAY →"
-              chipColor="green"
-              onClick={onOpenField}
-            />
-          ) : null}
-
-          {showDrills ? (
-            <Door
-              title="PROVE IT"
-              desc="One program. Three fields you've never seen. No counting squares — your bot has to think for itself."
-              chip="DRILL →"
-              chipColor="amber"
-              onClick={onDrill}
             />
           ) : null}
 

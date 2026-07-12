@@ -1,155 +1,169 @@
-import React from "react";
+import React, { useState } from "react";
 import { Panel } from "./components/Panel";
 import { Chip } from "./components/Chip";
 import { Coin } from "./components/Coin";
-import { CHASSIS, PARTS, computeStats, isPartOwnable, type Part } from "../content/parts";
-import { buyChassis, buyPart, toggleEquip, type SaveData } from "../state/save";
+import { BotAvatar } from "./components/BotAvatar";
+import { KITS, buyKit, equipKit, kitById } from "../content/parts";
+import { type SaveData } from "../state/save";
+import { loadBotConfig, saveBotConfig, resolveHex } from "../state/botConfig";
+import { analytics } from "../state/analytics";
 
 /**
- * The Garage — where coins finally go. Capability parts are EARNED by learning (never sold); stat
- * parts cost coins AND weight (trade-offs); cosmetics are pure style. Your loadout only matters in
- * the Arena, so learning is never gated behind gear.
+ * THE GARAGE — "make this bot mine", all in one room.
+ *
+ * It used to be two rooms and an RPG. BOT MAKER let you name and paint it; the GARAGE was a separate
+ * shop with three chassis, a weight budget, slot counts, part weights, an overload rule, and two kinds
+ * of part. They are the same idea — this bot is MINE — split across two doors for no reason, and one
+ * of them required a child to juggle four numbers before she could equip anything.
+ *
+ * One room now, and one decision: name it, paint it, choose how it fights. Nothing to overwhelm her,
+ * and the choice still matters, because the arena punishes the wrong one.
  */
 export function GarageScreen({ save, onSave }: { save: SaveData; onSave: (s: SaveData) => void }) {
-  const { loadout, coins } = save;
-  const stats = computeStats(loadout.chassis, loadout.equipped);
-  const bad = stats.overWeight || stats.overSlots;
+  const [bot, setBot] = useState(loadBotConfig());
+  const [msg, setMsg] = useState<string | null>(null);
+  const current = kitById(save.loadout.kit);
 
-  const groups: { kind: Part["kind"]; title: string; blurb: string }[] = [
-    { kind: "capability", title: "ABILITIES — earned by learning", blurb: "These are what let your bot DO things. You can't buy them: clear the level that teaches them." },
-    { kind: "stat", title: "GEAR — costs coins AND weight", blurb: "Every one has a downside. Your frame can only carry so much, so you have to choose." },
-    { kind: "cosmetic", title: "STYLE — just for looks", blurb: "No effect on a fight. Purely you." },
-  ];
+  function rename(name: string) {
+    const next = { ...bot, botName: name.slice(0, 14).toUpperCase() };
+    setBot(next);
+    saveBotConfig(next);
+  }
+  function repaint(part: "body" | "dome", value: string) {
+    const next = { ...bot, paint: { ...bot.paint, [part]: value } };
+    setBot(next);
+    saveBotConfig(next);
+  }
+
+  function choose(id: string) {
+    if (save.loadout.owned.includes(id)) {
+      onSave({ ...save, loadout: equipKit(save.loadout, id) });
+      setMsg(null);
+      return;
+    }
+    const bought = buyKit(save.loadout, save.coins, id);
+    if (!bought) {
+      setMsg(`You need ${kitById(id).cost - save.coins} more coins for that one. Clear a level to earn some.`);
+      return;
+    }
+    onSave({ ...save, coins: bought.coins, loadout: bought.loadout });
+    analytics.partBought?.(id);
+    setMsg(null);
+  }
 
   return (
-    <div style={{ height: "100%", overflow: "auto", padding: "24px" }}>
-      <div style={{ maxWidth: 900, margin: "0 auto", display: "flex", flexDirection: "column", gap: 16 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-2xl)" }}>GARAGE</div>
-          <div style={{ flex: 1 }} />
-          <Coin count={coins} />
+    <div style={{ height: "100%", overflow: "auto", padding: "26px 24px" }}>
+      <div style={{ maxWidth: 820, margin: "0 auto", display: "flex", flexDirection: "column", gap: 18 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 20, flexWrap: "wrap" }}>
+          <BotAvatar body={resolveHex(bot.paint.body, bot.paintbox)} dome={resolveHex(bot.paint.dome, bot.paintbox)} width={140} />
+          <div>
+            <div style={{ fontSize: "var(--text-2xs)", letterSpacing: "1.5px", color: "var(--text-dim)", fontWeight: 700 }}>
+              YOUR BOT
+            </div>
+            <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-3xl)", color: "var(--cyan)" }}>
+              {bot.botName}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 8, alignItems: "center" }}>
+              <Chip color="cyan">{current.name}</Chip>
+              <Coin count={save.coins} />
+            </div>
+          </div>
         </div>
 
-        {/* Loadout summary — the puzzle you're solving */}
-        <Panel label="YOUR BOT" active>
-          <div style={{ display: "flex", gap: 22, flexWrap: "wrap", alignItems: "center" }}>
-            <Stat label="SLOTS" value={`${stats.slotsUsed}/${stats.slots}`} bad={stats.overSlots} />
-            <Stat label="WEIGHT" value={`${stats.weightUsed}/${stats.capacity}`} bad={stats.overWeight} />
-            <Stat label="ARMOUR" value={stats.armor} />
-            <Stat label="DAMAGE" value={stats.damage} />
-            <Stat label="RANGE" value={stats.range} />
-          </div>
-          {bad ? (
-            <div style={{ marginTop: 8, color: "var(--red)", fontSize: "var(--text-sm)", fontWeight: 700 }}>
-              {stats.overWeight ? "Too heavy for this frame — take something off, or get a bigger chassis." : "Too many parts for this frame — take one off."}
-            </div>
-          ) : (
-            <div style={{ marginTop: 8, fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>
-              Your loadout matters in the Arena. Remember: <b>good code beats good gear.</b>
-            </div>
-          )}
+        <Panel label="NAME IT">
+          <input
+            value={bot.botName}
+            onChange={(e) => rename(e.target.value)}
+            style={{
+              fontFamily: "var(--font-mono)", fontSize: "var(--text-md)", fontWeight: 700,
+              color: "var(--ink)", background: "var(--surface-inset)", border: "var(--border)",
+              borderRadius: "var(--radius-md)", padding: "10px 12px", width: "100%",
+              boxSizing: "border-box", letterSpacing: "1px",
+            }}
+          />
         </Panel>
 
-        {/* Chassis */}
-        <Panel label="CHASSIS — the frame everything bolts onto">
-          <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-            {CHASSIS.map((c) => {
-              const owned = loadout.chassis === c.id;
-              const afford = coins >= c.cost;
+        <Panel label="PAINT IT">
+          <div style={{ display: "flex", gap: 22, flexWrap: "wrap" }}>
+            {(["body", "dome"] as const).map((part) => (
+              <div key={part}>
+                <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginBottom: 6, letterSpacing: "1px" }}>
+                  {part === "body" ? "BODY" : "DOME"}
+                </div>
+                <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                  {["#FF8BB3", "#5FD4FF", "#FFB454", "#6FE3A5", "#C89BFF", "#FF6B7A", "#EAF2FF"].map((hex) => (
+                    <button
+                      key={hex}
+                      onClick={() => repaint(part, hex)}
+                      aria-label={hex}
+                      style={{
+                        all: "unset", cursor: "pointer", width: 30, height: 30, borderRadius: 8,
+                        background: hex,
+                        outline: resolveHex(bot.paint[part], bot.paintbox) === hex ? "3px solid var(--ink)" : "1px solid var(--line)",
+                        outlineOffset: 2,
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Panel>
+
+        {/*
+          THE ONLY DECISION IN THE GARAGE.
+
+          Three answers, each with its cost said out loud. No weights, no slots, no overload maths —
+          and it is still a genuine strategic choice, because the arena punishes the wrong pick.
+        */}
+        <Panel label="HOW IT FIGHTS">
+          <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", marginBottom: 10, lineHeight: 1.5 }}>
+            Pick one. Swapping between the ones you own is free, always — changing your mind should
+            never cost you anything.
+          </div>
+          <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+            {KITS.map((k) => {
+              const owned = save.loadout.owned.includes(k.id);
+              const on = save.loadout.kit === k.id;
               return (
-                <button key={c.id}
-                  onClick={() => { if (owned) return; const next = buyChassis(save, c.id, c.cost); if (next) onSave(next); }}
-                  disabled={!owned && !afford}
-                  style={{ all: "unset", cursor: owned ? "default" : afford ? "pointer" : "not-allowed",
-                    width: 250, padding: 12, borderRadius: 10, boxSizing: "border-box",
-                    border: `1.5px solid ${owned ? "var(--cyan)" : "var(--line)"}`,
-                    background: owned ? "rgba(95,212,255,.07)" : "transparent",
-                    opacity: !owned && !afford ? 0.5 : 1 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                    <span style={{ fontWeight: 700, color: "var(--ink)" }}>{c.name}</span>
-                    {owned ? <Chip color="cyan">EQUIPPED</Chip> : c.cost === 0 ? null : <Coin count={c.cost} />}
+                <button
+                  key={k.id}
+                  onClick={() => choose(k.id)}
+                  style={{
+                    all: "unset", cursor: "pointer", flex: "1 1 220px", boxSizing: "border-box",
+                    padding: 14, borderRadius: 12,
+                    border: `2px solid ${on ? "var(--cyan)" : "var(--line)"}`,
+                    background: on ? "rgba(95,212,255,.07)" : "transparent",
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", gap: 8 }}>
+                    <span style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-lg)" }}>
+                      {k.name}
+                    </span>
+                    {on ? <Chip color="cyan">DRIVING</Chip> : owned ? <Chip color="dim">OWNED</Chip> : <Coin count={k.cost} />}
                   </div>
-                  <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginTop: 4, lineHeight: 1.4 }}>{c.desc}</div>
-                  <div style={{ fontSize: "var(--text-2xs)", color: "var(--amber)", marginTop: 4 }}>
-                    {c.slots} slots · carries {c.capacity} · armour {c.armor}
+                  <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", marginTop: 6, lineHeight: 1.5 }}>
+                    {k.desc}
+                  </div>
+                  <div style={{ fontSize: "var(--text-xs)", color: "var(--amber)", marginTop: 6, lineHeight: 1.5 }}>
+                    {k.tradeoff}
+                  </div>
+                  <div style={{ fontFamily: "var(--font-mono)", fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginTop: 8 }}>
+                    ARMOUR {k.armor} · RANGE {k.range}
                   </div>
                 </button>
               );
             })}
           </div>
+          {msg ? <div style={{ fontSize: "var(--text-xs)", color: "var(--red)", marginTop: 10 }}>{msg}</div> : null}
         </Panel>
 
-        {/* Parts, grouped so the rules are obvious */}
-        {groups.map((g) => (
-          <Panel key={g.kind} label={g.title}>
-            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", marginBottom: 8 }}>{g.blurb}</div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {PARTS.filter((p) => p.kind === g.kind).map((p) => {
-                const ownable = isPartOwnable(p, save.unlocked, loadout.bought);
-                const equipped = loadout.equipped.includes(p.id);
-                const afford = coins >= p.cost;
-                const locked = p.kind === "capability" && !ownable;
-                const buyable = p.kind !== "capability" && !ownable;
-                return (
-                  <div key={p.id}
-                    style={{ width: 250, padding: 12, borderRadius: 10, boxSizing: "border-box",
-                      border: `1.5px ${locked ? "dashed" : "solid"} ${equipped ? "var(--green)" : "var(--line)"}`,
-                      background: equipped ? "rgba(111,227,165,.06)" : "transparent", opacity: locked ? 0.55 : 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-                      <span style={{ fontWeight: 700, color: "var(--ink)" }}>{p.name}</span>
-                      {equipped ? <Chip color="green">ON</Chip> : null}
-                      {p.weight !== 0 ? (
-                        <span style={{ fontSize: "var(--text-2xs)", color: p.weight < 0 ? "var(--green)" : "var(--amber)" }}>
-                          {p.weight > 0 ? `+${p.weight} weight` : `${p.weight} weight`}
-                        </span>
-                      ) : null}
-                    </div>
-                    <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginTop: 4, lineHeight: 1.4 }}>{p.desc}</div>
-                    {p.tradeoff ? (
-                      <div style={{ fontSize: "var(--text-2xs)", color: "var(--red)", marginTop: 4, fontStyle: "italic" }}>{p.tradeoff}</div>
-                    ) : null}
-
-                    <div style={{ marginTop: 8 }}>
-                      {locked ? (
-                        <Chip color="dim" dashed>LOCKED — learn it to earn it</Chip>
-                      ) : buyable ? (
-                        <button
-                          onClick={() => { const next = buyPart(save, p.id, p.cost); if (next) onSave(next); }}
-                          disabled={!afford}
-                          style={{ all: "unset", cursor: afford ? "pointer" : "not-allowed",
-                            border: "1.5px solid var(--amber)", borderRadius: 999, padding: "4px 12px",
-                            fontSize: "var(--text-2xs)", fontWeight: 700, color: "var(--amber)", opacity: afford ? 1 : 0.5 }}>
-                          BUY · {p.cost}
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => onSave(toggleEquip(save, p.id))}
-                          style={{ all: "unset", cursor: "pointer",
-                            border: `1.5px solid ${equipped ? "var(--red)" : "var(--green)"}`, borderRadius: 999,
-                            padding: "4px 12px", fontSize: "var(--text-2xs)", fontWeight: 700,
-                            color: equipped ? "var(--red)" : "var(--green)" }}>
-                          {equipped ? "TAKE OFF" : "EQUIP"}
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Panel>
-        ))}
+        {/* The rule the whole game stands on, said out loud in the room most likely to make her doubt it. */}
+        <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)", lineHeight: 1.6 }}>
+          None of this wins a fight on its own. A well-written SCOUT beats a badly-written anything.
+          Gear picks your <b>style</b>. Your code decides who wins.
+        </div>
       </div>
-    </div>
-  );
-}
-
-function Stat({ label, value, bad = false }: { label: string; value: string | number; bad?: boolean }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <div style={{ fontFamily: "var(--font-display)", fontWeight: 700, fontSize: "var(--text-2xl)", color: bad ? "var(--red)" : "var(--cyan)" }}>
-        {value}
-      </div>
-      <div style={{ fontSize: "var(--text-2xs)", letterSpacing: "1px", color: "var(--text-dim)", fontWeight: 700 }}>{label}</div>
     </div>
   );
 }

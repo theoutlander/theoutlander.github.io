@@ -115,11 +115,10 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
 
   // Your Garage loadout feeds the fight — unless you've overloaded the frame, in which case the
   // gear doesn't fit and your bot rolls out stock. Weight is a real constraint, not a suggestion.
+  // Her kit from the Garage. One choice, three numbers — no weights, no slots, nothing to overload.
   const save = loadSave();
-  const ls = computeStats(save.loadout.chassis, save.loadout.equipped);
-  const overloaded = ls.overWeight || ls.overSlots;
-  const myStats = overloaded ? undefined : { armor: ls.armor, damage: ls.damage, range: ls.range };
-  const myMax = myStats?.armor ?? 100;
+  const myStats = computeStats(save.loadout);
+  const myMax = myStats.armor;
 
   const enemyMax = (preset?.stats?.armor ?? 100);
   const [hp, setHp] = useState({ player: myMax, enemy: enemyMax });
