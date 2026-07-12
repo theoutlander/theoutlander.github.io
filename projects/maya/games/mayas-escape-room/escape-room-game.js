@@ -632,11 +632,6 @@ function startGame(){
   msg('👻 Welcome to the Chair Parlor... Five chairs. One hides a key. You may only sit on <b>THREE!</b> Look around for help...', 4500);
 }
 
-window.__DEBUG_JUMP_ROOM2 = function(){
-  startGame();
-  S.phase='room2'; S.key2=true;
-  updateHUD(); show('#s-room2');
-};
 $('#start-btn').addEventListener('click', startGame);
 $('#again-btn').addEventListener('click', startGame);
 $('#retry-btn').addEventListener('click', ()=>{
