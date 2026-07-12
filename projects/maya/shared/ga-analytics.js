@@ -84,10 +84,27 @@
 		};
 	}
 
+	/* The UI title is deliberately playful — emoji, exclamation marks, and (when the portal
+	   opens a game in its modal) a "· Maya's Game Lab 🎮" breadcrumb. All of that is noise in
+	   analytics: the lab name repeats on every single row, the emoji vary, and the trailing "!"
+	   is inconsistent across games ("Dust Chasers!" but "Sparkle Duel 2"). Normalize here, at
+	   the boundary, so GA gets one stable name per game and the games keep their character.
+
+	     "Dust Chasers! 👻 · Maya's Game Lab 🎮"  →  "Dust Chasers" */
+	function displayTitle() {
+		var t = document.title || '';
+		t = t.split('·')[0]; // drop the lab breadcrumb the portal appends on modal open
+		t = t.replace(
+			/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{1F1E6}-\u{1F1FF}\u{FE0F}]/gu,
+			''
+		);
+		return t.replace(/[!\s]+$/, '').trim();
+	}
+
 	function trackMayaPageView() {
 		window.gtag('event', 'page_view', {
 			page_path: mayaPagePath(),
-			page_title: document.title,
+			page_title: displayTitle(),
 			page_location: window.location.href,
 			site_area: 'maya',
 		});
