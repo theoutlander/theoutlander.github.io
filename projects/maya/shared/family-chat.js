@@ -9,8 +9,12 @@ const CHAT_CFG = {
 	supabaseUrl: 'https://mqmkktxaqmgqbdogozuu.supabase.co',
 	supabaseAnonKey:
 		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xbWtrdHhhcW1ncWJkb2dvenV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxOTA4ODIsImV4cCI6MjA5NTc2Njg4Mn0.agbC0-xB0jeetK5i6huDm87O3rDOwqdb4fRvEmNDPYU',
-	mayaPin: '6425',
-	dadPin: '2545',
+	// The passwords are NOT here anymore. They live only in Supabase secrets
+	// (MAYA_CHAT_PIN / DAD_CHAT_PIN); the family-chat-auth function validates a
+	// typed password and returns just the role. This is why the password can no
+	// longer be read out of this file by anyone who views the page source.
+	authUrl:
+		'https://mqmkktxaqmgqbdogozuu.supabase.co/functions/v1/family-chat-auth',
 };
 
 const SESSION_KEY = 'maya_family_chat_v3';
@@ -19,18 +23,34 @@ const MAX_MESSAGES = 120;
 
 function chatReady() {
 	return Boolean(
-		CHAT_CFG.supabaseUrl &&
-			CHAT_CFG.supabaseAnonKey &&
-			CHAT_CFG.mayaPin &&
-			CHAT_CFG.dadPin
+		CHAT_CFG.supabaseUrl && CHAT_CFG.supabaseAnonKey && CHAT_CFG.authUrl
 	);
 }
 
-function roleFromPin(pin) {
-	const v = String(pin || '').trim();
-	if (v === CHAT_CFG.mayaPin) return 'maya';
-	if (v === CHAT_CFG.dadPin) return 'dad';
-	return null;
+// Ask the server whether this password is valid and, if so, which side of the
+// chat it is. Returns 'maya' | 'dad' on success, or a reason string:
+// 'wrong' (bad password), 'throttled' (too many tries), 'offline' (network).
+async function authenticatePin(pin) {
+	try {
+		const res = await fetch(CHAT_CFG.authUrl, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+				apikey: CHAT_CFG.supabaseAnonKey,
+			},
+			body: JSON.stringify({ pin: String(pin || '').trim() }),
+		});
+		if (res.ok) {
+			const data = await res.json();
+			return data.role === 'maya' || data.role === 'dad'
+				? data.role
+				: 'wrong';
+		}
+		if (res.status === 429) return 'throttled';
+		return 'wrong';
+	} catch {
+		return 'offline';
+	}
 }
 
 function loadSession() {
@@ -39,7 +59,11 @@ function loadSession() {
 		if (!raw) return null;
 		const s = JSON.parse(raw);
 		if (!s?.pinOk || !s?.role || !s?.pin) return null;
-		if (roleFromPin(s.pin) !== s.role) return null;
+		// No client-side re-validation of the PIN — the passwords aren't in this
+		// file to compare against anymore. This is also what lets an already-signed-in
+		// device (Maya's iPad) keep working with no re-entry after this change: the
+		// stored session is trusted here, and Row Level Security is still the real
+		// gate on every read/write (it checks the x-family-pin header server-side).
 		return s;
 	} catch {
 		return null;
@@ -63,14 +87,6 @@ function supabaseForPin(pin) {
 	return createClient(CHAT_CFG.supabaseUrl, CHAT_CFG.supabaseAnonKey, {
 		global: { headers: { 'x-family-pin': pin } },
 	});
-}
-
-async function verifyPinWorks(pin) {
-	const { error } = await supabaseForPin(pin)
-		.from('maya_chat_messages')
-		.select('id')
-		.limit(1);
-	return !error;
 }
 
 function fmtTime(iso) {
@@ -136,12 +152,32 @@ export function initFamilyChat(root, hooks = {}) {
 			const inp = root.querySelector('#chat-pin');
 			const btn = root.querySelector('#chat-pin-btn');
 			const err = root.querySelector('#chat-pin-err');
+			let unlocking = false;
 			async function tryUnlock() {
+				if (unlocking) return;
 				const val = inp.value.trim();
-				const role = roleFromPin(val);
-				if (!role) {
+				if (!val) return;
+				unlocking = true;
+				btn.disabled = true;
+				const prevLabel = btn.textContent;
+				btn.textContent = 'Opening…';
+				err.hidden = true;
+
+				// The server holds the passwords now, so validation is a round-trip.
+				const role = await authenticatePin(val);
+
+				unlocking = false;
+				btn.disabled = false;
+				btn.textContent = prevLabel;
+
+				if (role !== 'maya' && role !== 'dad') {
 					err.hidden = false;
-					err.textContent = 'Wrong password — try again';
+					err.textContent =
+						role === 'throttled'
+							? 'Too many tries — wait a few minutes and try again.'
+							: role === 'offline'
+								? 'Can’t reach the chat right now — check your connection.'
+								: 'Wrong password — try again';
 					root.querySelector('.chat-lock')?.classList.add('shake');
 					setTimeout(
 						() => root.querySelector('.chat-lock')?.classList.remove('shake'),
@@ -149,19 +185,7 @@ export function initFamilyChat(root, hooks = {}) {
 					);
 					return;
 				}
-				btn.disabled = true;
-				const prevLabel = btn.textContent;
-				btn.textContent = 'Opening…';
-				err.hidden = true;
-				const ok = await verifyPinWorks(val);
-				btn.disabled = false;
-				btn.textContent = prevLabel;
-				if (!ok) {
-					err.hidden = false;
-					err.textContent =
-						'Chat is not set up yet — ask Dad to check Supabase.';
-					return;
-				}
+
 				inp.value = '';
 				session = { pinOk: true, role, pin: val };
 				myRole = session.role;
