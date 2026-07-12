@@ -111,33 +111,57 @@
 		});
 	}
 
-	/* ===== OWNER OPT-OUT =====
-	   Nick browsing his own site was showing up as an active user and drowning out the only
-	   person whose behaviour actually matters here. Visit any lab page once per device with
-	   ?ga=off to stop being counted; ?ga=on undoes it. The choice persists per browser, and
-	   because the games are same-origin iframes, setting it on the portal covers every game.
+	/* ===== WHO DOES NOT GET COUNTED =====
+	   GA should measure Maya, and only Maya. Two sources of noise are excluded automatically,
+	   with nothing for Nick to remember to do:
 
-	   Deliberately GA-only: his errors still reach Sentry. If Nick hits a broken game we want
-	   to know, and Sentry's value is correctness, not audience counting.
+	     1. localhost / dev — any host that isn't a real lab domain. Development and testing
+	        must never show up as usage.
+	     2. Nick himself — detected via the family chat, which stores role 'dad' vs 'maya'.
+	        Any device where he has opened the chat as Dad is his device, so it stops counting.
 
-	   Storage is wrapped, of course — reading it bare is the exact bug that started all this. */
+	   Manual override remains for a device where he hasn't signed into chat: visit any lab
+	   page once with ?ga=off (?ga=on to undo).
+
+	   GA-only by design: his errors still reach Sentry. If Nick hits a broken game we want to
+	   know — Sentry is about correctness, not audience counting.
+
+	   Every storage read is wrapped. Reading it bare is the exact bug that started all this,
+	   and the fallback is deliberately "count them": if storage throws we are almost certainly
+	   on Maya's locked-down iPad, and she is the one person who must never be excluded. */
+	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
+	function isProd() {
+		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
+	}
+
 	var GA_OPTOUT_KEY = 'maya_ga_optout';
-	var OWNER_OPTED_OUT = (function () {
+	var CHAT_SESSION_KEY = 'maya_family_chat_v3'; // set by shared/family-chat.js
+
+	function isNick() {
 		try {
 			var q = new URLSearchParams(window.location.search).get('ga');
 			if (q === 'off') window.localStorage.setItem(GA_OPTOUT_KEY, '1');
 			if (q === 'on') window.localStorage.removeItem(GA_OPTOUT_KEY);
-			return window.localStorage.getItem(GA_OPTOUT_KEY) === '1';
+			if (window.localStorage.getItem(GA_OPTOUT_KEY) === '1') return true;
+
+			// Signed into the family chat as Dad → this is Nick's device.
+			var raw = window.localStorage.getItem(CHAT_SESSION_KEY);
+			if (raw && JSON.parse(raw).role === 'dad') return true;
+
+			return false;
 		} catch (e) {
-			return false; // storage blocked (Maya's iPad) — she should always be counted
+			return false; // storage blocked → assume Maya, always count her
 		}
-	})();
+	}
+
+	// Skip GA for Nick, and for anything that isn't the real site (localhost, dev servers).
+	var SKIP_GA = !isProd() || isNick();
 
 	function loadGA() {
 		if (window.__gaLoaded) return;
 		window.__gaLoaded = true;
 
-		if (OWNER_OPTED_OUT) {
+		if (SKIP_GA) {
 			// gtag's official kill switch, in case anything else on the page loads it.
 			window['ga-disable-' + MEASUREMENT_ID] = true;
 			return;
@@ -166,7 +190,7 @@
 				if (Object.prototype.hasOwnProperty.call(params, k)) payload[k] = params[k];
 			}
 		}
-		if (!OWNER_OPTED_OUT) {
+		if (!SKIP_GA) {
 			loadGA();
 			window.gtag('event', name, payload);
 		}
@@ -196,7 +220,7 @@
 	// navigation/reload) so each game shows up as its own page_view in GA instead of
 	// collapsing into the portal's single initial-load hit.
 	window.mayaTrackPageView = function () {
-		if (OWNER_OPTED_OUT) return;
+		if (SKIP_GA) return;
 		if (window.__gaLoaded) {
 			trackMayaPageView();
 		} else {
@@ -225,13 +249,8 @@
 		};
 	}
 
-	// The DSN is public (it's in a public repo, and browser DSNs are write-only by design).
-	// Anyone could point it at their own page and burn the free-tier quota, so only accept
-	// events that actually originate from Nick's domains.
-	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
-	function isProd() {
-		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
-	}
+	// The DSN is public (browser DSNs are write-only by design, and this repo is public), so
+	// allowUrls below restricts reporting to Nick's own domains. isProd() is defined above.
 
 	function loadSentry() {
 		if (!SENTRY_DSN) return;
