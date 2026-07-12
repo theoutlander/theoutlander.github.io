@@ -87,7 +87,7 @@ function HealthBar({ label, hp, max, color }: { label: string; hp: number; max: 
   );
 }
 
-export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor: number } }) {
+export function BattleScreen({ paint, onLeague }: { paint: { bodyColor: number; domeColor: number }; onLeague: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const battle = useRef<MountedBattle | null>(null);
   const sfx = useRef<Sfx | null>(null);
@@ -292,6 +292,10 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
         {/* She could not see what verbs existed. There was no command list in the arena at all — the
             campaign has one, the place she actually needs it did not. Every battle-only sensor was
             effectively invisible, which is the same as not existing. */}
+        <Button variant="quiet" size="sm" onClick={onLeague}>
+          🏆 THE LEAGUE →
+        </Button>
+
         <Panel label="BATTLE COMMANDS">
           <div style={{ display: "flex", flexDirection: "column", gap: 5 }}>
             {[

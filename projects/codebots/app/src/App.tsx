@@ -9,6 +9,7 @@ import { BattleScreen } from "./ui/BattleScreen";
 import { GarageScreen } from "./ui/GarageScreen";
 import { DrillScreen } from "./ui/DrillScreen";
 import { FirstStepsScreen } from "./ui/FirstStepsScreen";
+import { LeagueScreen } from "./ui/LeagueScreen";
 import { AccountScreen } from "./ui/AccountScreen";
 import { ALL, globalLevel } from "./content/missions";
 import { currentAccount, cloudEnabled, type Account } from "./state/account";
@@ -27,6 +28,7 @@ type Screen =
   | { name: "garage" }
   | { name: "drill" }
   | { name: "first" }
+  | { name: "league" }
   | { name: "account" };
 
 /**
@@ -76,6 +78,7 @@ export function App() {
   const toAccount = () => setScreen({ name: "account" });
   const toDrill = () => setScreen({ name: "drill" });
   const toFirst = () => setScreen({ name: "first" });
+  const toLeague = () => setScreen({ name: "league" });
   /** "I already know how to code" — open every room. For older kids and returning players; the ramp
    *  is for people who want it, never a toll gate. */
   const unlockAll = () => { applySave({ ...loadSave(), skipAhead: true }); refresh(); };
@@ -114,6 +117,8 @@ export function App() {
         ? { back: "‹ HQ", onBack: toHQ, current: "PROVE IT" }
         : screen.name === "first"
         ? { back: "‹ HQ", onBack: toHQ, current: "FIRST STEPS" }
+        : screen.name === "league"
+        ? { back: "‹ ARENA", onBack: toBattle, current: "THE LEAGUE" }
         : mission
           ? { back: "‹ MAP", onBack: toMap, current: `LEVEL ${globalLevel(mission)} · ${mission.title}` }
           : null;
@@ -152,8 +157,10 @@ export function App() {
           <HQ bot={bot} account={account} save={save} missions={ALL} onPlay={toMap} onProfile={toProfile} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} onFirstSteps={toFirst} onUnlockAll={unlockAll} />
         ) : screen.name === "profile" ? (
           <Profile bot={bot} save={save} />
+        ) : screen.name === "league" ? (
+          <LeagueScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onExit={toBattle} />
         ) : screen.name === "battle" ? (
-          <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} />
+          <BattleScreen paint={{ bodyColor: bot.bodyColor, domeColor: bot.domeColor }} onLeague={toLeague} />
         ) : screen.name === "garage" ? (
           <GarageScreen save={save} onSave={applySave} />
         ) : screen.name === "drill" ? (
