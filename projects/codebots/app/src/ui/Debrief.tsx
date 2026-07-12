@@ -3,7 +3,7 @@ import React from "react";
 import { Panel } from "./components/Panel";
 import { Button } from "./components/Button";
 import { Chip } from "./components/Chip";
-import { detectConstructs, firstUnknownConstruct, constructWorld, CONSTRUCT_MISSIONS, type Construct } from "../rivals/constructs";
+import { detectConstructs, firstUnknownConstruct, isConstructKnown, constructWorld, CONSTRUCT_MISSIONS, type Construct } from "../rivals/constructs";
 import { computeDebriefStats } from "../rivals/debriefStats";
 import type { SaveData } from "../state/save";
 import type { FightRecord } from "./FightScreen";
@@ -54,7 +54,7 @@ export function Debrief({
       <Panel label="WHAT THEY USED">
         <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
           {constructs.map((c) => {
-            const known = c !== missing;
+            const known = isConstructKnown(save, c);
             return (
               <Chip key={c} color={known ? "green" : "red"} dashed={!known}>
                 {CONSTRUCT_LABEL[c]}
