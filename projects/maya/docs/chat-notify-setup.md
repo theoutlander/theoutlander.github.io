@@ -9,7 +9,13 @@ Push notification to Dad's phone when Maya sends a chat message. Uses ntfy.sh (f
 - iOS: https://apps.apple.com/app/ntfy/id1625396347
 - Android: https://play.google.com/store/apps/details?id=io.heckel.ntfy
 
-Pick a private topic name — something hard to guess, e.g. `maya-chat-nick-2545`. You'll use it in steps 2 and 3.
+Pick a private topic name that is RANDOM, not guessable from anything public. An
+ntfy topic is a password, not a username — anyone who knows the string receives the
+notifications — so do NOT base it on names or the chat PIN. Generate one with
+`echo "maya-dad-$(openssl rand -hex 8)"`. You'll use it in steps 2 and 3.
+
+(The live topic is already set as the `NTFY_TOPIC` secret in Supabase; you only
+need a new one if you're re-provisioning.)
 
 ---
 

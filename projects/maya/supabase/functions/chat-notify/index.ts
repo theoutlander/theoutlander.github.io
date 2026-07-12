@@ -5,7 +5,8 @@
  * When Maya sends a message, fires a push notification to Dad via ntfy.sh.
  *
  * Required env vars (set in Supabase Dashboard → Edge Functions → Secrets):
- *   NTFY_TOPIC   — your private ntfy.sh topic (e.g. "maya-chat-nick-2545")
+ *   NTFY_TOPIC   — a RANDOM private ntfy.sh topic (the topic name IS the secret;
+ *                  generate with `openssl rand -hex 8`, never derive it from a name/PIN)
  *
  * Optional:
  *   WEBHOOK_SECRET — if set, validates the x-webhook-secret header from Supabase
