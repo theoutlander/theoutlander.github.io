@@ -6,11 +6,18 @@ declare global {
 	}
 }
 
+/**
+ * The real site, by hostname. An allowlist rather than a denylist of local hosts: a production
+ * build previewed over the LAN (e.g. https://192.168.88.25:5173, which is how you test on
+ * Maya's iPad) has DEV false and a hostname no denylist would think to include — so it used to
+ * report as real traffic. Anything that isn't one of these hosts is development.
+ */
+const PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
+
 function isLocalDev() {
 	if (typeof window === 'undefined') return false;
 	if (import.meta.env.DEV) return true;
-	const hostname = window.location.hostname;
-	return hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '';
+	return !PROD_HOSTS.includes(window.location.hostname);
 }
 
 function track(eventName: string, params?: Record<string, any>) {
