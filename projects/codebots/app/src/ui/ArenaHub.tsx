@@ -1,5 +1,5 @@
 // src/ui/ArenaHub.tsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Panel } from "./components/Panel";
 import { Button } from "./components/Button";
 import { Chip } from "./components/Chip";
@@ -75,23 +75,59 @@ export function ArenaHub({ onFight }: { onFight: (opponent: Opponent) => void })
     })();
   }, []);
 
-  const fighters = board_.map(toFighter);
-  const standings = cachedStandings(fighters);
+  // Standings are the expensive derived value everything below keys off — memoize on the roster
+  // (board_) so an unrelated re-render (closing the watch panel, a publish message landing) doesn't
+  // silently re-run cachedStandings.
+  const standings = useMemo(() => cachedStandings(board_.map(toFighter)), [board_]);
   const previous = previousStandings();
-  const featured = standings.slice(0, 2);
+  const featured = useMemo(() => standings.slice(0, 2), [standings]);
   const myBotRow = accountId ? standings.find((s) => s.fighter.id === accountId) : undefined;
+  const salt = seasonSalt(seasonToken());
+
+  // FEATURED MATCH replay: a real up-to-120-round runBattle — must only re-run when the featured
+  // pairing or the season salt changes, not on every render.
+  const featuredReplay = useMemo(() => {
+    if (featured.length !== 2) return null;
+    const a = featured[0].fighter;
+    const b = featured[1].fighter;
+    return { key: `${a.id}-${b.id}`, names: `${a.name} vs ${b.name}`, payload: watchPairing(a, b) };
+  }, [featured, salt]);
+
+  // WATCHING panel replay: same cost as above, keyed on whichever pairing the kid picked.
+  const watchingReplay = useMemo(() => {
+    if (!watching) return null;
+    return { key: `${watching.a.id}-${watching.b.id}`, payload: watchPairing(watching.a, watching.b) };
+  }, [watching, salt]);
+
+  // FRESH RESULTS rows: each runs a 4-board playMatch, up to 5 of them — memoize on standings + salt
+  // so they don't re-simulate on every render either.
+  const freshResults = useMemo(() => {
+    const rows: { key: string; a: Fighter; b: Fighter; line: string }[] = [];
+    for (let i = 0; i < Math.min(5, standings.length); i++) {
+      const s = standings[i];
+      const next = standings[i + 1];
+      if (!next) continue;
+      const m = playMatch(s.fighter, next.fighter, salt);
+      const line =
+        m.winner === "draw"
+          ? `${s.fighter.name} drew ${next.fighter.name}`
+          : m.winner === "a"
+            ? `${s.fighter.name} beat ${next.fighter.name} ${m.wins}-${m.losses}`
+            : `${next.fighter.name} beat ${s.fighter.name} ${m.losses}-${m.wins}`;
+      rows.push({ key: s.fighter.id, a: s.fighter, b: next.fighter, line });
+    }
+    return rows;
+  }, [standings, salt]);
 
   return (
     <div style={{ display: "flex", gap: 14, padding: "14px 20px", height: "100%", boxSizing: "border-box", overflow: "auto" }}>
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 12 }}>
         <Chip color="dim">BOTS FIGHT · KIDS NEVER CHAT</Chip>
 
-        {featured.length === 2 ? (
+        {featuredReplay ? (
           <Panel label="FEATURED MATCH">
-            <ReplayViewer {...watchPairing(featured[0].fighter, featured[1].fighter)} autoPlay height={200} />
-            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>
-              {featured[0].fighter.name} vs {featured[1].fighter.name}
-            </div>
+            <ReplayViewer key={featuredReplay.key} {...featuredReplay.payload} autoPlay height={200} />
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-dim)" }}>{featuredReplay.names}</div>
           </Panel>
         ) : null}
 
@@ -117,9 +153,12 @@ export function ArenaHub({ onFight }: { onFight: (opponent: Opponent) => void })
           </div>
         </Panel>
 
-        {watching ? (
+        {watchingReplay ? (
           <Panel label="WATCHING">
-            <ReplayViewer {...watchPairing(watching.a, watching.b)} autoPlay height={200} />
+            <ReplayViewer key={watchingReplay.key} {...watchingReplay.payload} autoPlay height={200} />
+            <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)" }}>
+              BOARD 1 OF 4 — THE MATCHUP IS DECIDED ACROSS ALL FOUR.
+            </div>
             <Button size="sm" variant="ghost" onClick={() => setWatching(null)} style={{ alignSelf: "flex-start" }}>
               CLOSE
             </Button>
@@ -131,26 +170,14 @@ export function ArenaHub({ onFight }: { onFight: (opponent: Opponent) => void })
             {/* consecutive ranked pairs, not literal "just happened" fights (there's no fight log to
                 read from — every result here is re-derived, same as the rest of the ladder) */}
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {standings.slice(0, 5).map((s, i) => {
-                const next = standings[i + 1];
-                if (!next) return null;
-                const salt = seasonSalt(seasonToken());
-                const m = playMatch(s.fighter, next.fighter, salt);
-                const line =
-                  m.winner === "draw"
-                    ? `${s.fighter.name} drew ${next.fighter.name}`
-                    : m.winner === "a"
-                      ? `${s.fighter.name} beat ${next.fighter.name} ${m.wins}-${m.losses}`
-                      : `${next.fighter.name} beat ${s.fighter.name} ${m.losses}-${m.wins}`;
-                return (
-                  <div key={s.fighter.id} style={{ display: "flex", justifyContent: "space-between", gap: 8, fontSize: "var(--text-2xs)" }}>
-                    <span style={{ color: "var(--text-dim)" }}>{line}</span>
-                    <Button size="sm" variant="quiet" onClick={() => setWatching({ a: s.fighter, b: next.fighter })}>
-                      WATCH
-                    </Button>
-                  </div>
-                );
-              })}
+              {freshResults.map((r) => (
+                <div key={r.key} style={{ display: "flex", justifyContent: "space-between", gap: 8, fontSize: "var(--text-2xs)" }}>
+                  <span style={{ color: "var(--text-dim)" }}>{r.line}</span>
+                  <Button size="sm" variant="quiet" onClick={() => setWatching({ a: r.a, b: r.b })}>
+                    WATCH BOARD 1
+                  </Button>
+                </div>
+              ))}
             </div>
           </Panel>
         ) : null}
