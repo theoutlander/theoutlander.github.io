@@ -116,4 +116,30 @@ describe("the league is fair", () => {
     expect(once).toEqual(twice);
     expect(once[0]).toBe("thinker"); // and the best code is on top
   });
+
+  it("seasonSalt defaults to 0, which is byte-identical to today's behaviour", () => {
+    expect(playMatch(THINKER, BRAINLESS, 0)).toEqual(playMatch(THINKER, BRAINLESS));
+    const bots = [THINKER, BRAINLESS, TURTLE];
+    expect(standings(bots, 0)).toEqual(standings(bots));
+  });
+
+  it("a nonzero seasonSalt shifts which boards a matchup is played on", () => {
+    // this is the mechanism the season rotation relies on: same pairing, different salt, different
+    // boards — checked directly against board()/matchSeed(), not against a match OUTCOME (an outcome
+    // can coincidentally match even on a different board, which would make this test flaky)
+    const seed = matchSeed("x", "y");
+    const noSalt = Array.from({ length: BOARDS_PER_MATCH }, (_, i) => JSON.stringify(board(seed + i * 7919).arena));
+    const salted = Array.from(
+      { length: BOARDS_PER_MATCH },
+      (_, i) => JSON.stringify(board(seed + 999983 + i * 7919).arena),
+    );
+    expect(salted).not.toEqual(noSalt);
+  });
+
+  it("standings() stays a pure function of the programs even with a seasonSalt applied", () => {
+    const bots = [THINKER, BRAINLESS, TURTLE];
+    const once = standings(bots, 42).map((s) => s.fighter.id);
+    const twice = standings([...bots].reverse(), 42).map((s) => s.fighter.id);
+    expect(once).toEqual(twice);
+  });
 });

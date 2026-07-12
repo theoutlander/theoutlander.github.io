@@ -152,8 +152,8 @@ function fightOnce(a: Fighter, b: Fighter, bd: Board, aOnLeft: boolean): "a" | "
  *
  * Deterministic in every particular — same two programs, same answer, on any machine, forever.
  */
-export function playMatch(a: Fighter, b: Fighter): MatchResult {
-  const seed = matchSeed(a.id, b.id);
+export function playMatch(a: Fighter, b: Fighter, seasonSalt = 0): MatchResult {
+  const seed = matchSeed(a.id, b.id) + seasonSalt;
   let wins = 0, losses = 0, draws = 0;
 
   // One fight per board — no seat-swapping. We used to play every board twice with the sides
@@ -186,7 +186,7 @@ export interface Standing {
  * loads this page derives the identical table, and no child can inflate her own record, because
  * anyone can recompute the truth from the source.
  */
-export function standings(fighters: Fighter[]): Standing[] {
+export function standings(fighters: Fighter[], seasonSalt = 0): Standing[] {
   const table = new Map<string, Standing>(
     fighters.map((f) => [f.id, { fighter: f, wins: 0, losses: 0, draws: 0, points: 0 }]),
   );
@@ -194,7 +194,7 @@ export function standings(fighters: Fighter[]): Standing[] {
   for (let i = 0; i < fighters.length; i++) {
     for (let j = i + 1; j < fighters.length; j++) {
       const a = fighters[i], b = fighters[j];
-      const m = playMatch(a, b);
+      const m = playMatch(a, b, seasonSalt);
       const ta = table.get(a.id)!, tb = table.get(b.id)!;
       if (m.winner === "a") { ta.wins++; tb.losses++; ta.points += 3; }
       else if (m.winner === "b") { tb.wins++; ta.losses++; tb.points += 3; }
