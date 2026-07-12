@@ -1,266 +1,246 @@
 <title>CodeBots — Feature & Learning Map</title>
 <style>
   :root {
-    --deep: #f2f4fb; --panel: #fff; --panel-2: #e5e9f6;
-    --line: #12163a; --shadow: #12163a; --ink: #12163a; --ink-2: #565f8c;
-    --signal: #e08600; --signal-solid: #ffb020;
-    --ice: #0d93ab; --vine: #5f9000; --paint: #d61f74; --gust: #6d6ba8;
-    --console: #10152f; --console-ink: #dfe5ff; --console-dim: #7e88bd;
+    --sky: #d3efff; --panel: #ffffff; --panel-2: #eef4fa;
+    --ink: #1b2a4a; --ink-2: #5c6f92; --line: #1b2a4a; --shadow: #1b2a4a;
+    --sun: #ffc531; --coral: #ff5d8f; --mint: #2fd39b; --grape: #9b6cff; --aqua: #26c2ee;
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --deep: #0b0f26; --panel: #1a2148; --panel-2: #232c5e;
-      --line: #05071a; --shadow: #05071a; --ink: #eef1ff; --ink-2: #9aa4d6;
-      --signal: #ffb020; --signal-solid: #ffb020;
-      --ice: #3fd2e8; --vine: #b6f04a; --paint: #ff4d9d; --gust: #a9a7e0;
-      --console: #05071a; --console-ink: #dfe5ff; --console-dim: #7e88bd;
+      --sky: #182448; --panel: #26356a; --panel-2: #31427d;
+      --ink: #eaf2ff; --ink-2: #aab9dd; --line: #0a1226; --shadow: #0a1226;
+      --sun: #ffc531; --coral: #ff77a3; --mint: #45e3ad; --grape: #b48cff; --aqua: #4fd4f5;
     }
   }
   :root[data-theme="light"] {
-    --deep: #f2f4fb; --panel: #fff; --panel-2: #e5e9f6;
-    --line: #12163a; --shadow: #12163a; --ink: #12163a; --ink-2: #565f8c;
-    --signal: #e08600; --signal-solid: #ffb020;
-    --ice: #0d93ab; --vine: #5f9000; --paint: #d61f74; --gust: #6d6ba8;
-    --console: #10152f; --console-ink: #dfe5ff; --console-dim: #7e88bd;
+    --sky: #d3efff; --panel: #fff; --panel-2: #eef4fa;
+    --ink: #1b2a4a; --ink-2: #5c6f92; --line: #1b2a4a; --shadow: #1b2a4a;
+    --sun: #ffc531; --coral: #ff5d8f; --mint: #2fd39b; --grape: #9b6cff; --aqua: #26c2ee;
   }
   :root[data-theme="dark"] {
-    --deep: #0b0f26; --panel: #1a2148; --panel-2: #232c5e;
-    --line: #05071a; --shadow: #05071a; --ink: #eef1ff; --ink-2: #9aa4d6;
-    --signal: #ffb020; --signal-solid: #ffb020;
-    --ice: #3fd2e8; --vine: #b6f04a; --paint: #ff4d9d; --gust: #a9a7e0;
-    --console: #05071a; --console-ink: #dfe5ff; --console-dim: #7e88bd;
+    --sky: #182448; --panel: #26356a; --panel-2: #31427d;
+    --ink: #eaf2ff; --ink-2: #aab9dd; --line: #0a1226; --shadow: #0a1226;
+    --sun: #ffc531; --coral: #ff77a3; --mint: #45e3ad; --grape: #b48cff; --aqua: #4fd4f5;
   }
 
   * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--deep); color: var(--ink); font-family: system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
+  html, body { margin: 0; background: var(--sky); color: var(--ink); font-family: system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased; }
   .sheet { max-width: 1120px; margin: 0 auto; padding: 0 20px 90px; display: flex; flex-direction: column; gap: 66px; }
-  h1, h2, h3 { font-weight: 900; letter-spacing: -.025em; text-wrap: balance; margin: 0; }
+  h1, h2, h3 { font-weight: 900; letter-spacing: -.03em; text-wrap: balance; margin: 0; }
   p { line-height: 1.6; margin: 0; }
-  .lede { font-size: 16px; color: var(--ink-2); max-width: 68ch; }
+  .lede { font-size: 16.5px; color: var(--ink-2); max-width: 68ch; }
   code, .mono { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
 
   .eyebrow {
-    display: inline-block; font-family: ui-monospace, monospace;
-    font-size: 10.5px; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
-    color: var(--line); background: var(--signal-solid);
-    border: 2.5px solid var(--line); padding: 4px 10px; margin-bottom: 15px;
+    display: inline-block; font-size: 11px; font-weight: 900; letter-spacing: .16em; text-transform: uppercase;
+    color: #1b2a4a; background: var(--sun); border: 3px solid var(--line);
+    padding: 5px 11px; margin-bottom: 15px; box-shadow: 3px 3px 0 var(--shadow);
   }
-  section > h2 { font-size: clamp(22px, 3.2vw, 31px); line-height: 1.12; }
-  section > .lede { margin-top: 12px; }
+  section > h2 { font-size: clamp(23px, 3.3vw, 33px); line-height: 1.1; }
+  section > .lede { margin-top: 13px; }
 
-  /* header */
-  .head { margin-top: 40px; padding: 34px 34px 30px; background: var(--console); color: var(--console-ink); border: 3px solid var(--line); box-shadow: 10px 10px 0 var(--shadow); }
-  .head h1 { font-size: clamp(28px, 4.4vw, 44px); color: #fff; margin-bottom: 12px; }
-  .head p { color: #aab3e4; font-size: 16px; max-width: 66ch; }
-  .head .tele { font-family: ui-monospace, monospace; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--console-dim); margin-bottom: 16px; }
-  .head .tele b { color: var(--signal-solid); }
+  .head { margin-top: 40px; padding: 36px 36px 32px; background: var(--sun); border: 4px solid var(--line); box-shadow: 12px 12px 0 var(--shadow); position: relative; overflow: hidden; }
+  .head::before {
+    content: ""; position: absolute; inset: 0; opacity: .18; pointer-events: none;
+    background-image: radial-gradient(circle at 88% 25%, #fff 20px, transparent 21px),
+                      radial-gradient(circle at 96% 78%, #fff 12px, transparent 13px);
+  }
+  .head h1 { position: relative; font-size: clamp(28px, 4.4vw, 44px); color: #1b2a4a; margin-bottom: 12px; }
+  .head p { position: relative; color: #453720; font-size: 16px; max-width: 68ch; font-weight: 500; }
 
-  /* core loop */
+  /* loop */
   .loop { display: flex; flex-wrap: wrap; margin-top: 24px; }
-  .beat { flex: 1 1 180px; padding: 17px 15px 19px; background: var(--panel); border: 3px solid var(--line); box-shadow: 6px 6px 0 var(--shadow); margin-right: 24px; margin-bottom: 24px; position: relative; }
-  .beat::after { content: ""; position: absolute; top: 50%; right: -24px; width: 0; height: 0; border: 8px solid transparent; border-left-color: var(--line); transform: translateY(-50%); }
-  .beat:last-child::after { content: "\21BA"; border: 0; font-size: 17px; font-weight: 900; color: var(--signal); right: -20px; }
+  .beat { flex: 1 1 180px; padding: 17px 15px 19px; background: var(--panel); border: 3px solid var(--line); box-shadow: 7px 7px 0 var(--shadow); margin-right: 25px; margin-bottom: 25px; position: relative; }
+  .beat::after { content: ""; position: absolute; top: 50%; right: -25px; width: 0; height: 0; border: 9px solid transparent; border-left-color: var(--line); transform: translateY(-50%); }
   .beat:last-child { margin-right: 0; }
-  .beat .n { font-family: ui-monospace, monospace; font-size: 10px; font-weight: 700; letter-spacing: .12em; color: var(--signal); text-transform: uppercase; }
-  .beat h3 { font-size: 15.5px; margin: 6px 0 6px; }
+  .beat:last-child::after { content: "\21BA"; border: 0; font-size: 20px; font-weight: 900; color: var(--coral); right: -22px; }
+  .beat .n { font-size: 10.5px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-2); }
+  .beat h3 { font-size: 16px; margin: 6px 0 6px; }
   .beat p { font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
-  .beat.hot { background: var(--signal-solid); }
-  .beat.hot .n { color: #7a5200; } .beat.hot h3 { color: #12163a; } .beat.hot p { color: #3a2f05; }
+  .beat.hot { background: var(--coral); }
+  .beat.hot .n { color: #fff; opacity: .82; } .beat.hot h3 { color: #fff; } .beat.hot p { color: #ffe4ee; }
 
   /* sitemap */
-  .site { margin-top: 24px; display: flex; flex-direction: column; gap: 0; }
-  .tier { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-  .arrow-down { display: flex; justify-content: center; align-items: center; height: 30px; color: var(--line); font-size: 19px; font-weight: 900; }
-  .scr { border: 3px solid var(--line); box-shadow: 5px 5px 0 var(--shadow); background: var(--panel); padding: 12px 15px; min-width: 165px; flex: 0 1 200px; }
-  .scr .z { font-family: ui-monospace, monospace; font-size: 8.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; padding: 2px 5px; border: 1.5px solid; display: inline-block; margin-bottom: 6px; }
-  .scr .z.work { color: var(--console-dim); border-color: var(--console-dim); }
-  .scr .z.world { color: var(--signal); border-color: var(--signal); }
-  .scr h3 { font-size: 14.5px; margin-bottom: 4px; }
+  .site { margin-top: 24px; display: flex; flex-direction: column; }
+  .tier { display: flex; flex-wrap: wrap; gap: 15px; justify-content: center; }
+  .down { display: flex; justify-content: center; align-items: center; height: 32px; color: var(--line); font-size: 20px; font-weight: 900; }
+  .scr { border: 3px solid var(--line); box-shadow: 6px 6px 0 var(--shadow); background: var(--panel); padding: 13px 15px; min-width: 168px; flex: 0 1 205px; }
+  .scr .z { font-size: 8.5px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; padding: 2px 6px; border: 2px solid; display: inline-block; margin-bottom: 7px; }
+  .scr .z.work { color: var(--grape); border-color: var(--grape); }
+  .scr .z.world { color: var(--coral); border-color: var(--coral); }
+  .scr h3 { font-size: 15px; margin-bottom: 4px; }
   .scr p { font-size: 11.5px; color: var(--ink-2); line-height: 1.45; }
-  .scr.key { background: var(--signal-solid); }
-  .scr.key h3 { color: #12163a; } .scr.key p { color: #3a2f05; }
-  .scr.key .z.world { color: #7a5200; border-color: #7a5200; }
-  .zonekey { display: flex; gap: 16px; flex-wrap: wrap; margin-top: 18px; font-size: 12px; color: var(--ink-2); justify-content: center; }
-  .zonekey b { font-family: ui-monospace, monospace; font-size: 9.5px; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border: 1.5px solid; margin-right: 5px; }
-  .zonekey .w { color: var(--console-dim); border-color: var(--console-dim); }
-  .zonekey .o { color: var(--signal); border-color: var(--signal); }
+  .scr.key { background: var(--mint); }
+  .scr.key h3 { color: #0b3a2b; } .scr.key p { color: #14513c; }
+  .scr.key .z.world { color: #0b3a2b; border-color: #0b3a2b; }
+  .zonekey { display: flex; gap: 18px; flex-wrap: wrap; margin-top: 20px; font-size: 12.5px; color: var(--ink-2); justify-content: center; }
+  .zonekey b { font-size: 9.5px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; padding: 2px 7px; border: 2px solid; margin-right: 6px; }
+  .zonekey .w { color: var(--grape); border-color: var(--grape); }
+  .zonekey .o { color: var(--coral); border-color: var(--coral); }
 
-  /* ladder */
+  /* table */
   .tablewrap { overflow-x: auto; margin-top: 24px; }
-  table { width: 100%; border-collapse: collapse; min-width: 800px; border: 3px solid var(--line); box-shadow: 6px 6px 0 var(--shadow); background: var(--panel); }
-  th, td { text-align: left; padding: 10px 13px; border-bottom: 2px solid var(--panel-2); font-size: 13px; vertical-align: top; }
-  th { background: var(--line); color: #eef1ff; font-family: ui-monospace, monospace; font-size: 9.5px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; position: sticky; top: 0; }
+  table { width: 100%; border-collapse: collapse; min-width: 820px; border: 3px solid var(--line); box-shadow: 7px 7px 0 var(--shadow); background: var(--panel); }
+  th, td { text-align: left; padding: 11px 13px; border-bottom: 2px solid var(--panel-2); font-size: 13px; vertical-align: top; }
+  th { background: var(--line); color: #fff; font-size: 9.5px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
   tbody tr:last-child td { border-bottom: 0; }
-  tr.world td { background: var(--panel-2); font-weight: 900; font-size: 13.5px; letter-spacing: -.01em; }
-  tr.world td .depth { font-family: ui-monospace, monospace; font-weight: 400; font-size: 10.5px; color: var(--ink-2); letter-spacing: .08em; float: right; }
-  tr.boss td:first-child { border-left: 4px solid var(--signal); }
+  tr.world td { background: var(--aqua); color: #063341; font-weight: 900; font-size: 13.5px; }
+  tr.boss td:first-child { border-left: 5px solid var(--coral); }
   td.m { font-family: ui-monospace, monospace; font-size: 11.5px; color: var(--ink-2); white-space: nowrap; }
-  td.teach { font-weight: 700; }
+  td.teach { font-weight: 800; }
   td.how { color: var(--ink-2); font-size: 12.5px; }
-  .kind { font-family: ui-monospace, monospace; font-size: 9px; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; padding: 1px 5px; border: 1.5px solid var(--ink-2); color: var(--ink-2); }
-  .kind.g { color: var(--ice); border-color: var(--ice); }
-  .kind.b { color: var(--signal); border-color: var(--signal); }
-  .kind.r { color: var(--vine); border-color: var(--vine); }
-  .unlock { font-family: ui-monospace, monospace; font-size: 11px; color: var(--signal); font-weight: 700; }
-  .sketch { opacity: .62; }
-  .sketch td:first-child::after { content: " (sketch)"; font-family: ui-monospace, monospace; font-size: 9.5px; font-weight: 400; color: var(--ink-2); }
+  .kind { font-size: 9px; font-weight: 900; letter-spacing: .1em; text-transform: uppercase; padding: 2px 6px; border: 2px solid var(--ink-2); color: var(--ink-2); white-space: nowrap; }
+  .kind.g { color: var(--aqua); border-color: var(--aqua); }
+  .kind.b { color: var(--coral); border-color: var(--coral); }
+  .kind.r { color: var(--mint); border-color: var(--mint); }
+  .unlock { font-family: ui-monospace, monospace; font-size: 11px; color: var(--grape); font-weight: 700; }
+  tr.sketch { opacity: .66; }
 
   /* principles */
-  .prin { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 16px; margin-top: 24px; }
-  .p { border: 3px solid var(--line); box-shadow: 5px 5px 0 var(--shadow); background: var(--panel); padding: 15px 17px 17px; }
-  .p h3 { font-size: 14px; margin-bottom: 7px; }
+  .prin { display: grid; grid-template-columns: repeat(auto-fill, minmax(255px, 1fr)); gap: 17px; margin-top: 24px; }
+  .p { border: 3px solid var(--line); box-shadow: 6px 6px 0 var(--shadow); background: var(--panel); padding: 16px 18px 18px; }
+  .p h3 { font-size: 14.5px; margin-bottom: 7px; }
   .p p { font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }
-  .p .num { font-family: ui-monospace, monospace; font-size: 10px; font-weight: 700; color: var(--signal); letter-spacing: .1em; }
+  .p .num { font-size: 10px; font-weight: 900; color: var(--coral); letter-spacing: .1em; text-transform: uppercase; }
 
-  /* footer note */
-  .note { background: var(--console); color: #aab3e4; border: 3px solid var(--line); box-shadow: 8px 8px 0 var(--signal-solid); padding: 26px 30px; font-size: 14px; line-height: 1.6; }
-  .note b { color: var(--signal-solid); }
+  .note { background: var(--grape); color: #fff; border: 4px solid var(--line); box-shadow: 10px 10px 0 var(--sun); padding: 28px 32px; font-size: 14.5px; line-height: 1.62; }
+  .note b { color: var(--sun); }
 
-  @media (max-width: 720px) {
-    .beat::after { display: none; } .beat { margin-right: 0; }
-  }
+  @media (max-width: 720px) { .beat::after { display: none; } .beat { margin-right: 0; } }
 </style>
 
 <div class="sheet">
 
   <div class="head">
-    <p class="tele">Depth <b>−412 m</b> · Signal <b>none</b> · Program <b>running</b></p>
     <h1>CodeBots — Feature &amp; Learning Map</h1>
-    <p>Every screen, every mission, and exactly where a kid learns each idea. Companion to <span class="mono">PRODUCT_SPEC.md</span> (what it is) and <span class="mono">CONTENT_SPEC.md</span> (the arenas, traces and author solutions).</p>
+    <p>Every screen, every mission, and exactly where a kid learns each idea. Companion to <span class="mono">docs/game.md</span> (what it is) and <span class="mono">levels/</span> (the arenas, traces and author solutions).</p>
   </div>
 
-  <!-- CORE LOOP -->
   <section>
     <span class="eyebrow">The core loop</span>
-    <h2>Write. Send. Watch the footage. Fix line 6.</h2>
-    <p class="lede">There is no signal down there, so there is no joystick. Once she presses RUN she cannot intervene — the program is all there is. What comes back is a recording, and the recording is the reward.</p>
+    <h2>Write. Press RUN. Watch it go. Fix line 6.</h2>
+    <p class="lede">The gap between writing an instruction and seeing its consequence is a few seconds — and it's <em>visible</em>. She doesn't read an error message; <strong>she watches the mistake happen.</strong> That's the fastest debugging loop a nine-year-old will ever get, and it's the pedagogical engine of the entire product.</p>
     <div class="loop">
-      <div class="beat"><span class="n">01 · Workbench</span><h3>Brief</h3><p>A survey map and three sentences. What's down there, and what she's sent to bring back.</p></div>
-      <div class="beat"><span class="n">02 · Workbench</span><h3>Code</h3><p>Real JavaScript. Autocomplete offers only the commands her installed parts actually grant.</p></div>
-      <div class="beat"><span class="n">03 · World</span><h3>Send</h3><p>The bot rolls into the dark. From here it's alone: whatever she wrote is what it does.</p></div>
-      <div class="beat hot"><span class="n">04 · World</span><h3>The footage</h3><p>Dust, judder, panels flying, the bot chirping to itself. <strong>The moment the whole game is built around.</strong></p></div>
-      <div class="beat"><span class="n">05 · Workbench</span><h3>Debrief</h3><p>She saw exactly where it went wrong, and why. Stars for par, stars for the bonus goal. Back to line 6.</p></div>
+      <div class="beat"><span class="n">01 · Workbench</span><h3>Read</h3><p>Three sentences and a map. What's out there, and what she's after.</p></div>
+      <div class="beat"><span class="n">02 · Workbench</span><h3>Write</h3><p>Real JavaScript. Autocomplete offers only the commands her installed parts actually grant.</p></div>
+      <div class="beat hot"><span class="n">03 · World</span><h3>Watch</h3><p><strong>RUN.</strong> The bot rolls out, judders over rock, slides on ice, and does precisely what she wrote. Live. <strong>This is the game.</strong></p></div>
+      <div class="beat"><span class="n">04 · Workbench</span><h3>Fix line 6</h3><p>She <em>saw</em> where it went wrong. Stars for par, stars for the bonus goal. One more turn.</p></div>
     </div>
   </section>
 
-  <!-- SITE MAP -->
   <section>
     <span class="eyebrow">Site map</span>
     <h2>Every screen, and which zone it lives in.</h2>
-    <p class="lede">Two visual zones, and the boundary means something. <strong>The workbench</strong> is where she thinks — dark, monospaced, calm, unchanging. <strong>The world</strong> is where she watches — warm, chunky, loud, alive. The RUN button is the portal between them.</p>
-
+    <p class="lede">Two visual zones, and the boundary means something. <strong>The workbench</strong> is where she thinks — calm, monospaced, unchanging. <strong>The world</strong> is where she watches — bright, chunky, loud, alive. <strong>The RUN button is the portal between them.</strong></p>
     <div class="site">
       <div class="tier">
         <div class="scr"><span class="z work">Workbench</span><h3>BOOT</h3><p>Her bot rolls in. The paintbox settles on her colors.</p></div>
       </div>
-      <div class="arrow-down">↓</div>
+      <div class="down">↓</div>
       <div class="tier">
         <div class="scr"><span class="z work">Workbench</span><h3>HQ</h3><p>The hub. Doors unlock progressively — never all at once. Coins and stars up top.</p></div>
       </div>
-      <div class="arrow-down">↓</div>
+      <div class="down">↓</div>
       <div class="tier">
-        <div class="scr"><span class="z work">Workbench</span><h3>CAMPAIGN MAP</h3><p>Eight worlds descending. Mission dots, next unlock teased.</p></div>
+        <div class="scr"><span class="z work">Workbench</span><h3>CAMPAIGN MAP</h3><p>Eight worlds. Mission dots, next unlock teased.</p></div>
         <div class="scr"><span class="z work">Workbench</span><h3>GARAGE</h3><p>Spend coins, watch the weight bar, equip slots. <strong>Each part grants a command.</strong></p></div>
         <div class="scr"><span class="z work">Workbench</span><h3>BOT MAKER</h3><p>Name, color lab, eyes, decal. Writes <span class="mono">bot.json</span>. The hex wheel teaches hex.</p></div>
-        <div class="scr"><span class="z world">World</span><h3>SALVAGE RUN</h3><p>Free-play descents for coins. Unlocks W3.</p></div>
+        <div class="scr"><span class="z world">World</span><h3>SALVAGE RUN</h3><p>Free-play runs for coins. Unlocks W3.</p></div>
         <div class="scr"><span class="z world">World</span><h3>TIME TRIAL</h3><p>Race your own ghost. Unlocks W2.</p></div>
       </div>
-      <div class="arrow-down">↓</div>
+      <div class="down">↓</div>
       <div class="tier">
-        <div class="scr key"><span class="z world">Both</span><h3>MISSION</h3><p><strong>The core loop.</strong> Brief → Code → Run → Footage → Debrief. Editor and arena side by side.</p></div>
+        <div class="scr key"><span class="z world">Both</span><h3>MISSION</h3><p><strong>The core loop.</strong> Read → Write → <strong>RUN</strong> → Fix. Editor and arena side by side, always both on screen.</p></div>
       </div>
-      <div class="arrow-down">↓</div>
+      <div class="down">↓</div>
       <div class="tier">
-        <div class="scr"><span class="z world">World</span><h3>THE FOOTAGE</h3><p>What came back. Not a debug tool — the payoff. <em>(v1.5)</em></p></div>
         <div class="scr"><span class="z world">World</span><h3>DUEL</h3><p>Hot-seat, then arenas. <em>(v1.5)</em></p></div>
+        <div class="scr"><span class="z world">World</span><h3>REPLAY</h3><p>Re-watch any run. Race your own ghost. <em>(v1.5)</em></p></div>
         <div class="scr"><span class="z work">Workbench</span><h3>LEAGUE</h3><p>Publish a program — and nothing else, ever. <em>(v2)</em></p></div>
       </div>
     </div>
-
     <div class="zonekey">
-      <span><b class="w">Workbench</b> navy · mono · amber · flat · she thinks</span>
-      <span><b class="o">World</b> warm · chunky · shadows · juice · she watches</span>
+      <span><b class="w">Workbench</b> calm · mono · flat · she thinks</span>
+      <span><b class="o">World</b> bright · chunky · juicy · she watches</span>
     </div>
   </section>
 
-  <!-- LEARNING LADDER -->
   <section>
     <span class="eyebrow">The learning ladder</span>
     <h2>One idea per mission. Never two.</h2>
-    <p class="lede">Every mission names the single concept it teaches, and <strong>par is what forces her to actually learn it</strong> — a solution that ignores the lesson doesn't fit in the line budget. Worlds 1–4 are fully authored with hand-verified grid traces; 5–8 are sketched.</p>
+    <p class="lede">Every mission names the single concept it teaches — and <strong>par is what forces her to actually learn it.</strong> A solution that ignores the lesson doesn't fit in the line budget. Worlds 1–4 are fully authored with hand-verified grid traces; 5–8 are sketched.</p>
     <div class="tablewrap">
       <table>
         <thead><tr><th>Mission</th><th>Kind</th><th>Teaches</th><th>How the design forces it</th><th>Unlocks</th></tr></thead>
         <tbody>
 
-          <tr class="world"><td colspan="5">WORLD 1 · FIRST ROLL — commands &amp; sequences <span class="depth">−40 m</span></td></tr>
+          <tr class="world"><td colspan="5">WORLD 1 · FIRST ROLL — commands &amp; sequences</td></tr>
           <tr><td class="m">W1M1 Wake Up</td><td><span class="kind g">Guided</span></td><td class="teach">Sequencing</td><td class="how">Crates block the straight line. <strong>Difficulty floor: no mission is ever solvable by going straight.</strong></td><td class="unlock">AIR HORN · honk()</td></tr>
-          <tr><td class="m">W1M2 The Zigzag</td><td><span class="kind">Practice</span></td><td class="teach">Turning, counting squares</td><td class="how">A 3-corner staircase. Writing it long-hand is exhausting — the nudge toward loops.</td><td></td></tr>
+          <tr><td class="m">W1M2 The Zigzag</td><td><span class="kind">Practice</span></td><td class="teach">Turning, counting squares</td><td class="how">A three-corner staircase. Writing it longhand is exhausting — the first nudge toward loops.</td><td></td></tr>
           <tr><td class="m">W1M3 Reverse Out</td><td><span class="kind">Practice</span></td><td class="teach"><code>back(n)</code></td><td class="how">Parked nose-in to a wall. The arrive-facing rule blocks the one-line cheat.</td><td></td></tr>
-          <tr><td class="m">W1M4 Honk the Gates</td><td><span class="kind">Practice</span></td><td class="teach">Acting on the right square</td><td class="how">A honk from the wrong square does nothing. Position now matters, not just arrival.</td><td></td></tr>
+          <tr><td class="m">W1M4 Honk the Gates</td><td><span class="kind">Practice</span></td><td class="teach">Acting on the right square</td><td class="how">A honk from the wrong square does nothing. Now <em>position</em> matters, not just arrival.</td><td></td></tr>
           <tr><td class="m">W1M5 Build-a-Maze</td><td><span class="kind r">Remix</span></td><td class="teach">She authors a puzzle</td><td class="how">Validator: solvable, ≥2 turns. She must solve her own maze — then send it to a friend.</td><td></td></tr>
           <tr class="boss"><td class="m">W1M6 Toll Gate</td><td><span class="kind b">Boss</span></td><td class="teach">Everything, under pressure</td><td class="how">A wreck blocks the middle lane; a pit guards the right. Which row is clear?</td><td class="unlock">AIR HORN permanent</td></tr>
 
-          <tr class="world"><td colspan="5">WORLD 2 · ROUND &amp; ROUND — loops <span class="depth">−95 m</span></td></tr>
-          <tr><td class="m">W2M1 Square Dance</td><td><span class="kind g">Guided</span></td><td class="teach"><code>repeat n { }</code></td><td class="how">Par is 3 lines. Four copy-pasted moves do not fit.</td><td></td></tr>
-          <tr><td class="m">W2M2 Staircase</td><td><span class="kind">Practice</span></td><td class="teach">The loop body</td><td class="how"><strong>Par 4. Unrolled, the same route is 28 lines.</strong> Par is the teacher.</td><td></td></tr>
-          <tr><td class="m">W2M3 Perimeter Patrol</td><td><span class="kind">Practice</span></td><td class="teach">Loop + action inside it</td><td class="how">Four identical sides, four gates. The pattern is impossible to miss.</td><td></td></tr>
+          <tr class="world"><td colspan="5">WORLD 2 · ROUND &amp; ROUND — loops</td></tr>
+          <tr><td class="m">W2M1 Square Dance</td><td><span class="kind g">Guided</span></td><td class="teach"><code>repeat n { }</code></td><td class="how">Par is 3 lines. Four copy-pasted moves simply do not fit.</td><td></td></tr>
+          <tr><td class="m">W2M2 Staircase</td><td><span class="kind">Practice</span></td><td class="teach">The loop body</td><td class="how"><strong>Par 4. The same route unrolled is 28 lines.</strong> Par is the teacher.</td><td></td></tr>
+          <tr><td class="m">W2M3 Perimeter Patrol</td><td><span class="kind">Practice</span></td><td class="teach">An action inside the loop</td><td class="how">Four identical sides, four gates. The pattern is impossible to miss.</td><td></td></tr>
           <tr><td class="m">W2M4 The Long Haul</td><td><span class="kind">Practice</span></td><td class="teach">Loops meet obstacles</td><td class="how">A 22-wide corridor with a pillar. The bonus star rewards reading the terrain.</td><td></td></tr>
-          <tr><td class="m">W2M5 Loop Garden</td><td><span class="kind r">Remix</span></td><td class="teach">She designs for a loop</td><td class="how">Validator demands her solution fit in ≤6 lines — so she must build something loopable.</td><td></td></tr>
-          <tr class="boss"><td class="m">W2M6 The Windmill</td><td><span class="kind b">Boss</span></td><td class="teach">Timing to a fixed beat</td><td class="how">Arms sweep on a 4-tick period. Deterministic — so it's a puzzle, never luck.</td><td class="unlock">TURBO TREADS · <strong>repeat → for</strong></td></tr>
+          <tr><td class="m">W2M5 Loop Garden</td><td><span class="kind r">Remix</span></td><td class="teach">She designs <em>for</em> a loop</td><td class="how">Validator demands her own solution fit in ≤6 lines — so she must build something loopable.</td><td></td></tr>
+          <tr class="boss"><td class="m">W2M6 The Windmill</td><td><span class="kind b">Boss</span></td><td class="teach">Timing to a fixed beat</td><td class="how">Arms sweep on a 4-tick period. Fully deterministic — so it's a puzzle, never luck.</td><td class="unlock">TURBO TREADS · <strong>repeat → for</strong></td></tr>
 
-          <tr class="world"><td colspan="5">WORLD 3 · CORE COUNT — variables &amp; math <span class="depth">−170 m</span></td></tr>
+          <tr class="world"><td colspan="5">WORLD 3 · CORE COUNT — variables &amp; math</td></tr>
           <tr><td class="m">W3M1 Coin Trail</td><td><span class="kind g">Guided</span></td><td class="teach"><code>let</code>, counting</td><td class="how">The bonus star requires <code>picked == 5</code>. A lazy straight run misses two.</td><td></td></tr>
           <tr><td class="m">W3M2 Crate Math</td><td><span class="kind">Practice</span></td><td class="teach">Weight → speed</td><td class="how"><strong>The SPEED meter debuts here</strong> — the instant she grabs the crate and feels the drag. (Law 5.)</td><td class="unlock">CARGO CLAW · grab()</td></tr>
           <tr><td class="m">W3M3 The Scales</td><td><span class="kind">Practice</span></td><td class="teach">Reading a constraint</td><td class="how"><strong>The WEIGHT bar debuts.</strong> The bridge holds 12. One crate fits; two never do.</td><td></td></tr>
-          <tr><td class="m">W3M4 Chest Combo</td><td><span class="kind">Practice</span></td><td class="teach">Counting to a condition</td><td class="how">Par is 31 lines across three near-identical hauls. <strong>That pain is the setup for functions in W6.</strong></td><td></td></tr>
-          <tr><td class="m">W3M5 Salvage Stash</td><td><span class="kind r">Remix</span></td><td class="teach">She rigs a counter</td><td class="how">Validator: the chest must open on a counted condition, and the solution must use a <code>let</code>.</td><td></td></tr>
+          <tr><td class="m">W3M4 Chest Combo</td><td><span class="kind">Practice</span></td><td class="teach">Counting to a condition</td><td class="how">Par is 31 lines across three near-identical hauls. <strong>That pain is deliberately the setup for functions in W6.</strong></td><td></td></tr>
+          <tr><td class="m">W3M5 Salvage Stash</td><td><span class="kind r">Remix</span></td><td class="teach">She rigs a counter</td><td class="how">Validator: the chest must open on a counted condition, and her solution must use a <code>let</code>.</td><td></td></tr>
           <tr class="boss"><td class="m">W3M6 Countinghouse</td><td><span class="kind b">Boss</span></td><td class="teach">Repetition with variation</td><td class="how">Three heavy hauls. The weight limit <em>physically</em> enforces one trip at a time.</td><td class="unlock">CARGO CLAW permanent</td></tr>
 
-          <tr class="world"><td colspan="5">WORLD 4 · EYES ON — decisions, sensing, events <span class="depth">−260 m · dark</span></td></tr>
-          <tr><td class="m">W4M1 Blind Corner</td><td><span class="kind g">Guided</span></td><td class="teach"><code>if</code> + <code>radar()</code></td><td class="how">A wall she cannot see coming. The sensor must turn her — not a crash-and-correct.</td><td class="unlock">RADAR DISH</td></tr>
+          <tr class="world"><td colspan="5">WORLD 4 · EYES ON — decisions, sensing, events</td></tr>
+          <tr><td class="m">W4M1 Blind Corner</td><td><span class="kind g">Guided</span></td><td class="teach"><code>if</code> + <code>radar()</code></td><td class="how">A wall she can't see coming. The sensor must turn her — not a crash-and-correct.</td><td class="unlock">RADAR DISH</td></tr>
           <tr><td class="m">W4M2 Fork Roads</td><td><span class="kind">Practice</span></td><td class="teach"><code>if / else</code></td><td class="how">One branch is a dead end. Bonus star: pick right <em>first try</em>, using a sensor.</td><td></td></tr>
-          <tr><td class="m">W4M3 Bump in the Night</td><td><span class="kind">Practice</span></td><td class="teach">Events — <code>when bumped</code></td><td class="how">Sight is 1 square. She navigates by feel; the event block <em>is</em> her recovery strategy.</td><td></td></tr>
+          <tr><td class="m">W4M3 Bump in the Night</td><td><span class="kind">Practice</span></td><td class="teach">Events — <code>when bumped</code></td><td class="how">She navigates by feel; the event block <em>is</em> her recovery strategy, running automatically.</td><td></td></tr>
           <tr><td class="m">W4M4 Lights On</td><td><span class="kind">Practice</span></td><td class="teach">Sensing at range</td><td class="how">Two full-height walls, one offset gap each. <strong>Sight is a capability you earn.</strong></td><td class="unlock">HEADLIGHTS</td></tr>
           <tr><td class="m">W4M5 Ambush Alley</td><td><span class="kind r">Remix</span></td><td class="teach">She designs a patrol</td><td class="how">Validator: at least one bush must be <em>load-bearing</em> — re-simulated without it, the plan fails.</td><td></td></tr>
           <tr class="boss"><td class="m">W4M6 Hide &amp; Seek</td><td><span class="kind b">Boss</span></td><td class="teach">Sensing + timing + stealth</td><td class="how"><strong>No <code>fire()</code> exists yet.</strong> Pure stealth. Bonus star: never once spotted.</td><td class="unlock">RADAR permanent</td></tr>
 
-          <tr class="world sketch"><td colspan="5">WORLD 5 · SMART LOOPS — loops + conditionals together <span class="depth">−340 m</span></td></tr>
-          <tr class="sketch"><td class="m">W5</td><td><span class="kind">Sketch</span></td><td class="teach">Reactive patrols</td><td class="how">The CHARGE meter debuts. Every shot spends it — no spamming <code>fire()</code>.</td><td class="unlock">EMITTER · fire() · fire/ice ammo</td></tr>
+          <tr class="world"><td colspan="5">WORLD 5 · SMART LOOPS — loops + conditionals together <em>(sketch)</em></td></tr>
+          <tr class="sketch"><td class="m">W5</td><td><span class="kind">Sketch</span></td><td class="teach">Reactive patrols</td><td class="how">The CHARGE meter debuts. Every shot spends it — no spamming <code>fire()</code>.</td><td class="unlock">EMITTER · fire()</td></tr>
 
-          <tr class="world sketch"><td colspan="5">WORLD 6 · MY OWN MOVES — functions <span class="depth">−420 m</span></td></tr>
-          <tr class="sketch"><td class="m">W6</td><td><span class="kind">Sketch</span></td><td class="teach"><code>function</code> + parameters</td><td class="how"><strong>W3M4's 31-line pain pays off here.</strong> The refactor nudge: "make a move out of it." Reveals a when-block <em>is</em> a function.</td><td class="unlock">MACRO CHIP · echo missions</td></tr>
+          <tr class="world"><td colspan="5">WORLD 6 · MY OWN MOVES — functions <em>(sketch)</em></td></tr>
+          <tr class="sketch"><td class="m">W6</td><td><span class="kind">Sketch</span></td><td class="teach"><code>function</code> + parameters</td><td class="how"><strong>W3M4's 31-line pain pays off here.</strong> The refactor nudge: <em>"make a move out of it."</em> Reveals that a when-block <em>is</em> a function.</td><td class="unlock">MACRO CHIP</td></tr>
 
-          <tr class="world sketch"><td colspan="5">WORLD 7 · ROUTE PLANNER — lists <span class="depth">−480 m</span></td></tr>
+          <tr class="world"><td colspan="5">WORLD 7 · ROUTE PLANNER — lists <em>(sketch)</em></td></tr>
           <tr class="sketch"><td class="m">W7</td><td><span class="kind">Sketch</span></td><td class="teach">Lists, <code>for..of</code>, waypoints</td><td class="how">Maps with X at (x, y). Convoy escort boss.</td><td class="unlock">NAV LOG</td></tr>
 
-          <tr class="world sketch"><td colspan="5">WORLD 8 · THE DEEP — everything, in the dark <span class="depth">−600 m · no signal</span></td></tr>
-          <tr class="sketch"><td class="m">W8</td><td><span class="kind b">Boss</span></td><td class="teach">State machines · <code>when tick</code></td><td class="how"><strong>She is now flying completely blind on a program written hours ago.</strong> The fiction is at its most true exactly when the game is hardest.</td><td class="unlock">LEAGUE KEY → battles</td></tr>
+          <tr class="world"><td colspan="5">WORLD 8 · THE GAUNTLET — everything <em>(sketch)</em></td></tr>
+          <tr class="sketch"><td class="m">W8</td><td><span class="kind b">Boss</span></td><td class="teach">State machines · <code>when tick</code></td><td class="how">Modes she can watch think — the HUD highlights the live mode as it runs.</td><td class="unlock">LEAGUE KEY → battles</td></tr>
 
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- AUTHORING PRINCIPLES -->
   <section>
     <span class="eyebrow">The rules that make it teach</span>
     <h2>Why the curriculum can't be gamed.</h2>
     <div class="prin">
       <div class="p"><span class="num">Law 1</span><h3>Parts add commands, not stats</h3><p>Every unlock is a new <em>word</em> she can write — never a number that goes up. If a part doesn't add one new word or one new decision, it doesn't ship.</p></div>
       <div class="p"><span class="num">Law 2</span><h3>You can't buy what you haven't learned</h3><p>Coins build, but lessons unlock. There is no path around the curriculum.</p></div>
-      <div class="p"><span class="num">Law 3</span><h3>Every trap has a coded exit</h3><p>Frozen, tangled, blinded, stuck — each status is readable from her program. <strong>Every hazard is also a conditionals lesson.</strong></p></div>
+      <div class="p"><span class="num">Law 3</span><h3>Every trap has a coded exit</h3><p>Frozen, tangled, blinded, stuck — every status is readable from her program. <strong>Every hazard is also a conditionals lesson.</strong></p></div>
       <div class="p"><span class="num">Law 4</span><h3>Nothing dies</h3><p>Bots get tagged, dented, towed and rebooted. A test greps the engine for words like "kill" and fails the build.</p></div>
-      <div class="p"><span class="num">Law 5</span><h3>Numbers arrive only after they're felt</h3><p>The SPEED meter appears the moment she first feels the drag of cargo — not before. She names the sensation, then meets the number.</p></div>
-      <div class="p"><span class="num">Law 6</span><h3>The engine knows no story</h3><p>Core, workbench, theme pack. The fiction never touches the simulator — so Mars is a content drop, not a sequel.</p></div>
-      <div class="p"><span class="num">Par</span><h3>Par is the teacher</h3><p>Measured in <em>editor lines</em>. W2M2's par of 4 is unhittable without a loop — the same route unrolled is 28 lines. The lesson isn't suggested; it's the only thing that fits.</p></div>
-      <div class="p"><span class="num">Hints</span><h3>Three rungs, never the answer</h3><p>Nudge → concrete sub-goal → worked example <em>of the first leg only</em>. She always writes the ending herself.</p></div>
-      <div class="p"><span class="num">Free</span><h3>Errors cost nothing</h3><p>A soft, confused boop from the bot. Never a buzzer, never a red X, never a point. <strong>Trying is always free.</strong></p></div>
+      <div class="p"><span class="num">Law 5</span><h3>Numbers arrive only after they're felt</h3><p>The SPEED meter appears the moment she first feels cargo drag the bot down — not one mission before. She names the sensation, <em>then</em> meets the number.</p></div>
+      <div class="p"><span class="num">Law 6</span><h3>The engine knows no story</h3><p>Core, workbench, theme pack. The fiction never touches the simulator — so a new world is a content drop, not a sequel.</p></div>
+      <div class="p"><span class="num">Par</span><h3>Par is the teacher</h3><p>Measured in <em>editor lines</em>. W2M2's par of 4 is unhittable without a loop — the same route unrolled is 28 lines. The lesson isn't suggested. It's the only thing that fits.</p></div>
+      <div class="p"><span class="num">Hints</span><h3>Three rungs, never the answer</h3><p>Nudge → concrete sub-goal → a worked example <em>of the first leg only</em>. She always writes the ending herself.</p></div>
+      <div class="p"><span class="num">Free</span><h3>Errors cost nothing</h3><p>A soft, confused boop from the bot. Never a buzzer, never a red X, never a lost point. <strong>Trying is always free.</strong></p></div>
     </div>
   </section>
 
   <div class="note">
-    <b>The two open questions on this page.</b> Worlds 5–8 are sketched, not authored — they need the same hand-verified grid treatment as 1–4, and that's the largest remaining content job. And <b>the 24 authored missions become the golden test suite</b>: each one already specifies the arena, the author's exact code, and the expected outcome, so each is an integration test that writes itself. Nothing ships until they all pass.
+    <b>The two open jobs on this page.</b> Worlds 5–8 are sketched, not authored — they need the same hand-verified grid treatment as 1–4, and that is the largest remaining piece of work in the whole project. And <b>the 24 authored missions become the golden test suite</b>: each already specifies the arena, the author's exact code, and the expected outcome, so each is an integration test that writes itself. Nothing ships until all 24 pass.
   </div>
 
 </div>
