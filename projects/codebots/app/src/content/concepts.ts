@@ -90,6 +90,18 @@ export const CONCEPTS: Concept[] = [
     // and give the answer away. The example above carries the idea instead.
   },
   {
+    // The REVEAL, not a new construct: `repeat` is sugar the game desugars into exactly this `for`
+    // loop before it runs. Lands here because W3 is the loops world and L2 is the first free slot
+    // after `while` debuts — so the two loop shapes (counted / uncounted) sit side by side. Both
+    // forms keep working forever; nothing a kid already wrote breaks.
+    key: "forloop", world: 3, level: 2, title: "REPEAT'S REAL NAME",
+    idea: "Time for the truth: repeat was a for loop the whole time. Every run, the computer quietly rewrote your repeat into a for — and now you get to write the real one yourself.",
+    example: "repeat 3 {\n  forward(2)\n}\n\n// the same loop, its real name:\nfor (let i = 0; i < 3; i++) {\n  forward(2)\n}",
+    exampleNote: "i counts the trips: start at 0, keep going while i < 3, add one each time. Three trips — exactly what repeat 3 did.",
+    whenToUse: "When you know how many times. repeat still works and always will. Write for when you want code every JavaScript programmer can read.",
+    demoCode: "for (let i = 0; i < 4; i++) {\n  right()\n  honk()\n}",
+  },
+  {
     key: "chain", world: 3, level: 5, title: "CHAIN OF CHOICES",
     idea: "else if lets you ask a SECOND question when the first was no. The checks run top to bottom — the first one that's true wins, and the rest are skipped.",
     example: "if (targetAhead()) {\n  shoot()\n} else if (blocked()) {\n  right()\n} else {\n  forward(1)\n}",

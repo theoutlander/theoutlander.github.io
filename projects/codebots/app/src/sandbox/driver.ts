@@ -1,6 +1,7 @@
 import { desugarRepeat, toGeneratorSource, findUnknownCalls, collectFunctionNames } from "./transform";
 import { createSim, type Mission } from "../sim/engine";
-import { SandboxError, LintError, unknownCommandMessage } from "./errors";
+import { SandboxError, LintError, unknownCommandMessage, type LockedInfo } from "./errors";
+import { lockedAt, lockedName } from "../content/unlocks";
 import { countCodeLines } from "./lines";
 import { apiForWorld } from "./api";
 import type { Command } from "../sim/types";
@@ -26,6 +27,18 @@ function computeStars(mission: Mission, source: string, cleared: boolean, facts:
   return stars;
 }
 
+/**
+ * Is this unknown name actually a REAL command she just hasn't unlocked? Only ever true for names
+ * that aren't already in her API — a command she has is never "locked".
+ */
+function lockedInfo(name: string, api: string[]): LockedInfo | null {
+  const has = new Set(api.map((a) => a.toLowerCase()));
+  if (has.has(name.toLowerCase())) return null;
+  const level = lockedAt(name);
+  const real = lockedName(name);
+  return level && real ? { name: real, level } : null;
+}
+
 export function runInSandbox(mission: Mission, source: string) {
   const desugared = desugarRepeat(source);
   const api = apiForWorld(mission.world);
@@ -39,7 +52,7 @@ export function runInSandbox(mission: Mission, source: string) {
   const unknown = findUnknownCalls(desugared, known);
   if (unknown.length > 0) {
     const u = unknown[0];
-    throw new LintError(u.line, unknownCommandMessage(u.name, u.line, api));
+    throw new LintError(u.line, unknownCommandMessage(u.name, u.line, api, lockedInfo(u.name, api)));
   }
 
   const generatorSource = toGeneratorSource(desugared, api);

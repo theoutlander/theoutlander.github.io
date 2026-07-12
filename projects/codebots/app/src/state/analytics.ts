@@ -79,6 +79,14 @@ export const analytics = {
   drillPassed(drill: string, first: boolean) {
     track("cb_drill_passed", { drill, first });
   },
+  /**
+   * The kid told us something is wrong. This is the only signal that carries a REASON — every other
+   * event tells us she struggled, never why. Carries no free text and no identity, so it's safe to
+   * collect from a logged-out player.
+   */
+  problemReport(reason: string, level: number) {
+    track("cb_problem", { reason, level });
+  },
 };
 
 function track(event: string, params?: Params): void {

@@ -5,7 +5,8 @@ import {
   type CompletionContext,
   type CompletionResult,
 } from "@codemirror/autocomplete";
-import { unknownCommandHint } from "../sandbox/errors";
+import { unknownCommandHint, type LockedInfo } from "../sandbox/errors";
+import { lockedAt, lockedName } from "../content/unlocks";
 import { apiForWorld } from "../sandbox/api";
 
 /** Control-flow words that may legally appear before "(" (or as keywords) — never "unknown". */
@@ -44,6 +45,18 @@ export function scanUnknownCalls(
   return out;
 }
 
+/**
+ * Is this unknown name actually a REAL command she just hasn't unlocked? Only ever true for names
+ * that aren't already in her API — a command she has is never "locked".
+ */
+function lockedInfo(name: string, api: string[]): LockedInfo | null {
+  const has = new Set(api.map((a) => a.toLowerCase()));
+  if (has.has(name.toLowerCase())) return null;
+  const level = lockedAt(name);
+  const real = lockedName(name);
+  return level && real ? { name: real, level } : null;
+}
+
 /** Live red squiggles under unknown commands for a given world, with a "did you mean" message.
  *  `extra` adds command names only valid in a special mode (e.g. enemyAhead() in battles). */
 export function makeCodebotsLinter(world: number, extra: string[] = []) {
@@ -55,7 +68,7 @@ export function makeCodebotsLinter(world: number, extra: string[] = []) {
       from: u.from,
       to: u.to,
       severity: "error",
-      message: unknownCommandHint(u.name, api),
+      message: unknownCommandHint(u.name, api, lockedInfo(u.name, api)),
     }));
   });
 }
@@ -87,8 +100,9 @@ const CMDS: CmdInfo[] = [
   { label: "shoot", type: "function", apply: "shoot()", detail: "()", sig: "shoot()", desc: "Fire the blaster straight ahead. Smashes a barrel in your way.", example: "shoot()", world: 2 },
   { label: "if", type: "keyword", apply: "if () {\n  \n}", detail: "( ) { }", sig: "if ( … ) { }", desc: "Only run the moves inside when the test is true.", example: "if (blocked()) { right() }", world: 2 },
   { label: "else", type: "keyword", apply: "else {\n  \n}", detail: "{ }", sig: "else { }", desc: "What to do when the if test was NOT true.", example: "if (blocked()) { right() } else { forward(1) }", world: 2 },
-  // World 3 — while
+  // World 3 — while, and the for reveal (repeat's real name)
   { label: "while", type: "keyword", apply: "while () {\n  \n}", detail: "( ) { }", sig: "while ( … ) { }", desc: "Keep repeating the moves WHILE the test stays true.", example: "while (!atBeacon()) { forward(1) }", world: 3 },
+  { label: "for", type: "keyword", apply: "for (let i = 0; i < 3; i++) {\n  \n}", detail: "( ; ; ) { }", sig: "for (let i = 0; i < n; i++) { }", desc: "The real name of repeat n — do the moves inside n times.", example: "for (let i = 0; i < 3; i++) { forward(2) }", world: 3 },
   // World 4 — functions
   { label: "function", type: "keyword", apply: "function name() {\n  \n}", detail: "name() { }", sig: "function name() { }", desc: "Make your OWN command out of other commands, then call it by name.", example: "function spin() { right(2) }\nspin()", world: 4 },
 ];

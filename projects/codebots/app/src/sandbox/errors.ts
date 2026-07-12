@@ -87,7 +87,32 @@ export function caseOnlyMatch(name: string, candidates: string[]): string | null
  * rule (computers read `Forward` and `forward` as different words). camelCase names get taught too,
  * since a capital in the MIDDLE of a word is genuinely baffling the first time you meet one.
  */
-export function unknownCommandHint(name: string, candidates: string[]): string {
+/**
+ * A command she hasn't unlocked yet. Optional, because the Battle Arena hands out the whole API and
+ * nothing is locked there.
+ */
+export interface LockedInfo {
+  /** the properly-cased command name */
+  name: string;
+  /** the level it arrives on */
+  level: number;
+}
+
+export function unknownCommandHint(
+  name: string,
+  candidates: string[],
+  locked?: LockedInfo | null,
+): string {
+  // FIRST: is this a real command she simply hasn't earned yet? Typing `shoot()` on Level 2 is a kid
+  // thinking ahead, and the old message — "I don't know 'shoot'" — was a flat lie that taught her to
+  // distrust her own good instinct. Tell her the truth: it's real, and it's coming.
+  if (locked) {
+    const miscased = locked.name !== name;
+    return miscased
+      ? `${locked.name}() is a real command — good instinct! Two things: the capital letters matter (a computer reads "${name}" and "${locked.name}" as different words), and you haven't unlocked it yet. It arrives on Level ${locked.level}.`
+      : `${locked.name}() is real, and it's coming — you just haven't unlocked it yet. You'll get it on Level ${locked.level}. For now, use what's in the COMMANDS list.`;
+  }
+
   const cased = caseOnlyMatch(name, candidates);
   if (cased) {
     const camel = /[a-z][A-Z]/.test(cased);
@@ -102,6 +127,11 @@ export function unknownCommandHint(name: string, candidates: string[]): string {
 }
 
 /** "Line 2 — I don't know 'forwrd'. Did you mean forward()?" */
-export function unknownCommandMessage(name: string, line: number, candidates: string[]): string {
-  return `Line ${line} — ${unknownCommandHint(name, candidates)}`;
+export function unknownCommandMessage(
+  name: string,
+  line: number,
+  candidates: string[],
+  locked?: LockedInfo | null,
+): string {
+  return `Line ${line} — ${unknownCommandHint(name, candidates, locked)}`;
 }

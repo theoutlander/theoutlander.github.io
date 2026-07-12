@@ -145,7 +145,7 @@ export function App() {
         <Coin count={coins} />
       </div>
 
-      <div style={{ flex: 1, minHeight: 0, overflow: screen.name === "mission" ? "hidden" : "auto" }}>
+      <div style={{ flex: 1, minHeight: 0, overflow: "auto" }}>
         {screen.name === "hq" ? (
           <HQ bot={bot} save={save} missions={ALL} onPlay={toMap} onBotMaker={toBotMaker} onProfile={toProfile} onOpenField={toField} onBattle={toBattle} onGarage={toGarage} onDrill={toDrill} />
         ) : screen.name === "profile" ? (

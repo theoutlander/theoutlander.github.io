@@ -33,6 +33,7 @@ export const ALL_COMMANDS: CommandDoc[] = [
   // World 3 — while loops
   { sig: "while ( ) { }", desc: "keep repeating the moves WHILE it's true", world: 3, since: 1, kind: "control" },
   { sig: "!  (not)", desc: "flips a yes/no — while (!atBeacon()) means 'until you arrive'", world: 3, since: 1, kind: "control" },
+  { sig: "for (let i = 0; i < n; i++) { }", desc: "the real name of repeat n — do the moves inside n times", world: 3, since: 2, kind: "control" },
   { sig: "else if ( ) { }", desc: "ask another question when the first was no — first true one wins", world: 3, since: 5, kind: "control" },
 
   // World 4 — your own commands

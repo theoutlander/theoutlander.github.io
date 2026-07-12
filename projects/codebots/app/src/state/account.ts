@@ -24,7 +24,8 @@ const CODEBOTS_SAVES = "codebots_saves";
 export const cloudEnabled = !!(URL && ANON);
 
 let client: SupabaseClient | null = null;
-function sb(): SupabaseClient {
+/** shared client — also used by feedback.ts, so a kid's report goes to the same project */
+export function sb(): SupabaseClient {
   if (!client) client = createClient(URL!, ANON!);
   return client;
 }

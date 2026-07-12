@@ -12,6 +12,7 @@ import { conceptFor } from "../content/concepts";
 import { ConceptCard } from "./ConceptCard";
 import { CommandList } from "./CommandList";
 import { RobotRules } from "./RobotRules";
+import { FeedbackButton } from "./FeedbackButton";
 import { ResultOverlay, type MissionResult } from "./ResultOverlay";
 import { Editor } from "../editor/Editor";
 import { mountArena, type MountedArena } from "../view/mountArena";
@@ -21,6 +22,26 @@ import { loadSave, saveSave, recordResult, starsAfterHelp } from "../state/save"
 import { countCodeLines } from "../sandbox/lines";
 import { analytics } from "../state/analytics";
 
+
+/**
+ * Is the window too narrow for the three-column desktop layout (briefing | arena | editor)?
+ *
+ * It used to be laid out as three fixed columns inside `overflow: hidden`. On a small laptop or a
+ * tablet that doesn't merely look cramped — the arena and the editor end up off-screen and there is
+ * no way to scroll to them. The game is unusable and it isn't obvious why. Below the breakpoint we
+ * stack the columns and let the page scroll instead.
+ */
+function useNarrow(breakpoint = 1100): boolean {
+  const [narrow, setNarrow] = useState(
+    typeof window !== "undefined" ? window.innerWidth < breakpoint : false,
+  );
+  useEffect(() => {
+    const onResize = () => setNarrow(window.innerWidth < breakpoint);
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [breakpoint]);
+  return narrow;
+}
 
 export function MissionScreen({
   mission,
@@ -107,7 +128,7 @@ export function MissionScreen({
     setErrorMsg(null);
     setResult(null);
     setHud({ score: 0, armor: 100 });
-    setRadio([{ text: "program uploaded — rolling…", tone: "dim" }]);
+    setRadio([{ text: "program uploaded. Sparkplug is on its own now — watch what YOUR code makes it do.", tone: "dim" }]);
     a.scene.reset();
     const usedCmds = ["forward", "back", "left", "right", "honk", "repeat"]
       .filter((c) => new RegExp(`\\b${c}\\b`).test(code))
@@ -266,23 +287,27 @@ export function MissionScreen({
     setRadio([]);
   }
 
-  const col: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 12 };
+  const narrow = useNarrow();
+  const col: React.CSSProperties = { display: "flex", flexDirection: "column", gap: 12, minHeight: 0 };
 
   return (
     <div
       style={{
         display: "flex",
+        flexDirection: narrow ? "column" : "row",
         gap: 14,
         padding: "14px 20px",
         alignItems: "stretch",
-        height: "100%",
+        height: narrow ? "auto" : "100%",
         boxSizing: "border-box",
-        overflow: "hidden",
+        // NEVER `hidden` here. Anything that doesn't fit must stay reachable — clipping the editor
+        // off the side of a small screen is how you hand a kid a game she cannot play.
+        overflow: narrow ? "visible" : "hidden",
       }}
     >
       {/* LEFT: collapsible briefing / commands / hint — collapse it to give the code + arena room */}
       {briefOpen ? (
-      <div style={{ ...col, width: 230, flex: "none", overflowY: "auto" }}>
+      <div style={{ ...col, width: narrow ? "100%" : 230, flex: "none", overflowY: narrow ? "visible" : "auto" }}>
         <Button variant="ghost" size="sm" onClick={() => setBriefOpen(false)}>
           ◀ HIDE PANEL
         </Button>
@@ -356,6 +381,21 @@ export function MissionScreen({
             before you ask me.
           </div>
         )}
+
+        {/* She's stuck and looking at the hints. That is precisely the moment to let her tell us the
+            level is the problem, not her. */}
+        <FeedbackButton
+          context={{
+            level,
+            missionId: mission.id,
+            code,
+            error: errorMsg,
+            hintsUsed: hintLevel,
+            fails: stuck,
+            showMeUsed,
+            solutionUsed,
+          }}
+        />
       </div>
       ) : (
         <div style={{ width: 42, flex: "none", display: "flex", flexDirection: "column" }}>
@@ -372,7 +412,7 @@ export function MissionScreen({
 
       {/* CENTER: HUD + arena. The arena box fills the remaining space; Phaser FIT centers the grid
           inside it so the whole thing always stays within the screen. */}
-      <div style={{ ...col, flex: 1, minWidth: 0 }}>
+      <div style={{ ...col, flex: 1, minWidth: 0, position: "relative", minHeight: narrow ? 340 : 0 }}>
         <Hud score={hud.score} armor={hud.armor} />
         <div
           ref={arenaHost}
@@ -386,12 +426,44 @@ export function MissionScreen({
             overflow: "hidden",
           }}
         />
+        {/*
+          THE AUTONOMY BEAT.
+
+          A real nine-year-old played this and thought she was STEERING the robot — that pressing RUN
+          was her driving it. She isn't; she wrote its brain and it's now thinking for itself. That
+          misunderstanding is fatal, because if you believe you're steering, then `if` and sensors are
+          pointless: why teach a robot to decide when you're the one deciding?
+
+          The ROBOT RULES panel already said all this in words, and she read right past it. Words in a
+          panel lose to what's happening on screen. So we say it AT the one moment it's undeniable —
+          while the bot is moving and her hands do nothing.
+        */}
+        {running ? (
+          <div
+            style={{
+              position: "absolute", left: 0, right: 0, bottom: 10, display: "grid", placeItems: "center",
+              pointerEvents: "none", zIndex: 5,
+            }}
+          >
+            <div
+              style={{
+                background: "rgba(5,10,24,.82)", border: "1.5px solid var(--amber)", borderRadius: 999,
+                padding: "6px 16px", display: "flex", alignItems: "center", gap: 8,
+              }}
+            >
+              <span style={{ width: 8, height: 8, borderRadius: 999, background: "var(--amber)" }} />
+              <span style={{ fontSize: "var(--text-xs)", fontWeight: 700, letterSpacing: ".5px", color: "var(--ink)" }}>
+                IT'S ON ITS OWN NOW — you can't steer it. It's following your code.
+              </span>
+            </div>
+          </div>
+        ) : null}
       </div>
 
       {/* RIGHT: editor + controls + radio — the coding window. Collapsible so you can watch the
           arena full-size; a RUN button stays in the collapsed strip so you can still run it. */}
       {codeOpen ? (
-      <div style={{ ...col, width: briefOpen ? 460 : 540, flex: "none", minHeight: 0 }}>
+      <div style={{ ...col, width: narrow ? "100%" : briefOpen ? 460 : 540, flex: "none", minHeight: narrow ? 420 : 0 }}>
         <Button variant="ghost" size="sm" onClick={() => setCodeOpen(false)}>
           HIDE CODE ▶
         </Button>
@@ -424,7 +496,7 @@ export function MissionScreen({
               </Button>
             ) : (
               <Button onClick={run} style={{ flex: 1 }}>
-                ▶ RUN
+                ▶ RUN MY PROGRAM
               </Button>
             )}
             <Button variant="ghost" onClick={reset}>
