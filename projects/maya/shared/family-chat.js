@@ -89,6 +89,71 @@ function supabaseForPin(pin) {
 	});
 }
 
+// ===== Web push =====
+// VAPID public key — safe to ship (the private half is a Supabase secret).
+const VAPID_PUBLIC_KEY =
+	'BNgNacfYj1LYGNiItRmXBWGoDrDXKy8nmnX66KOu24d-WjobMFNYTEMbaj9ltm64SBa9wQD5YCymdUSeqy6VXME';
+const SUBSCRIBE_URL =
+	'https://mqmkktxaqmgqbdogozuu.supabase.co/functions/v1/family-chat-subscribe';
+
+function pushSupported() {
+	return (
+		typeof navigator !== 'undefined' &&
+		'serviceWorker' in navigator &&
+		'PushManager' in window &&
+		'Notification' in window
+	);
+}
+
+function urlBase64ToUint8Array(base64String) {
+	const padding = '='.repeat((4 - (base64String.length % 4)) % 4);
+	const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+	const raw = atob(base64);
+	const out = new Uint8Array(raw.length);
+	for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
+	return out;
+}
+
+// 'unsupported' | 'denied' | 'on' (already subscribed) | 'off' (can enable)
+async function pushState() {
+	if (!pushSupported()) return 'unsupported';
+	if (Notification.permission === 'denied') return 'denied';
+	try {
+		const reg = await navigator.serviceWorker.ready;
+		const sub = await reg.pushManager.getSubscription();
+		return sub ? 'on' : 'off';
+	} catch {
+		return 'off';
+	}
+}
+
+// Request permission (must be called from a user gesture on iOS), subscribe, and
+// register the device with the server. Returns true if notifications are now on.
+async function enablePush(pin) {
+	if (!pushSupported()) return false;
+	const perm = await Notification.requestPermission();
+	if (perm !== 'granted') return false;
+
+	const reg = await navigator.serviceWorker.ready;
+	let sub = await reg.pushManager.getSubscription();
+	if (!sub) {
+		sub = await reg.pushManager.subscribe({
+			userVisibleOnly: true,
+			applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY),
+		});
+	}
+
+	const res = await fetch(SUBSCRIBE_URL, {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			apikey: CHAT_CFG.supabaseAnonKey,
+		},
+		body: JSON.stringify({ pin, subscription: sub.toJSON() }),
+	});
+	return res.ok;
+}
+
 function fmtTime(iso) {
 	try {
 		const d = new Date(iso);
@@ -208,6 +273,7 @@ export function initFamilyChat(root, hooks = {}) {
 		root.innerHTML = `
       <div class="chat-head">
         <span class="chat-you"><strong>${myRole === 'maya' ? 'Maya 💕' : 'Dad'}</strong></span>
+        <button type="button" id="chat-bell-btn" class="chat-link-btn" hidden>🔔 Notify me</button>
         <button type="button" id="chat-lock-btn" class="chat-link-btn">Lock</button>
       </div>
       <div id="chat-log" class="chat-log" aria-live="polite"></div>
@@ -225,6 +291,27 @@ export function initFamilyChat(root, hooks = {}) {
 			clearSession();
 			teardown();
 			render();
+		});
+
+		// Notification bell: shown only when push is supported and not yet enabled.
+		// Enabling MUST happen from this tap (iOS requires a user gesture), and on
+		// iOS only works once the Lab is added to the Home Screen.
+		const bell = root.querySelector('#chat-bell-btn');
+		(async () => {
+			if ((await pushState()) === 'off') bell.hidden = false;
+		})();
+		bell.addEventListener('click', async () => {
+			bell.disabled = true;
+			const prev = bell.textContent;
+			bell.textContent = '…';
+			const ok = await enablePush(session.pin).catch(() => false);
+			bell.disabled = false;
+			if (ok) {
+				bell.hidden = true;
+			} else {
+				bell.textContent = Notification?.permission === 'denied' ? '🔕 Blocked' : prev;
+				if (Notification?.permission !== 'denied') bell.textContent = prev;
+			}
 		});
 
 		const messages = new Map();
@@ -628,6 +715,19 @@ function initChatWidget() {
 		peek.addEventListener('click', (e) => {
 			if (e.target.closest('.dad-peek-close')) return;
 			setPanelOpen(true);
+		});
+	}
+
+	// Opening from a push notification: the SW appends ?openChat=1 (cold open) and
+	// posts 'maya:open-chat' to an already-running Lab (warm focus). Both open chat.
+	try {
+		if (new URLSearchParams(location.search).get('openChat') === '1') {
+			setPanelOpen(true);
+		}
+	} catch (e) {}
+	if ('serviceWorker' in navigator) {
+		navigator.serviceWorker.addEventListener('message', (e) => {
+			if (e.data && e.data.type === 'maya:open-chat') setPanelOpen(true);
 		});
 	}
 
