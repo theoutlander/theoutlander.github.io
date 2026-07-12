@@ -16,6 +16,21 @@
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}
 
+	// Shared by every Lab experiment, so the area comes from the URL rather than
+	// being baked in — /judgement reports as judgement, not as lab.
+	function siteArea() {
+		var seg = window.location.pathname.split('/').filter(Boolean)[0];
+		return seg || 'lab';
+	}
+
+	// Landing on a page and actually using the thing are different signals, and
+	// only the second one answers "is anyone really playing this". Experiments
+	// call JTrack for the second; it no-ops off prod so local runs aren't counted.
+	window.JTrack = function (name, params) {
+		if (!isProd()) return;
+		window.gtag('event', name, params || {});
+	};
+
 	function loadGA() {
 		if (window.__gaLoaded) return;
 		window.__gaLoaded = true;
@@ -37,7 +52,7 @@
 			page_path: path.length > 1 ? path.replace(/\/+$/, '') : path,
 			page_title: document.title,
 			page_location: window.location.href,
-			site_area: 'lab',
+			site_area: siteArea(),
 		});
 	}
 

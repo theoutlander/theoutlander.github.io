@@ -13,6 +13,11 @@ export const redirects: Redirect[] = [
 		statusCode: 301,
 	},
 	{
+		source: "/labs",
+		destination: "/lab",
+		statusCode: 301,
+	},
+	{
 		source: "/judgment",
 		destination: "/judgement",
 		statusCode: 301,

@@ -111,6 +111,7 @@
         seats.push({ id: 'bot' + i, name: botNames[i - 1] || ('Bot ' + i), color: PLAYER_COLORS[i % PLAYER_COLORS.length], avatar: AVATARS[i % AVATARS.length], isBot: true });
       }
       const maxCards = Math.floor(52 / size);
+      window.JTrack && window.JTrack('game_start', { mode: 'bots', players: size });
       start(seats, { startCards: maxCards, scoring: 'classic', faceStyle: settings.faceStyle });
     }
     return e('div', { className: 'screen' },
