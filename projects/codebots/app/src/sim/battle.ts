@@ -76,6 +76,26 @@ function compile(source: string, api: string[]): () => Generator<Command, void, 
   ) as () => Generator<Command, void, unknown>;
 }
 
+/**
+ * Compile a bot's program, and if it won't compile, let that bot simply DO NOTHING.
+ *
+ * In the campaign a broken program is the kid's own, and she needs to see the error — so it throws,
+ * loudly, with a line number. In a battle the program might be SOMEBODY ELSE'S: a bot published by
+ * another nine-year-old and reviewed by no one, which can be half-finished, mistyped, or outright
+ * gibberish. Throwing there means her opponent's bad code crashes HER game, which is our bug and not
+ * hers, and "the other kid's bot broke my game" is the fastest way to lose a player.
+ *
+ * So a rival that cannot compile forfeits. It sits there and loses, which is exactly what a broken
+ * robot should do.
+ */
+function compileOrForfeit(source: string, api: string[]): Generator<Command, void, unknown> | null {
+  try {
+    return compile(source, api)();
+  } catch {
+    return null; // `gen: null` is already handled everywhere as "this bot takes no turns"
+  }
+}
+
 const key = (p: Vec2) => `${p.x},${p.y}`;
 
 export function runBattle(
@@ -97,7 +117,7 @@ export function runBattle(
       damage: e.stats?.damage ?? SHOOT_DAMAGE,
       range: e.stats?.range ?? SHOOT_RANGE,
       wrecked: false,
-      gen: compile(e.source, api)(),
+      gen: compileOrForfeit(e.source, api),
       done: false,
     };
   });

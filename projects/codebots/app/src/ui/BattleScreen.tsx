@@ -13,6 +13,8 @@ import { unknownCommandMessage } from "../sandbox/errors";
 import { analytics } from "../state/analytics";
 import { loadSave } from "../state/save";
 import { computeStats } from "../content/parts";
+import { fetchOpponents, leaderboard, publishBot, recordOutcome, type PublishedBot } from "../pvp/publish";
+import { currentAccount, cloudEnabled } from "../state/account";
 
 const BATTLE_EXTRA = ["enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight"];
 
@@ -61,10 +63,25 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
   const sfx = useRef<Sfx | null>(null);
 
   const [enemyId, setEnemyId] = useState("sniper");
+  // Real kids' bots, fetched once. They sit alongside the presets — a rival with a NAME is worth ten
+  // robots we wrote ourselves.
+  const [rivals, setRivals] = useState<PublishedBot[]>([]);
+  const [board, setBoard] = useState<PublishedBot[]>([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [publishMsg, setPublishMsg] = useState<string | null>(null);
+  const rival = rivals.find((r) => r.userId === enemyId) ?? null;
   const [code, setCode] = useState(STARTER);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<"win" | "lose" | "draw" | null>(null);
-  const enemy = presetById(enemyId)!;
+  // An opponent is either one of our presets or another kid's published bot. Normalise both into the
+  // same shape so the fight code never has to care which it is — a rival IS just a program, which is
+  // the whole reason this feature costs no infrastructure.
+  const preset = presetById(enemyId);
+  const enemy = preset
+    ? { name: preset.name, source: preset.source, stats: preset.stats, real: false as const, userId: null }
+    : rival
+      ? { name: `${rival.botName} (${rival.username})`, source: rival.source, stats: undefined, real: true as const, userId: rival.userId }
+      : { name: "SNIPER", source: PRESETS[1].source, stats: PRESETS[1].stats, real: false as const, userId: null };
 
   // Your Garage loadout feeds the fight — unless you've overloaded the frame, in which case the
   // gear doesn't fit and your bot rolls out stock. Weight is a real constraint, not a suggestion.
@@ -77,6 +94,14 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
   const [hp, setHp] = useState({ player: myMax, enemy: 100 });
   const [errorLine, setErrorLine] = useState<number | null>(null);
   const [status, setStatus] = useState("Write your bot's brain, then press FIGHT — once it starts, you can't steer it.");
+
+  useEffect(() => {
+    void (async () => {
+      setLoggedIn(!!(await currentAccount()));
+      setRivals(await fetchOpponents());
+      setBoard(await leaderboard());
+    })();
+  }, []);
 
   useEffect(() => {
     sfx.current = new Sfx();
@@ -113,7 +138,7 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
         ARENA,
         [
           { id: "me", source: code, isPlayer: true, stats: myStats },
-          { id: enemy.id, source: enemy.source, stats: enemy.stats },
+          { id: "them", source: enemy.source, stats: enemy.stats },
         ],
         [PLAYER_START, ENEMY_START],
         [...BATTLE_API, ...BATTLE_EXTRA],
@@ -123,7 +148,7 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
       setStatus(`Something tripped up: ${(e as Error).message}`);
       return;
     }
-    analytics.battleRun?.(enemy.id);
+    analytics.battleRun?.(enemyId);
     setRunning(true);
     setHp({ player: myMax, enemy: 100 });
     setStatus("FIGHT!");
@@ -136,7 +161,12 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
       onDone: () => {
         setRunning(false);
         setResult(res.outcome);
-        analytics.battleResult?.(enemy.id, res.outcome);
+        analytics.battleResult?.(enemyId, res.outcome);
+        // Her bot beat Maya's, and Maya isn't online to record her own loss — so we write the result
+        // to the opponent's row. The database only lets us add one to a counter, never anything else.
+        if (enemy.real && enemy.userId && res.outcome !== "draw") {
+          void recordOutcome(enemy.userId, res.outcome === "lose");
+        }
       },
     });
   }
@@ -159,6 +189,65 @@ export function BattleScreen({ paint }: { paint: { bodyColor: number; domeColor:
             ))}
           </div>
         </Panel>
+        {rivals.length ? (
+          <Panel label="REAL RIVALS">
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {rivals.map((r) => (
+                <button key={r.userId} onClick={() => { if (!running) { setEnemyId(r.userId); setResult(null); } }}
+                  style={{ all: "unset", cursor: running ? "default" : "pointer", padding: "8px 10px", borderRadius: 8,
+                    border: `1.5px solid ${r.userId === enemyId ? "var(--green)" : "var(--line)"}`,
+                    background: r.userId === enemyId ? "rgba(111,227,165,.08)" : "transparent" }}>
+                  <div style={{ fontSize: "var(--text-sm)", fontWeight: 700, color: "var(--ink)" }}>{r.botName}</div>
+                  <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)" }}>
+                    {r.username} · {r.wins}W {r.losses}L
+                  </div>
+                </button>
+              ))}
+            </div>
+          </Panel>
+        ) : null}
+
+        {/* Publishing is the whole retention loop: her bot keeps fighting while she's asleep, and she
+            comes back to find out what happened. Say plainly what it means — a kid should never be
+            surprised to discover strangers have been playing against something of hers. */}
+        {cloudEnabled && loggedIn ? (
+          <Panel label="YOUR BOT">
+            <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-body)", marginBottom: 8 }}>
+              Publish your bot and other kids will fight it while you're away. They see your code's
+              MOVES, never your code.
+            </div>
+            <Button variant="quiet" size="sm" disabled={running}
+              onClick={async () => {
+                setPublishMsg("publishing…");
+                const ok = await publishBot(code, "MY BOT");
+                setPublishMsg(ok ? "Published. It's fighting for you now." : "Couldn't publish — try again in a bit.");
+                setRivals(await fetchOpponents());
+                setBoard(await leaderboard());
+              }}>
+              ▲ PUBLISH MY BOT
+            </Button>
+            {publishMsg ? (
+              <div style={{ fontSize: "var(--text-2xs)", color: "var(--text-dim)", marginTop: 6 }}>{publishMsg}</div>
+            ) : null}
+          </Panel>
+        ) : null}
+
+        {board.length ? (
+          <Panel label="LEADERBOARD">
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {board.map((b, i) => (
+                <div key={b.userId} style={{ display: "flex", gap: 8, fontSize: "var(--text-2xs)" }}>
+                  <span style={{ color: "var(--text-dim)", width: 16 }}>{i + 1}</span>
+                  <span style={{ color: "var(--ink)", fontWeight: 700, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {b.botName}
+                  </span>
+                  <span style={{ color: "var(--green)" }}>{b.wins}W</span>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        ) : null}
+
         <Panel label="HOW TO WIN">
           <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
             Reach the beacon <b>or</b> wreck your rival. Your program IS the bot's brain — once the
