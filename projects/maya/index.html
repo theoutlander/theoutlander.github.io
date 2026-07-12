@@ -607,6 +607,7 @@ function openGame(file,title){
   }else{
     history.pushState({mayaIframe:true,file:file},'',url);
   }
+  if(window.mayaTrackPageView)window.mayaTrackPageView();
 }
 function updateModalBackLabel(){
   const mc=document.getElementById('mc');
@@ -630,6 +631,7 @@ function onGameModalPopState(){
     if(!history.state||!history.state.mayaIframe){
       history.replaceState({mayaIframe:true,file:file},'',resolveGameUrl(file));
     }
+    if(window.mayaTrackPageView)window.mayaTrackPageView();
   }
 }
 window.addEventListener('popstate',onGameModalPopState);

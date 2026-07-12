@@ -73,6 +73,24 @@ describe("the league is fair", () => {
     );
   });
 
+  it("every board is the SAME board for both bots — 180° rotational symmetry", () => {
+    // Not a mirror. Turning isn't reflection-symmetric: a bot facing east that calls left() goes
+    // north, but its REFLECTED twin faces west and left() takes it south. Rotate instead and east
+    // becomes west, north becomes south, and left stays left — so the two bots genuinely face the
+    // same problem, and only the code can separate them.
+    for (let i = 0; i < 25; i++) {
+      const a = board(i * 104729 + 3).arena;
+      for (let y = 0; y < a.rows; y++) {
+        for (let x = 0; x < a.cols; x++) {
+          expect(
+            a.cells[y][x],
+            `board ${i} is not rotationally symmetric at (${x},${y}) — the geometry, not the code, would decide fights`,
+          ).toBe(a.cells[a.rows - 1 - y][a.cols - 1 - x]);
+        }
+      }
+    }
+  });
+
   it("every board leaves the centre lane open — a walled middle means the bots never meet", () => {
     // we shipped this once: cover across the lane, and every fight ended a scoreless 200-round draw.
     // A very quiet way to have no game at all.
@@ -87,7 +105,7 @@ describe("the league is fair", () => {
     const other = { ...TURTLE, id: "turtle2", name: "turtle2" };
     const m = playMatch(TURTLE, other);
     expect(m.winner).toBe("draw");
-    expect(m.draws).toBe(BOARDS_PER_MATCH * 2);
+    expect(m.draws).toBe(BOARDS_PER_MATCH);
   });
 
   it("the standings are a FUNCTION of the programs — same bots in, same table out", () => {

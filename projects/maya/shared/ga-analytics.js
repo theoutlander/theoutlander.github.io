@@ -61,4 +61,15 @@
 	(window.requestIdleCallback || function (cb) {
 		setTimeout(cb, 1500);
 	})(loadGA);
+
+	// Called by the portal after it pushState's to a game's URL (in-modal open,
+	// no real navigation/reload) so each game shows up as its own page_view in
+	// GA instead of collapsing into the portal's single initial-load hit.
+	window.mayaTrackPageView = function () {
+		if (window.__gaLoaded) {
+			trackMayaPageView();
+		} else {
+			loadGA();
+		}
+	};
 })();

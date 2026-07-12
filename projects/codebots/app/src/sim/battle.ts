@@ -258,20 +258,25 @@ export function runBattle(
     "enemyAhead", "enemyNear", "closerAhead", "enemyLeft", "enemyRight", "hurt",
   ]);
 
-  /** Advance one bot until it performs a world action (or finishes). Sensors resolved inline. */
-  function takeTurn(self: Bot): void {
-    if (self.wrecked || self.done || !self.gen) return;
+  /**
+   * Step a bot's program until it wants to DO something — but don't do it yet.
+   *
+   * This is the half that makes the fight simultaneous. Every bot chooses its action while the world
+   * still looks exactly as it did at the start of the tick, so nobody is reacting to a move their
+   * opponent has already made. Deciding and acting are separate phases; see the round loop.
+   */
+  function chooseAction(self: Bot): Command | null {
+    if (self.wrecked || self.done || !self.gen) return null;
     let result: unknown = undefined;
     for (let think = 0; think < MAX_THINK; think++) {
       const step = self.gen.next(result);
-      if (step.done) { self.done = true; return; }
+      if (step.done) { self.done = true; return null; }
       const cmd = step.value;
       if (SENSORS.has(cmd.name)) { result = sense(self, cmd.name); continue; }
-      // a world action — do it, then this bot's turn is over
-      applyAction(self, cmd);
-      return;
+      return cmd;
     }
-    // thought too long without acting (e.g. while(true) sensing) — skip the turn to avoid a hang
+    // thought too long without acting (e.g. while(true) sensing) — forfeit the tick rather than hang
+    return null;
   }
 
   function applyAction(self: Bot, cmd: Command): void {
@@ -300,6 +305,11 @@ export function runBattle(
   const player = bots.find((b) => b.isPlayer)!;
 
   function decide(): BattleOutcome | null {
+    // Simultaneous fire means both bots can die on the SAME tick — each one's shot was already in
+    // the air when the other's landed. That is a draw. Calling it a loss for the player would be
+    // handing the win to whoever we happened to list second, which is the exact bias we removed.
+    const enemiesAllWrecked = bots.filter((b) => !b.isPlayer).every((b) => b.wrecked);
+    if (player.wrecked && enemiesAllWrecked) return "draw";
     if (player.wrecked) return "lose";
     const enemies = bots.filter((b) => !b.isPlayer);
     const enemiesLeft = enemies.filter((b) => !b.wrecked).length;
@@ -311,17 +321,86 @@ export function runBattle(
     return null;
   }
 
+  /**
+   * THE TICK. Everybody moves at once.
+   *
+   * It used to be strictly sequential — bot 0 took a whole turn, then bot 1 took a whole turn — and
+   * that quietly decided fights. Bot 0 always shot first, so against an identical opponent it won
+   * every single time. Measured: same program on both sides, 20 fights, the left seat won 20-0. In a
+   * league, that means children would have been ranked by which side of the board they were listed
+   * on. No amount of arena balancing fixes that, because the bias isn't in the arena.
+   *
+   * Real bot-battle games (Robocode, Screeps, and friends) don't take turns. A tick has two phases:
+   *
+   *   DECIDE   every bot picks its action against the SAME unchanged world. Nobody has moved yet, so
+   *            nobody is reacting to a move their opponent made "earlier this tick" — there is no
+   *            earlier. Sensors all read the same snapshot.
+   *
+   *   RESOLVE  every action lands together. Shots are fired at where their targets WERE when the
+   *            trigger was pulled, which is the only symmetric rule: you cannot dodge a bullet aimed
+   *            at you this tick, and neither can they. Two bots can kill each other on the same tick,
+   *            and that is a draw, and it is correct.
+   *
+   * Movement is resolved against pre-tick occupancy, so a bot may roll into a square another bot is
+   * leaving. But two bots may never end up in the same square, and they may never swap through each
+   * other — those cancel, and both bump.
+   */
   for (round = 1; round <= maxRounds; round++) {
-    for (const b of bots) {
-      if (b.wrecked || b.done) continue;
-      takeTurn(b);
+    // ---- DECIDE: everyone chooses, blind to what the others chose ----
+    const intents = bots.map((b) => (b.wrecked || b.done ? null : chooseAction(b)));
+
+    // ---- RESOLVE (1): shots, all at once, all aimed at the pre-tick world ----
+    //
+    // Note `aliveAtTickStart`, and not `!b.wrecked`. If we checked liveness AS WE FIRED, the bot we
+    // happened to iterate first could kill the second and the second's shot would never leave the
+    // barrel — the sequential bias creeping straight back in through the shooting phase. Both
+    // triggers were pulled at the same instant. Both bullets fly, even if one of them is fired by a
+    // bot that is already dead by the time it lands. That's what makes mutual destruction possible,
+    // and mutual destruction is exactly what two identical bots deserve.
+    const aliveAtTickStart = bots.map((b) => !b.wrecked);
+    bots.forEach((b, i) => {
+      if (intents[i]?.name === "shoot" && aliveAtTickStart[i]) fire(b);
+    });
+
+    // ---- RESOLVE (2): movement, with collisions cancelled rather than raced ----
+    const movers = bots.filter((b, i) => intents[i] && intents[i]!.name !== "shoot" && !b.wrecked);
+    const before = new Map(bots.map((b) => [b.index, { ...b.pos }]));
+    const planned = new Map<number, { pos: Vec2; facing: Facing; cmd: Command }>();
+
+    for (const b of movers) {
+      const cmd = intents[b.index]!;
+      const { state: next } = executeCommand(worldFor(b), { ...botState(b) }, cmd);
+      planned.set(b.index, { pos: next.pos, facing: next.facing, cmd });
+    }
+
+    // two bots may not land on the same square, and may not swap straight through one another
+    const cancelled = new Set<number>();
+    for (const a of movers) {
+      for (const c of movers) {
+        if (a.index >= c.index) continue;
+        const pa = planned.get(a.index)!, pc = planned.get(c.index)!;
+        const sameSquare = pa.pos.x === pc.pos.x && pa.pos.y === pc.pos.y;
+        const swapped =
+          pa.pos.x === before.get(c.index)!.x && pa.pos.y === before.get(c.index)!.y &&
+          pc.pos.x === before.get(a.index)!.x && pc.pos.y === before.get(a.index)!.y;
+        if (sameSquare || swapped) { cancelled.add(a.index); cancelled.add(c.index); }
+      }
+    }
+
+    for (const b of movers) {
+      if (cancelled.has(b.index)) {
+        events.push({ round, bot: b.index, type: "bump", at: { ...b.pos } });
+        continue;
+      }
+      applyAction(b, intents[b.index]!);
       if (b.isPlayer && atBeacon(b) && (winRule === "reachBeacon" || winRule === "both")) {
         events.push({ round, bot: b.index, type: "reach", at: { ...b.pos } });
       }
-      const decided = decide();
-      if (decided) {
-        return { outcome: decided, events, rounds: round, survivors: bots.filter((x) => !x.wrecked).map((x) => x.index) };
-      }
+    }
+
+    const decided = decide();
+    if (decided) {
+      return { outcome: decided, events, rounds: round, survivors: bots.filter((x) => !x.wrecked).map((x) => x.index) };
     }
     // everyone finished their program without a decision → stop (draw)
     if (bots.every((b) => b.done || b.wrecked)) break;

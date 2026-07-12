@@ -65,24 +65,39 @@ export interface Board {
 }
 
 /**
- * Build one board. Size varies, cover varies, and it does NOT have to be balanced — the swap takes
- * care of that. Cover is kept off the centre lane: wall the middle and the bots simply never find
- * each other, and every fight ends a scoreless 200-round draw. (We shipped that once. It's a very
- * quiet way to have no game.)
+ * Build one board — with 180° ROTATIONAL symmetry.
+ *
+ * Not a mirror. A rotation. The difference matters and it is easy to get wrong:
+ *
+ * Reflect the board left-to-right and the two bots are NOT in the same situation, because turning is
+ * not reflection-symmetric. A bot facing east that calls left() goes north; its reflected twin faces
+ * west, and left() sends it SOUTH. The same program in the mirrored position behaves differently, and
+ * the fight is decided by the geometry rather than the code.
+ *
+ * Rotate the board 180° about its centre and everything lines up: east becomes west, north becomes
+ * south, and a left turn stays a left turn. Bot A's world, rotated, IS bot B's world. Identical
+ * programs therefore play identical fights and kill each other on the same tick — a draw, which is
+ * the honest answer, and the thing the mirror-match test checks.
+ *
+ * The centre lane always stays open. We shipped a walled middle once and every fight ended a
+ * scoreless 200-round draw: a very quiet way to have no game at all.
  */
 export function board(seed: number): Board {
   const r = rng(seed);
-  const cols = int(r, 13, 19) | 1; // odd, so there's a true centre line
+  const cols = int(r, 13, 19) | 1; // odd, so there's a true centre
   const rows = int(r, 7, 11) | 1;
   const mid = (rows - 1) / 2;
   const cells: CellKind[][] = Array.from({ length: rows }, () => Array<CellKind>(cols).fill("floor"));
 
-  const blocks = int(r, 6, 12);
+  const blocks = int(r, 3, 6);
   for (let i = 0; i < blocks; i++) {
     const x = int(r, 2, cols - 3);
     const y = int(r, 0, rows - 1);
-    if (y === mid) continue; // never block the lane they meet in
+    if (y === mid) continue; // never wall the lane they meet in
     cells[y][x] = "wall";
+    // ...and its partner under a 180° turn. Whatever cover one bot gets, the other gets exactly.
+    const rx = cols - 1 - x, ry = rows - 1 - y;
+    if (ry !== mid) cells[ry][rx] = "wall";
   }
 
   return {
@@ -141,14 +156,15 @@ export function playMatch(a: Fighter, b: Fighter): MatchResult {
   const seed = matchSeed(a.id, b.id);
   let wins = 0, losses = 0, draws = 0;
 
+  // One fight per board — no seat-swapping. We used to play every board twice with the sides
+  // reversed, to cancel out the fact that whoever went first shot first. That was a plaster over an
+  // engine bug: the fight is SIMULTANEOUS now, so there is no "first", and the seat is worth nothing.
+  // Fixing the tick beat compensating for it.
   for (let i = 0; i < BOARDS_PER_MATCH; i++) {
-    const bd = board(seed + i * 7919);
-    for (const aOnLeft of [true, false]) {
-      const r = fightOnce(a, b, bd, aOnLeft);
-      if (r === "a") wins++;
-      else if (r === "b") losses++;
-      else draws++;
-    }
+    const r = fightOnce(a, b, board(seed + i * 7919), true);
+    if (r === "a") wins++;
+    else if (r === "b") losses++;
+    else draws++;
   }
 
   return { wins, losses, draws, winner: wins > losses ? "a" : losses > wins ? "b" : "draw" };

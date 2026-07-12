@@ -17,13 +17,15 @@
  *
  * Now each has exactly one weakness, and each weakness is a different thing to write:
  *
- *   PATROLLER  wanders; never comes looking          → you have to HUNT it
- *   SNIPER     out-ranges you, but made of glass     → break its line with a wall, then close
- *   CHASER     tanky, but must get close to hurt you → KITE it: back away and keep firing
+ *   PATROLLER  wanders; never comes looking          → you have to HUNT it (closerAhead)
+ *   SNIPER     out-ranges you, but made of glass     → you MUST close; holding your ground just
+ *                                                       stalemates against a turret that sees further
+ *   CHASER     must get close to hurt you            → do NOT charge it; hold, and out-range it
  *
- * That last one was impossible until the sim learned `hurt()`. A bot had no way to know it was losing,
- * so retreating wasn't a hard strategy — it was an unwritable one, and the whole arena collapsed into
- * "whoever shoots first wins".
+ * The fight is SIMULTANEOUS now — both bots choose against the same frozen world and both actions land
+ * together — which changed the maths completely. Trading damage is symmetric, so simply having more
+ * armour wins an exchange, and "charge everything and shoot" stopped being a universal answer. That's
+ * the point: each of these now dies to a different idea.
  */
 export const BATTLE_API = [
   "forward", "back", "left", "right", "honk", "shoot",
@@ -88,9 +90,9 @@ export const PRESETS: Preset[] = [
   {
     id: "chaser",
     name: "CHASER",
-    stats: { range: 3, armor: 150 },
+    stats: { range: 3, armor: 105 },
     desc: "Heavily armoured and relentless. It will run you down — but it has to get close to hurt you.",
-    weakness: "It only shoots from 3 squares away. You shoot from 6. Back away while firing and it dies on the way in.",
+    weakness: "It only shoots from 3 squares. You shoot from 6. DON'T charge it — hold your ground, fire as it comes, and it dies on the way in.",
     source: [
       "while (true) {",
       "  if (enemyAhead()) {",
