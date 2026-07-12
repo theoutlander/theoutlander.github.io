@@ -847,6 +847,7 @@ function showToast(msg){
     if(!active) return;
     active=false;
     if(!armed){ reset(); return; }
+    localStorage.setItem('mayaPTRUsed','1');
     refreshing=true;
     ptr.classList.add('snap','spin');
     ptr.style.transform='translate(-50%,18px)';
@@ -857,6 +858,21 @@ function showToast(msg){
   }
   window.addEventListener('touchend',end,{passive:true});
   window.addEventListener('touchcancel',function(){ active=false; reset(); },{passive:true});
+
+  // first-time tip: briefly show the pill on load so she discovers pull-to-refresh
+  if(!localStorage.getItem('mayaPTRUsed')){
+    setTimeout(function(){
+      if(active||document.body.classList.contains('maya-game-open')) return;
+      txt.textContent='Pull down for new games! ✨';
+      ptr.classList.add('snap');
+      ptr.style.transform='translate(-50%,18px)';
+      setTimeout(function(){
+        if(active) return;
+        reset();
+        txt.textContent='Pull down to refresh…';
+      },3200);
+    },1200);
+  }
 })();
 </script>
 <script type="module" src="shared/family-chat.js"></script>

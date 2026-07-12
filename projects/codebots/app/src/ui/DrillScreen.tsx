@@ -6,6 +6,7 @@ import { Sfx } from "../sound/sfx";
 import { mountArena, type MountedArena } from "../view/mountArena";
 import { SandboxClient } from "../sandbox/sandboxClient";
 import { DRILLS, availableDrills, drillArenas, drillPassed, type DrillFamily } from "../content/drills";
+import { countCodeLines } from "../sandbox/lines";
 import { loadSave, saveSave } from "../state/save";
 import { analytics } from "../state/analytics";
 import type { Mission } from "../sim/engine";
@@ -98,9 +99,29 @@ export function DrillScreen({
   async function run() {
     const c = client.current;
     if (!c || running) return;
+
+    // Check the drill's own rules BEFORE running. A budget or a required construct isn't a gotcha —
+    // it's the thing that makes the drill impossible to brute-force — so she has to be told plainly,
+    // up front, rather than watching a run fail for a reason the arena never shows.
+    if (family.maxLines) {
+      const lines = countCodeLines(code);
+      if (lines > family.maxLines) {
+        setStatus(
+          `That's ${lines} lines, and you get ${family.maxLines}. Writing every move out by hand won't fit — that's the point. Find the part that repeats.`,
+        );
+        return;
+      }
+    }
+    for (const word of family.mustUse ?? []) {
+      if (!code.includes(word)) {
+        setStatus(`This drill is practice for ${word}. Your program has to use it.`);
+        return;
+      }
+    }
+
     setRunning(true);
     setPassed(false);
-    setStatus("Running your program on all three fields…");
+    setStatus(fields.length > 1 ? `Running your program on all ${fields.length} fields…` : "Running…");
 
     // Run every field headlessly first, so the scoreboard is honest before any animation plays.
     const outcomes: boolean[] = [];
@@ -200,8 +221,14 @@ export function DrillScreen({
         </Panel>
         <Panel label="THE RULE">
           <div style={{ fontSize: "var(--text-xs)", color: "var(--text-body)", lineHeight: "var(--leading-body)" }}>
-            One program. Three fields. You pass only if your bot <b>parks on the beacon</b> in all
-            three. You can't count squares here — the fields aren't the same.
+            {fields.length > 1 ? (
+              <>One program. {fields.length} fields. You pass only if your bot <b>parks on the beacon</b> in
+              every one. You can't count squares here — the fields aren't the same.</>
+            ) : (
+              <>A field you've never seen, fresh every attempt. Your bot must <b>park on the beacon</b>.</>
+            )}
+            {family.maxLines ? <> You get <b>{family.maxLines} lines</b>.</> : null}
+            {family.mustUse?.length ? <> Your program must use <b>{family.mustUse.join(", ")}</b>.</> : null}
           </div>
         </Panel>
         <Panel label="STUCK?">
@@ -214,7 +241,7 @@ export function DrillScreen({
             {drills.map((d) => (
               <button
                 key={d.key}
-                onClick={() => { if (!running && d.key !== family.key) { setFamily(d); setResults([null, null, null]); setPassed(false); setShown(0); } }}
+                onClick={() => { if (!running && d.key !== family.key) { setFamily(d); setResults([null, null, null]); setPassed(false); setShown(0); setStatus('Write ONE program. It has to work on every field.'); } }}
                 style={{ all: "unset", cursor: running ? "default" : "pointer", padding: "7px 9px", borderRadius: 8,
                   border: `1.5px solid ${d.key === family.key ? "var(--amber)" : "var(--line)"}`,
                   background: d.key === family.key ? "rgba(255,180,84,.08)" : "transparent" }}
@@ -228,7 +255,7 @@ export function DrillScreen({
       </div>
 
       <div style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 8 }}>
-        <div style={{ display: "flex", gap: 8 }}>{[0, 1, 2].map(chip)}</div>
+        <div style={{ display: "flex", gap: 8 }}>{fields.map((_, n) => chip(n))}</div>
         <div ref={host} style={{ flex: 1, minHeight: 0, borderRadius: 10, overflow: "hidden", position: "relative" }}>
           {passed ? (
             <div style={{ position: "absolute", inset: 0, display: "grid", placeItems: "center", zIndex: 5, pointerEvents: "none" }}>
@@ -245,7 +272,7 @@ export function DrillScreen({
         <div style={{ flex: 1, minHeight: 0 }}>
           <Editor value={code} onChange={setCode} onRun={run} errorLine={null} world={fields[0].world} />
         </div>
-        <Button onClick={run} disabled={running}>{running ? "■ TESTING…" : "▶ RUN ON ALL 3"}</Button>
+        <Button onClick={run} disabled={running}>{running ? "■ TESTING…" : fields.length > 1 ? `▶ RUN ON ALL ${fields.length}` : "▶ RUN"}</Button>
       </div>
     </div>
   );
