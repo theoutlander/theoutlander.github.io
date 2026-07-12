@@ -9,34 +9,25 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="game/styles.css" />
-  <link rel="stylesheet" href="game/table.css" />
-  <link rel="stylesheet" href="game/screens.css" />
-  <link rel="stylesheet" href="game/a11y.css" />
-  <script src="/lab/shared/ga-analytics.js" defer></script>
+  <!-- Site-wide analytics. Injected at runtime rather than declared as <script src="/lab/...">
+       because that path is resolved by the *site* build, not this one — Vite would try to find
+       it inside projects/judgement/ and fail. -->
+  <script>
+    (function () {
+      var s = document.createElement('script');
+      s.src = '/lab/shared/ga-analytics.js';
+      s.defer = true;
+      document.head.appendChild(s);
+    })();
+  </script>
+  <script type="module" crossorigin src="/judgement/assets/index-C4w--564.js"></script>
+  <link rel="stylesheet" crossorigin href="/judgement/assets/index-DmZ7d4nA.css">
 </head>
 <body>
   <div id="app"></div>
 
-  <!-- React + Babel -->
-  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
-  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
-
-  <!-- plain JS modules -->
-  <script src="game/engine.js"></script>
-  <script src="game/sound.js"></script>
-  <script src="game/themes.js"></script>
-  <script src="game/net.js"></script>
-
-  <!-- React components (Babel) -->
-  <script type="text/babel" src="game/cards.jsx"></script>
-  <script type="text/babel" src="game/ui.jsx"></script>
-  <script type="text/babel" src="game/table.jsx"></script>
-  <script type="text/babel" src="game/table_screen.jsx"></script>
-  <script type="text/babel" src="game/home_setup.jsx"></script>
-  <script type="text/babel" src="game/lobby.jsx"></script>
-  <script type="text/babel" src="game/standings.jsx"></script>
-  <script type="text/babel" src="game/app.jsx"></script>
+  <!-- One bundle. React, the engine, and every screen are compiled ahead of time by Vite.
+       This used to be a CDN copy of React plus @babel/standalone (~1MB) transpiling eight
+       game/*.jsx files in the browser on every single page load. -->
 </body>
 </html>
