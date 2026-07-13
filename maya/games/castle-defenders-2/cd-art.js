@@ -467,25 +467,28 @@ Art.face = function(scene, container, dir){
 Art.buildAnimal = function(scene, x, y, species){
   const A = CD.TREE_ANIMALS[species];
   if (!A) return null;
-  const c = scene.add.container(x, y).setDepth(y + 200);
+  /* Depth 980 — ABOVE every tree, flat, not derived from y.
+     A y-based depth put the Grandpa Tree's monkey (high in a tall canopy, so a SMALL y) at 434,
+     underneath the trees at 521: the tree swallowed the tap and the knight walked over and chopped
+     it instead. "If I click it, it chops the tree." Tree friends always win the tap now. */
+  const c = scene.add.container(x, y).setDepth(980);
 
-  const glow = scene.add.circle(0, 0, 26, 0xFFE082, 0.28);
-  const body = Art.emoji(scene, 0, 0, A.emoji, 36);
-  const zzz  = Art.emoji(scene, 16, -20, '😴', 20).setVisible(false);
-  const bang = scene.add.text(15, -22, '!', {
-    fontFamily: '"Fredoka One", sans-serif', fontSize: '22px',
-    color: '#FFD24D', stroke: '#3B2A45', strokeThickness: 5
-  }).setOrigin(0.5);
-  c.add([glow, body, bang, zzz]);
+  const glow = scene.add.circle(0, 0, 28, 0xFFE082, 0.3);
+  const body = Art.emoji(scene, 0, 0, A.emoji, 38);
+  const zzz  = Art.emoji(scene, 18, -22, '😴', 20).setVisible(false);
+  /* Not a bare "!" — nobody knew what that meant. Show WHAT HE'LL DO: the monkey holds up a
+     banana, the parrot a log, and so on. The icon IS the instruction. */
+  const ready = Art.emoji(scene, 20, -22, A.icon, 22);
+  c.add([glow, body, ready, zzz]);
 
-  // 44px+ hit area — she is 8 and this is a touchscreen
-  c.setSize(56, 56);
-  c.setInteractive(new Phaser.Geom.Rectangle(-28, -28, 56, 56), Phaser.Geom.Rectangle.Contains);
+  // Generous touch target — she is 8, on a touchscreen, and the canopy is busy
+  c.setSize(80, 80);
+  c.setInteractive(new Phaser.Geom.Rectangle(-40, -40, 80, 80), Phaser.Geom.Rectangle.Contains);
 
   scene.tweens.add({ targets: c, y: y - 6, duration: CD.rnd(700, 1000), yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   scene.tweens.add({ targets: glow, alpha: 0.5, scale: 1.15, duration: 900, yoyo: true, repeat: -1 });
 
-  c.animalData = { species, body, zzz, bang, glow, ready: true };
+  c.animalData = { species, body, zzz, ready, glow, isReady: true };
   return c;
 };
 
@@ -493,9 +496,9 @@ Art.buildAnimal = function(scene, x, y, species){
 Art.setAnimalReady = function(a, ready){
   if (!a || !a.animalData) return;
   const d = a.animalData;
-  d.ready = ready;
+  d.isReady = ready;
   d.zzz.setVisible(!ready);
-  d.bang.setVisible(ready);
+  d.ready.setVisible(ready);
   d.glow.setVisible(ready);
   d.body.setAlpha(ready ? 1 : 0.55);
 };

@@ -99,6 +99,71 @@ function clearAnimal(sp){
   if (sp.animalNap){ sp.animalNap.remove(false); sp.animalNap = null; }
 }
 
+/* His tree is being chopped down. He does NOT just blink out of existence — he leaps to another
+   big tree of his own kind, and if there isn't one he takes refuge on the castle roof and waits
+   for you to grow him a new home. */
+function homeFor(species, notIdx){
+  const home = spots.find(o =>
+    o.idx !== notIdx && !o.animal && o.tree && o.tree.treeData &&
+    !o.tree.treeData.falling &&
+    o.tree.treeData.stage >= CD.ANIMAL_MIN_STAGE &&
+    CD.speciesOf(o.idx) === species);
+  return home || null;
+}
+
+function evictAnimal(sp){
+  const a = sp.animal;
+  if (!a){ clearAnimal(sp); return; }
+  if (sp.animalNap){ sp.animalNap.remove(false); sp.animalNap = null; }
+  sp.animal = null;
+
+  const species = a.animalData.species;
+  const A = CD.TREE_ANIMALS[species];
+  const home = homeFor(species, sp.idx);
+
+  if (home){
+    // leap to the new tree, arcing over the garden
+    const d = home.tree.treeData;
+    const tx = home.tree.x + CD.rnd(-14, 14);
+    const ty = CD.groundY(home.idx) - d.h + d.canopy * 0.35;
+    const sx = a.x, sy = a.y, peak = Math.min(sy, ty) - 90;
+    home.animal = a;
+    a.on('pointerdown', () => {});                 // handler is rebound below
+    a.removeAllListeners('pointerdown');
+    a.on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); callAnimal(home); });
+    S.tweens.add({
+      targets: a, duration: 600, ease: 'Sine.inOut',
+      onUpdate: (tw) => {
+        const t = tw.progress;
+        a.x = sx + (tx - sx) * t;
+        a.y = (1-t)*(1-t)*sy + 2*(1-t)*t*peak + t*t*ty;
+      }
+    });
+    CD.floatText(sx, sy - 40, A.emoji + ' Wheee! New tree!', { size: 19, color: '#FFF3B0' });
+    return;
+  }
+
+  // nowhere to go — hop onto the castle roof and wait for a new home
+  const tx = CD.rnd(150, 210), ty = 250;
+  const sx = a.x, sy = a.y, peak = Math.min(sy, ty) - 100;
+  CD.Art.setAnimalReady(a, false);
+  a.disableInteractive();
+  S.tweens.add({
+    targets: a, duration: 750, ease: 'Sine.inOut',
+    onUpdate: (tw) => {
+      const t = tw.progress;
+      a.x = sx + (tx - sx) * t;
+      a.y = (1-t)*(1-t)*sy + 2*(1-t)*t*peak + t*t*ty;
+    },
+    onComplete: () => {
+      if (!a.scene) return;
+      CD.floatText(a.x, a.y - 34, A.emoji + ' Grow me a new tree!', { size: 18, color: '#FFF3B0' });
+      // sit on the roof, then fade — he'll come back when a big tree of his kind exists again
+      S.tweens.add({ targets: a, alpha: 0, duration: 700, delay: 2200, onComplete: () => a.destroy() });
+    }
+  });
+}
+
 function ensureAnimal(sp){
   clearAnimal(sp);
   const tree = sp.tree;
@@ -542,7 +607,7 @@ function fellTree(sp){
   d.falling = true;
   tree.disableInteractive();
   clearGrow(sp);
-  clearAnimal(sp);        // his house is coming down — he hops off before it falls
+  evictAnimal(sp);        // his house is coming down — he leaps clear before it falls
   const gy = CD.groundY(sp.idx);
   const golden = CD.hasTool('golden');
   const woodGain = d.wood * (golden ? 2 : 1);

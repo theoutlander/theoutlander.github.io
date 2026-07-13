@@ -18,7 +18,7 @@ importScripts("shared/extract-asset-urls.js");
 /* v3 -> v4: tree friends (the monkeys). BUMP THIS WITH EVERY GAME CHANGE. The fetch handler is
    cache-first, so a cached device keeps running the OLD game .js after a deploy and the new
    feature simply is not there — the deploy looks like it silently did nothing. */
-var CACHE_VERSION = "v4";
+var CACHE_VERSION = "v5";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 

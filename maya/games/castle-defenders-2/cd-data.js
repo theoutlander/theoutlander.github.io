@@ -116,15 +116,15 @@ window.CD = {
      Tap the animal to call it — it does its trick, then naps for a bit. No shop, no unlock:
      she just grows a big tree and a friend shows up. */
   TREE_ANIMALS: {
-    oak:     { emoji: '🐒', name: 'Monkey',  call: 'Bananas away! 🍌', help: 'bananas',
+    oak:     { emoji: '🐒', name: 'Monkey',  call: 'Bananas away! 🍌', help: 'bananas', icon: '🍌',
                desc: 'Throws bananas and chops your other trees!' },
-    cherry:  { emoji: '🐦', name: 'Birdie',  call: 'Tweet tweet! 🎵',  help: 'grow',
+    cherry:  { emoji: '🐦', name: 'Birdie',  call: 'Tweet tweet! 🎵',  help: 'grow', icon: '🎵',
                desc: 'Sings to the garden — everything grows faster!' },
-    apple:   { emoji: '🐝', name: 'Buzzy',   call: 'Bzzzz! 🍎',        help: 'apple',
+    apple:   { emoji: '🐝', name: 'Buzzy',   call: 'Bzzzz! 🍎',        help: 'apple', icon: '🍎',
                desc: 'Makes an extra apple — a bonus heart tonight!' },
-    candy:   { emoji: '🦜', name: 'Polly',   call: 'Squawk! 🪵',       help: 'wood',
+    candy:   { emoji: '🦜', name: 'Polly',   call: 'Squawk! 🪵',       help: 'wood', icon: '🪵',
                desc: 'Drops a beakful of wood!' },
-    rainbow: { emoji: '🦄', name: 'Sparkle', call: 'MAGIC! ✨',        help: 'surprise',
+    rainbow: { emoji: '🦄', name: 'Sparkle', call: 'MAGIC! ✨',        help: 'surprise', icon: '✨',
                desc: 'A magical surprise, every single time!' }
   },
   ANIMAL_MIN_STAGE: 2,      // must be a Big Tree before anyone moves in
