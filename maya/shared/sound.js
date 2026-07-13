@@ -297,7 +297,11 @@
 	   game, music is a mood — she may well want one without the other. Mute still wins over both. */
 
 	var MUSIC_KEY = 'maya_music';
-	var MUSIC_LEVEL = 0.25; // music bus, against effects arriving at the master at 1.0
+	/* Music sits UNDER the game, not next to it. 0.25 was still loud enough to be the thing you
+	   noticed instead of the thing you felt — "too loud, needs to be subtle in the background".
+	   Effects arrive at the master at 1.0; this is the only attenuation on the music path, so it
+	   is the one knob that matters. */
+	var MUSIC_LEVEL = 0.12;
 
 	function readMusicOn() {
 		try {
@@ -361,7 +365,12 @@
 		'maya-shop': { root: 62, scale: 'majPent', bpm: 100, pad: 'triangle', lead: 'square', density: 0.45, swing: 0.18, gain: 0.85 },
 		'mayas-delivery-service': { root: 59, scale: 'mixolydian', bpm: 116, pad: 'triangle', lead: 'square', density: 0.5, swing: 0.2, gain: 0.85 },
 		// Escape room. Tense, low, sparse — suspense, not scares.
-		'mayas-escape-room': { root: 46, scale: 'minor', bpm: 80, pad: 'triangle', lead: 'sine', density: 0.25, swing: 0, gain: 0.9 },
+		/* NO generic music. The Escape Room has its own designed per-room ambient soundscapes —
+		   layering a procedural bed on top meant two soundtracks fighting each other, and the
+		   generic one (at the loudest gain in this table, no less) won. A game that has real sound
+		   design should never get a stock backing track; the rule is "fill silence", not "add
+		   music everywhere". Same reason pinata-piano is excluded: it IS the music. */
+		'mayas-escape-room': { mode: 'none' },
 		// RPG. Fantasy, modal, a proper wandering tune.
 		'legend-of-the-rainbow-dragon': { root: 50, scale: 'dorian', bpm: 92, pad: 'sawtooth', lead: 'triangle', density: 0.45, swing: 0.12, gain: 0.8 },
 		// Duel. Fast, punchy, minor pentatonic.
