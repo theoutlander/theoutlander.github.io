@@ -75,7 +75,21 @@ const FX={
   poof(){ const t=ctx().currentTime; whoosh(t,.25,.12,1400,400); osc('triangle',600,200,t,.2,.08); },
   dawn(){ const t=ctx().currentTime; [N.C4,N.E4,N.G4,N.C5,N.E5].forEach((f,i)=>osc('triangle',f,0,t+i*.1,.4,.09)); },
   fanfare(){ const t=ctx().currentTime; [[N.C5,0],[N.C5,.12],[N.C5,.24],[N.E5,.36],[N.G5,.56],[N.E5,.76],[N.G5,.9],[N.C6,1.1]].forEach(p=>{osc('square',p[1]===1.1?p[0]:p[0],0,t+p[1],.22,.07); osc('triangle',p[0],0,t+p[1],.3,.1);}); },
-  firework(){ const t=ctx().currentTime; whoosh(t,.3,.07,300,2500); osc('triangle',CD.pick([N.C6,N.A5,N.G5]),0,t+.28,.3,.08); whoosh(t+.28,.3,.06,3000,800); }
+  firework(){ const t=ctx().currentTime; whoosh(t,.3,.07,300,2500); osc('triangle',CD.pick([N.C6,N.A5,N.G5]),0,t+.28,.3,.08); whoosh(t+.28,.3,.06,3000,800); },
+
+  /* ---------- garden ---------- */
+  splash(){ const t=ctx().currentTime; whoosh(t,.18,.1,900,2600); osc('sine',500,1100,t,.14,.09); osc('sine',760,1500,t+.07,.12,.06); },
+  plant(){ const t=ctx().currentTime; osc('triangle',N.G4,N.C5,t,.12,.1); osc('triangle',N.C5,N.E5,t+.1,.16,.09); whoosh(t,.14,.05,400,1200); },
+  grow(){ const t=ctx().currentTime; [N.C5,N.E5,N.G5].forEach((f,i)=>osc('sine',f,f*1.5,t+i*.05,.16,.06)); },
+  surprise(){ const t=ctx().currentTime; [N.C5,N.D5,N.E5,N.G5,N.C6].forEach((f,i)=>osc('triangle',f,0,t+i*.06,.2,.09)); whoosh(t,.4,.05,1200,4000); },
+  turn(){ const t=ctx().currentTime; whoosh(t,.1,.05,500,1500); },
+  buyplot(){ const t=ctx().currentTime; osc('sine',180,90,t,.2,.14); [N.E5,N.G5].forEach((f,i)=>osc('triangle',f,0,t+.1+i*.08,.18,.09)); },
+
+  /* ---------- zombie gear ---------- */
+  clang(){ const t=ctx().currentTime; osc('square',1200,700,t,.1,.1); osc('triangle',2400,1600,t,.14,.06); whoosh(t,.08,.06,3000,1200); },
+  gearoff(){ const t=ctx().currentTime; osc('square',900,300,t,.16,.11); whoosh(t,.2,.09,2200,500); osc('triangle',400,180,t+.1,.18,.07); },
+  balloonpop(){ const t=ctx().currentTime; osc('triangle',1500,200,t,.07,.16); whoosh(t,.09,.12,3500,600); },
+  ladderdrop(){ const t=ctx().currentTime; [0,.07,.15].forEach(d=>osc('square',300,180,t+d,.07,.08)); whoosh(t,.25,.06,800,300); }
 };
 
 /* --- tiny step-sequencer music --- */

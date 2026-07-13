@@ -62,15 +62,42 @@
 			a:hover {
 				color: var(--pink);
 			}
+			/* The page is a flex COLUMN: topbar / daybar / stage / botbar.
+			   Nothing overlaps the canvas — the bars own their own space. */
+			body {
+				display: flex;
+				flex-direction: column;
+			}
 			#stage {
-				position: fixed;
-				inset: 0;
+				flex: 1 1 auto;
+				min-height: 0; /* let the canvas shrink instead of pushing the bars off-screen */
+				position: relative;
 			}
 			#stage canvas {
 				display: block;
 			}
 
-			/* ---------- UI layer ---------- */
+			#topbar,
+			#botbar {
+				flex: none;
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				padding: 7px 10px;
+				background: #171f47;
+				border-bottom: 2px solid rgba(255, 248, 236, 0.12);
+			}
+			#botbar {
+				border-bottom: none;
+				border-top: 2px solid rgba(255, 248, 236, 0.12);
+				min-height: 66px;
+				justify-content: center;
+			}
+			#topbar #hud-top {
+				flex: 1;
+			}
+
+			/* ---------- UI layer (transient overlays ONLY: banner, tool banner) ---------- */
 			#ui {
 				position: fixed;
 				inset: 0;
@@ -109,20 +136,14 @@
 				opacity: 0.45;
 			}
 
+			/* Lives inside #topbar now — static, so it can never cover the home button. */
 			#hud-top {
-				position: absolute;
-				top: 10px;
-				left: 10px;
-				right: 10px;
 				display: none;
 				align-items: center;
 				gap: 8px;
 			}
 			#hud-top.show {
 				display: flex;
-			}
-			html.maya-in-portal #hud-top {
-				padding-left: 64px;
 			}
 			#phase-chip {
 				background: rgba(255, 248, 236, 0.94);
@@ -157,23 +178,48 @@
 				opacity: 0.18;
 				transform: scale(0.75);
 			}
+			/* Bonus hearts (from apple trees) go past MAX_HEARTS — golden, and they sparkle,
+			   so the apples visibly paid off. A LOST bonus heart is a dimmed gold one. */
+			#hearts span.bonus {
+				filter: drop-shadow(0 0 5px rgba(255, 210, 77, 0.95));
+				animation: bonusbeat 1.8s ease-in-out infinite;
+			}
+			#hearts span.bonus.lost {
+				filter: none;
+				animation: none;
+			}
+			@keyframes bonusbeat {
+				0%,
+				100% {
+					transform: scale(1);
+				}
+				50% {
+					transform: scale(1.16);
+				}
+			}
 			#hearts.pop span:not(.lost):last-of-type {
 				animation: pop 0.3s;
+			}
+			#apple-chip .n {
+				font-size: 19px;
+			}
+			#apple-chip .sfx {
+				font-size: 11px;
+				font-weight: 900;
+				color: var(--muted);
+				line-height: 1.1;
+				max-width: 74px;
 			}
 			#hud-spacer {
 				flex: 1;
 			}
 
+			/* A full-width sun-timer strip between the top bar and the canvas. */
 			#daybar {
-				position: absolute;
-				top: 64px;
-				left: 50%;
-				transform: translateX(-50%);
-				width: min(300px, 52vw);
-				height: 12px;
-				background: rgba(59, 42, 69, 0.35);
-				border: 2px solid rgba(255, 248, 236, 0.7);
-				border-radius: 8px;
+				flex: none;
+				width: 100%;
+				height: 8px;
+				background: rgba(59, 42, 69, 0.55);
 				display: none;
 				overflow: hidden;
 			}
@@ -184,18 +230,14 @@
 				height: 100%;
 				width: 0%;
 				background: linear-gradient(90deg, var(--gold), #ffb347);
-				border-radius: 6px;
 			}
 
-			/* day controls */
+			/* day controls — a ROW inside the bottom bar */
 			#day-controls {
-				position: absolute;
-				left: 12px;
-				bottom: 12px;
 				display: none;
-				flex-direction: column;
+				flex-direction: row;
 				gap: 10px;
-				align-items: flex-start;
+				align-items: center;
 			}
 			#day-controls.show {
 				display: flex;
@@ -228,15 +270,219 @@
 				background: linear-gradient(180deg, #4a5490, var(--night));
 				color: #fff;
 			}
+			.big-btn.water {
+				background: linear-gradient(180deg, #9fdcff, #4fb3e8);
+				color: #fff;
+				text-shadow: 0 1px 0 rgba(59, 42, 69, 0.3);
+			}
+			.big-btn:disabled {
+				filter: grayscale(0.7);
+				opacity: 0.6;
+			}
 
-			/* weapon bar */
-			#weapon-bar {
+			/* ---------- TOOL BELT (day only, interactive) ----------
+			   Bottom-CENTER: day-controls own bottom-left, the weapon bar owns bottom-right
+			   (and is night-only anyway). Kept to ONE short row on purpose — the front-row
+			   garden plots sit at the very bottom of the 960x600 canvas, so a tall dock here
+			   would cover the exact dirt she needs to tap to plant. */
+			#tool-belt {
 				position: absolute;
-				right: 14px;
-				bottom: 10px;
+				left: 50%;
+				bottom: 8px;
+				transform: translateX(-50%);
+				display: none;
+				align-items: center;
+				gap: 10px;
+				max-width: 96vw;
+			}
+			#tool-belt.show {
+				display: flex;
+			}
+			.tbtn {
+				pointer-events: auto;
+				touch-action: none;
+				position: relative;
+				width: 74px;
+				min-height: 66px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 1px;
+				background: rgba(255, 248, 236, 0.94);
+				border: 3px solid var(--ink);
+				border-radius: 16px;
+				box-shadow: 0 4px 0 rgba(59, 42, 69, 0.4);
+				transition:
+					transform 0.12s,
+					box-shadow 0.12s,
+					background 0.12s;
+			}
+			.tbtn .e {
+				font-size: 26px;
+				line-height: 1;
+			}
+			.tbtn .l {
+				font-family: "Fredoka One", cursive;
+				font-size: 12px;
+				color: var(--ink);
+				letter-spacing: 0.01em;
+			}
+			.tbtn:active {
+				transform: translateY(3px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.4);
+			}
+			/* The selected tool must be unmistakable from across the room: gold fill, a fat
+			   coloured ring, a pulsing glow, scaled up, and a ✓ badge. */
+			.tbtn.sel {
+				background: linear-gradient(180deg, #ffe082, var(--gold));
+				transform: translateY(-3px) scale(1.08);
+				box-shadow:
+					0 5px 0 rgba(59, 42, 69, 0.45),
+					0 0 0 4px var(--pink),
+					0 0 20px rgba(255, 210, 77, 0.9);
+				animation: beltglow 1.5s ease-in-out infinite;
+			}
+			.tbtn.sel:active {
+				transform: translateY(0) scale(1.04);
+			}
+			@keyframes beltglow {
+				0%,
+				100% {
+					box-shadow:
+						0 5px 0 rgba(59, 42, 69, 0.45),
+						0 0 0 4px var(--pink),
+						0 0 16px rgba(255, 210, 77, 0.75);
+				}
+				50% {
+					box-shadow:
+						0 5px 0 rgba(59, 42, 69, 0.45),
+						0 0 0 5px var(--pink),
+						0 0 30px rgba(255, 210, 77, 1);
+				}
+			}
+			.tbtn .pick {
+				display: none;
+				position: absolute;
+				top: -9px;
+				right: -9px;
+				width: 24px;
+				height: 24px;
+				border-radius: 50%;
+				background: var(--pink);
+				color: #fff;
+				border: 2px solid var(--ink);
+				font-size: 13px;
+				font-weight: 900;
+				line-height: 20px;
+				text-align: center;
+			}
+			.tbtn.sel .pick {
+				display: block;
+			}
+			#tool-hint {
+				display: flex;
+				align-items: center;
+				background: rgba(20, 27, 61, 0.82);
+				border: 2px solid rgba(255, 248, 236, 0.45);
+				border-radius: 14px;
+				color: #fff8ec;
+				font-size: 13px;
+				font-weight: 900;
+				line-height: 1.25;
+				padding: 9px 12px;
+				max-width: 190px;
+				min-height: 46px;
+				text-align: left;
+			}
+
+			/* ---------- PASSIVE TOOL RACK (day only, NOT buttons) ----------
+			   The day-unlock tools (throwing axe, beaver, golden axe, squirrels) work by
+			   themselves — the game used to announce them once and then never show them again.
+			   Top-centre under the day bar, in empty sky, and pointer-events:none so it can
+			   never swallow a tap meant for the canvas. */
+			#tool-rack {
+				position: absolute;
+				top: 84px;
+				left: 50%;
+				transform: translateX(-50%);
+				display: none;
+				align-items: center;
+				gap: 8px;
+				padding: 6px 10px;
+				background: rgba(20, 27, 61, 0.72);
+				border: 2px solid rgba(255, 248, 236, 0.35);
+				border-radius: 18px;
+				pointer-events: none;
+				max-width: 96vw;
+			}
+			#tool-rack.show {
+				display: flex;
+			}
+			.rk-hd {
+				font-family: "Fredoka One", cursive;
+				font-size: 10px;
+				line-height: 1.2;
+				color: var(--gold);
+				text-align: center;
+				width: 58px;
+				flex: none;
+			}
+			.rk-list {
+				display: flex;
+				gap: 6px;
+			}
+			.rk {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: 1px;
+				width: 64px;
+				padding: 4px 2px 3px;
+				border: 2px solid var(--ink);
+				border-radius: 12px;
+				background: rgba(255, 248, 236, 0.94);
+			}
+			.rk .e {
+				font-size: 20px;
+				line-height: 1;
+			}
+			.rk .nm {
+				font-size: 8.5px;
+				font-weight: 900;
+				line-height: 1.1;
+				text-align: center;
+				color: var(--ink);
+			}
+			.rk .st {
+				font-size: 8px;
+				font-weight: 900;
+				color: var(--green);
+				letter-spacing: 0.02em;
+			}
+			.rk.on {
+				box-shadow:
+					0 0 0 2px rgba(255, 210, 77, 0.95),
+					0 0 12px rgba(255, 210, 77, 0.6);
+			}
+			.rk.locked {
+				background: rgba(255, 248, 236, 0.32);
+				border-color: rgba(255, 248, 236, 0.3);
+				filter: grayscale(1);
+				opacity: 0.75;
+			}
+			.rk.locked .nm {
+				color: rgba(59, 42, 69, 0.75);
+			}
+			.rk.locked .st {
+				color: rgba(59, 42, 69, 0.75);
+			}
+
+			/* weapon bar — lives in the bottom bar (night only; day-controls are hidden then) */
+			#weapon-bar {
 				display: none;
 				gap: 9px;
-				align-items: flex-end;
+				align-items: center;
 			}
 			#weapon-bar.show {
 				display: flex;
@@ -349,11 +595,13 @@
 			}
 
 			/* tool banner */
+			/* Sits BELOW the passive tool rack (top:84px, ~62px tall) — the banner announces the
+			   tool, the rack is where it then lives, so the banner must never cover it. */
 			#toolbanner {
 				position: absolute;
 				left: 50%;
-				top: 86px;
-				transform: translate(-50%, -190px);
+				top: 172px;
+				transform: translate(-50%, -280px);
 				background: var(--panel);
 				border: 3px solid var(--ink);
 				border-radius: 18px;
@@ -431,7 +679,8 @@
 				border-radius: 12px;
 				padding: 5px 12px;
 			}
-			#shop-close {
+			#shop-close,
+			#seed-close {
 				background: var(--pink);
 				color: #fff;
 				border: 3px solid var(--ink);
@@ -442,10 +691,156 @@
 				min-height: 44px;
 				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.35);
 			}
-			#shop-grid {
+			#shop-tabs {
+				display: flex;
+				gap: 8px;
+				margin-bottom: 12px;
+			}
+			.stab {
+				flex: 1;
+				font-family: "Fredoka One", cursive;
+				font-size: 16px;
+				color: var(--muted);
+				background: var(--cream);
+				border: 3px solid var(--ink);
+				border-radius: 14px;
+				padding: 10px 12px;
+				min-height: 50px;
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.25);
+				touch-action: none;
+			}
+			.stab.sel {
+				background: linear-gradient(180deg, #ffe082, var(--gold));
+				color: var(--ink);
+				box-shadow:
+					0 3px 0 rgba(59, 42, 69, 0.35),
+					0 0 0 3px var(--pink);
+			}
+			#shop-grid,
+			.gsec .grid {
 				display: grid;
 				grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
 				gap: 10px;
+			}
+			#shop-garden {
+				display: none;
+			}
+			#shop-garden.show {
+				display: block;
+			}
+			#shop-grid.hide {
+				display: none;
+			}
+			.gsec {
+				margin-bottom: 16px;
+			}
+			.gsec > .h {
+				font-family: "Fredoka One", cursive;
+				font-size: 18px;
+				margin-bottom: 3px;
+			}
+			.gsec > .sub {
+				font-size: 12.5px;
+				font-weight: 700;
+				color: var(--muted);
+				margin-bottom: 8px;
+			}
+			.wcard .tag {
+				display: inline-block;
+				font-size: 11px;
+				font-weight: 900;
+				background: rgba(79, 163, 209, 0.16);
+				border: 2px solid rgba(79, 163, 209, 0.5);
+				border-radius: 9px;
+				padding: 2px 7px;
+				margin-right: 4px;
+			}
+			.wcard.done {
+				background: rgba(111, 191, 97, 0.14);
+			}
+
+			/* ---------- seed picker ---------- */
+			#seedpick {
+				position: fixed;
+				inset: 0;
+				background: rgba(20, 15, 30, 0.6);
+				display: none;
+				align-items: center;
+				justify-content: center;
+				z-index: 45;
+				pointer-events: auto;
+				padding: 14px;
+			}
+			#seedpick.show {
+				display: flex;
+			}
+			#seed-panel {
+				background: var(--panel);
+				border: 4px solid var(--ink);
+				border-radius: 24px;
+				box-shadow: 0 10px 0 rgba(59, 42, 69, 0.4);
+				width: min(700px, 96vw);
+				max-height: 92vh;
+				overflow: auto;
+				padding: 18px;
+			}
+			#seed-head {
+				display: flex;
+				align-items: center;
+				gap: 10px;
+				margin-bottom: 4px;
+			}
+			#seed-head .t {
+				font-family: "Fredoka One", cursive;
+				font-size: 24px;
+				flex: 1;
+			}
+			#seed-sub {
+				font-size: 13px;
+				font-weight: 700;
+				color: var(--muted);
+				margin-bottom: 12px;
+			}
+			#seed-grid {
+				display: grid;
+				grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+				gap: 10px;
+			}
+			.wcard.locked {
+				background: #f1ece3;
+			}
+			.wcard.locked .e,
+			.wcard.locked .nm {
+				filter: grayscale(1);
+				opacity: 0.7;
+			}
+			.wcard .plant {
+				font-family: "Fredoka One", cursive;
+				font-size: 16px;
+				border: 3px solid var(--ink);
+				border-radius: 12px;
+				padding: 10px;
+				background: linear-gradient(180deg, #9fe08c, var(--green));
+				color: var(--ink);
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.3);
+				min-height: 52px;
+				touch-action: none;
+			}
+			.wcard .plant:active {
+				transform: translateY(2px);
+				box-shadow: 0 1px 0 rgba(59, 42, 69, 0.3);
+			}
+			.wcard .nudge {
+				font-family: "Fredoka One", cursive;
+				font-size: 13.5px;
+				border: 3px solid var(--ink);
+				border-radius: 12px;
+				padding: 9px;
+				background: var(--cream);
+				color: var(--ink);
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.25);
+				min-height: 48px;
+				touch-action: none;
 			}
 			.wcard {
 				border: 3px solid var(--ink);
@@ -719,18 +1114,19 @@
 		</style>
 	</head>
 	<body>
-		<div id="stage"></div>
-
-		<div id="ui">
+		<!-- LAYOUT: top bar / canvas / bottom bar are SIBLINGS in a flex column, so no control
+		     ever sits on top of the play field. Phaser's Scale.FIT shrinks the canvas into
+		     whatever #stage is left. Only transient overlays (banner, shop, endcard) float. -->
+		<div id="topbar">
+			<button
+				class="icon-btn"
+				id="home-btn"
+				data-maya-native-back
+				title="Back to Game Lab"
+			>
+				🏠
+			</button>
 			<div id="hud-top">
-				<button
-					class="icon-btn"
-					id="home-btn"
-					data-maya-native-back
-					title="Back to Game Lab"
-				>
-					🏠
-				</button>
 				<div
 					class="chip"
 					id="phase-chip"
@@ -743,38 +1139,59 @@
 				>
 					🪵 <span class="n">0</span>
 				</div>
+				<div
+					class="chip"
+					id="apple-chip"
+					style="display: none"
+				>
+					🍎 <span class="n">0</span>
+					<span class="sfx">bonus 💖 tonight</span>
+				</div>
 				<div id="hud-spacer"></div>
 				<div
 					id="hearts"
 					class="chip"
 				></div>
-				<button
-					class="icon-btn"
-					id="mute-btn"
-					title="Sound"
-				>
-					🔊
-				</button>
 			</div>
-			<div id="daybar"><div class="fill"></div></div>
+			<button
+				class="icon-btn"
+				id="mute-btn"
+				title="Sound"
+			>
+				🔊
+			</button>
+		</div>
+		<div id="daybar"><div class="fill"></div></div>
 
+		<div id="stage"></div>
+
+		<!-- ONE bottom bar. No tool modes: tapping a tree chops it, tapping an empty plot
+		     plants it. Watering is a single button that waters the whole garden. -->
+		<div id="botbar">
 			<div id="day-controls">
+				<button
+					class="big-btn water"
+					id="water-btn"
+				>
+					💧 Water All
+				</button>
 				<button
 					class="big-btn blue"
 					id="forge-btn"
 				>
-					🛠️ Forge Weapons
+					🛠️ Forge
 				</button>
 				<button
 					class="big-btn night"
 					id="night-btn"
 				>
-					🌙 Ready for Night!
+					🌙 Night!
 				</button>
 			</div>
-
 			<div id="weapon-bar"></div>
+		</div>
 
+		<div id="ui">
 			<div id="banner">
 				<div class="t"></div>
 				<div class="s"></div>
@@ -797,7 +1214,40 @@
 					<div id="shop-wood">🪵 0</div>
 					<button id="shop-close">✕</button>
 				</div>
+				<div id="shop-tabs">
+					<button
+						class="stab sel"
+						data-tab="weapons"
+					>
+						⚔️ Weapons
+					</button>
+					<button
+						class="stab"
+						data-tab="garden"
+					>
+						🌱 Garden
+					</button>
+					<button
+						class="stab"
+						data-tab="stuff"
+					>
+						🎒 My Stuff
+					</button>
+				</div>
 				<div id="shop-grid"></div>
+				<div id="shop-garden"></div>
+				<div id="shop-stuff"></div>
+			</div>
+		</div>
+
+		<div id="seedpick">
+			<div id="seed-panel">
+				<div id="seed-head">
+					<div class="t">🌱 Plant a seed!</div>
+					<button id="seed-close">✕</button>
+				</div>
+				<div id="seed-sub">Pick what grows in this plot.</div>
+				<div id="seed-grid"></div>
 			</div>
 		</div>
 

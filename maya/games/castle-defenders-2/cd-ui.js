@@ -7,19 +7,48 @@ window.CD.ui = ui;
 
 const cdReadyAt = {};   // weapon id -> timestamp ms
 
+/* NO TOOL MODES. A mode ("which tool am I holding?") is exactly the question an 8-year-old
+   shouldn't have to answer before every tap, and the belt covered the plots besides. Taps are
+   CONTEXTUAL instead — cd-day.js still reads CD.ui.tool, and it is always the axe:
+     tap a tree       -> chop it
+     tap an empty plot-> plant it (the seed picker opens)
+   Watering is not a mode either: it's one button that waters the whole garden at once. */
+ui.tool = 'axe';
+
 /* ---------- HUD ---------- */
 ui.setWood = function(pop){
   const el = $('wood-chip');
   el.querySelector('.n').textContent = CD.state.wood;
   $('shop-wood').textContent = '🪵 ' + CD.state.wood;
   if (pop){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+  /* Apples are banked by cd-day.js (speciesPayout / rainbowSurprise) with no UI hook of its own —
+     but every felled tree pays wood through CD.addWood -> ui.setWood, so this is the one call that
+     reliably fires right after an apple lands. Refresh the apple chip here or it goes stale until
+     the next morning and looks broken. */
+  updateAppleChip();
   renderShop();
 };
 
+function updateAppleChip(){
+  const el = $('apple-chip');
+  if (!el || !CD.state) return;
+  const apples = CD.state.apples || 0;
+  const bonus = Math.min(apples, CD.MAX_BONUS_HEARTS);
+  if (CD.state.phase !== 'day' || apples <= 0){ el.style.display = 'none'; return; }
+  el.style.display = '';
+  el.querySelector('.n').textContent = apples;
+  el.querySelector('.sfx').innerHTML = '+' + bonus + ' bonus 💖<br>tonight';
+}
+
 ui.setHearts = function(pop){
   const h = $('hearts');
+  // Apple trees can push the night's heart count ABOVE MAX_HEARTS — render the real cap.
+  const cap = Math.max(CD.MAX_HEARTS, CD.state.heartCap || CD.MAX_HEARTS);
   let s = '';
-  for (let i = 0; i < CD.MAX_HEARTS; i++) s += '<span class="' + (i < CD.state.hearts ? '' : 'lost') + '">💖</span>';
+  for (let i = 0; i < cap; i++){
+    const cls = (i < CD.state.hearts ? '' : 'lost') + (i >= CD.MAX_HEARTS ? ' bonus' : '');
+    s += '<span class="' + cls.trim() + '">' + (i >= CD.MAX_HEARTS ? '💛' : '💖') + '</span>';
+  }
   h.innerHTML = s;
   if (pop){ h.classList.remove('pop'); void h.offsetWidth; h.classList.add('pop'); }
 };
@@ -29,6 +58,14 @@ function phaseChip(txt){ $('phase-chip').textContent = txt; }
 ui.dayTick = function(frac){
   $('daybar').querySelector('.fill').style.width = Math.min(100, frac * 100) + '%';
 };
+
+/* ---------- Water All ----------
+   One tap, the whole garden gets a splash. cd-day.js decides which trees actually benefit. */
+$('water-btn').addEventListener('click', () => {
+  CDAudio.unlockCtx();
+  if (CD.state.phase !== 'day') return;
+  CD.Day.waterAll();
+});
 
 /* ---------- phase UI ---------- */
 ui.enterDay = function(){
@@ -43,7 +80,9 @@ ui.enterDay = function(){
 ui.exitDay = function(){
   $('day-controls').classList.remove('show');
   $('daybar').classList.remove('show');
+  $('apple-chip').style.display = 'none';
   closeShop();
+  closeSeedPicker();
   hideToolBanner();
 };
 ui.enterNight = function(){
@@ -79,16 +118,84 @@ ui.toolBanner = function(tool){
 function hideToolBanner(){ $('toolbanner').classList.remove('show'); }
 
 /* ---------- shop ---------- */
-ui.openShop = function(){
+let shopTab = 'weapons';
+
+const TABS = ['weapons', 'garden', 'stuff'];
+
+ui.openShop = function(tab){
   if (CD.state.phase !== 'day') return;
+  setShopTab(TABS.indexOf(tab) >= 0 ? tab : 'weapons');
   renderShop();
   $('shop').classList.add('show');
 };
 function closeShop(){ $('shop').classList.remove('show'); }
 
+/* The tab is remembered in `shopTab` so that renderShop() — which runs on EVERY wood tick via
+   setWood — can safely redraw the grids without yanking her back to the Weapons tab mid-buy. */
+function setShopTab(tab){
+  shopTab = tab;
+  document.querySelectorAll('#shop-tabs .stab').forEach(b => {
+    b.classList.toggle('sel', b.getAttribute('data-tab') === tab);
+  });
+  $('shop-grid').classList.toggle('hide', tab !== 'weapons');
+  $('shop-garden').classList.toggle('show', tab === 'garden');
+  $('shop-stuff').classList.toggle('show', tab === 'stuff');
+}
+
+/* ---------- MY STUFF ----------
+   The four day-unlock tools (throwing axe, beaver, golden axe, squirrels) are passive: the game
+   announced each one with a banner and then never showed it anywhere again, so she was told she
+   had them and could never find them. ("I didn't see those in my list.") They live here now,
+   alongside everything else she owns, with the locked ones showing the day they arrive. */
+function renderStuffGrid(){
+  const el = $('shop-stuff');
+  if (!el || !CD.state) return;
+  const card = (emoji, name, desc, on, lockTxt) =>
+    '<div class="wcard' + (on ? '' : ' locked') + '">' +
+      '<div class="top"><div class="e">' + emoji + '</div><div class="nm">' + name + '</div></div>' +
+      '<div class="d">' + desc + '</div>' +
+      '<div class="owned">' + (on ? '✓ Working for you!' : '🔒 ' + lockTxt) + '</div>' +
+    '</div>';
+
+  let html = '<div class="sect-h">🪓 Your Tools <span>they work all by themselves</span></div><div class="sgrid">';
+  CD.TOOLS.forEach(t => {
+    html += card(t.emoji, t.name, t.desc, CD.hasTool(t.id), 'Arrives on Day ' + t.day);
+  });
+  html += '</div>';
+
+  html += '<div class="sect-h">🌱 Your Seeds <span>plant them in any empty plot</span></div><div class="sgrid">';
+  CD.SEED_ORDER.forEach(id => {
+    const s = CD.TREE_SPECIES[id];
+    html += card(s.emoji, s.name, s.blurb, CD.hasSeed(id), 'Buy in the Garden — 🪵 ' + s.seedCost);
+  });
+  html += '</div>';
+
+  html += '<div class="sect-h">🤝 Your Helpers <span>hire them in the Garden</span></div><div class="sgrid">';
+  CD.HELPERS.forEach(h => {
+    html += card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost);
+  });
+  html += '</div>';
+
+  el.innerHTML = html;
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-tab]');
+  if (!b) return;
+  CDAudio.fx.click();
+  setShopTab(b.getAttribute('data-tab'));
+});
+
 function renderShop(){
+  if (!CD.state) return;
+  renderWeaponGrid();
+  renderGardenGrid();
+  renderStuffGrid();
+}
+
+function renderWeaponGrid(){
   const grid = $('shop-grid');
-  if (!grid || !CD.state) return;
+  if (!grid) return;
   let html = '';
   CD.WEAPONS.forEach(w => {
     const owned = CD.hasWeapon(w.id);
@@ -104,6 +211,99 @@ function renderShop(){
   grid.innerHTML = html;
 }
 
+/* ---------- garden tab ---------- */
+function speedTag(spec){
+  if (spec.grow <= 0.7) return '⚡ Grows FAST';
+  if (spec.grow >= 1.5) return '🐢 Grows slow';
+  return '⏱️ Normal speed';
+}
+function woodTag(spec){
+  if (spec.wood >= 2) return '🪵🪵🪵 HUGE wood';
+  if (spec.wood >= 1) return '🪵🪵 Good wood';
+  return '🪵 A little wood';
+}
+
+function seedCard(id, opts){
+  const spec = CD.TREE_SPECIES[id];
+  const owned = CD.hasSeed(id);
+  const afford = CD.state.wood >= spec.seedCost;
+  let foot;
+  if (id === 'oak') foot = '<div class="owned">✓ Always yours</div>';
+  else if (owned) foot = '<div class="owned">✓ In your seed bag!</div>';
+  else foot = '<button class="buy" data-buy-seed="' + id + '"' + (afford ? '' : ' disabled') +
+    '>Buy seed — 🪵 ' + spec.seedCost + '</button>';
+  return '<div class="wcard' + (owned ? ' done' : '') + '">' +
+    '<div class="top"><div class="e">' + spec.emoji + '</div><div class="nm">' + spec.name + '</div></div>' +
+    '<div class="d">' + spec.blurb + '</div>' +
+    '<div><span class="tag">' + speedTag(spec) + '</span><span class="tag">' + woodTag(spec) + '</span></div>' +
+    (opts && opts.foot === false ? '' : foot) +
+    '</div>';
+}
+
+function renderGardenGrid(){
+  const box = $('shop-garden');
+  if (!box) return;
+  let html = '';
+
+  /* Seeds */
+  html += '<div class="gsec"><div class="h">🌱 Seeds</div>' +
+    '<div class="sub">Buy a seed once and it is yours forever — plant it as many times as you like!</div>' +
+    '<div class="grid">';
+  CD.SEED_ORDER.forEach(id => { html += seedCard(id); });
+  html += '</div></div>';
+
+  /* Plots */
+  const idx = CD.nextPlotIdx();
+  html += '<div class="gsec"><div class="h">🟫 Garden Plots</div>' +
+    '<div class="sub">More plots = more trees growing at the same time.</div>' +
+    '<div class="grid">';
+  if (idx < 0){
+    html += '<div class="wcard done">' +
+      '<div class="top"><div class="e">🌳</div><div class="nm">Your garden is COMPLETE!</div></div>' +
+      '<div class="d">Every single plot is yours. Nice work, farmer! 👑</div>' +
+      '<div class="owned">✓ All ' + CD.TREE_SPOTS.length + ' plots</div></div>';
+  } else {
+    const cost = CD.nextPlotCost();
+    const afford = CD.state.wood >= cost;
+    html += '<div class="wcard">' +
+      '<div class="top"><div class="e">🟫</div><div class="nm">New Plot</div></div>' +
+      '<div class="d">Dig up a fresh patch of dirt down at the front of the garden.</div>' +
+      '<div><span class="tag">You have ' + CD.state.plots + ' of ' + CD.TREE_SPOTS.length + '</span></div>' +
+      '<button class="buy" data-buy-plot="1"' + (afford ? '' : ' disabled') + '>Dig it — 🪵 ' + cost + '</button>' +
+      '</div>';
+  }
+  html += '</div></div>';
+
+  /* Helpers */
+  html += '<div class="gsec"><div class="h">🧑‍🌾 Helpers</div>' +
+    '<div class="sub">Friends who work in the garden all by themselves.</div>' +
+    '<div class="grid">';
+  CD.HELPERS.forEach(h => {
+    const owned = CD.hasHelper(h.id);
+    const afford = CD.state.wood >= h.cost;
+    html += '<div class="wcard' + (owned ? ' done' : '') + '">' +
+      '<div class="top"><div class="e">' + h.emoji + '</div><div class="nm">' + h.name + '</div></div>' +
+      '<div class="d">' + h.desc + '</div>' +
+      (owned
+        ? '<div class="owned">✓ Working for you!</div>'
+        : '<button class="buy" data-buy-helper="' + h.id + '"' + (afford ? '' : ' disabled') + '>Hire — 🪵 ' + h.cost + '</button>') +
+      '</div>';
+  });
+  html += '</div></div>';
+
+  box.innerHTML = html;
+}
+
+/* ---------- purchases (delegated, same pattern as the original weapon buy) ---------- */
+function afford(cost){
+  if (CD.state.wood >= cost) return true;
+  CDAudio.fx.nope();
+  return false;
+}
+function pop(str, color){
+  if (CD.scene) CD.floatText(CD.W / 2, 300, str, { size: 28, color: color || '#FFD24D' });
+}
+
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-buy]');
   if (!b) return;
@@ -114,8 +314,101 @@ document.addEventListener('click', e => {
   CDAudio.fx.buy();
   CD.save();
   ui.setWood(true);
-  CD.floatText(CD.W / 2, 300, w.emoji + ' ' + w.name + ' forged!', { size: 30, color: '#FFD24D' });
+  pop(w.emoji + ' ' + w.name + ' forged!');
 });
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-seed]');
+  if (!b) return;
+  const id = b.getAttribute('data-buy-seed');
+  const spec = CD.TREE_SPECIES[id];
+  if (!spec || CD.hasSeed(id) || !afford(spec.seedCost)) return;
+  CD.state.wood -= spec.seedCost;
+  CD.state.seeds.push(id);
+  CDAudio.fx.buy();
+  CD.save();
+  ui.setWood(true);
+  pop(spec.emoji + ' ' + spec.name + ' seed — it’s yours!', '#FFF3B0');
+});
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-plot]');
+  if (!b) return;
+  // Read BOTH before mutating: nextPlotIdx/nextPlotCost are derived from state.plots.
+  const idx = CD.nextPlotIdx();
+  const cost = CD.nextPlotCost();
+  if (idx < 0){ CDAudio.fx.nope(); return; }
+  if (!afford(cost)) return;
+  CD.state.wood -= cost;
+  CD.state.plots++;
+  CD.save();
+  ui.setWood(true);
+  CD.Day.onPlotBought(idx);                     // plays fx.buyplot() + the confetti itself
+});
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-buy-helper]');
+  if (!b) return;
+  const id = b.getAttribute('data-buy-helper');
+  const h = CD.HELPERS.find(x => x.id === id);
+  if (!h || CD.hasHelper(id) || !afford(h.cost)) return;
+  CD.state.wood -= h.cost;
+  CD.state.helpers.push(id);
+  CDAudio.fx.buy();
+  CD.save();
+  ui.setWood(true);
+  CD.Day.onHelperBought(id);
+});
+
+/* ---------- seed picker ---------- */
+let seedSpot = -1;
+
+ui.openSeedPicker = function(spotIdx){
+  if (!CD.state || CD.state.phase !== 'day') return;
+  seedSpot = spotIdx;
+  renderSeedPicker();
+  $('seedpick').classList.add('show');
+};
+function closeSeedPicker(){ $('seedpick').classList.remove('show'); seedSpot = -1; }
+
+function renderSeedPicker(){
+  const grid = $('seed-grid');
+  if (!grid || !CD.state) return;
+  let html = '';
+  CD.SEED_ORDER.forEach(id => {
+    const spec = CD.TREE_SPECIES[id];
+    const owned = CD.hasSeed(id);
+    html += '<div class="wcard' + (owned ? '' : ' locked') + '">' +
+      '<div class="top"><div class="e">' + spec.emoji + '</div><div class="nm">' + spec.name + '</div></div>' +
+      '<div class="d">' + spec.blurb + '</div>' +
+      '<div><span class="tag">' + speedTag(spec) + '</span><span class="tag">' + woodTag(spec) + '</span></div>' +
+      (owned
+        ? '<button class="plant" data-plant="' + id + '">' + spec.emoji + ' Plant it!</button>'
+        : '<button class="nudge" data-seed-shop="1">🔒 🪵 ' + spec.seedCost + ' — Buy at the Forge 🌱</button>') +
+      '</div>';
+  });
+  grid.innerHTML = html;
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-plant]');
+  if (!b) return;
+  const id = b.getAttribute('data-plant');
+  const spot = seedSpot;
+  if (spot < 0 || !CD.hasSeed(id)){ CDAudio.fx.nope(); return; }
+  closeSeedPicker();
+  CD.Day.plantSeed(spot, id);                   // plays fx.plant() itself
+});
+
+document.addEventListener('click', e => {
+  if (!e.target.closest('[data-seed-shop]')) return;
+  CDAudio.fx.click();
+  closeSeedPicker();
+  ui.openShop('garden');
+});
+
+$('seed-close').addEventListener('click', () => { CDAudio.fx.click(); closeSeedPicker(); });
+$('seedpick').addEventListener('click', e => { if (e.target.id === 'seedpick') closeSeedPicker(); });
 
 /* ---------- weapon bar ---------- */
 function renderWeaponBar(){
@@ -183,7 +476,7 @@ ui.winCard = function(){
 ui.loseCard = function(){
   showEnd({
     e: '🍪', t: 'Oh no! The zombies got in…',
-    d: '…and ate ALL the castle snacks! Don\u2019t worry — you keep your weapons and wood. Try the night again!',
+    d: '…and ate ALL the castle snacks! Don’t worry — you keep your weapons and wood. Try the night again!',
     primary: '💪 Try Night ' + CD.state.day + ' Again', secondary: 'Back to Title',
     onPrimary: () => CD.retryNight(),
     onSecondary: () => showTitle()

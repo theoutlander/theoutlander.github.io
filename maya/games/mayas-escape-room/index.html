@@ -251,8 +251,20 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
 .mghost{position:absolute;top:28%;left:50%;transform:translateX(-50%);font-size:46px;opacity:0;pointer-events:none;filter:blur(1px)}
 .mghost.boo{animation:mghostboo 3.2s ease-in-out}
 @keyframes mghostboo{0%{opacity:0;transform:translateX(-50%) translateY(14px) scale(.8)}45%{opacity:.55;transform:translateX(-50%) translateY(-6px) scale(1)}100%{opacity:0;transform:translateX(-50%) translateY(-24px) scale(1.06)}}
-.darkeyes{position:absolute;width:30px;height:9px;pointer-events:none;opacity:0;animation:eyeblink 9s infinite;background:radial-gradient(circle at 25% 50%,#ffcf5d 0 3.5px,transparent 4px),radial-gradient(circle at 75% 50%,#ffcf5d 0 3.5px,transparent 4px);filter:drop-shadow(0 0 4px rgba(255,207,93,.9))}
-@keyframes eyeblink{0%,82%,100%{opacity:0}85%,95%{opacity:.9}}
+/* The Watchers — the hidden eyes. They are TAPPABLE now (they used to just
+   blink at you and do nothing). ::after gives them a 56px iPad-sized hitbox
+   without making the eyes themselves any bigger. */
+.darkeyes{position:absolute;width:30px;height:9px;pointer-events:auto;cursor:pointer;opacity:.3;animation:eyeblink 9s infinite;background:radial-gradient(circle at 25% 50%,#ffcf5d 0 3.5px,transparent 4px),radial-gradient(circle at 75% 50%,#ffcf5d 0 3.5px,transparent 4px);filter:drop-shadow(0 0 4px rgba(255,207,93,.9));z-index:3}
+.darkeyes::after{content:'';position:absolute;left:50%;top:50%;width:56px;height:56px;transform:translate(-50%,-50%)}
+@keyframes eyeblink{0%,80%,100%{opacity:.3}84%,94%{opacity:.95}}
+.darkeyes.awake{animation:eyewake 1.5s ease-in-out infinite;opacity:1;filter:drop-shadow(0 0 10px rgba(255,207,93,1))}
+@keyframes eyewake{0%,100%{opacity:.75;filter:drop-shadow(0 0 6px rgba(255,207,93,.8))}50%{opacity:1;filter:drop-shadow(0 0 18px rgba(255,225,77,1))}}
+.darkeyes.met{animation:none;opacity:.65;background:radial-gradient(circle at 25% 50%,#7de3ff 0 3.5px,transparent 4px),radial-gradient(circle at 75% 50%,#7de3ff 0 3.5px,transparent 4px);filter:drop-shadow(0 0 7px rgba(125,227,255,.95))}
+.darkeyes.squint{animation:eyesquint .55s}
+@keyframes eyesquint{0%,100%{transform:scaleY(1);opacity:.9}45%{transform:scaleY(.12);opacity:1}}
+/* a Watcher pointing at something — no transform, so it can't fight .swung etc */
+.revealed{animation:revealring 1.5s ease-in-out infinite;border-radius:10px}
+@keyframes revealring{0%,100%{box-shadow:0 0 0 3px rgba(255,225,77,.3),0 0 14px rgba(255,225,77,.35)}50%{box-shadow:0 0 0 5px rgba(255,225,77,.75),0 0 30px rgba(255,225,77,.85)}}
 
 /* ---------- Gems, secrets & spooks ---------- */
 #gemring{display:flex;align-items:center;gap:3px;font-size:16px;font-weight:900;color:#7de3ff}
@@ -419,6 +431,8 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
         <div class="portrait" id="portrait" style="left:16%;top:22%"><span class="eyes">🧐</span></div>
         <div id="chair-note">📌</div>
         <div class="door" id="door1" style="right:14%"><span class="lock" id="door1-lock">🔒</span><span class="knob"></span></div>
+        <span class="darkeyes" style="left:30%;bottom:16%;animation-delay:-1.5s"></span>
+        <span class="darkeyes" style="right:30%;bottom:34%;animation-delay:-6.5s"></span>
       </div>
       <div class="floor"><div class="rug"></div><span class="darkeyes" style="left:5%;bottom:34%"></span><span class="darkeyes" style="right:7%;bottom:58%;animation-delay:-4s"></span><div id="chair-row"></div></div>
     </div>
@@ -478,6 +492,7 @@ a{color:var(--purple)}a:hover{color:var(--candle)}
         <div class="glow" style="left:calc(4% - 75px);top:calc(14% - 70px)"></div>
         <span class="candle" style="right:4%;top:14%">🕯️</span>
         <div id="fake-door"></div>
+        <span class="darkeyes" style="left:12%;bottom:12%;animation-delay:-3.5s"></span>
         <div id="mirror"><span class="mghost" id="mghost">👻</span><span class="m-keyhole" id="m-keyhole">🔒</span></div>
         <div id="r2-wall-items"></div>
       </div>

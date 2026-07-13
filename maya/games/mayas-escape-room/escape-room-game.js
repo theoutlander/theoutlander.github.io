@@ -17,7 +17,7 @@ const COLOR_RIDDLES = [
 const BOOK_EMOJI = ['📕','📗','📘','📙'];
 const BOOK_NAMES = ['RED','GREEN','BLUE','ORANGE'];
 const SHELF_NAMES = ['TOP','MIDDLE','BOTTOM'];
-const TOTAL_GEMS = 11;
+const TOTAL_GEMS = 12;
 const ITEM_ORDER = ['candle','brasskey','musicbox','teddy','page0','page1','page2'];
 const TOTAL_ITEMS = ITEM_ORDER.length;
 
@@ -63,6 +63,7 @@ function newState(){
     mimicCrate:0, cratesOpened:[], furnaceTaps:0,
     trunkRattled:false, trunkOpen:false, trunkGemTaken:false,
     chandTaps:0, toyTaps:0, grannyTaps:0, wallTaps:{}, moonTaps:0,
+    watchersMet:[],
   };
 }
 
@@ -276,7 +277,7 @@ function goalText(){
       if(!S.noteRead) return THEME.room1GoalMsg;
       return THEME.room1ColorGoalMsg;
     }
-    if(!S.door1Open) return 'Grab the scrolls 📜, then tap the door and crack its number locks!';
+    if(!S.door1Open) return 'Tap the door and crack its number locks! 🚪 (Scrolls 📜 are optional — they wake something...)';
     return 'Go through the door! 🚪';
   }
   if(S.phase==='secret') return S.chestOpen ? 'Take the back door when you\u2019re done exploring! 🚪' : 'A treasure chest! It’s... moving?! Open it if you dare!';
@@ -328,7 +329,9 @@ function hintFor(){
 }
 function secretHintFor(){
   const p=S.phase;
-  if(p==='room1') return '“Wanna know a SECRET? That grumpy portrait 🧐 is terribly ticklish. Tap it three times! And the chandelier is hiding something...”';
+  if(p==='room1') return S.watchersMet.length
+    ? '“The <b>Watchers</b> 👀 wake up when you read a scroll 📜 — and they tell you where things hide. Wake them ALL!”'
+    : '“See those little eyes 👀 in the dark? Read a scroll 📜 and watch what happens to them... hee hee!”';
   if(p==='secret') return '“Poke EVERYTHING — the toys squeak, granny whispers, the chair rocks itself... and is that an old PAGE on the wall? 📜”';
   if(p==='kitchen') return hasItem('candle')
     ? '“One floorboard near the cauldron looks... crooked. You have a candle now, don’t you? 🕯️”'
@@ -342,6 +345,83 @@ function secretHintFor(){
   if(p==='room3') return '“Tap the floating chair! It’s keeping something warm, hee hee!”';
   return '“Hee hee... every room has secrets. Poke EVERYTHING!”';
 }
+
+/* ---------------- The Watchers (the hidden eyes) ---------------- */
+/* Nick, 2026-07-12: "These hidden eyes are kinda interesting. Why are they
+   non-clickable?" — they are now, and they're what the scrolls are FOR.
+   Read a scroll in the parlor -> a Watcher wakes -> tap it -> it uncovers
+   something real, in sequence, ending in the truth about the mirror key.
+   Everywhere else a Watcher whispers that room's secret. All of it is a bonus:
+   nothing here gates the escape, so it can never strand her. */
+const PARLOR_WATCHERS = [
+  { sel:'#portrait',   line:'👀 <i>“The grumpy painting is <b>ticklish</b>. Tickle it three times!”</i> 🧐' },
+  { sel:'#chandelier', line:'👀 <i>“Look <b>UP</b>. Something shiny is riding the chandelier!”</i> 🕯️' },
+  { sel:null,          line:'👀 <i>“The <b>GOLDEN</b> scroll never lies. The others are pranksters!”</i> ✨' },
+  { sel:null,          line:null },   // the payoff — built at runtime from the true spot
+];
+const ROOM_WATCHERS = {
+  's-kitchen': [{ sel:'#trapdoor',     line:'👀 <i>“The floor is FIBBING. One board is <b>loose</b>... bring a light!”</i> 🕯️' }],
+  's-library': [{ sel:'#lever-sconce', line:'👀 <i>“That candle isn’t a candle. It’s a <b>LEVER</b>. Pull it!”</i> 🕯️' }],
+  's-cellar':  [{ sel:'#furnace',      line:'👀 <i>“Say hi to the big snoring thing. He’s lonely.”</i> 🔥' },
+                { sel:'#cellar-floor', line:'👀 <i>“One crate has <b>TEETH</b>. We won’t say which. Hee hee!”</i> 📦' }],
+  's-attic':   [{ sel:'#att-trunk',    line:'👀 <i>“Knock on the trunk. It <b>SINGS</b>.”</i> 🎼' }],
+  's-secret':  [{ sel:'#toy-pile',     line:'👀 <i>“Poke the old toys. They still squeak. We checked. A lot.”</i> 🪆' },
+                { sel:'#secret-page',  line:'👀 <i>“That old <b>page</b> on the wall? It’s the whole story.”</i> 📜' }],
+  's-room2':   [{ sel:'#fake-door',    line:'👀 <i>“That door is <b>PAINT</b>. We watched someone draw it!”</i> 🖌️' }],
+};
+function watcherEls(sceneId){ return $$('#'+sceneId+' .darkeyes'); }
+function reveal(sel){ if(!sel) return; const el=$(sel); if(el) el.classList.add('revealed'); }
+function initWatchers(){
+  $$('.revealed').forEach(e=>e.classList.remove('revealed'));
+  $$('.darkeyes').forEach(e=>{
+    e.classList.remove('awake','met','squint');
+    delete e.dataset.line;
+    // the parlor's Watchers are asleep — a scroll wakes them. Elsewhere they're
+    // already awake, because word travels fast in a haunted house.
+    if(!e.closest('#s-room1')) e.classList.add('awake');
+  });
+}
+function wakeWatcher(){
+  const next = watcherEls('s-room1').find(e=>!e.classList.contains('awake') && !e.classList.contains('met'));
+  if(!next) return;
+  next.classList.add('awake');
+  sfx('wake');
+  setTimeout(()=>msg('👀 <b>Two eyes blink open</b> in the dark — the scroll woke a <b>Watcher!</b> Tap it!', 4200), 600);
+}
+function watcherTap(el){
+  if(!S || S.phase==='title' || S.phase==='win') return;
+  const scene = el.closest('.scene'); if(!scene) return;
+  if(el.classList.contains('met')){ sfx('blink'); msg(el.dataset.line || '👀 <i>“We already told you everything!”</i>', 3200); return; }
+  if(!el.classList.contains('awake')){
+    el.classList.remove('squint'); void el.offsetWidth; el.classList.add('squint');
+    sfx('giggle');
+    msg('👀 The eyes squeeze shut! <i>“We only wake for someone who reads a <b>scroll</b>...”</i> 📜', 4000);
+    return;
+  }
+  el.classList.remove('awake'); el.classList.add('met');
+  sfx('blink');
+  if(scene.id==='s-room1'){
+    const step = S.watchersMet.length;
+    S.watchersMet.push(step);
+    if(step >= PARLOR_WATCHERS.length-1){
+      const line = '👀 <i>“We <b>SAW</b> where the key went. It sleeps in the <b>'+S.trueSpot.name.toUpperCase()+'</b>!”</i> ✨';
+      el.dataset.line = line;
+      const sup = {text:'👀 THE WATCHERS SAW IT: the key hides in the '+S.trueSpot.name.toUpperCase()+'!', true:true};
+      if(!S.cluesFound.some(x=>x.text===sup.text)) S.cluesFound.push(sup);
+      updateHUD(); msg(line, 5200);
+      setTimeout(()=>addGem('watchers','Every Watcher woke up and told you EVERYTHING!'), 2800);
+      return;
+    }
+    const w = PARLOR_WATCHERS[step];
+    el.dataset.line = w.line; reveal(w.sel); msg(w.line, 4200);
+    return;
+  }
+  const list = ROOM_WATCHERS[scene.id] || [];
+  const idx = watcherEls(scene.id).indexOf(el);
+  const w = list[idx] || list[0] || { line:'👀 <i>“...boo?”</i>' };
+  el.dataset.line = w.line; reveal(w.sel); msg(w.line, 4200);
+}
+$$('.darkeyes').forEach(e=>e.addEventListener('click', e2=>{ e2.stopPropagation(); watcherTap(e); }));
 
 /* ---------------- Room 1: chairs ---------------- */
 function buildChairs(){
@@ -384,12 +464,14 @@ function chairClick(i, el){
       S.keyTaken=true; S.key1=true; el.classList.add('taken');
       el.querySelector('.c-content').textContent='';
       sfx('key'); updateHUD();
-      msg('🗝️ You got the <b>'+THEME.room1KeyName+' key!</b> The other lids popped — read those scrolls, then unlock the door!');
+      msg('🗝️ You got the <b>'+THEME.room1KeyName+' key!</b> The door is yours whenever you want it 🚪 — but the other lids popped open too... 📜', 4200);
       openAllLids(false);
     } else if(c.type==='clue'){
-      if(!S.cluesFound.some(x=>x.text===c.text)) S.cluesFound.push({text:c.text, true:!!c.true});
+      const isNew = !S.cluesFound.some(x=>x.text===c.text);
+      if(isNew) S.cluesFound.push({text:c.text, true:!!c.true});
       updateHUD();
       showScroll(c.true?'✨ A scroll... it feels warm?':'📜 A dusty scroll', c.text.replace(/\n/g,'<br>') + '<em>Hmm... is this clue real, or is it tricking you?</em>', c.true);
+      if(isNew) wakeWatcher();   // reading a scroll wakes an eye in the dark 👀
     }
     return;
   }
@@ -452,11 +534,9 @@ function doorClick(){
     sfx('bad'); msg(THEME.door1LockedMsg);
     return;
   }
-  if(S.lidsOpen && S.cluesFound.length<4){
-    d.classList.add('shake'); setTimeout(()=>d.classList.remove('shake'),450);
-    sfx('bad'); msg(THEME.doorSealedMsg, 4000);
-    return;
-  }
+  /* Nick, 2026-07-12: "I don't know why you're forcing me to look at all the
+     scrolls if I have got the key." — right. Key in hand = door opens. The
+     scrolls are now a CHOICE that wakes the Watchers (see watcherTap). */
   if(!S.door1Open){
     msg('🔐 The key fits... but <b>number padlocks</b> guard the door too!', 2500);
     Puzzles.mathLock(
@@ -926,7 +1006,7 @@ function startGame(themeId){
   $('#att-trunk').classList.remove('open');
   const ck=$('#cellar-key'); ck.style.display=''; ck.classList.remove('found');
   const kc=$('#kitchen-candle'); kc.style.display=''; kc.classList.remove('found');
-  buildCellar();
+  buildCellar(); initWatchers();
   const m=$('#mirror'); m.classList.remove('unlocked','enter-anim');
   $('#m-keyhole').textContent='🔒';
   $('#hud').classList.add('show'); $('#goal').classList.add('show'); $('#hint-ghost').classList.add('show');
@@ -1155,15 +1235,15 @@ syncMute();
     setTimeout(()=>{
       if(S && S.phase!=='title' && S.phase!=='win'){
         const r=Math.random();
-        if(r<.4){
+        if(r<.18){
           const L=$('#lightning'); L.classList.remove('flash'); void L.offsetWidth; L.classList.add('flash');
           sfx('thunder');
-        } else if(r<.7) sfx('rumble');
-        else if(r<.87) sfx('wolfhowl');
+        } else if(r<.45) sfx('rumble');
+        else if(r<.75) sfx('distantcreak');
         else sfx('whistle');
       }
       storm();
-    }, 14000+Math.random()*18000);
+    }, 45000+Math.random()*45000);
   })();
   // 🕷️ spider drops
   (function creep(){

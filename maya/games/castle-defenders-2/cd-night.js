@@ -12,19 +12,41 @@ let projectiles = [];   // { update(dt) -> false to remove, obj }
 let confettiUsed = false;
 let swordCd = 0;
 let over = false;
+let hintsShown = {};    // gear id -> already taught this night (don't spam her)
 
 const GATE_X = 228;
+
+/* The balloon is the only gear that makes a zombie UNREACHABLE, and an unreachable zombie that
+   never dies = a night that never ends (checkWin needs zombies.length === 0). So the balloon
+   ALWAYS leaks: after BALLOON_LEAK_MS of floating it runs out of air on its own and he drops.
+   Maya can beat him faster with the banana/bubble — but she never HAS to own them. */
+const BALLOON_LEAK_MS = 11000;
+const BALLOON_WHIFF_MS = 1000;   // every "Too high!" sword swipe knocks a little more air out
+const GROUND_REACH = 30;         // a body drawn this far above its own feet is still hittable low
 
 Night.init = function(scene){ S = scene; };
 
 Night.start = function(){
   over = false;
   CD.state.phase = 'night';
-  CD.state.hearts = CD.MAX_HEARTS;
+  // Apples banked in the garden become BONUS hearts — spent the moment the night starts.
+  const bonus = CD.nightHearts() - CD.MAX_HEARTS;
+  CD.state.heartCap = CD.nightHearts();
+  CD.state.hearts = CD.state.heartCap;
+  CD.state.apples = 0;
+  CD.save();
   confettiUsed = false;
+  hintsShown = {};
   zombies = []; projectiles = [];
   CDAudio.music('night');
   CD.ui.enterNight();
+  if (bonus > 0){
+    S.time.delayedCall(400, () => {
+      CDAudio.fx.unlock();
+      CD.floatText(CD.W / 2, 250, '🍎 The gate is EXTRA strong tonight! +' + bonus + ' 💖',
+        { size: 28, color: '#FFD24D' });
+    });
+  }
 
   const wave = CD.makeWave(CD.state.day);
   queue = [];
@@ -61,22 +83,77 @@ Night.stop = function(){
   projectiles = [];
 };
 
+/* ---------- gear helpers ----------
+   `z.gear` is only what he SPAWNED with. The one true "is he still wearing it?" answer is
+   parts.gear, which Art.detachGear nulls — every rule below asks through hasGear(). */
+function hasGear(z, id){ return !!(z.parts.gear && z.parts.gear.id === id); }
+
+/* Hit-testing a floating zombie.
+   cd-art lifts a balloon zombie's ART (parts.body) by GEAR.balloon.lift INSIDE his container and
+   bobs it — his container y (his FEET, and his depth) never changes. So a hit test that reads
+   parts.c.y would happily "hit" a zombie who is visibly sailing 74px over the chicken.
+   liftOf() reads the live body offset (bob included) and scales it, giving how high his torso is
+   drawn above HIS OWN ground line. We test in that local frame on purpose: the screen y of the
+   ground varies by row (2.5D depth), so an absolute screen-y test would alias a back-row floater
+   onto a front-row chicken's arc. Local frame is row-proof. */
+function liftOf(z){ return z.parts.body ? -z.parts.body.y * z.scale : 0; }
+function grounded(z){ return liftOf(z) < GROUND_REACH; }   // chicken + marshmallow only reach these
+function bodyY(z){ return z.parts.c.y - liftOf(z); }        // where his torso actually IS on screen
+
+/* The ONLY way a balloon comes off in play. Every caller (bubble, confetti, leak) goes through
+   here so a popped zombie can never be left stranded in the 'float' state. */
+function popBalloon(z, txt){
+  if (z.state === 'dead' || !hasGear(z, 'balloon')) return;
+  CD.Art.detachGear(S, z.parts);
+  CDAudio.fx.balloonpop();
+  CD.fxPuff(z.parts.c.x, bodyY(z) - 40 * z.scale, 6);
+  if (txt) CD.floatText(z.parts.c.x, z.parts.c.y - 120, txt, { size: 22, color: '#FF88AC' });
+  // He was drifting over the gate: put him back on the ground and let him behave like anyone else.
+  if (z.state === 'float'){
+    z.state = 'gate';
+    z.biteT = biteGap(z) * 0.6;
+    if (z.hopTween) z.hopTween.pause();
+  }
+}
+
+// Ladder zombies climb OVER the gate — they bite twice as fast.
+function biteGap(z){ return hasGear(z, 'ladder') ? 2.4 / CD.GEAR.ladder.biteMul : 2.4; }
+
+function teachGear(z, gear){
+  if (!gear || hintsShown[gear]) return;
+  hintsShown[gear] = 1;
+  const G = CD.GEAR[gear];
+  // He spawns at x = W + 50 (off-screen right) and has barely moved by now — anchor the hint back
+  // inside the canvas or the whole lesson floats away where she can't read it.
+  const hx = Math.max(210, Math.min(z.parts.c.x, CD.W - 210));
+  CD.floatText(hx, bodyY(z) - 130 * z.scale, G.emoji + ' ' + G.hint, { size: 20, color: '#FFF3B0' });
+}
+
 /* ---------- zombies ---------- */
 function spawnZombie(type){
   const cfg = CD.ZOMBIES[type];
-  const parts = CD.Art.buildZombie(S, type);
+  const gear = CD.rollGear(type, CD.state.day);          // handles night>=2, rising odds, no king
+  const parts = CD.Art.buildZombie(S, type, gear);
   const y = CD.rnd(CD.GROUND + 22, CD.H - 20);
   parts.c.setPosition(CD.W + 50, y);
   parts.c.setDepth(y);
+  // Per-zombie jitter so the horde stops looking like clones. The King is exempt: he is exactly
+  // King-sized and King-slow, always.
+  const jScale = cfg.king ? 1 : CD.rnd(0.9, 1.1);
+  const jSpeed = cfg.king ? 1 : CD.rnd(0.85, 1.15);
   const z = {
     parts, type, cfg, hp: cfg.hp, maxHp: cfg.hp,
-    speed: cfg.speed, slowUntil: 0, stunUntil: 0,
-    state: 'walk', biteT: CD.rnd(0.4, 1.4), bubbled: false, hitBy: {}
+    scale: cfg.scale * jScale,                           // the TRUE size — use this, not cfg.scale
+    speed: cfg.speed * jSpeed, slowUntil: 0, stunUntil: 0,
+    state: 'walk', biteT: CD.rnd(0.4, 1.4), bubbled: false, hitBy: {},
+    gear, blocks: CD.GEAR.shield.blocks, helmetTaps: CD.GEAR.helmet.taps,
+    balloonT: BALLOON_LEAK_MS / 1000
   };
-  // hp bar (hidden until hurt)
+  parts.c.setScale(z.scale);
+  // hp bar (hidden until hurt) — lives in `body` so it rides UP with a floating balloon zombie
   z.hpBg = S.add.rectangle(0, -92, 40, 6, 0x2B2B3B).setOrigin(0.5).setVisible(false);
   z.hpFill = S.add.rectangle(-20, -92, 40, 6, 0x7ED957).setOrigin(0, 0.5).setVisible(false);
-  parts.c.add([z.hpBg, z.hpFill]);
+  parts.body.add([z.hpBg, z.hpFill]);
 
   parts.c.on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); Night.bonk(z); });
   // walk wobble
@@ -90,6 +167,7 @@ function spawnZombie(type){
     CD.floatText(CD.W - 180, CD.GROUND - 120, '👑 THE ZOMBIE KING! 👑', { size: 30, color: '#FFD24D' });
   }
   zombies.push(z);
+  if (gear) S.time.delayedCall(500, () => { if (z.state !== 'dead' && CD.state.phase === 'night') teachGear(z, gear); });
 }
 
 function damage(z, dmg, opts){
@@ -106,7 +184,7 @@ function damage(z, dmg, opts){
   [z.parts.eyeL, z.parts.eyeR].forEach(e => {
     S.tweens.add({ targets: e.pupil, x: CD.rnd(-2.5, 2.5), y: CD.rnd(-2.5, 2.5), duration: 120 });
   });
-  S.tweens.add({ targets: z.parts.c, scaleX: z.cfg.scale * 0.86, scaleY: z.cfg.scale * 1.1, duration: 70, yoyo: true });
+  S.tweens.add({ targets: z.parts.c, scaleX: z.scale * 0.86, scaleY: z.scale * 1.1, duration: 70, yoyo: true });
   if (z.hp <= 0) defeat(z);
 }
 
@@ -126,12 +204,12 @@ function defeat(z, opts){
     e.add(x);
   });
   CDAudio.fx.boing();
-  CD.fxStars(z.parts.c.x, z.parts.c.y - 60, 6);
-  CD.floatText(z.parts.c.x, z.parts.c.y - 100, CD.pick(['BONK!','POW!','BOOP!','WHAM!','SPLAT!']), { size: 26, color: '#FFD24D' });
+  CD.fxStars(z.parts.c.x, bodyY(z) - 60 * z.scale, 6);
+  CD.floatText(z.parts.c.x, bodyY(z) - 100 * z.scale, CD.pick(['BONK!','POW!','BOOP!','WHAM!','SPLAT!']), { size: 26, color: '#FFD24D' });
   const c = z.parts.c;
   S.tweens.add({
     targets: c, x: c.x + (opts.fly ? CD.rnd(120, 220) : CD.rnd(60, 120)), y: c.y - CD.rnd(90, 150),
-    angle: CD.rnd(300, 540), scale: z.cfg.scale * 0.7, duration: 500, ease: 'Quad.out',
+    angle: CD.rnd(300, 540), scale: z.scale * 0.7, duration: 500, ease: 'Quad.out',
     onComplete: () => S.tweens.add({ targets: c, y: CD.H + 120, angle: '+=180', alpha: 0.9, duration: 460, ease: 'Quad.in',
       onComplete: () => c.destroy() })
   });
@@ -155,24 +233,38 @@ Night.tick = function(dt){
   const now = S.time.now;
   zombies.forEach(z => {
     if (z.state === 'dead' || z.bubbled) return;
+
+    /* Leak FIRST, and gated only on "is he still wearing the balloon" — never on his state. A
+       floater must keep counting down while he drifts over the gate, or the night can't end. */
+    if (hasGear(z, 'balloon')){
+      z.balloonT -= dt;
+      if (z.balloonT <= 0){ popBalloon(z, 'Out of air! 🎈'); }
+    }
+
     const stunned = now < z.stunUntil;
     const slow = now < z.slowUntil ? 0.42 : 1;
     if (z.state === 'walk' && !stunned){
       z.parts.c.x -= z.speed * slow * dt;
       z.parts.c.setDepth(z.parts.c.y);
-      if (z.parts.c.x <= GATE_X + (z.cfg.scale - 1) * 24){
-        z.state = 'gate';
+      if (z.parts.c.x <= GATE_X + (z.scale - 1) * 24){
+        // Ballooned: he FLOATS OVER the gate line. He can't bite from up there — he just drifts.
+        z.state = hasGear(z, 'balloon') ? 'float' : 'gate';
+        z.biteT = Math.min(z.biteT, biteGap(z));
         if (z.hopTween) z.hopTween.pause();
       }
+    } else if (z.state === 'float'){
+      // Harmless, but not gone: he bobs above the gate until his balloon leaks or she pops it.
+      z.parts.c.x += Math.sin(now / 640) * 10 * dt;
+      z.parts.c.setDepth(z.parts.c.y);
     } else if (z.state === 'gate' && !stunned){
       z.biteT -= dt;
       if (z.biteT <= 0){
-        z.biteT = 2.4;
+        z.biteT = biteGap(z);                    // ladder zombie bites 2x as fast — he's climbing
         S.tweens.add({ targets: z.parts.c, x: z.parts.c.x - 14, duration: 110, yoyo: true, ease: 'Quad.in' });
         S.time.delayedCall(110, () => { if (z.state !== 'dead' && CD.state.phase === 'night') CD.gateBite(); });
       }
     }
-    if (stunned && Math.random() < dt * 3) CD.fxStars(z.parts.c.x, z.parts.c.y - 90 * z.cfg.scale, 1);
+    if (stunned && Math.random() < dt * 3) CD.fxStars(z.parts.c.x, bodyY(z) - 90 * z.scale, 1);
   });
   projectiles = projectiles.filter(p => p.update(dt) !== false);
 };
@@ -182,9 +274,63 @@ Night.bonk = function(z){
   if (CD.state.phase !== 'night' || z.state === 'dead' || z.bubbled) return;
   if (swordCd > 0) return;
   swordCd = 0.14;
+
+  // BALLOON: out of reach. The swipe whiffs underneath him — but it shakes a little air loose,
+  // so even a sword-only player can bring him down faster than the leak would.
+  if (hasGear(z, 'balloon')){
+    CDAudio.fx.boing();
+    const sw0 = CD.Art.emoji(S, z.parts.c.x - 26, z.parts.c.y - 70 * z.scale, '⚔️', 30).setDepth(900).setAngle(-40);
+    S.tweens.add({ targets: sw0, angle: 50, duration: 140, onComplete: () => sw0.destroy() });
+    CD.floatText(z.parts.c.x, bodyY(z) - 60 * z.scale, 'Too high! 🎈', { size: 22, color: '#BFE8FF' });
+    CD.fxPuff(z.parts.c.x, bodyY(z) - 70 * z.scale, 2);
+    if (z.parts.gear && z.parts.gear.obj && z.parts.gear.obj.scene){
+      S.tweens.add({ targets: z.parts.gear.obj, scaleX: 0.86, scaleY: 0.9, duration: 90, yoyo: true });
+    }
+    z.balloonT -= BALLOON_WHIFF_MS / 1000;
+    if (z.balloonT <= 0) popBalloon(z, 'Pssshh… 🎈');
+    return;
+  }
+
   CDAudio.fx.bonk();
-  CD.fxStars(z.parts.c.x - 10, z.parts.c.y - 70 * z.cfg.scale, 3);
-  const sw = CD.Art.emoji(S, z.parts.c.x - 26, z.parts.c.y - 80 * z.cfg.scale, '⚔️', 30).setDepth(900).setAngle(-40);
+
+  // SHIELD: he holds it up while he's WALKING at you. Once he's at the gate he has turned to
+  // bite — the shield is out of the way and bonks land.
+  if (hasGear(z, 'shield') && z.state === 'walk'){
+    CDAudio.fx.clang();
+    z.blocks--;
+    CD.fxStars(z.parts.c.x - 24, bodyY(z) - 34 * z.scale, 4);
+    const sw1 = CD.Art.emoji(S, z.parts.c.x - 30, bodyY(z) - 80 * z.scale, '⚔️', 30).setDepth(900).setAngle(-40);
+    S.tweens.add({ targets: sw1, angle: -95, x: sw1.x + 26, duration: 170, ease: 'Back.out', onComplete: () => sw1.destroy() });
+    if (z.blocks <= 0){
+      CD.Art.detachGear(S, z.parts);
+      CDAudio.fx.gearoff();
+      CD.floatText(z.parts.c.x, bodyY(z) - 100 * z.scale, 'Shield BROKE! 🛡️', { size: 24, color: '#FFD24D' });
+    } else {
+      CD.floatText(z.parts.c.x, bodyY(z) - 100 * z.scale, 'CLANG! 🛡️', { size: 24, color: '#C9CBD6' });
+    }
+    return;                                       // blocked — no damage
+  }
+
+  // HELMET: the first taps knock the hat off instead of hurting him.
+  if (hasGear(z, 'helmet')){
+    CDAudio.fx.clang();
+    z.helmetTaps--;
+    CD.fxStars(z.parts.c.x, bodyY(z) - 76 * z.scale, 4);
+    const sw2 = CD.Art.emoji(S, z.parts.c.x - 26, bodyY(z) - 90 * z.scale, '⚔️', 30).setDepth(900).setAngle(-40);
+    S.tweens.add({ targets: sw2, angle: 50, duration: 140, onComplete: () => sw2.destroy() });
+    if (z.helmetTaps <= 0){
+      CD.Art.detachGear(S, z.parts);
+      CDAudio.fx.gearoff();
+      CD.floatText(z.parts.c.x, bodyY(z) - 100 * z.scale, 'Helmet off! ⛑️', { size: 24, color: '#FFD24D' });
+    } else {
+      CD.floatText(z.parts.c.x, bodyY(z) - 100 * z.scale, 'CLONK! ⛑️', { size: 22, color: '#C9CBD6' });
+    }
+    return;                                       // no damage until the helmet is gone
+  }
+
+  // normal bonk (incl. ladder zombie — the ladder is no defence, it just gets him over the gate)
+  CD.fxStars(z.parts.c.x - 10, bodyY(z) - 70 * z.scale, 3);
+  const sw = CD.Art.emoji(S, z.parts.c.x - 26, bodyY(z) - 80 * z.scale, '⚔️', 30).setDepth(900).setAngle(-40);
   S.tweens.add({ targets: sw, angle: 50, duration: 140, onComplete: () => sw.destroy() });
   damage(z, 1, { knock: 30 });
 };
@@ -220,10 +366,17 @@ function fireChicken(){
     ch.y = CD.GROUND + 40 - Math.abs(Math.sin(t * 9)) * 34;
     ch.angle = Math.sin(t * 14) * 16;
     zombies.forEach(z => {
-      if (!hit[zId(z)] && !z.bubbled && z.state !== 'dead' && Math.abs(z.parts.c.x - ch.x) < 34){
+      // grounded(): the chicken bowls along the FLOOR. A balloon zombie sails right over him.
+      if (!hit[zId(z)] && !z.bubbled && z.state !== 'dead' && grounded(z) && Math.abs(z.parts.c.x - ch.x) < 34){
         hit[zId(z)] = 1;
         CDAudio.fx.honk();
-        CD.floatText(z.parts.c.x, z.parts.c.y - 110, 'HONK!', { size: 22, color: '#FFB347' });
+        if (hasGear(z, 'shield')){                 // bowled clean over — the shield goes flying
+          CD.Art.detachGear(S, z.parts);
+          CDAudio.fx.gearoff();
+          CD.floatText(z.parts.c.x, bodyY(z) - 115, 'STRIKE! 🎳', { size: 24, color: '#FFD24D' });
+        } else {
+          CD.floatText(z.parts.c.x, bodyY(z) - 110, 'HONK!', { size: 22, color: '#FFB347' });
+        }
         damage(z, 2, { knock: 26 });
       }
     });
@@ -233,9 +386,11 @@ function fireChicken(){
 }
 
 function fireMarsh(){
-  CDAudio.fx.throwaxe();
-  const targets = zombies.filter(z => z.state !== 'dead' && !z.bubbled)
+  // Aim only at zombies the goo can actually land on — lobbing it under a floating balloon zombie
+  // would just waste the shot.
+  const targets = zombies.filter(z => z.state !== 'dead' && !z.bubbled && grounded(z))
     .sort((a, b) => a.parts.c.x - b.parts.c.x).slice(0, 3);
+  CDAudio.fx.throwaxe();
   const xs = targets.length ? targets.map(z => z.parts.c.x) : [420, 560, 700];
   xs.forEach((tx, i) => {
     S.time.delayedCall(i * 160, () => {
@@ -255,8 +410,15 @@ function fireMarsh(){
           const blob = S.add.ellipse(tx, ty, 74, 22, 0xFFF6E8, 0.85).setDepth(CD.GROUND + 1);
           S.tweens.add({ targets: blob, alpha: 0, duration: 3800, delay: 500, onComplete: () => blob.destroy() });
           zombies.forEach(z => {
-            if (z.state !== 'dead' && !z.bubbled && Math.abs(z.parts.c.x - tx) < 75){
-              CD.floatText(z.parts.c.x, z.parts.c.y - 110, 'Sticky!', { size: 20, color: '#FFF6E8' });
+            // the goo pools on the FLOOR — again, a floater's feet never touch it
+            if (z.state !== 'dead' && !z.bubbled && grounded(z) && Math.abs(z.parts.c.x - tx) < 75){
+              if (hasGear(z, 'ladder')){           // too sticky to carry it — he lets it go
+                CD.Art.detachGear(S, z.parts);
+                CDAudio.fx.ladderdrop();
+                CD.floatText(z.parts.c.x, bodyY(z) - 115, 'He dropped it! 🪜', { size: 22, color: '#FFD24D' });
+              } else {
+                CD.floatText(z.parts.c.x, bodyY(z) - 110, 'Sticky!', { size: 20, color: '#FFF6E8' });
+              }
               damage(z, 2, { slow: 4200 });
             }
           });
@@ -281,8 +443,19 @@ function fireBubble(){
         if (!captured){
           b.x += 150 * dt;
           b.y = y0 + Math.sin(t * 4) * 14;
+          /* Deliberately tested against parts.c.y — his GROUND line, not his drawn body. A bubble
+             is buoyant: it rides up the whole column, so it reaches a floating balloon zombie just
+             as well as a walking one. (Chicken/marshmallow use grounded() and do NOT.) */
           const z = zombies.find(z => z.state !== 'dead' && !z.bubbled && Math.abs(z.parts.c.x - b.x) < 30 && Math.abs((z.parts.c.y - 40) - b.y) < 70);
           if (z){
+            /* BALLOON first, heavy second — on purpose. A chonko WITH a balloon is a funny sight,
+               and the bubble's job against a balloon is to POP it, which takes no lifting at all.
+               So popping wins over weight; he thumps down and is a normal (heavy) zombie after. */
+            if (hasGear(z, 'balloon')){
+              popBalloon(z, 'POP! 🎈');
+              CD.fxPuff(b.x, b.y, 4);
+              b.destroy(); return false;           // the bubble is spent — popping IS the effect
+            }
             if (z.cfg.heavy){
               CDAudio.fx.bubblepop();
               CD.floatText(b.x, b.y - 40, 'Too heavy! 😅', { size: 20, color: '#BFE8FF' });
@@ -327,6 +500,9 @@ function fireBanana(){
     bn.y = CD.GROUND - 40 + Math.sin(bn.x / 70) * 26;
     const hits = dir > 0 ? hitA : hitB;
     zombies.forEach(z => {
+      /* x-only ON PURPOSE — the banana-rang arcs high and swoops low across the whole column, so
+         it is the one weapon that REACHES a balloon zombie in the air. It hurts him; it does not
+         pop him (a banana is not a pin). It is the balloon's main counter. */
       if (!hits[zId(z)] && z.state !== 'dead' && !z.bubbled && Math.abs(z.parts.c.x - bn.x) < 36){
         hits[zId(z)] = 1;
         damage(z, 2, { knock: 18 });
@@ -344,6 +520,15 @@ function fireConfetti(){
   CD.fxConfetti(CD.W / 2, 160, 160);
   CD.floatText(CD.W/2, 240, '🎉 PARTY BLAST! 🎉', { size: 44, color: '#FFD24D' });
   S.time.delayedCall(150, () => {
+    if (CD.state.phase !== 'night') return;
+    // The mega-blast STRIPS every gear in the horde first, then damages what's left of them.
+    let stripped = false;
+    zombies.slice().forEach(z => {
+      if (z.state === 'dead') return;
+      if (hasGear(z, 'balloon')){ popBalloon(z, null); stripped = true; }
+      else if (z.parts.gear){ CD.Art.detachGear(S, z.parts); stripped = true; }
+    });
+    if (stripped) CDAudio.fx.gearoff();
     zombies.slice().forEach(z => damage(z, 6, { stun: 2200, knock: 40 }));
   });
 }

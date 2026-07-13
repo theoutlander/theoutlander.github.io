@@ -1,51 +1,139 @@
-/* Castle Defenders v2 — DAY: chop wood, forge weapons */
+/* Castle Defenders v2 — DAY: the garden. Chop, water, plant; plots, species, helpers. */
 (function(){
 'use strict';
 const Day = {};
 window.CD.Day = Day;
 
 let S = null;            // scene
-let spots = [];          // { idx, tree, stump, timer }
+let spots = [];          // { idx, tree, stump, plot, locked, timer, growEnd }
 let knight = null;
-let beaver = null;
+let beavers = [];        // 0..2 of them (tool 'beaver' + helper 'beaver2')
+let gardener = null;
 let squirrelTimer = null;
+let sprinklerTimer = null;
 let dayLeft = 0;
 let busyChop = false;
 let ended = false;
+/* The garden art is built from CD.state, but boot() creates a FRESH state and the scene renders
+   before CDGame.start(save) swaps in her real save. So remember WHICH state object we drew, and
+   redraw only when that object is replaced. Rebuilding every morning would also reset growth and
+   silently refill any plot she deliberately left empty — don't. */
+let builtState = null;
 
-Day.init = function(scene, knightRef){
-  S = scene; knight = knightRef;
-  spots = CD.TREE_SPOTS.map((sp, i) => ({ idx: i, tree: null, stump: null, timer: null }));
-  spots.forEach(sp => buildTree(sp, CD.TREE_SPOTS[sp.idx].max));
-};
+/* ---------- helpers ---------- */
+function tool(){
+  const t = CD.ui && CD.ui.tool;
+  return (t === 'water' || t === 'seed') ? t : 'axe';
+}
+function faceIt(obj, dir){
+  if (!obj) return;
+  const d = dir < 0 ? -1 : 1;
+  if (obj.facing === d) return;
+  obj.facing = d;
+  CD.Art.face(S, obj, d);
+}
+function spotX(i){ return CD.TREE_SPOTS[i].x; }
+function choppable(sp){ return !!(sp.tree && sp.tree.treeData && sp.tree.treeData.stage > 0 && !sp.tree.treeData.falling); }
+function poof(x, y){ CD.fxPuff(x, y, 6); }
+function onlyOakSeeds(){ return !CD.state.seeds.some(s => s !== 'oak'); }
+function bestSeed(){
+  let best = 'oak';
+  CD.SEED_ORDER.forEach(id => {
+    if (CD.hasSeed(id) && CD.TREE_SPECIES[id].seedCost >= CD.TREE_SPECIES[best].seedCost) best = id;
+  });
+  return best;
+}
+
+/* ---------- spot art ---------- */
+function clearGrow(sp){
+  if (sp.timer){ sp.timer.remove(false); sp.timer = null; }
+  sp.growEnd = 0;
+}
+function clearDirt(sp){                       // plot / locked-plot / stump art (never the tree)
+  if (sp.plot){ sp.plot.destroy(); sp.plot = null; }
+  if (sp.locked){ sp.locked.destroy(); sp.locked = null; }
+  if (sp.stump){ sp.stump.destroy(); sp.stump = null; }
+}
+function clearSpot(sp){
+  clearGrow(sp);
+  clearDirt(sp);
+  if (sp.tree){ sp.tree.destroy(); sp.tree = null; }
+}
+
+function makePlot(sp){
+  clearDirt(sp);
+  const p = CD.Art.buildPlot(S, sp.idx);
+  p.on('pointerdown', (pt, lx, ly, ev) => { if (ev) ev.stopPropagation(); Day.onPlotTap(sp); });
+  sp.plot = p;
+  return p;
+}
+function makeLocked(sp){
+  clearDirt(sp);
+  const p = CD.Art.buildLockedPlot(S, sp.idx);
+  p.on('pointerdown', (pt, lx, ly, ev) => { if (ev) ev.stopPropagation(); Day.onPlotTap(sp); });
+  sp.locked = p;
+  return p;
+}
 
 function buildTree(sp, stage){
-  if (sp.tree) { sp.tree.destroy(); sp.tree = null; }
-  if (sp.stump) { sp.stump.destroy(); sp.stump = null; }
+  clearDirt(sp);
+  if (sp.tree){ sp.tree.destroy(); sp.tree = null; }
   const t = CD.Art.buildTree(S, sp.idx, stage);
   t.on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); Day.onTreeTap(sp); });
   sp.tree = t;
-  // gentle idle sway
   S.tweens.add({ targets: t, angle: { from: -0.7, to: 0.7 }, duration: CD.rnd(1800, 2600), yoyo: true, repeat: -1, ease: 'Sine.inOut' });
-  if (stage === 0 || stage < CD.TREE_SPOTS[sp.idx].max) scheduleGrow(sp);
+  if (stage < CD.maxStageFor(sp.idx)) scheduleGrow(sp);
+  else clearGrow(sp);
   return t;
 }
 
-function scheduleGrow(sp){
-  if (sp.timer) sp.timer.remove();
-  sp.timer = S.time.delayedCall(CD.GROW_MS, () => {
-    if (!sp.tree || sp.tree.treeData.stage >= CD.TREE_SPOTS[sp.idx].max) return;
-    const next = sp.tree.treeData.stage + 1;
-    buildTree(sp, next);
-    poof(CD.TREE_SPOTS[sp.idx].x, CD.GROUND - 30);
-  });
+/* ---------- growth ---------- */
+function scheduleGrow(sp, ms){
+  clearGrow(sp);
+  const delay = Math.max(300, (ms === undefined || ms === null) ? CD.growMsFor(sp.idx) : ms);
+  sp.growEnd = S.time.now + delay;
+  sp.timer = S.time.delayedCall(delay, () => { sp.timer = null; growSpot(sp); });
 }
-
-function poof(x, y){
-  CD.fxPuff(x, y, 6);
+/* Watering halves the REMAINING time of the current stage, so we need that remaining time.
+   Phaser's TimerEvent.getRemaining() is the source of truth; growEnd is a belt-and-braces
+   fallback in case a Phaser version hands back 0/undefined. */
+function growRemaining(sp){
+  if (!sp.timer) return 0;
+  if (typeof sp.timer.getRemaining === 'function'){
+    const r = sp.timer.getRemaining();
+    if (typeof r === 'number' && r > 0) return r;
+  }
+  return Math.max(0, sp.growEnd - S.time.now);
+}
+function growSpot(sp){
+  if (!CD.state || !sp.tree || !sp.tree.treeData) return;
+  const max = CD.maxStageFor(sp.idx);
+  if (sp.tree.treeData.stage >= max) return;
+  const next = sp.tree.treeData.stage + 1;
+  buildTree(sp, next);
+  const gy = CD.groundY(sp.idx);
+  poof(spotX(sp.idx), gy - 30);
+  CDAudio.fx.grow();
+  CD.fxSparkle(spotX(sp.idx), gy - 60, 4);
 }
 
 /* ---------- phase control ---------- */
+Day.init = function(scene, knightRef){
+  S = scene; knight = knightRef;
+  knight.c.facing = 1;
+  spots = CD.TREE_SPOTS.map((sp, i) => ({ idx: i, tree: null, stump: null, plot: null, locked: null, timer: null, growEnd: 0 }));
+  buildGarden();
+};
+
+function buildGarden(){
+  spots.forEach(sp => {
+    clearSpot(sp);
+    if (!CD.plotUnlocked(sp.idx)) makeLocked(sp);
+    else buildTree(sp, CD.maxStageFor(sp.idx));
+  });
+  builtState = CD.state;
+}
+
 Day.start = function(){
   ended = false;
   CD.state.phase = 'day';
@@ -53,26 +141,24 @@ Day.start = function(){
   dayLeft = CD.DAY_SECONDS;
   CDAudio.music('day');
   CD.ui.enterDay();
+  if (builtState !== CD.state) buildGarden();   // her save just replaced the boot state
 
-  const tool = CD.TOOLS.find(t => t.day === CD.state.day);
-  if (tool && CD.state.day > 1){
-    S.time.delayedCall(900, () => { CDAudio.fx.unlock(); CD.ui.toolBanner(tool); });
+  const t = CD.TOOLS.find(x => x.day === CD.state.day);
+  if (t && CD.state.day > 1){
+    S.time.delayedCall(900, () => { CDAudio.fx.unlock(); CD.ui.toolBanner(t); });
   }
-  if (CD.hasTool('beaver') && !beaver){
-    beaver = CD.Art.buildBeaver(S);
-    beaver.tx = beaver.x;
-    beaver.chopAt = 0;
-  }
-  if (beaver) beaver.setVisible(true);
-  if (CD.hasTool('squirrels')){
-    squirrelTimer = S.time.addEvent({ delay: 6500, loop: true, callback: squirrelRaid });
-  }
+  ensureBeavers();
+  ensureGardener();
+  setupSprinkler();
+  setupSquirrels();
   CD.save();
 };
 
 Day.stop = function(){
   if (squirrelTimer){ squirrelTimer.remove(); squirrelTimer = null; }
-  if (beaver) beaver.setVisible(false);
+  if (sprinklerTimer){ sprinklerTimer.remove(); sprinklerTimer = null; }
+  beavers.forEach(b => b.setVisible(false));
+  if (gardener) gardener.setVisible(false);
 };
 
 Day.tick = function(dtSec){
@@ -81,42 +167,82 @@ Day.tick = function(dtSec){
   CD.ui.dayTick(1 - dayLeft / CD.DAY_SECONDS);
   CD.sunArc(1 - dayLeft / CD.DAY_SECONDS);
   if (dayLeft <= 0) Day.end();
-  if (beaver) beaverThink(dtSec);
+  beavers.forEach(b => beaverThink(b, dtSec));
+  gardenerThink(dtSec);
 };
 
 Day.end = function(){
   if (ended) return;
   ended = true;
-  // knight walks home
   walkKnightTo(285, () => {});
   CD.toNight();
 };
 
-/* ---------- chopping ---------- */
+/* ---------- tool-belt dispatch ---------- */
 Day.onTreeTap = function(sp){
-  if (CD.state.phase !== 'day' || ended) return;
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
   const tree = sp.tree;
   if (!tree || !tree.treeData || tree.treeData.falling) return;
+  const gy = CD.groundY(sp.idx);
+  const tl = tool();
+
+  if (tl === 'seed'){
+    CDAudio.fx.click();
+    CD.floatText(tree.x, gy - tree.treeData.h - 16, 'Chop it down first! 🪓', { size: 20 });
+    return;
+  }
+  if (tl === 'water'){
+    approach(tree.x, () => waterTree(sp, false));
+    return;
+  }
+  // axe
   if (tree.treeData.stage === 0){
-    CD.floatText(tree.x, CD.GROUND - 70, 'Still growing! 🌱', { size: 20 });
+    CD.floatText(tree.x, gy - 70, 'Still growing! 🌱', { size: 20 });
     CDAudio.fx.click();
     return;
   }
   const dist = Math.abs(knight.c.x - tree.x);
   if (dist < 95){
-    faceTree(tree);
+    faceIt(knight.c, tree.x >= knight.c.x ? 1 : -1);
     swingChop(sp, 'axe');
   } else if (CD.hasTool('throw') && dist > 180){
     throwAxe(sp);
   } else {
     walkKnightTo(tree.x + (knight.c.x < tree.x ? -62 : 62), () => {
-      if (sp.tree === tree && !tree.treeData.falling) { faceTree(tree); swingChop(sp, 'axe'); }
+      if (sp.tree === tree && !tree.treeData.falling){
+        faceIt(knight.c, tree.x >= knight.c.x ? 1 : -1);
+        swingChop(sp, 'axe');
+      }
     });
   }
 };
 
-function faceTree(tree){
-  knight.c.scaleX = (tree.x >= knight.c.x) ? 1 : -1;
+Day.onPlotTap = function(sp){
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  if (!CD.plotUnlocked(sp.idx)){
+    CDAudio.fx.click();
+    if (CD.ui && typeof CD.ui.openShop === 'function') CD.ui.openShop('garden');
+    return;
+  }
+  if (sp.tree) return;
+  /* Empty plot + ANY tool -> the seed picker. Kid-friendly on purpose: she should never tap bare
+     dirt and get nothing back just because the wrong tool was selected. (Spec said seed tool only.) */
+  CDAudio.fx.click();
+  if (CD.ui && typeof CD.ui.openSeedPicker === 'function') CD.ui.openSeedPicker(sp.idx);
+};
+
+/* ---------- knight movement ---------- */
+function approach(x, done){
+  const dist = Math.abs(knight.c.x - x);
+  if (dist < 95){
+    faceIt(knight.c, x >= knight.c.x ? 1 : -1);
+    done();
+    return;
+  }
+  walkKnightTo(x + (knight.c.x < x ? -62 : 62), () => {
+    faceIt(knight.c, x >= knight.c.x ? 1 : -1);
+    done();
+  });
 }
 
 function walkKnightTo(x, done){
@@ -124,7 +250,7 @@ function walkKnightTo(x, done){
   if (knight.bobTween){ knight.bobTween.stop(); knight.c.angle = 0; }
   const dist = Math.abs(knight.c.x - x);
   if (dist < 6){ done(); return; }
-  knight.c.scaleX = (x > knight.c.x) ? 1 : -1;
+  faceIt(knight.c, x > knight.c.x ? 1 : -1);
   knight.bobTween = S.tweens.add({ targets: knight.c, angle: { from: -2.5, to: 2.5 }, duration: 130, yoyo: true, repeat: -1 });
   knight.walkTween = S.tweens.add({
     targets: knight.c, x, duration: dist * 2.6, ease: 'Sine.inOut',
@@ -135,6 +261,81 @@ function walkKnightTo(x, done){
   });
 }
 
+/* ---------- watering ---------- */
+/* remote = a helper did it (sprinkler): no nag text if there is nothing to water. */
+function waterTree(sp, remote){
+  const tree = sp.tree;                        // re-read: the sprout may have grown during the walk
+  if (!tree || !tree.treeData || tree.treeData.falling) return false;
+  const d = tree.treeData;
+  const gy = CD.groundY(sp.idx);
+  const top = gy - d.h - 10;
+
+  if (d.stage >= CD.maxStageFor(sp.idx)){
+    if (!remote){ CDAudio.fx.click(); CD.floatText(tree.x, top, 'All grown! 🌳', { size: 20 }); }
+    return false;
+  }
+  if (d.watered){
+    if (!remote){ CDAudio.fx.click(); CD.floatText(tree.x, top, 'Already watered! 💧', { size: 20, color: '#A8E9FF' }); }
+    return false;
+  }
+
+  d.watered = true;
+  scheduleGrow(sp, growRemaining(sp) * CD.WATER_BOOST);
+
+  CDAudio.fx.splash();
+  if (!remote){
+    S.tweens.add({ targets: knight.arm, angle: -66, duration: 200, yoyo: true, hold: 120, ease: 'Sine.inOut' });
+  }
+  CD.Art.waterSplash(S, tree.x, gy - Math.min(70, d.h * 0.55));
+  CD.fxSparkle(tree.x, gy - d.h * 0.7, 8);
+  S.tweens.add({ targets: tree, scaleX: 1.07, scaleY: 1.1, duration: 190, yoyo: true, ease: 'Sine.inOut' });
+  CD.floatText(tree.x, top, CD.pick(['Glug glug! 💧', 'Grow grow grow! 💧', 'Yum! 💧']), { size: 22, color: '#A8E9FF' });
+  return true;
+}
+
+/* ---------- planting ---------- */
+function plantAt(sp, id){
+  if (!CD.plotUnlocked(sp.idx) || sp.tree) return false;
+  if (!CD.hasSeed(id)) return false;
+  CD.setSpecies(sp.idx, id);
+  const t = buildTree(sp, 0);
+  const gy = CD.groundY(sp.idx);
+  const spec = CD.TREE_SPECIES[id];
+  CDAudio.fx.plant();
+  CD.fxPuff(t.x, gy - 12, 10);
+  CD.fxSparkle(t.x, gy - 48, 6);
+  S.tweens.add({ targets: t, scaleX: { from: 0.3, to: 1 }, scaleY: { from: 0.3, to: 1 }, duration: 320, ease: 'Back.out' });
+  CD.floatText(t.x, gy - 92, spec.emoji + ' ' + spec.name + ' planted!', { size: 21, color: '#FFF3B0' });
+  return true;
+}
+
+/* PUBLIC — cd-ui.js calls this from the seed picker. */
+Day.plantSeed = function(spotIdx, id){
+  const sp = spots[spotIdx];
+  if (!sp || !CD.state || CD.state.phase !== 'day' || ended) return;
+  if (!CD.plotUnlocked(spotIdx) || sp.tree || !CD.hasSeed(id)){ CDAudio.fx.nope(); return; }
+  const x = spotX(spotIdx);
+  approach(x, () => {
+    S.tweens.add({ targets: knight.arm, angle: -60, duration: 190, yoyo: true, ease: 'Sine.inOut' });
+    plantAt(sp, id);
+  });
+};
+
+/* PUBLIC — cd-ui.js calls this AFTER it has taken the wood and unlocked the plot. Visual only. */
+Day.onPlotBought = function(idx){
+  const sp = spots[idx];
+  if (!sp || !S) return;
+  if (!CD.plotUnlocked(idx)) CD.state.plots = Math.max(CD.state.plots, idx + 1);  // idempotent safety net
+  makePlot(sp);
+  const gy = CD.groundY(idx), x = spotX(idx);
+  CDAudio.fx.buyplot();
+  CD.shake(140, 0.005);
+  CD.fxPuff(x, gy - 8, 12);
+  CD.fxConfetti(x, gy - 70, 30);
+  CD.floatText(x, gy - 100, 'New plot! 🌱', { size: 26, color: '#FFF3B0' });
+};
+
+/* ---------- chopping ---------- */
 function swingChop(sp, source){
   if (busyChop) return;
   busyChop = true;
@@ -150,10 +351,11 @@ function swingChop(sp, source){
 
 function throwAxe(sp){
   const tree = sp.tree;
-  faceTree(tree);
+  const gy = CD.groundY(sp.idx);
+  faceIt(knight.c, tree.x >= knight.c.x ? 1 : -1);
   CDAudio.fx.throwaxe();
   const ax = CD.Art.emoji(S, knight.c.x, knight.c.y - 50, '🪓', 30).setDepth(CD.GROUND + 60);
-  const tx = tree.x, ty = CD.GROUND - tree.treeData.h * 0.45;
+  const tx = tree.x, ty = gy - tree.treeData.h * 0.45;
   const sx = ax.x, sy = ax.y, peak = Math.min(sy, ty) - 90;
   S.tweens.add({
     targets: ax, angle: 900, duration: 480,
@@ -173,18 +375,18 @@ function applyChop(sp, source, power){
   const tree = sp.tree;
   if (!tree || !tree.treeData || tree.treeData.falling || tree.treeData.stage === 0) return;
   const d = tree.treeData;
+  const gy = CD.groundY(sp.idx);
   d.hits += power;
   const golden = CD.hasTool('golden');
   if (golden) CDAudio.fx.goldchop(); else CDAudio.fx.chop();
 
-  // wobble + chips
   S.tweens.add({ targets: tree, angle: (Math.random()<0.5?-1:1) * 4, duration: 55, yoyo: true, repeat: 1 });
-  CD.fxChips(tree.x + (knight.c.x < tree.x ? -d.r*0.2 : d.r*0.2), CD.GROUND - Math.min(60, d.h*0.35), 6 + power*3);
-  if (Math.random() < 0.55) CD.fxLeaves(tree.x, CD.GROUND - d.h + d.r*0.4, 3);
-  if (golden) CD.fxSparkle(tree.x, CD.GROUND - d.h*0.4, 4);
+  CD.fxChips(tree.x + (knight.c.x < tree.x ? -d.r*0.2 : d.r*0.2), gy - Math.min(60, d.h*0.35), 6 + power*3);
+  if (Math.random() < 0.55) CD.fxLeaves(tree.x, gy - d.h + d.r*0.4, 3);
+  if (golden) CD.fxSparkle(tree.x, gy - d.h*0.4, 4);
   if (d.stage === 3 && d.hits >= d.chops - 3 && d.hits < d.chops){
     CDAudio.fx.crack();
-    CD.floatText(tree.x, CD.GROUND - d.h - 20, 'CREEEAK…', { size: 22, color: '#FFD24D' });
+    CD.floatText(tree.x, gy - d.h - 20, 'CREEEAK…', { size: 22, color: '#FFD24D' });
   }
   if (d.hits >= d.chops) fellTree(sp);
 }
@@ -194,28 +396,79 @@ function fellTree(sp){
   const d = tree.treeData;
   d.falling = true;
   tree.disableInteractive();
+  clearGrow(sp);
+  const gy = CD.groundY(sp.idx);
   const golden = CD.hasTool('golden');
   const woodGain = d.wood * (golden ? 2 : 1);
+  const party = d.species === 'candy' || d.species === 'rainbow';
 
-  if (d.stage === 3){ CDAudio.fx.bigfall(); CD.shake(300, 0.012); CD.floatText(tree.x - 40, CD.GROUND - d.h*0.7, 'TIMBERRRR!', { size: 40, color: '#FFD24D' }); }
+  if (d.stage === 3){ CDAudio.fx.bigfall(); CD.shake(300, 0.012); CD.floatText(tree.x - 40, gy - d.h*0.7, 'TIMBERRRR!', { size: 40, color: '#FFD24D' }); }
   else { CDAudio.fx.treefall(); CD.shake(120, 0.004); }
 
   const dir = (knight.c.x < tree.x) ? 1 : -1;
   S.tweens.add({
     targets: tree, angle: 84 * dir, duration: d.stage === 3 ? 900 : 620, ease: 'Bounce.easeOut',
     onComplete: () => {
-      CD.fxLeaves(tree.x + dir * d.h * 0.5, CD.GROUND - 20, d.stage * 8 + 6);
-      if (d.stage === 3) CD.fxConfetti(tree.x, CD.GROUND - 120, 50);
-      woodBurst(tree.x + dir * d.h * 0.4, CD.GROUND - 30, woodGain);
+      CD.fxLeaves(tree.x + dir * d.h * 0.5, gy - 20, d.stage * 8 + 6);
+      if (d.stage === 3 || party) CD.fxConfetti(tree.x, gy - 120, party ? 40 : 50);
+      woodBurst(tree.x + dir * d.h * 0.4, gy - 30, woodGain);
+      speciesPayout(sp, d, gy);
       S.tweens.add({ targets: tree, alpha: 0, duration: 320, delay: 120, onComplete: () => {
         tree.destroy();
         if (sp.tree === tree) sp.tree = null;
-        sp.stump = CD.Art.buildStump(S, CD.TREE_SPOTS[sp.idx].x);
-        S.time.delayedCall(CD.REGROW_DELAY, () => { if (CD.state) buildTree(sp, 0); });
+        sp.stump = CD.Art.buildStump(S, spotX(sp.idx), gy);
+        S.time.delayedCall(CD.REGROW_DELAY, () => afterStump(sp));
       }});
     }
   });
   CD.state.chopped += woodGain;
+}
+
+/* A felled tree leaves an EMPTY plot — she picks what goes there next. EXCEPT: a brand-new player
+   owns nothing but oak, so an empty plot would just be dead dirt she can't do anything with. In
+   that case the oak simply comes back, exactly like it used to. The moment she owns a real seed,
+   the plot stays empty and the choice is hers. (Gardener Gus, if hired, fills it in himself.) */
+function afterStump(sp){
+  if (!CD.state || sp.tree) return;
+  clearDirt(sp);
+  if (onlyOakSeeds()){
+    CD.setSpecies(sp.idx, 'oak');
+    buildTree(sp, 0);
+    poof(spotX(sp.idx), CD.groundY(sp.idx) - 24);
+  } else {
+    makePlot(sp);
+  }
+}
+
+function speciesPayout(sp, d, gy){
+  if (d.species === 'apple'){
+    CD.state.apples++;
+    CD.save();
+    CD.fxStars(spotX(sp.idx), gy - 90, 10);
+    CD.floatText(spotX(sp.idx), gy - 150, '🍎 +1 heart tonight!', { size: 24, color: '#FF9EC7' });
+  } else if (d.species === 'rainbow'){
+    rainbowSurprise(spotX(sp.idx), gy - 130);
+  } else if (d.species === 'candy'){
+    CD.floatText(spotX(sp.idx), gy - 150, '🍭 CANDY HAUL!', { size: 26, color: '#C77DFF' });
+  }
+}
+
+function rainbowSurprise(x, y){
+  CDAudio.fx.surprise();
+  CD.fxConfetti(x, y, 44);
+  CD.fxStars(x, y, 14);
+  const roll = Math.random();
+  if (roll < 0.34){
+    CD.addWood(5);
+    CD.floatText(x, y - 30, '🌈 SURPRISE! +5 wood!', { size: 26, color: '#FFD24D' });
+  } else if (roll < 0.67){
+    CD.state.apples++;
+    CD.save();
+    CD.floatText(x, y - 30, '🌈 SURPRISE! 🍎 Extra heart!', { size: 24, color: '#FF9EC7' });
+  } else {
+    CD.addWood(8);
+    CD.floatText(x, y - 30, '🌈 SURPRISE! Weapon fuel +8! ⚔️', { size: 23, color: '#6FD3FF' });
+  }
 }
 
 function woodBurst(x, y, n){
@@ -231,33 +484,53 @@ function woodBurst(x, y, n){
   }
 }
 
-/* ---------- helpers: beaver + squirrels ---------- */
-function nearestChoppable(x){
-  let best = null, bd = 1e9;
-  spots.forEach(sp => {
-    if (sp.tree && sp.tree.treeData.stage > 0 && !sp.tree.treeData.falling){
-      const d = Math.abs(sp.tree.x - x);
-      if (d < bd){ bd = d; best = sp; }
-    }
-  });
-  return best;
+/* ---------- helpers: beavers ---------- */
+function ensureBeavers(){
+  const want = (CD.hasTool('beaver') ? 1 : 0) + (CD.hasHelper('beaver2') ? 1 : 0);
+  while (beavers.length < want){
+    const b = CD.Art.buildBeaver(S);
+    b.x = 120 + beavers.length * 70;
+    b.chopAt = 0;
+    b.claim = -1;
+    b.facing = 1;
+    beavers.push(b);
+  }
+  beavers.forEach(b => b.setVisible(true));
 }
 
-function beaverThink(dt){
-  const sp = nearestChoppable(beaver.x);
-  if (!sp){ return; }
+/* Two beavers must not pile onto the same trunk: each one claims a spot, the other prefers a
+   different one (falling back to the shared nearest if that is genuinely all there is). */
+function beaverTarget(b){
+  const taken = {};
+  beavers.forEach(o => { if (o !== b && o.claim >= 0) taken[o.claim] = 1; });
+  let best = null, bd = 1e9, any = null, ad = 1e9;
+  spots.forEach(sp => {
+    if (!choppable(sp)) return;
+    const d = Math.abs(sp.tree.x - b.x);
+    if (d < ad){ ad = d; any = sp; }
+    if (taken[sp.idx]) return;
+    if (d < bd){ bd = d; best = sp; }
+  });
+  return best || any;
+}
+
+function beaverThink(b, dt){
+  if (!b.visible) return;
+  const sp = beaverTarget(b);
+  b.claim = sp ? sp.idx : -1;
+  if (!sp) return;
   const target = sp.tree.x + 42;
-  const d = target - beaver.x;
+  const d = target - b.x;
   if (Math.abs(d) > 8){
-    beaver.x += Math.sign(d) * 62 * dt;
-    beaver.scaleX = d > 0 ? 1 : -1;
-    beaver.setDepth(beaver.y);
+    b.x += Math.sign(d) * 62 * dt;
+    faceIt(b, d > 0 ? 1 : -1);
+    b.setDepth(b.y);
   } else {
-    beaver.chopAt += dt;
-    if (beaver.chopAt >= 1.1){
-      beaver.chopAt = 0;
+    b.chopAt += dt;
+    if (b.chopAt >= 1.1){
+      b.chopAt = 0;
       CDAudio.fx.beaver();
-      S.tweens.add({ targets: beaver, y: beaver.y - 10, duration: 90, yoyo: true });
+      S.tweens.add({ targets: b, y: b.y - 10, duration: 90, yoyo: true });
       applyChopRemote(sp, 1);
     }
   }
@@ -265,29 +538,121 @@ function beaverThink(dt){
 
 function applyChopRemote(sp, power){
   const tree = sp.tree;
-  if (!tree || tree.treeData.falling || tree.treeData.stage === 0) return;
+  if (!tree || !tree.treeData || tree.treeData.falling || tree.treeData.stage === 0) return;
   tree.treeData.hits += power;
   S.tweens.add({ targets: tree, angle: 3, duration: 55, yoyo: true, repeat: 1 });
-  CD.fxChips(tree.x, CD.GROUND - 30, 5);
+  CD.fxChips(tree.x, CD.groundY(sp.idx) - 30, 5);
   if (tree.treeData.hits >= tree.treeData.chops) fellTree(sp);
 }
 
+/* ---------- helpers: gardener ---------- */
+function ensureGardener(){
+  if (!CD.hasHelper('gardener')) return;
+  if (!gardener){
+    gardener = CD.Art.buildGardener(S);
+    gardener.facing = 1;
+    gardener.cool = 0;
+  }
+  gardener.setVisible(true);
+}
+
+function emptyPlot(){
+  for (let i = 0; i < spots.length; i++){
+    const sp = spots[i];
+    if (!sp.tree && !sp.stump && sp.plot && CD.plotUnlocked(i)) return sp;
+  }
+  return null;
+}
+
+function gardenerThink(dt){
+  if (!gardener || !gardener.visible) return;
+  if (gardener.cool > 0){ gardener.cool -= dt; return; }
+  const sp = emptyPlot();
+  const tx = sp ? spotX(sp.idx) : 250;          // no work -> amble back toward the forge
+  const d = tx - gardener.x;
+  if (Math.abs(d) > 10){
+    gardener.x += Math.sign(d) * (sp ? 58 : 34) * dt;
+    faceIt(gardener, d > 0 ? 1 : -1);
+    gardener.setDepth(gardener.y);
+    return;
+  }
+  if (!sp) return;
+  gardener.cool = 2.0;
+  S.tweens.add({ targets: gardener.can, angle: 46, duration: 260, yoyo: true, ease: 'Sine.inOut' });
+  S.tweens.add({ targets: gardener, y: gardener.y - 8, duration: 140, yoyo: true });
+  plantAt(sp, bestSeed());                      // she paid for the fanciest seed — show it off
+}
+
+/* ---------- helpers: sprinkler + squirrels ---------- */
+function setupSprinkler(){
+  if (sprinklerTimer){ sprinklerTimer.remove(); sprinklerTimer = null; }
+  if (!CD.hasHelper('sprinkler')) return;
+  sprinklerTimer = S.time.addEvent({ delay: 5000, loop: true, callback: sprinkle });
+}
+
+function sprinkle(){
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  const thirsty = spots.filter(sp =>
+    sp.tree && sp.tree.treeData && !sp.tree.treeData.falling &&
+    !sp.tree.treeData.watered && sp.tree.treeData.stage < CD.maxStageFor(sp.idx));
+  if (!thirsty.length) return;
+  const sp = CD.pick(thirsty);
+  const gy = CD.groundY(sp.idx);
+  const can = CD.Art.emoji(S, sp.tree.x, gy - sp.tree.treeData.h - 40, '💦', 30).setDepth(gy + 30).setAlpha(0);
+  S.tweens.add({ targets: can, alpha: 1, y: can.y + 10, duration: 220, yoyo: true, hold: 260,
+    onComplete: () => can.destroy() });
+  waterTree(sp, true);
+}
+
+function setupSquirrels(){
+  if (squirrelTimer){ squirrelTimer.remove(); squirrelTimer = null; }
+  if (!CD.hasTool('squirrels')) return;
+  squirrelTimer = S.time.addEvent({
+    delay: CD.hasHelper('squirrels2') ? 3250 : 6500, loop: true, callback: squirrelRaid
+  });
+}
+
+function nearestChoppable(x){
+  let best = null, bd = 1e9;
+  spots.forEach(sp => {
+    if (!choppable(sp)) return;
+    const d = Math.abs(sp.tree.x - x);
+    if (d < bd){ bd = d; best = sp; }
+  });
+  return best;
+}
+
 function squirrelRaid(){
-  if (CD.state.phase !== 'day' || ended) return;
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
   const sp = nearestChoppable(CD.rnd(200, CD.W));
   if (!sp) return;
   const tree = sp.tree;
-  const sq = CD.Art.emoji(S, tree.x + 20, CD.GROUND - tree.treeData.h + 10, '🐿️', 30).setDepth(CD.GROUND + 65).setAlpha(0);
+  const gy = CD.groundY(sp.idx);
+  const sq = CD.Art.emoji(S, tree.x + 20, gy - tree.treeData.h + 10, '🐿️', 30).setDepth(gy + 65).setAlpha(0);
   S.tweens.add({ targets: sq, alpha: 1, y: sq.y - 14, duration: 250, yoyo: true, hold: 1400, onComplete: () => sq.destroy() });
   for (let i = 0; i < 3; i++){
     S.time.delayedCall(320 + i * 380, () => {
       if (!sp.tree || sp.tree !== tree || tree.treeData.falling) return;
-      const a = CD.Art.emoji(S, tree.x + CD.rnd(-24, 24), CD.GROUND - tree.treeData.h * 0.8, '🌰', 20).setDepth(CD.GROUND + 64);
-      S.tweens.add({ targets: a, y: CD.GROUND - 14, angle: 260, duration: 330, ease: 'Quad.in', onComplete: () => {
+      const a = CD.Art.emoji(S, tree.x + CD.rnd(-24, 24), gy - tree.treeData.h * 0.8, '🌰', 20).setDepth(gy + 64);
+      S.tweens.add({ targets: a, y: gy - 14, angle: 260, duration: 330, ease: 'Quad.in', onComplete: () => {
         a.destroy(); CDAudio.fx.acorn();
         applyChopRemote(sp, 1);
       }});
     });
   }
 }
+
+/* PUBLIC — cd-ui.js calls this after it has taken the wood for a shop helper. */
+Day.onHelperBought = function(id){
+  if (!S || !CD.state) return;
+  if (id === 'beaver2') ensureBeavers();
+  else if (id === 'gardener') ensureGardener();
+  else if (id === 'sprinkler') setupSprinkler();
+  else if (id === 'squirrels2') setupSquirrels();
+  const h = CD.HELPERS.find(x => x.id === id);
+  CDAudio.fx.fanfare();
+  CD.fxConfetti(CD.W / 2, 230, 44);
+  CD.fxSparkle(CD.W / 2, 230, 10);
+  if (h) CD.floatText(CD.W / 2, 200, h.emoji + ' ' + h.name + ' joined!', { size: 26, color: '#FFF3B0' });
+};
 })();

@@ -168,6 +168,9 @@ CD.nightWon = function(){
 CD.retryNight = function(){
   CD.Night.stop();
   CD.ui.exitNight();
+  /* Night.start() re-derives heartCap from her banked apples — but those were already spent on the
+     attempt that just failed, so a retry gets the plain full bar, not the apple bonus. */
+  CD.state.heartCap = CD.MAX_HEARTS;
   CD.state.hearts = CD.MAX_HEARTS;
   CD.ui.setHearts();
   CD.ui.banner('Night ' + CD.state.day + ' 🌙', 'Round two — you got this!');

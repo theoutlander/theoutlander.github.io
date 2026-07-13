@@ -8,7 +8,11 @@
 
 importScripts("shared/extract-asset-urls.js");
 
-var CACHE_VERSION = "v1";
+/* Bump this whenever a shell file changes in a way players must not miss. v1 → v2: a cached shell
+   that was missing shared/family-chat.css rendered the family chat unstyled — the whole
+   conversation in the page body. The fix only reaches an already-cached device if the cache is
+   thrown away, and activate() deletes every maya-cache-* that isn't the current name. */
+var CACHE_VERSION = "v2";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 

@@ -19,6 +19,17 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared/family-chat.css">
+<style>
+/* The chat panel's hidden state must NOT depend on family-chat.css loading. It is the only
+   external stylesheet on this page (everything else is inlined below), so when a stale service
+   worker cache or a blocked request left it unapplied, the widget fell back to normal document
+   flow: no floating 💬 button, and — on a device that had already unlocked — the entire private
+   conversation printed at the bottom of the page for anyone standing there. Nick hit exactly that.
+   These few rules are inline so they cannot go missing. The .open rules in family-chat.css are
+   id+class, so they still win over these and the open/close animation is unchanged. */
+#family-chat-widget{position:fixed;bottom:16px;right:12px;top:auto;left:auto;z-index:450}
+#family-chat-panel,#family-chat-backdrop{opacity:0;visibility:hidden}
+</style>
 <!-- EmailJS is loaded LAZILY (see loadEmailJS below), not here.
      @emailjs/browser@4 touches localStorage as it initialises, and on Maya's iPad Safari throws
      SecurityError when site data is blocked. Loading it eagerly meant an uncaught error on EVERY

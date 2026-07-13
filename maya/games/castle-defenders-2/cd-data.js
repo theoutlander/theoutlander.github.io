@@ -58,13 +58,24 @@ window.CD = {
   W: 960, H: 600, GROUND: 522,
   scene: null, game: null,
 
+  /* Back row = the original 5 (free). Front row = the 4 buyable plots; they sit lower on the
+     screen (dy) so they read as "closer to you", and they cap at stage 2 so a bought tree can
+     never hide Grandpa Tree behind it. */
   TREE_SPOTS: [
-    { x: 305, max: 1 },
-    { x: 415, max: 2 },
-    { x: 525, max: 1 },
-    { x: 650, max: 2 },
-    { x: 830, max: 3 }   // Grandpa Tree — the GIANT
+    { x: 305, max: 1, dy: 0,  cost: 0 },
+    { x: 415, max: 2, dy: 0,  cost: 0 },
+    { x: 525, max: 1, dy: 0,  cost: 0 },
+    { x: 650, max: 2, dy: 0,  cost: 0 },
+    { x: 830, max: 3, dy: 0,  cost: 0 },   // Grandpa Tree — the GIANT
+    /* dy is deliberately small (12-18, not 38-46). The tool belt is a DOM bar pinned to the bottom
+       of the canvas, and it covered the dy:38 plots outright — Maya could not tap the 🪵12 plot at
+       all. Verified in the browser. Keep the front row above the belt band. */
+    { x: 360, max: 2, dy: 12, cost: 12 },
+    { x: 480, max: 2, dy: 18, cost: 20 },
+    { x: 600, max: 2, dy: 12, cost: 30 },
+    { x: 740, max: 2, dy: 18, cost: 45 }
   ],
+  BASE_PLOTS: 5,
 
   // stage: 0 sprout, 1 small, 2 big, 3 giant
   TREE_STAGES: {
@@ -73,8 +84,44 @@ window.CD = {
     2: { name: 'Big Tree',chops: 6,  wood: 5,  h: 215, canopy: 82 },
     3: { name: 'Grandpa Tree', chops: 12, wood: 14, h: 330, canopy: 120 }
   },
-  GROW_MS: 9000,          // time per growth stage
+
+  /* Species MULTIPLY the stage table above; they never replace it.
+     grow  — multiplier on GROW_MS (lower = faster)
+     wood  — multiplier on the stage's wood payout (rounded up, min 1)
+     maxStage — species cap, ANDed with the spot's own max
+     Payout is always WOOD. There is no second currency. Candy is simply the big-wood tree. */
+  TREE_SPECIES: {
+    oak:     { emoji: '🌳', name: 'Oak',            seedCost: 0,  grow: 1.0, wood: 1.0, maxStage: 3,
+               leaf: 0x58A14E, leaf2: 0x6FBF61, leafHi: 0x8ED97F,
+               blurb: 'Big, strong, reliable. Lots of wood!' },
+    cherry:  { emoji: '🌸', name: 'Cherry Blossom', seedCost: 6,  grow: 0.5, wood: 0.5, maxStage: 2,
+               leaf: 0xFF9EC7, leaf2: 0xFFC2DC, leafHi: 0xFFE1EE,
+               blurb: 'Grows SUPER fast — chop it again and again!' },
+    apple:   { emoji: '🍎', name: 'Apple Tree',     seedCost: 12, grow: 1.6, wood: 0.6, maxStage: 3,
+               leaf: 0x4E9E4A, leaf2: 0x6FBF61, leafHi: 0x8ED97F, fruit: 0xFF5C5C, apples: true,
+               blurb: 'Apples make the gate EXTRA strong tonight!' },
+    candy:   { emoji: '🍭', name: 'Candy Tree',     seedCost: 18, grow: 2.0, wood: 2.5, maxStage: 3,
+               leaf: 0xC77DFF, leaf2: 0xFFB3E6, leafHi: 0xFFD9F2,
+               blurb: 'Slow… but a HUGE pile of wood!' },
+    rainbow: { emoji: '🌈', name: 'Rainbow Tree',   seedCost: 28, grow: 2.4, wood: 1.0, maxStage: 3,
+               leaf: 0x6FD3FF, leaf2: 0xFFD24D, leafHi: 0xFFFFFF, rainbow: true,
+               blurb: 'A SURPRISE every time you chop it!' }
+  },
+  SEED_ORDER: ['oak', 'cherry', 'apple', 'candy', 'rainbow'],
+
+  GROW_MS: 9000,          // base time per growth stage (× species.grow)
   REGROW_DELAY: 5000,     // stump -> sprout
+  WATER_BOOST: 0.5,       // watering completes the current stage in half the REMAINING time
+  MAX_BONUS_HEARTS: 3,    // apples can add at most this many hearts to a night
+
+  /* Shop helpers. These are BOUGHT WITH WOOD and are a SEPARATE system from TOOLS above
+     (TOOLS unlock automatically by day and are chop enhancers — do not conflate them). */
+  HELPERS: [
+    { id: 'sprinkler',  emoji: '💦', name: 'Sprinkler',      cost: 18, desc: 'Waters your trees all by itself!' },
+    { id: 'gardener',   emoji: '🌻', name: 'Gardener Gus',   cost: 26, desc: 'Plants seeds in your empty plots!' },
+    { id: 'beaver2',    emoji: '🦫', name: 'Chomp the Beaver',cost: 22, desc: 'Chip brings his cousin along!' },
+    { id: 'squirrels2', emoji: '🐿️', name: 'Squirrel Squad+', cost: 20, desc: 'DOUBLE the acorn rain!' }
+  ],
 
   TOOLS: [
     { day: 1, id: 'axe',       emoji: '🪓', name: 'Trusty Axe',     desc: 'Tap a tree to chop it!' },
@@ -99,6 +146,25 @@ window.CD = {
     chonko: { hp: 6,  speed: 12, scale: 1.5,  bite: 2, heavy: true },
     bouncy: { hp: 3,  speed: 25, scale: 0.95, bite: 1, hops: true },
     king:   { hp: 26, speed: 8,  scale: 2.0,  bite: 3, heavy: true, king: true }
+  },
+
+  /* GEAR — a modifier on top of a zombie kind, never a new kind. Each is a small puzzle:
+     a gear must change HOW you beat him, not just how long it takes.
+     The full gear × counter matrix lives in the design doc; cd-night.js implements it. */
+  GEAR: {
+    shield:  { emoji: '🛡️', name: 'Shield Zombie',  blocks: 3,   hint: 'Bonks bounce off! Try the chicken 🐔' },
+    helmet:  { emoji: '⛑️', name: 'Helmet Zombie',  taps: 2,     hint: 'Knock the helmet off first!' },
+    ladder:  { emoji: '🪜', name: 'Ladder Zombie',  biteMul: 2,  hint: 'He climbs OVER! Slow him down 🍡' },
+    balloon: { emoji: '🎈', name: 'Balloon Zombie', lift: 74,    hint: 'Too high to bonk! Pop him 🍌🫧' }
+  },
+  GEAR_IDS: ['shield', 'helmet', 'ladder', 'balloon'],
+
+  // Gear starts on night 2 and gets commoner. The King never wears gear — he IS the King.
+  gearChance(day){ return day < 2 ? 0 : Math.min(0.55, 0.15 + (day - 2) * 0.10); },
+  rollGear(type, day){
+    if (type === 'king') return null;
+    if (Math.random() >= CD.gearChance(day)) return null;
+    return CD.pick(CD.GEAR_IDS);
   },
 
   WAVES: {
@@ -127,15 +193,23 @@ window.CD = {
   freshState(){
     return {
       day: 1, wood: 0, weapons: ['sword'],
-      hearts: CD.MAX_HEARTS, phase: 'title',
+      seeds: ['oak'],          // owned seed species (oak is free forever)
+      helpers: [],             // owned shop helper ids
+      plots: CD.BASE_PLOTS,    // how many TREE_SPOTS are unlocked
+      apples: 0,               // banked apples -> bonus hearts at NIGHT START only
+      garden: CD.freshGarden(),// species planted per plot index
+      hearts: CD.MAX_HEARTS, heartCap: CD.MAX_HEARTS, phase: 'title',
       chopped: 0, bonked: 0, won: false
     };
   },
+  freshGarden(){ return CD.TREE_SPOTS.map(() => 'oak'); },
 
   save(){
     const s = CD.state;
     CDStore.set('cdSaveV2', JSON.stringify({
       day: s.day, wood: s.wood, weapons: s.weapons,
+      seeds: s.seeds, helpers: s.helpers, plots: s.plots,
+      apples: s.apples, garden: s.garden,
       chopped: s.chopped, bonked: s.bonked, won: s.won
     }));
   },
@@ -145,6 +219,16 @@ window.CD = {
       if (!raw) return null;
       const d = JSON.parse(raw);
       if (!d || !d.day) return null;
+      /* A save written before the garden existed has none of these fields. Default every one of
+         them — Maya has real progress saved and a crash here would eat it. */
+      if (!Array.isArray(d.weapons) || !d.weapons.length) d.weapons = ['sword'];
+      if (!Array.isArray(d.seeds) || !d.seeds.length) d.seeds = ['oak'];
+      if (!Array.isArray(d.helpers)) d.helpers = [];
+      if (typeof d.plots !== 'number' || !(d.plots >= CD.BASE_PLOTS)) d.plots = CD.BASE_PLOTS;
+      d.plots = Math.min(d.plots, CD.TREE_SPOTS.length);
+      if (typeof d.apples !== 'number' || d.apples < 0) d.apples = 0;
+      if (!Array.isArray(d.garden) || d.garden.length !== CD.TREE_SPOTS.length) d.garden = CD.freshGarden();
+      d.garden = d.garden.map(sp => CD.TREE_SPECIES[sp] ? sp : 'oak');
       return d;
     } catch(e){ return null; }
   },
@@ -155,6 +239,30 @@ window.CD = {
     return t && CD.state.day >= t.day;
   },
   hasWeapon(id){ return CD.state.weapons.indexOf(id) >= 0; },
+
+  /* ---------- garden API (cd-day / cd-art / cd-ui all go through these) ---------- */
+  hasSeed(id){ return id === 'oak' || CD.state.seeds.indexOf(id) >= 0; },
+  hasHelper(id){ return CD.state.helpers.indexOf(id) >= 0; },
+  plotUnlocked(i){ return i < CD.state.plots; },
+  nextPlotIdx(){ return CD.state.plots < CD.TREE_SPOTS.length ? CD.state.plots : -1; },
+  nextPlotCost(){ const i = CD.nextPlotIdx(); return i < 0 ? 0 : CD.TREE_SPOTS[i].cost; },
+
+  speciesOf(i){ return CD.TREE_SPECIES[CD.state.garden[i]] ? CD.state.garden[i] : 'oak'; },
+  spec(i){ return CD.TREE_SPECIES[CD.speciesOf(i)]; },
+  setSpecies(i, id){ if (CD.TREE_SPECIES[id]) { CD.state.garden[i] = id; CD.save(); } },
+
+  // a spot's own max ANDed with the species cap
+  maxStageFor(i){ return Math.min(CD.TREE_SPOTS[i].max, CD.spec(i).maxStage); },
+  growMsFor(i){ return CD.GROW_MS * CD.spec(i).grow; },
+  woodFor(i, stage){
+    const base = CD.TREE_STAGES[stage].wood;
+    if (!base) return 0;
+    return Math.max(1, Math.round(base * CD.spec(i).wood));
+  },
+  groundY(i){ return CD.GROUND + (CD.TREE_SPOTS[i].dy || 0); },
+
+  // hearts you START the night with: full + banked apples (capped). Spent on use.
+  nightHearts(){ return CD.MAX_HEARTS + Math.min(CD.state.apples, CD.MAX_BONUS_HEARTS); },
 
   rnd(a, b){ return a + Math.random() * (b - a); },
   pick(arr){ return arr[Math.floor(Math.random() * arr.length)]; }
