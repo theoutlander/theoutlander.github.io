@@ -5,6 +5,17 @@ const $ = id => document.getElementById(id);
 const ui = {};
 window.CD.ui = ui;
 
+/* Bind through this, NEVER `$('x').addEventListener` directly.
+   A missing element must not be able to kill the whole script. It already did: a service worker
+   served a CACHED cd-ui.js (which still bound '#home-btn') against the NEW index.html (where that
+   duplicate button is gone) — `null.addEventListener` threw at top level, cd-ui.js died, Phaser
+   never booted, and the game was a BLANK SCREEN in production. Old JS + new HTML is a combination
+   a cache-first service worker WILL produce, so the binding has to survive it. */
+function on(id, ev, fn){
+  const el = $(id);
+  if (el) el.addEventListener(ev, fn);
+}
+
 const cdReadyAt = {};   // weapon id -> timestamp ms
 
 /* NO TOOL MODES. A mode ("which tool am I holding?") is exactly the question an 8-year-old
@@ -61,7 +72,7 @@ ui.dayTick = function(frac){
 
 /* ---------- Water All ----------
    One tap, the whole garden gets a splash. cd-day.js decides which trees actually benefit. */
-$('water-btn').addEventListener('click', () => {
+on('water-btn', 'click', () => {
   CDAudio.unlockCtx();
   if (CD.state.phase !== 'day') return;
   CD.Day.waterAll();
@@ -401,8 +412,8 @@ document.addEventListener('click', e => {
   ui.openShop('garden');
 });
 
-$('seed-close').addEventListener('click', () => { CDAudio.fx.click(); closeSeedPicker(); });
-$('seedpick').addEventListener('click', e => { if (e.target.id === 'seedpick') closeSeedPicker(); });
+on('seed-close', 'click', () => { CDAudio.fx.click(); closeSeedPicker(); });
+on('seedpick', 'click', e => { if (e.target.id === 'seedpick') closeSeedPicker(); });
 
 /* ---------- weapon bar ---------- */
 function renderWeaponBar(){
@@ -501,14 +512,14 @@ function refreshTitleButtons(){
 
 ui.onSceneReady = function(){ refreshTitleButtons(); };
 
-$('play-btn').addEventListener('click', () => {
+on('play-btn', 'click', () => {
   CDAudio.unlockCtx(); CDAudio.fx.click();
   $('title').classList.remove('show');
   $('hud-top').classList.add('show');
   CDGame.start(null);
   if (window.MayaPortal) MayaPortal.notifyScreen('game');
 });
-$('continue-btn').addEventListener('click', () => {
+on('continue-btn', 'click', () => {
   CDAudio.unlockCtx(); CDAudio.fx.click();
   $('title').classList.remove('show');
   $('hud-top').classList.add('show');
@@ -520,14 +531,18 @@ $('continue-btn').addEventListener('click', () => {
 /* No #home-btn any more — shared/back.js owns the back button (a fixed #maya-back at top-left).
    Binding to a missing element here would THROW at top level and take the whole UI script with
    it, which is exactly how other games have shipped a dead start screen. */
-$('forge-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); ui.openShop(); });
-$('night-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); if (CD.state.phase === 'day') CD.Day.end(); });
-$('shop-close').addEventListener('click', () => { CDAudio.fx.click(); closeShop(); });
-$('shop').addEventListener('click', e => { if (e.target.id === 'shop') closeShop(); });
+on('forge-btn', 'click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); ui.openShop(); });
+on('night-btn', 'click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); if (CD.state.phase === 'day') CD.Day.end(); });
+on('shop-close', 'click', () => { CDAudio.fx.click(); closeShop(); });
+on('shop', 'click', e => { if (e.target.id === 'shop') closeShop(); });
 
 const muteBtn = $('mute-btn');
-function syncMute(){ muteBtn.textContent = CDAudio.muted ? '🔇' : '🔊'; muteBtn.classList.toggle('off', CDAudio.muted); }
-muteBtn.addEventListener('click', () => { CDAudio.setMuted(!CDAudio.muted); syncMute(); });
+function syncMute(){
+  if (!muteBtn) return;
+  muteBtn.textContent = CDAudio.muted ? '🔇' : '🔊';
+  muteBtn.classList.toggle('off', CDAudio.muted);
+}
+on('mute-btn', 'click', () => { CDAudio.setMuted(!CDAudio.muted); syncMute(); });
 syncMute();
 
 /* ---------- boot ---------- */

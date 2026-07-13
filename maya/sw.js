@@ -12,7 +12,10 @@ importScripts("shared/extract-asset-urls.js");
    that was missing shared/family-chat.css rendered the family chat unstyled — the whole
    conversation in the page body. The fix only reaches an already-cached device if the cache is
    thrown away, and activate() deletes every maya-cache-* that isn't the current name. */
-var CACHE_VERSION = "v2";
+/* v2 → v3: Castle Defenders 2's garden/gear rewrite. The cache is cache-first, so an already-
+   cached device keeps serving the OLD game files after a deploy and only revalidates in the
+   background — you see the new build a load LATE. Bumping the version drops the stale cache. */
+var CACHE_VERSION = "v3";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 
