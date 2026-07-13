@@ -517,7 +517,9 @@ $('continue-btn').addEventListener('click', () => {
 });
 
 /* ---------- top buttons ---------- */
-$('home-btn').addEventListener('click', () => { if (window.MayaPortal) MayaPortal.leaveToLab(); });
+/* No #home-btn any more — shared/back.js owns the back button (a fixed #maya-back at top-left).
+   Binding to a missing element here would THROW at top level and take the whole UI script with
+   it, which is exactly how other games have shipped a dead start screen. */
 $('forge-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); ui.openShop(); });
 $('night-btn').addEventListener('click', () => { CDAudio.unlockCtx(); CDAudio.fx.click(); if (CD.state.phase === 'day') CD.Day.end(); });
 $('shop-close').addEventListener('click', () => { CDAudio.fx.click(); closeShop(); });

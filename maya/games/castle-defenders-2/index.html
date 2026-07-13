@@ -214,12 +214,17 @@
 				flex: 1;
 			}
 
-			/* A full-width sun-timer strip between the top bar and the canvas. */
+			/* Sun timer — a slim strip in the sky, top-centre. */
 			#daybar {
-				flex: none;
-				width: 100%;
-				height: 8px;
-				background: rgba(59, 42, 69, 0.55);
+				position: absolute;
+				top: 66px;
+				left: 50%;
+				transform: translateX(-50%);
+				width: min(300px, 46vw);
+				height: 10px;
+				background: rgba(59, 42, 69, 0.4);
+				border: 2px solid rgba(255, 248, 236, 0.65);
+				border-radius: 8px;
 				display: none;
 				overflow: hidden;
 			}
@@ -1116,14 +1121,16 @@
 		</style>
 	</head>
 	<body>
-		<!-- LAYOUT: top bar / canvas / bottom bar are SIBLINGS in a flex column, so no control
-		     ever sits on top of the play field. Phaser's Scale.FIT shrinks the canvas into
-		     whatever #stage is left. Only transient overlays (banner, shop, endcard) float. -->
-		<!-- NO home button here on purpose. shared/back.js injects its own fixed #maya-back at
-		     top-left (12,12); the game used to draw a second one underneath it, and the pair sat
-		     on top of the Day chip. The bar just reserves the space instead. -->
-		<div id="topbar">
-			<div id="hud-top">
+		<div id="stage"></div>
+
+		<!-- Everything below floats OVER the canvas, inside #ui, so the game never shrinks.
+		     The chips and buttons sit in the SKY — the top of the scene is empty by design.
+		     NO home button here on purpose: shared/back.js injects its own fixed #maya-back at
+		     top-left (12,12), and the game used to draw a second one underneath it — the pair
+		     landed on top of the Day chip. #topbar just starts to the right of it instead. -->
+		<div id="ui">
+			<div id="topbar">
+				<div id="hud-top">
 				<div
 					class="chip"
 					id="phase-chip"
@@ -1150,45 +1157,42 @@
 					class="chip"
 				></div>
 			</div>
-			<button
-				class="icon-btn"
-				id="mute-btn"
-				title="Sound"
-			>
-				🔊
-			</button>
-		</div>
-		<div id="daybar"><div class="fill"></div></div>
-
-		<div id="stage"></div>
-
-		<!-- ONE bottom bar. No tool modes: tapping a tree chops it, tapping an empty plot
-		     plants it. Watering is a single button that waters the whole garden. -->
-		<div id="botbar">
-			<div id="day-controls">
 				<button
-					class="big-btn water"
-					id="water-btn"
+					class="icon-btn"
+					id="mute-btn"
+					title="Sound"
 				>
-					💧 Water All
-				</button>
-				<button
-					class="big-btn blue"
-					id="forge-btn"
-				>
-					🛠️ Forge
-				</button>
-				<button
-					class="big-btn night"
-					id="night-btn"
-				>
-					🌙 Night!
+					🔊
 				</button>
 			</div>
-			<div id="weapon-bar"></div>
-		</div>
+			<div id="daybar"><div class="fill"></div></div>
 
-		<div id="ui">
+			<!-- No tool modes: tapping a tree chops it, tapping an empty plot plants it.
+			     Watering is one button that waters the whole garden. -->
+			<div id="botbar">
+				<div id="day-controls">
+					<button
+						class="big-btn water"
+						id="water-btn"
+					>
+						💧 Water All
+					</button>
+					<button
+						class="big-btn blue"
+						id="forge-btn"
+					>
+						🛠️ Forge
+					</button>
+					<button
+						class="big-btn night"
+						id="night-btn"
+					>
+						🌙 Night!
+					</button>
+				</div>
+				<div id="weapon-bar"></div>
+			</div>
+
 			<div id="banner">
 				<div class="t"></div>
 				<div class="s"></div>

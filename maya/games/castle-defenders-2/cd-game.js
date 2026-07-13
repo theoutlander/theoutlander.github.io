@@ -110,6 +110,7 @@ function windowsGlow(on){
 
 CD.toNight = function(){
   CD.state.phase = 'dusk';
+  CD.Day.stop();          // nothing used to call this — the beaver stayed out all night
   CD.ui.exitDay();
   CDAudio.stopMusic();
   const s = CD.scene;

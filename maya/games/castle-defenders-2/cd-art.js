@@ -434,19 +434,30 @@ Art.buildKnight = function(scene){
   return { c, arm, sh, gold: null };
 };
 
-/* Animated turn-around. dir: 1 = right, -1 = left. Squash to nothing, pop out mirrored. */
+/* Animated turn-around. dir: 1 = right, -1 = left. Squash to nothing, pop out mirrored.
+   Tracks INTENT (__faceDir), never the live scaleX. Reading scaleX mid-tween is a trap: the turn
+   passes through small values of the OLD sign, so a second turn fired during the first one reads
+   "already facing that way", returns early, and the in-flight tween then finishes turning him the
+   WRONG way — which is exactly how the knight ended up staring at the castle all night while the
+   whole horde walked in from the right. Any in-flight turn is stopped, and the final scaleX is
+   always d * base. */
 Art.face = function(scene, container, dir){
   if (!container || !container.scene) return;
   const d = dir < 0 ? -1 : 1;
-  const sx = container.scaleX;
-  if (sx !== 0 && (sx > 0) === (d > 0)) return;          // already facing that way
-  const base = Math.abs(sx) || 1;
+  if (container.__faceDir === undefined) container.__faceDir = container.scaleX < 0 ? -1 : 1;
+  if (container.__faceDir === d) return;
+  container.__faceDir = d;
+  const base = Math.abs(container.__faceBase || container.scaleX) || 1;
+  container.__faceBase = base;
+  if (container.__faceTween) container.__faceTween.stop();
   CDAudio.fx.turn();
-  scene.tweens.add({
-    targets: container, scaleX: (sx < 0 ? -1 : 1) * base * 0.1, duration: 60, ease: 'Sine.in',
+  container.__faceTween = scene.tweens.add({
+    targets: container, scaleX: d * base * 0.1, duration: 60, ease: 'Sine.in',
     onComplete: () => {
       if (!container.scene) return;
-      scene.tweens.add({ targets: container, scaleX: d * base, duration: 60, ease: 'Back.out' });
+      container.__faceTween = scene.tweens.add({
+        targets: container, scaleX: d * base, duration: 60, ease: 'Back.out'
+      });
     }
   });
 };

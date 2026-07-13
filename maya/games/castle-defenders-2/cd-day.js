@@ -25,12 +25,12 @@ function tool(){
   const t = CD.ui && CD.ui.tool;
   return (t === 'water' || t === 'seed') ? t : 'axe';
 }
+/* No local memo here on purpose — a second copy of "which way is he facing" desynced from the one
+   inside Art.face and swallowed turns. Art.face is the single source of truth and no-ops when the
+   direction already matches, so it is safe to call every frame. */
 function faceIt(obj, dir){
   if (!obj) return;
-  const d = dir < 0 ? -1 : 1;
-  if (obj.facing === d) return;
-  obj.facing = d;
-  CD.Art.face(S, obj, d);
+  CD.Art.face(S, obj, dir < 0 ? -1 : 1);
 }
 function spotX(i){ return CD.TREE_SPOTS[i].x; }
 function choppable(sp){ return !!(sp.tree && sp.tree.treeData && sp.tree.treeData.stage > 0 && !sp.tree.treeData.falling); }
@@ -70,7 +70,10 @@ function makePlot(sp){
 function makeLocked(sp){
   clearDirt(sp);
   const p = CD.Art.buildLockedPlot(S, sp.idx);
-  p.on('pointerdown', (pt, lx, ly, ev) => { if (ev) ev.stopPropagation(); Day.onPlotTap(sp); });
+  /* Deliberately NOT interactive. A locked plot sits right in the middle of the trees, so while
+     she is happily tapping to chop she keeps clipping one — and it used to yank the Forge open
+     mid-chop, every time. Locked plots are scenery; you buy them on the Garden tab. */
+  if (p.disableInteractive) p.disableInteractive();
   sp.locked = p;
   return p;
 }
@@ -120,7 +123,6 @@ function growSpot(sp){
 /* ---------- phase control ---------- */
 Day.init = function(scene, knightRef){
   S = scene; knight = knightRef;
-  knight.c.facing = 1;
   spots = CD.TREE_SPOTS.map((sp, i) => ({ idx: i, tree: null, stump: null, plot: null, locked: null, timer: null, growEnd: 0 }));
   buildGarden();
 };
@@ -159,6 +161,7 @@ Day.stop = function(){
   if (sprinklerTimer){ sprinklerTimer.remove(); sprinklerTimer = null; }
   beavers.forEach(b => b.setVisible(false));
   if (gardener) gardener.setVisible(false);
+  faceIt(knight.c, 1);          // the horde comes from the RIGHT — never stand facing the castle
 };
 
 Day.tick = function(dtSec){
@@ -174,7 +177,9 @@ Day.tick = function(dtSec){
 Day.end = function(){
   if (ended) return;
   ended = true;
-  walkKnightTo(285, () => {});
+  /* He walks home LEFTWARD, so he arrives facing left — and then stands there facing the castle
+     all night while the entire horde comes at him from the right. Turn him around once he's home. */
+  walkKnightTo(285, () => faceIt(knight.c, 1));
   CD.toNight();
 };
 
@@ -513,7 +518,6 @@ function ensureBeavers(){
     b.x = 120 + beavers.length * 70;
     b.chopAt = 0;
     b.claim = -1;
-    b.facing = 1;
     beavers.push(b);
   }
   beavers.forEach(b => b.setVisible(true));
@@ -571,7 +575,6 @@ function ensureGardener(){
   if (!CD.hasHelper('gardener')) return;
   if (!gardener){
     gardener = CD.Art.buildGardener(S);
-    gardener.facing = 1;
     gardener.cool = 0;
   }
   gardener.setVisible(true);
