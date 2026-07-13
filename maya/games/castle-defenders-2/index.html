@@ -731,10 +731,12 @@
 				gap: 10px;
 			}
 			#shop-garden,
+			#shop-helpers,
 			#shop-stuff {
 				display: none;
 			}
 			#shop-garden.show,
+			#shop-helpers.show,
 			#shop-stuff.show {
 				display: block;
 			}
@@ -742,22 +744,22 @@
 				display: none;
 			}
 			.gsec {
-				margin-bottom: 16px;
+				margin-bottom: 9px;
 			}
 			.gsec > .h {
 				font-family: "Fredoka One", cursive;
-				font-size: 18px;
-				margin-bottom: 3px;
+				font-size: 15px;
+				margin-bottom: 1px;
 			}
 			.gsec > .sub {
-				font-size: 12.5px;
+				font-size: 11px;
 				font-weight: 700;
 				color: var(--muted);
-				margin-bottom: 8px;
+				margin-bottom: 5px;
 			}
 			.wcard .tag {
 				display: inline-block;
-				font-size: 11px;
+				font-size: 9.5px;
 				font-weight: 900;
 				background: rgba(79, 163, 209, 0.16);
 				border: 2px solid rgba(79, 163, 209, 0.5);
@@ -854,8 +856,8 @@
 			}
 			.wcard {
 				border: 3px solid var(--ink);
-				border-radius: 14px;
-				padding: 8px 9px;
+				border-radius: 12px;
+				padding: 6px 7px;
 				background: var(--cream);
 				display: flex;
 				flex-direction: column;
@@ -1236,7 +1238,13 @@
 						class="stab"
 						data-tab="garden"
 					>
-						🌱 Garden
+						🌱 Seeds
+					</button>
+					<button
+						class="stab"
+						data-tab="helpers"
+					>
+						🤝 Helpers
 					</button>
 					<button
 						class="stab"
@@ -1247,6 +1255,7 @@
 				</div>
 				<div id="shop-grid"></div>
 				<div id="shop-garden"></div>
+				<div id="shop-helpers"></div>
 				<div id="shop-stuff"></div>
 			</div>
 		</div>

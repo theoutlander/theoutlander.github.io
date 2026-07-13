@@ -131,7 +131,7 @@ function hideToolBanner(){ $('toolbanner').classList.remove('show'); }
 /* ---------- shop ---------- */
 let shopTab = 'weapons';
 
-const TABS = ['weapons', 'garden', 'stuff'];
+const TABS = ['weapons', 'garden', 'helpers', 'stuff'];
 
 ui.openShop = function(tab){
   if (CD.state.phase !== 'day') return;
@@ -150,6 +150,7 @@ function setShopTab(tab){
   });
   $('shop-grid').classList.toggle('hide', tab !== 'weapons');
   $('shop-garden').classList.toggle('show', tab === 'garden');
+  $('shop-helpers').classList.toggle('show', tab === 'helpers');
   $('shop-stuff').classList.toggle('show', tab === 'stuff');
 }
 
@@ -259,7 +260,6 @@ function seedCard(id, opts){
     '>Buy seed — 🪵 ' + spec.seedCost + '</button>';
   return '<div class="wcard' + (owned ? ' done' : '') + '">' +
     '<div class="top"><div class="e">' + spec.emoji + '</div><div class="nm">' + spec.name + '</div></div>' +
-    '<div class="d">' + spec.blurb + '</div>' +
     '<div><span class="tag">' + speedTag(spec) + '</span><span class="tag">' + woodTag(spec) + '</span></div>' +
     (opts && opts.foot === false ? '' : foot) +
     '</div>';
@@ -272,7 +272,7 @@ function renderGardenGrid(){
 
   /* Seeds */
   html += '<div class="gsec"><div class="h">🌱 Seeds</div>' +
-    '<div class="sub">Buy a seed once and it is yours forever — plant it as many times as you like!</div>' +
+    '<div class="sub">Buy once — plant it forever.</div>' +
     '<div class="grid">';
   CD.SEED_ORDER.forEach(id => { html += seedCard(id); });
   html += '</div></div>';
@@ -280,7 +280,6 @@ function renderGardenGrid(){
   /* Plots */
   const idx = CD.nextPlotIdx();
   html += '<div class="gsec"><div class="h">🟫 Garden Plots</div>' +
-    '<div class="sub">More plots = more trees growing at the same time.</div>' +
     '<div class="grid">';
   if (idx < 0){
     html += '<div class="wcard done">' +
@@ -292,16 +291,24 @@ function renderGardenGrid(){
     const afford = CD.state.wood >= cost;
     html += '<div class="wcard">' +
       '<div class="top"><div class="e">🟫</div><div class="nm">New Plot</div></div>' +
-      '<div class="d">Dig up a fresh patch of dirt down at the front of the garden.</div>' +
       '<div><span class="tag">You have ' + CD.state.plots + ' of ' + CD.TREE_SPOTS.length + '</span></div>' +
       '<button class="buy" data-buy-plot="1"' + (afford ? '' : ' disabled') + '>Dig it — 🪵 ' + cost + '</button>' +
       '</div>';
   }
   html += '</div></div>';
 
-  /* Helpers */
-  html += '<div class="gsec"><div class="h">🧑‍🌾 Helpers</div>' +
-    '<div class="sub">Friends who work in the garden all by themselves.</div>' +
+  box.innerHTML = html;
+  renderHelperGrid();
+}
+
+/* Helpers live on their OWN tab. Seeds + plots + helpers on one page came to 807px of content in
+   a 536px panel on an iPad — everything past the second row was below the fold, and an 8-year-old
+   does not scroll a shop to discover that helpers exist. One screen per tab, no scrolling. */
+function renderHelperGrid(){
+  const box = $('shop-helpers');
+  if (!box) return;
+  let html = '<div class="gsec"><div class="h">🤝 Helpers</div>' +
+    '<div class="sub">They work in your garden all by themselves.</div>' +
     '<div class="grid">';
   CD.HELPERS.forEach(h => {
     const owned = CD.hasHelper(h.id);
@@ -315,7 +322,6 @@ function renderGardenGrid(){
       '</div>';
   });
   html += '</div></div>';
-
   box.innerHTML = html;
 }
 
