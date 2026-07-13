@@ -157,26 +157,20 @@ function renderStuffGrid(){
       '<div class="owned">' + (on ? '✓ Working for you!' : '🔒 ' + lockTxt) + '</div>' +
     '</div>';
 
-  let html = '<div class="sect-h">🪓 Your Tools <span>they work all by themselves</span></div><div class="sgrid">';
-  CD.TOOLS.forEach(t => {
-    html += card(t.emoji, t.name, t.desc, CD.hasTool(t.id), 'Arrives on Day ' + t.day);
-  });
-  html += '</div>';
+  const sect = (h, sub, body) =>
+    '<div class="gsec"><div class="h">' + h + '</div><div class="sub">' + sub + '</div>' +
+    '<div class="grid">' + body + '</div></div>';
 
-  html += '<div class="sect-h">🌱 Your Seeds <span>plant them in any empty plot</span></div><div class="sgrid">';
-  CD.SEED_ORDER.forEach(id => {
-    const s = CD.TREE_SPECIES[id];
-    html += card(s.emoji, s.name, s.blurb, CD.hasSeed(id), 'Buy in the Garden — 🪵 ' + s.seedCost);
-  });
-  html += '</div>';
-
-  html += '<div class="sect-h">🤝 Your Helpers <span>hire them in the Garden</span></div><div class="sgrid">';
-  CD.HELPERS.forEach(h => {
-    html += card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost);
-  });
-  html += '</div>';
-
-  el.innerHTML = html;
+  el.innerHTML =
+    sect('🪓 Your Tools', 'These work all by themselves — no tapping needed!',
+      CD.TOOLS.map(t => card(t.emoji, t.name, t.desc, CD.hasTool(t.id), 'Arrives on Day ' + t.day)).join('')) +
+    sect('🌱 Your Seeds', 'Tap any empty plot to plant one.',
+      CD.SEED_ORDER.map(id => {
+        const s = CD.TREE_SPECIES[id];
+        return card(s.emoji, s.name, s.blurb, CD.hasSeed(id), 'Buy in the Garden — 🪵 ' + s.seedCost);
+      }).join('')) +
+    sect('🤝 Your Helpers', 'Hire them on the Garden tab.',
+      CD.HELPERS.map(h => card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost)).join(''));
 }
 
 document.addEventListener('click', e => {

@@ -293,6 +293,27 @@ function waterTree(sp, remote){
   return true;
 }
 
+/* PUBLIC — the 💧 Water All button. One tap soaks the whole garden, so watering never becomes a
+   mode she has to remember she's in. Trees that are fully grown or already watered simply skip
+   (quietly — no nagging), and if NOTHING could use a drink we say so once. */
+Day.waterAll = function(){
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  let n = 0;
+  spots.forEach((sp, i) => {
+    S.time.delayedCall(i * 90, () => {          // a little ripple across the garden
+      if (CD.state && CD.state.phase === 'day' && !ended) waterTree(sp, true);
+    });
+    const d = sp.tree && sp.tree.treeData;
+    if (d && !d.falling && !d.watered && d.stage < CD.maxStageFor(sp.idx)) n++;
+  });
+  if (n === 0){
+    CDAudio.fx.click();
+    CD.floatText(CD.W / 2, 250, 'Everything is watered! 💧', { size: 24, color: '#A8E9FF' });
+    return;
+  }
+  CD.floatText(CD.W / 2, 250, 'Glug glug! ' + n + ' tree' + (n > 1 ? 's' : '') + ' watered 💧', { size: 26, color: '#A8E9FF' });
+};
+
 /* ---------- planting ---------- */
 function plantAt(sp, id){
   if (!CD.plotUnlocked(sp.idx) || sp.tree) return false;
