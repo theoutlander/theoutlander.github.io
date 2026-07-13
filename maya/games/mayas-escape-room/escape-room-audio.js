@@ -7,7 +7,7 @@ const store = {
   get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
 };
-let AC=null, master=null, ambGain=null, ambTimers=[], ambNodes=[];
+let AC=null, master=null, ambGain=null, echoIn=null, ambTimers=[], ambNodes=[];
 let muted = store.get('mayaEscapeMuted')==='1';
 
 function ctx(){
@@ -16,6 +16,12 @@ function ctx(){
     AC = new (window.AudioContext||window.webkitAudioContext)();
     master = AC.createGain(); master.gain.value = muted?0:0.55; master.connect(AC.destination);
     ambGain = AC.createGain(); ambGain.gain.value = 1; ambGain.connect(master);
+    // gentle echo send — makes the music sound like it's in a big old house
+    echoIn = AC.createGain(); echoIn.gain.value = 1;
+    const d = AC.createDelay(1); d.delayTime.value = .27;
+    const fb = AC.createGain(); fb.gain.value = .3;
+    const wet = AC.createGain(); wet.gain.value = .32;
+    echoIn.connect(d); d.connect(fb); fb.connect(d); d.connect(wet); wet.connect(master);
   }
   if(AC.state==='suspended') AC.resume();
   return AC;
@@ -102,7 +108,7 @@ const FX={
   belltoll(){ const t=ctx().currentTime; osc('sine',196,0,t,2.6,.07); osc('sine',392.5,0,t,1.8,.03); osc('triangle',589,0,t,1.1,.015); },
   musicbox(){ const t=ctx().currentTime;
     const mel=[1047,1319,1568,1319,1047,1568,2093,1568,1319,1047,1175,1047];
-    mel.forEach((f,i)=>{ osc('triangle',f,0,t+i*.28,.5,.08); osc('sine',f*2,0,t+i*.28,.3,.02); }); },
+    mel.forEach((f,i)=>voice(f, t+i*.28, .55, .06)); },
   bubble(){ const t=ctx().currentTime; osc('sine',180+Math.random()*160,500+Math.random()*400,t,.16,.06); },
   rustle(){ const t=ctx().currentTime; whoosh(t,.22,.08,1000,2200); },
   /* jump-scare stingers + storm & critter pack */
@@ -136,11 +142,72 @@ function stopAmbient(){
   ambTimers.forEach(s=>clearTimeout(s.id)); ambTimers=[];
   ambNodes.forEach(n=>{ try{n.stop();}catch(e){} }); ambNodes=[];
 }
-/* short melodic phrase — 0 entries are rests */
-function phrase(notes, step, vol, type){
-  const a=ctx(), t=a.currentTime;
-  notes.forEach((f,i)=>{ if(f){ osc(type||'triangle',f,0,t+i*step,step*1.9,vol); osc('sine',f*2,0,t+i*step,step,vol*.18); } });
+/* ---- tiny tune engine: celesta voice + composed tunes (no audio files) ---- */
+function voice(f,t,dur,vol){
+  const a=ctx();
+  [-4,4].forEach(cents=>{
+    const o=a.createOscillator(), g=a.createGain(), fl=a.createBiquadFilter();
+    o.type='triangle'; o.frequency.value=f; o.detune.value=cents;
+    fl.type='lowpass'; fl.frequency.value=2800;
+    g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(vol,t+.015); g.gain.exponentialRampToValueAtTime(.0001,t+dur);
+    o.connect(fl); fl.connect(g); g.connect(master); if(echoIn) g.connect(echoIn);
+    o.start(t); o.stop(t+dur+.05);
+  });
+  const o2=a.createOscillator(), g2=a.createGain();
+  o2.type='sine'; o2.frequency.value=f*2;
+  g2.gain.setValueAtTime(0,t); g2.gain.linearRampToValueAtTime(vol*.22,t+.01); g2.gain.exponentialRampToValueAtTime(.0001,t+dur*.6);
+  o2.connect(g2); g2.connect(master); if(echoIn) g2.connect(echoIn);
+  o2.start(t); o2.stop(t+dur);
 }
+/* tune = {bpm, mv/cv/bv vols, m: melody, c: chords, b: bass} — [beat, freq, beats] */
+function playTune(tune){
+  const spb=60/tune.bpm, t0=ctx().currentTime+.05;
+  (tune.m||[]).forEach(([b,f,d])=>voice(f, t0+b*spb, Math.max(d*spb,.28)*1.15, tune.mv||.05));
+  (tune.c||[]).forEach(([b,f,d])=>voice(f, t0+b*spb, Math.max(d*spb,.22), tune.cv||.022));
+  (tune.b||[]).forEach(([b,f,d])=>{
+    const tt=t0+b*spb;
+    osc('triangle',f,0,tt,d*spb*.95,tune.bv||.07);
+    osc('sine',f,0,tt,d*spb*.6,(tune.bv||.07)*.5);
+  });
+}
+const TUNES={
+  /* parlor: spooky-sweet waltz in A minor, oom-pah-pah */
+  waltz:{bpm:132, mv:.05, bv:.065,
+    m:[[0,1319,2],[2,1047,1],[3,880,3],[6,988,1],[7,1047,1],[8,988,1],[9,784,3],
+       [12,1047,1],[13,1319,1],[14,1175,1],[15,1047,2],[17,988,1],[18,880,1],[19,988,1],[20,1047,1],[21,880,3]],
+    c:[[1,330,.6],[2,440,.6],[4,330,.6],[5,440,.6],[7,349,.6],[8,440,.6],[10,330,.6],[11,415,.6],
+       [13,330,.6],[14,440,.6],[16,349,.6],[17,440,.6],[19,330,.6],[20,415,.6],[22,330,.6],[23,440,.6]],
+    b:[[0,110,1],[3,110,1],[6,146.8,1],[9,164.8,1],[12,110,1],[15,174.6,1],[18,164.8,1],[21,110,1]]},
+  /* kitchen: bouncy walking-bass boogie with cheeky answer notes */
+  boogie1:{bpm:168, mv:.045, bv:.08,
+    m:[[0,659,.5],[2,784,.5],[4,880,.5],[6,784,.5],[8,659,.5],[10,880,.5],[12,1047,.5],[12.5,988,.5],[13,880,1.5]],
+    b:[[0,82.4,1],[1,98,1],[2,110,1],[3,123.5,1],[4,110,1],[5,98,1],[6,82.4,1],[7,73.4,1],
+       [8,82.4,1],[9,98,1],[10,110,1],[11,123.5,1],[12,146.8,1],[13,123.5,1],[14,110,1],[15,98,1]]},
+  boogie2:{bpm:168, mv:.045, bv:.08,
+    m:[[1,988,.5],[3,880,.5],[5,784,.5],[7,880,.5],[9,988,.5],[11,1175,.5],[13,988,.5],[14,880,1.5]],
+    b:[[0,82.4,1],[1,98,1],[2,110,1],[3,123.5,1],[4,110,1],[5,98,1],[6,82.4,1],[7,73.4,1],
+       [8,82.4,1],[9,98,1],[10,110,1],[11,123.5,1],[12,146.8,1],[13,123.5,1],[14,110,1],[15,98,1]]},
+  /* library: dreamy whole-tone celesta drift */
+  celesta:{bpm:84, mv:.034,
+    m:[[0,1047,1],[1,1175,1],[2,1319,1],[3,1480,1],[4,1319,2],[6,1175,1],[7,1047,3]]},
+  /* attic: slow dreamy descent over the chimes */
+  dream:{bpm:76, mv:.04,
+    m:[[0,1480,2],[2,1319,1],[3,1175,2],[5,988,1],[6,880,4]]},
+  /* mirror room: rolled glass arpeggios, up then down */
+  glassup:{bpm:108, mv:.04,
+    m:[[0,659,.5],[.5,784,.5],[1,988,.5],[1.5,1175,.5],[2,1480,3]]},
+  glassdown:{bpm:108, mv:.04,
+    m:[[0,1480,.5],[.5,1175,.5],[1,988,.5],[1.5,784,.5],[2,659,3]]},
+  /* secret room: Lottie's lullaby */
+  lullaby:{bpm:92, mv:.05,
+    m:[[0,1047,1],[1,1047,1],[2,1319,1],[3,1175,2],[5,988,1],[6,1047,1],[7,988,1],[8,880,1],[9,880,3]]},
+  /* cellar: rare low three-note shadow motif */
+  shadow:{bpm:60, mv:.038,
+    m:[[0,220,2],[2,261.6,2],[4,329.6,4]]},
+  /* inside the mirror: happy sparkling run */
+  sparkle:{bpm:120, mv:.042,
+    m:[[0,1047,.5],[.5,1319,.5],[1,1568,.5],[1.5,2093,2.5]]},
+};
 function drone(freqs,vol,type){
   const a=ctx();
   freqs.forEach(f=>{
@@ -169,52 +236,47 @@ function ambient(kind){
   // Every room gets its OWN musical identity — melodies over near-silence,
   // not a gloomy drone (feedback 2026-07-12: "monotonous and depressing").
   if(kind==='mansion'){
-    // parlor: twinkly music-box waltz, high and delicate
-    const waltzes=[
-      [1319,0,0,1047,0,880,0,1047,0,880,0,698,0,0,880,0,0,0],
-      [880,0,0,1047,0,1319,0,1568,0,1319,0,1047,0,0,880,0,0,0],
-    ];
-    let w=0;
-    loop(()=>phrase(waltzes[w++%2], .32, .05), 7000, 4000, 1200);
+    // parlor: a real music-box waltz (oom-pah-pah bass + melody)
+    loop(()=>playTune(TUNES.waltz), 14500, 4000, 1200);
     loop(()=>pick([[FX.distantcreak,3],[FX.belltoll,1],[FX.scratch,3],[FX.skitter,2],[FX.wolfhowl,1]])(), 6500, 7000, 4500);
   } else if(kind==='mirror'){
-    // inside the mirror: shimmer pad + happy twinkles
+    // inside the mirror: shimmer pad + happy twinkles + sparkling runs
     drone([220,220.9,330],.01);
     loop(FX.twinkle, 2200, 3500, 1200);
+    loop(()=>playTune(TUNES.sparkle), 7500, 4000, 2500);
   } else if(kind==='mirrorroom'){
-    // mirror room: rising glassy arpeggios, mysterious and pretty
-    const glass=[[659,0,784,0,988,0,1319],[587,0,740,0,880,0,1175]];
+    // mirror room: rolled glass arpeggios, mysterious and pretty
     let g=0;
-    loop(()=>phrase(glass[g++%2], .30, .04, 'sine'), 6000, 3500, 1500);
+    loop(()=>playTune(g++%2 ? TUNES.glassdown : TUNES.glassup), 6500, 3500, 1500);
     loop(()=>pick([[FX.whisper,3],[FX.twinkle,4],[FX.skitter,1]])(), 5000, 5000, 3500);
   } else if(kind==='kitchen'){
-    // galley groove: bouncy witch's-brew bass plucks under the bubbles
-    const bounce=[[98,0,131,0,110,0,147,131,0,98],[110,0,131,0,165,0,147,0,131,110]];
+    // galley: bouncy walking-bass boogie under the bubbles
     let b=0;
-    loop(()=>phrase(bounce[b++%2], .21, .09), 5200, 3000, 1000);
+    loop(()=>playTune(b++%2 ? TUNES.boogie2 : TUNES.boogie1), 8500, 3500, 1000);
     loop(()=>pick([[FX.bubble,6],[FX.cackle,1],[FX.skitter,3]])(), 1600, 2600, 1400);
   } else if(kind==='library'){
     // grandfather clock: steady tick... tock... + whispery pages
     let tk=false;
     loop(()=>{ tk=!tk; const t=ctx().currentTime; osc('triangle', tk?920:690, tk?300:230, t, .07, .05); }, 1550, 100, 800);
+    loop(()=>playTune(TUNES.celesta), 12000, 6000, 5000);
     loop(()=>pick([[FX.whisper,4],[FX.rustle,2],[FX.scratch,3],[FX.skitter,1],[FX.hoot,1]])(), 5200, 6000, 3000);
   } else if(kind==='cellar'){
-    // the scary one keeps its heartbeat — but only a whisper of drone
+    // the scary one keeps its heartbeat — with a rare low shadow motif
     drone([48,48.4,72],.015);
     let n=0;
     loop(()=>{ n++; (n%2?FX.heartbeat:pick([[FX.drip,4],[FX.scratch,3],[FX.skitter,2],[FX.growl,1]]))(); }, 1400, 1800, 900);
+    loop(()=>playTune(TUNES.shadow), 16000, 9000, 7000);
   } else if(kind==='attic'){
-    // wind chimes tinkling in the draft
+    // wind chimes in the draft + a slow dreamy melody drifting past
     const PENT=[1047,1175,1319,1568,1760];
     loop(()=>{ const t=ctx().currentTime, n=2+Math.floor(Math.random()*3);
       for(let i=0;i<n;i++) osc('sine', PENT[Math.floor(Math.random()*5)], 0, t+i*(.18+Math.random()*.2), .9, .05);
     }, 3200, 3500, 900);
+    loop(()=>playTune(TUNES.dream), 13000, 6000, 4500);
     loop(()=>pick([[FX.wind,4],[FX.whistle,3],[FX.distantcreak,2],[FX.scratch,2],[FX.wolfhowl,1]])(), 5000, 5000, 1600);
   } else if(kind==='secret'){
-    // Lottie's lullaby — a soft music-box fragment (it's HER song)
-    const lull=[[1047,0,1319,0,1568,0,1319,0,1047],[1319,0,1568,0,2093,0,1568,0,1319]];
-    let l=0;
-    loop(()=>phrase(lull[l++%2], .34, .05), 8000, 4000, 1500);
+    // Lottie's lullaby — HER music-box song
+    loop(()=>playTune(TUNES.lullaby), 10500, 5000, 1500);
     loop(()=>pick([[FX.distantcreak,3],[FX.skitter,2],[FX.rustle,2]])(), 6000, 6000, 4000);
   }
 }
