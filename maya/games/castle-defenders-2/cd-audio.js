@@ -89,7 +89,35 @@ const FX={
   clang(){ const t=ctx().currentTime; osc('square',1200,700,t,.1,.1); osc('triangle',2400,1600,t,.14,.06); whoosh(t,.08,.06,3000,1200); },
   gearoff(){ const t=ctx().currentTime; osc('square',900,300,t,.16,.11); whoosh(t,.2,.09,2200,500); osc('triangle',400,180,t+.1,.18,.07); },
   balloonpop(){ const t=ctx().currentTime; osc('triangle',1500,200,t,.07,.16); whoosh(t,.09,.12,3500,600); },
-  ladderdrop(){ const t=ctx().currentTime; [0,.07,.15].forEach(d=>osc('square',300,180,t+d,.07,.08)); whoosh(t,.25,.06,800,300); }
+  ladderdrop(){ const t=ctx().currentTime; [0,.07,.15].forEach(d=>osc('square',300,180,t+d,.07,.08)); whoosh(t,.25,.06,800,300); },
+
+  /* ---------- SPOOKY (kid-scary: creepy, never nasty) ---------- */
+  // a low moan from the whole horde — rises as the night gets worse
+  horde(intensity){
+    const t=ctx().currentTime, k=Math.min(1, intensity||0);
+    const o=osc('sawtooth', 70+k*20, 0, t, 1.6, .07+k*.05);
+    o.frequency.setValueAtTime(70+k*20, t);
+    o.frequency.linearRampToValueAtTime(52+k*16, t+.8);
+    o.frequency.linearRampToValueAtTime(64+k*18, t+1.6);
+    osc('triangle', 140+k*30, 96, t, 1.6, .04+k*.03);
+    whoosh(t, 1.6, .03+k*.03, 240, 90);
+  },
+  // a snarl when a zombie lunges at the gate
+  snarl(){ const t=ctx().currentTime;
+    const o=osc('sawtooth',180,60,t,.34,.16);
+    o.frequency.setValueAtTime(180,t);
+    o.frequency.linearRampToValueAtTime(90,t+.16);
+    o.frequency.linearRampToValueAtTime(58,t+.34);
+    whoosh(t,.3,.1,900,180); },
+  // the King's roar
+  roar(){ const t=ctx().currentTime;
+    osc('sawtooth',60,34,t,1.1,.3); osc('square',92,44,t+.05,.9,.12);
+    whoosh(t,1.1,.14,500,80);
+    const o=osc('triangle',150,60,t,1.0,.1);
+    o.frequency.setValueAtTime(150,t); o.frequency.linearRampToValueAtTime(70,t+1); },
+  // heartbeat — plays when the gate is nearly down
+  heartbeat(){ const t=ctx().currentTime;
+    osc('sine',58,32,t,.16,.34); osc('sine',52,28,t+.26,.2,.26); }
 };
 
 /* --- tiny step-sequencer music --- */

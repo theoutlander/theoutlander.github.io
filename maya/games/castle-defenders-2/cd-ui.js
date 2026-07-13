@@ -158,37 +158,50 @@ function setShopTab(tab){
    announced each one with a banner and then never showed it anywhere again, so she was told she
    had them and could never find them. ("I didn't see those in my list.") They live here now,
    alongside everything else she owns, with the locked ones showing the day they arrive. */
+/* ONLY things she actually has. The old version listed every locked tool, seed, helper and animal
+   with a "🔒 Arrives on Day 4" — a wall of stuff she can't do anything about, which is noise, not
+   information. What she owns goes in cards; what's coming is ONE line at the bottom. */
 function renderStuffGrid(){
   const el = $('shop-stuff');
   if (!el || !CD.state) return;
-  const card = (emoji, name, desc, on, lockTxt) =>
-    '<div class="wcard' + (on ? '' : ' locked') + '">' +
+
+  const card = (emoji, name, desc) =>
+    '<div class="wcard">' +
       '<div class="top"><div class="e">' + emoji + '</div><div class="nm">' + name + '</div></div>' +
       '<div class="d">' + desc + '</div>' +
-      '<div class="owned">' + (on ? '✓ Working for you!' : '🔒 ' + lockTxt) + '</div>' +
     '</div>';
 
-  const sect = (h, sub, body) =>
-    '<div class="gsec"><div class="h">' + h + '</div><div class="sub">' + sub + '</div>' +
-    '<div class="grid">' + body + '</div></div>';
+  const sect = (h, sub, body) => body
+    ? '<div class="gsec"><div class="h">' + h + '</div><div class="sub">' + sub + '</div>' +
+      '<div class="grid">' + body + '</div></div>'
+    : '';
 
-  el.innerHTML =
+  const tools   = CD.TOOLS.filter(t => CD.hasTool(t.id));
+  const seeds   = CD.SEED_ORDER.filter(id => CD.hasSeed(id));
+  const helpers = CD.HELPERS.filter(h => CD.hasHelper(h.id));
+
+  let html =
     sect('🪓 Your Tools', 'These work all by themselves — no tapping needed!',
-      CD.TOOLS.map(t => card(t.emoji, t.name, t.desc, CD.hasTool(t.id), 'Arrives on Day ' + t.day)).join('')) +
+      tools.map(t => card(t.emoji, t.name, t.desc)).join('')) +
     sect('🌱 Your Seeds', 'Tap any empty plot to plant one.',
-      CD.SEED_ORDER.map(id => {
+      seeds.map(id => {
         const s = CD.TREE_SPECIES[id];
-        return card(s.emoji, s.name, s.blurb, CD.hasSeed(id), 'Buy in the Garden — 🪵 ' + s.seedCost);
+        return card(s.emoji, s.name, s.blurb);
       }).join('')) +
-    sect('🤝 Your Helpers', 'Hire them on the Garden tab.',
-      CD.HELPERS.map(h => card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost)).join('')) +
-    sect('🐒 Tree Friends', 'Grow a tree into a BIG tree and a friend moves in. Tap them to call!',
-      CD.SEED_ORDER.map(id => {
-        const a = CD.TREE_ANIMALS[id];
-        const s = CD.TREE_SPECIES[id];
-        if (!a) return '';
-        return card(a.emoji, a.name, a.desc, false, 'Lives in a big ' + s.emoji + ' ' + s.name);
-      }).join(''));
+    sect('🤝 Your Helpers', 'Hard at work in your garden.',
+      helpers.map(h => card(h.emoji, h.name, h.desc)).join(''));
+
+  // exactly one "what's next" line, for the very next tool only
+  const next = CD.TOOLS.find(t => !CD.hasTool(t.id));
+  if (next){
+    html += '<div class="gsec"><div class="sub">⏳ Coming on Day ' + next.day + ': ' +
+      next.emoji + ' <b>' + next.name + '</b> — ' + next.desc + '</div></div>';
+  }
+
+  html += '<div class="gsec"><div class="sub">🐒 Grow a tree into a <b>BIG tree</b> and a friend ' +
+    'moves in — tap them to call for help!</div></div>';
+
+  el.innerHTML = html;
 }
 
 document.addEventListener('click', e => {

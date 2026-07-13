@@ -7,7 +7,7 @@ window.CD.Night = Night;
 let S = null;
 let zombies = [];
 let queue = [];
-let spawnEvt = null, groanEvt = null;
+let spawnEvt = null, groanEvt = null, hordeEvt = null;
 let projectiles = [];   // { update(dt) -> false to remove, obj }
 let confettiUsed = false;
 let swordCd = 0;
@@ -63,6 +63,16 @@ Night.start = function(){
       if (z && z.state !== 'dead') S.tweens.add({ targets: z.parts.head, angle: CD.rnd(-14,14), duration: 200, yoyo: true });
     }
   }});
+
+  /* The horde MOANS, and it gets worse as the night goes on and as the gate gets chewed up.
+     Spooky, not nasty — she is 8. Plus a heartbeat once the gate is nearly down. */
+  hordeEvt = S.time.addEvent({ delay: 5200, loop: true, callback: () => {
+    if (over || CD.state.phase !== 'night' || !zombies.length) return;
+    const nightPressure = Math.min(1, (CD.state.day - 1) / 6);
+    const gatePressure  = 1 - (CD.state.hearts / Math.max(1, CD.state.heartCap || CD.MAX_HEARTS));
+    CDAudio.fx.horde(Math.max(nightPressure, gatePressure));
+    if (CD.state.hearts <= 2) CDAudio.fx.heartbeat();
+  }});
 };
 
 function scheduleSpawn(wave, delay){
@@ -77,6 +87,7 @@ function scheduleSpawn(wave, delay){
 Night.stop = function(){
   if (spawnEvt) spawnEvt.remove();
   if (groanEvt) groanEvt.remove();
+  if (hordeEvt) hordeEvt.remove();
   zombies.forEach(z => z.parts.c.destroy());
   zombies = [];
   projectiles.forEach(p => p.obj && p.obj.destroy && p.obj.destroy());
@@ -116,8 +127,11 @@ function popBalloon(z, txt){
   }
 }
 
-// Ladder zombies climb OVER the gate — they bite twice as fast.
-function biteGap(z){ return hasGear(z, 'ladder') ? 2.4 / CD.GEAR.ladder.biteMul : 2.4; }
+// Ladder zombies climb OVER the gate — they bite twice as fast. And every night they chew faster.
+function biteGap(z){
+  const base = 2.4 / CD.biteScale(CD.state.day);
+  return hasGear(z, 'ladder') ? base / CD.GEAR.ladder.biteMul : base;
+}
 
 function teachGear(z, gear){
   if (!gear || hintsShown[gear]) return;
@@ -141,10 +155,13 @@ function spawnZombie(type){
   // King-sized and King-slow, always.
   const jScale = cfg.king ? 1 : CD.rnd(0.9, 1.1);
   const jSpeed = cfg.king ? 1 : CD.rnd(0.85, 1.15);
+  // They get harder every night: tougher, faster, hungrier. Night 1 is unscaled on purpose.
+  const day = CD.state.day;
+  const hp = Math.max(1, Math.round(cfg.hp * CD.hpScale(day)));
   const z = {
-    parts, type, cfg, hp: cfg.hp, maxHp: cfg.hp,
+    parts, type, cfg, hp, maxHp: hp,
     scale: cfg.scale * jScale,                           // the TRUE size — use this, not cfg.scale
-    speed: cfg.speed * jSpeed, slowUntil: 0, stunUntil: 0,
+    speed: cfg.speed * jSpeed * CD.speedScale(day), slowUntil: 0, stunUntil: 0, rageUntil: 0,
     state: 'walk', biteT: CD.rnd(0.4, 1.4), bubbled: false, hitBy: {},
     gear, blocks: CD.GEAR.shield.blocks, helmetTaps: CD.GEAR.helmet.taps,
     balloonT: BALLOON_LEAK_MS / 1000
@@ -164,6 +181,7 @@ function spawnZombie(type){
   }
   if (cfg.king){
     CDAudio.fx.groan(); CD.shake(280, 0.008);
+    CDAudio.fx.roar();
     CD.floatText(CD.W - 180, CD.GROUND - 120, '👑 THE ZOMBIE KING! 👑', { size: 30, color: '#FFD24D' });
   }
   zombies.push(z);
@@ -174,6 +192,13 @@ function damage(z, dmg, opts){
   opts = opts || {};
   if (z.state === 'dead' || z.bubbled) return;
   z.hp -= dmg;
+  /* THEY FIGHT BACK. Hit one and it snarls and surges forward — it doesn't just stand there
+     soaking damage. (Slowed/stunned zombies can't rage; the marshmallow still wins.) */
+  if (z.hp > 0 && !opts.slow && !opts.stun){
+    z.rageUntil = S.time.now + CD.RAGE_MS;
+    if (Math.random() < 0.5) CDAudio.fx.snarl();
+    S.tweens.add({ targets: z.parts.c, scaleX: z.scale * 1.12, scaleY: z.scale * 0.92, duration: 90, yoyo: true });
+  }
   z.hpBg.setVisible(true); z.hpFill.setVisible(true);
   z.hpFill.width = Math.max(0, 40 * z.hp / z.maxHp);
   z.hpFill.fillColor = z.hp / z.maxHp > 0.5 ? 0x7ED957 : 0xFFB347;
@@ -243,8 +268,9 @@ Night.tick = function(dt){
 
     const stunned = now < z.stunUntil;
     const slow = now < z.slowUntil ? 0.42 : 1;
+    const rage = now < z.rageUntil ? CD.RAGE_SPEED : 1;   // bonked -> surges forward
     if (z.state === 'walk' && !stunned){
-      z.parts.c.x -= z.speed * slow * dt;
+      z.parts.c.x -= z.speed * slow * rage * dt;
       z.parts.c.setDepth(z.parts.c.y);
       if (z.parts.c.x <= GATE_X + (z.scale - 1) * 24){
         // Ballooned: he FLOATS OVER the gate line. He can't bite from up there — he just drifts.
@@ -261,6 +287,7 @@ Night.tick = function(dt){
       if (z.biteT <= 0){
         z.biteT = biteGap(z);                    // ladder zombie bites 2x as fast — he's climbing
         S.tweens.add({ targets: z.parts.c, x: z.parts.c.x - 14, duration: 110, yoyo: true, ease: 'Quad.in' });
+        CDAudio.fx.snarl();
         S.time.delayedCall(110, () => { if (z.state !== 'dead' && CD.state.phase === 'night') CD.gateBite(); });
       }
     }

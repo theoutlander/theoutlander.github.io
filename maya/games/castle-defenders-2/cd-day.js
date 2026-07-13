@@ -71,10 +71,17 @@ function makePlot(sp){
 function makeLocked(sp){
   clearDirt(sp);
   const p = CD.Art.buildLockedPlot(S, sp.idx);
-  /* Deliberately NOT interactive. A locked plot sits right in the middle of the trees, so while
-     she is happily tapping to chop she keeps clipping one — and it used to yank the Forge open
-     mid-chop, every time. Locked plots are scenery; you buy them on the Garden tab. */
-  if (p.disableInteractive) p.disableInteractive();
+  /* Tapping a locked plot TELLS you how to unlock it, but does NOT open the Forge. Opening the
+     modal was worse: these plots sit right among the trees, so while she was happily tapping to
+     chop she kept clipping one and the shop flew open in her face. A one-line hint answers
+     "how do I plant here?" without hijacking the screen. */
+  p.on('pointerdown', (pt, lx, ly, ev) => {
+    if (ev) ev.stopPropagation();
+    if (!CD.state || CD.state.phase !== 'day' || ended) return;
+    CDAudio.fx.click();
+    CD.floatText(CD.TREE_SPOTS[sp.idx].x, CD.groundY(sp.idx) - 70,
+      'Buy this plot at the 🛠️ Forge — 🪵 ' + CD.TREE_SPOTS[sp.idx].cost, { size: 19, color: '#FFD24D' });
+  });
   sp.locked = p;
   return p;
 }
@@ -94,6 +101,12 @@ function buildTree(sp, stage){
 
 /* ---------- tree animals ----------
    A big tree grows a friend. Tap the friend to call it. */
+let building = false;      // true while the whole garden is being (re)built — stay quiet
+let toldAboutFriends = false;   // the "tap him!" banner shows once, not once per animal
+function A_NAME(species){
+  const A = CD.TREE_ANIMALS[species];
+  return A ? A.emoji + ' ' + A.name : '';
+}
 function clearAnimal(sp){
   if (sp.animal){ sp.animal.destroy(); sp.animal = null; }
   if (sp.animalNap){ sp.animalNap.remove(false); sp.animalNap = null; }
@@ -165,30 +178,48 @@ function evictAnimal(sp){
 }
 
 function ensureAnimal(sp){
-  clearAnimal(sp);
   const tree = sp.tree;
-  if (!tree || !tree.treeData) return;
-  const d = tree.treeData;
-  if (d.stage < CD.ANIMAL_MIN_STAGE) return;              // too small to live in
   const species = CD.speciesOf(sp.idx);
-  const A = CD.TREE_ANIMALS[species];
-  if (!A) return;
+  const d = tree && tree.treeData;
+  const eligible = !!(d && !d.falling && d.stage >= CD.ANIMAL_MIN_STAGE && CD.TREE_ANIMALS[species]);
+
+  if (!eligible){ clearAnimal(sp); return; }
 
   const gy = CD.groundY(sp.idx);
-  const a = CD.Art.buildAnimal(S, tree.x + CD.rnd(-14, 14), gy - d.h + d.canopy * 0.35, species);
+  const ay = gy - d.h + d.canopy * 0.35;
+
+  /* Already living here? Just move him up to the new canopy — do NOT rebuild him.
+     buildTree() runs on every growth stage, and rebuilding meant he was destroyed and re-created
+     (losing his nap) and re-announced himself every single time the tree grew. */
+  if (sp.animal && sp.animal.animalData && sp.animal.animalData.species === species){
+    S.tweens.add({ targets: sp.animal, x: tree.x + CD.rnd(-10, 10), y: ay, duration: 350, ease: 'Sine.out' });
+    return;
+  }
+
+  clearAnimal(sp);
+  const a = CD.Art.buildAnimal(S, tree.x + CD.rnd(-14, 14), ay, species);
   if (!a) return;
   a.on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); callAnimal(sp); });
   sp.animal = a;
 
-  /* Announce ONLY while she's actually playing. Day.init() builds the whole garden during the
-     scene's create(), which runs BEFORE cd-game.js installs CD.fxSparkle/floatText — calling them
-     here threw "CD.fxSparkle is not a function" at boot and killed the game. (The e2e suite caught
-     exactly this.) It would also have fired a fanfare at the title screen for a tree she never grew. */
+  /* Announce only when a friend genuinely ARRIVES mid-play — never while the garden is being
+     built. Day.start() rebuilds the whole garden, and with three big oaks that fired three
+     "moved in!" banners on top of each other every single morning.
+     It also must not run during Day.init(): that happens inside the scene's create(), BEFORE
+     cd-game.js installs CD.fxSparkle, and calling it threw "CD.fxSparkle is not a function" and
+     killed the game at boot. (The e2e suite caught that one.) */
+  if (building) return;
   const playing = CD.state && CD.state.phase === 'day' && typeof CD.fxSparkle === 'function';
   if (!playing) return;
   CDAudio.fx.surprise();
   CD.fxSparkle(a.x, a.y, 10);
-  CD.floatText(a.x, a.y - 40, A.emoji + ' ' + A.name + ' moved in! Tap to call!', { size: 20, color: '#FFF3B0' });
+  CD.floatText(a.x, a.y - 40, A_NAME(species) + ' moved in! TAP HIM!', { size: 20, color: '#FFF3B0' });
+
+  // The very first friend ever gets a proper banner — otherwise nobody knows they can be tapped.
+  if (!toldAboutFriends){
+    toldAboutFriends = true;
+    CD.ui.banner(A_NAME(species) + ' moved in!', 'Tap him in the tree — he helps you!');
+  }
 }
 
 function callAnimal(sp){
@@ -312,11 +343,13 @@ Day.init = function(scene, knightRef){
 };
 
 function buildGarden(){
+  building = true;                 // no "moved in!" banners for trees that were already there
   spots.forEach(sp => {
     clearSpot(sp);
     if (!CD.plotUnlocked(sp.idx)) makeLocked(sp);
     else buildTree(sp, CD.maxStageFor(sp.idx));
   });
+  building = false;
   builtState = CD.state;
 }
 

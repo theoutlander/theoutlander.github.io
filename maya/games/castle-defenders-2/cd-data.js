@@ -93,19 +93,19 @@ window.CD = {
   TREE_SPECIES: {
     oak:     { emoji: '🌳', name: 'Oak',            seedCost: 0,  grow: 1.0, wood: 1.0, maxStage: 3,
                leaf: 0x58A14E, leaf2: 0x6FBF61, leafHi: 0x8ED97F,
-               blurb: 'Big, strong, reliable. Lots of wood!' },
+               blurb: 'Lots of wood.' },
     cherry:  { emoji: '🌸', name: 'Cherry Blossom', seedCost: 6,  grow: 0.5, wood: 0.5, maxStage: 2,
                leaf: 0xFF9EC7, leaf2: 0xFFC2DC, leafHi: 0xFFE1EE,
-               blurb: 'Grows SUPER fast — chop it again and again!' },
+               blurb: 'Grows SUPER fast.' },
     apple:   { emoji: '🍎', name: 'Apple Tree',     seedCost: 12, grow: 1.6, wood: 0.6, maxStage: 3,
                leaf: 0x4E9E4A, leaf2: 0x6FBF61, leafHi: 0x8ED97F, fruit: 0xFF5C5C, apples: true,
-               blurb: 'Apples make the gate EXTRA strong tonight!' },
+               blurb: 'Apples = bonus hearts.' },
     candy:   { emoji: '🍭', name: 'Candy Tree',     seedCost: 18, grow: 2.0, wood: 2.5, maxStage: 3,
                leaf: 0xC77DFF, leaf2: 0xFFB3E6, leafHi: 0xFFD9F2,
-               blurb: 'Slow… but a HUGE pile of wood!' },
+               blurb: 'Slow. HUGE wood.' },
     rainbow: { emoji: '🌈', name: 'Rainbow Tree',   seedCost: 28, grow: 2.4, wood: 1.0, maxStage: 3,
                leaf: 0x6FD3FF, leaf2: 0xFFD24D, leafHi: 0xFFFFFF, rainbow: true,
-               blurb: 'A SURPRISE every time you chop it!' }
+               blurb: 'A surprise every chop!' }
   },
   SEED_ORDER: ['oak', 'cherry', 'apple', 'candy', 'rainbow'],
 
@@ -117,15 +117,15 @@ window.CD = {
      she just grows a big tree and a friend shows up. */
   TREE_ANIMALS: {
     oak:     { emoji: '🐒', name: 'Monkey',  call: 'Bananas away! 🍌', help: 'bananas', icon: '🍌',
-               desc: 'Throws bananas and chops your other trees!' },
+               desc: 'Throws bananas — chops trees!' },
     cherry:  { emoji: '🐦', name: 'Birdie',  call: 'Tweet tweet! 🎵',  help: 'grow', icon: '🎵',
-               desc: 'Sings to the garden — everything grows faster!' },
+               desc: 'Sings — everything grows faster!' },
     apple:   { emoji: '🐝', name: 'Buzzy',   call: 'Bzzzz! 🍎',        help: 'apple', icon: '🍎',
-               desc: 'Makes an extra apple — a bonus heart tonight!' },
+               desc: 'An extra bonus heart!' },
     candy:   { emoji: '🦜', name: 'Polly',   call: 'Squawk! 🪵',       help: 'wood', icon: '🪵',
-               desc: 'Drops a beakful of wood!' },
+               desc: 'Drops wood!' },
     rainbow: { emoji: '🦄', name: 'Sparkle', call: 'MAGIC! ✨',        help: 'surprise', icon: '✨',
-               desc: 'A magical surprise, every single time!' }
+               desc: 'A magical surprise!' }
   },
   ANIMAL_MIN_STAGE: 2,      // must be a Big Tree before anyone moves in
   ANIMAL_COOLDOWN: 6000,    // then they nap 😴
@@ -139,10 +139,10 @@ window.CD = {
   /* Shop helpers. These are BOUGHT WITH WOOD and are a SEPARATE system from TOOLS above
      (TOOLS unlock automatically by day and are chop enhancers — do not conflate them). */
   HELPERS: [
-    { id: 'sprinkler',  emoji: '💦', name: 'Sprinkler',      cost: 18, desc: 'Waters your trees all by itself!' },
-    { id: 'gardener',   emoji: '🌻', name: 'Gardener Gus',   cost: 26, desc: 'Plants seeds in your empty plots!' },
-    { id: 'beaver2',    emoji: '🦫', name: 'Chomp the Beaver',cost: 22, desc: 'Chip brings his cousin along!' },
-    { id: 'squirrels2', emoji: '🐿️', name: 'Squirrel Squad+', cost: 20, desc: 'DOUBLE the acorn rain!' }
+    { id: 'sprinkler',  emoji: '💦', name: 'Sprinkler',      cost: 18, desc: 'Waters your trees.' },
+    { id: 'gardener',   emoji: '🌻', name: 'Gardener Gus',   cost: 26, desc: 'Plants your empty plots.' },
+    { id: 'beaver2',    emoji: '🦫', name: 'Chomp the Beaver',cost: 22, desc: 'A second beaver!' },
+    { id: 'squirrels2', emoji: '🐿️', name: 'Squirrel Squad+', cost: 20, desc: 'Double acorn rain.' }
   ],
 
   TOOLS: [
@@ -205,6 +205,18 @@ window.CD = {
       gap: [Math.max(700, 1300 - k*100), Math.max(1200, 2200 - k*150)]
     };
   },
+
+  /* ---------- THEY GET HARDER ----------
+     Night 1 must stay gentle (she is 8 and it's her first night), so these are all 1.0 on night 1
+     and climb from there. Capped, because an unwinnable night is the worst bug in the game. */
+  hpScale(day){ return 1 + Math.min(1.2, (day - 1) * 0.15); },      // up to 2.2x HP
+  speedScale(day){ return 1 + Math.min(0.6, (day - 1) * 0.07); },   // up to 1.6x speed
+  biteScale(day){ return 1 + Math.min(0.8, (day - 1) * 0.10); },    // they chew the gate faster
+
+  /* THEY FIGHT BACK. Bonk one and it doesn't just absorb it — it snarls and surges forward for a
+     moment. Hitting things has a consequence now, so the horde feels alive instead of passive. */
+  RAGE_MS: 900,
+  RAGE_SPEED: 1.9,
 
   DAY_SECONDS: 75,
   MAX_HEARTS: 5,

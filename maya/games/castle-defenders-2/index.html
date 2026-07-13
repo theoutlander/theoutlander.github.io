@@ -655,15 +655,18 @@
 			#shop.show {
 				display: flex;
 			}
+			/* Wider + denser so a whole tab fits on an iPad WITHOUT scrolling.
+			   It used to be a 680px column of fat cards: everything below the third card was
+			   off-screen, and she never scrolled to find it. */
 			#shop-panel {
 				background: var(--panel);
 				border: 4px solid var(--ink);
 				border-radius: 24px;
 				box-shadow: 0 10px 0 rgba(59, 42, 69, 0.4);
-				width: min(680px, 96vw);
+				width: min(920px, 96vw);
 				max-height: 92vh;
 				overflow: auto;
-				padding: 18px;
+				padding: 14px;
 			}
 			#shop-head {
 				display: flex;
@@ -724,7 +727,7 @@
 			#shop-grid,
 			.gsec .grid {
 				display: grid;
-				grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+				grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
 				gap: 10px;
 			}
 			#shop-garden,
@@ -851,13 +854,20 @@
 			}
 			.wcard {
 				border: 3px solid var(--ink);
-				border-radius: 16px;
-				padding: 12px;
+				border-radius: 14px;
+				padding: 8px 9px;
 				background: var(--cream);
 				display: flex;
 				flex-direction: column;
-				gap: 6px;
-				box-shadow: 0 4px 0 rgba(59, 42, 69, 0.2);
+				gap: 4px;
+				box-shadow: 0 3px 0 rgba(59, 42, 69, 0.2);
+			}
+			.wcard .d {
+				font-size: 11.5px;
+				line-height: 1.25;
+			}
+			.wcard .buy {
+				min-height: 44px; /* iPad touch target — do not shrink below this */
 			}
 			.wcard .top {
 				display: flex;
