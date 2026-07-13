@@ -62,16 +62,13 @@
 			a:hover {
 				color: var(--pink);
 			}
-			/* The page is a flex COLUMN: topbar / daybar / stage / botbar.
-			   Nothing overlaps the canvas — the bars own their own space. */
-			body {
-				display: flex;
-				flex-direction: column;
-			}
+			/* The canvas gets the WHOLE viewport — bars above/below it would only shrink the game,
+			   and it is already letterboxed on an iPad. The controls live in the SKY instead:
+			   the top third of the scene is empty by design (the action is all on the ground
+			   strip), so nothing gameplay-relevant is ever underneath them. */
 			#stage {
-				flex: 1 1 auto;
-				min-height: 0; /* let the canvas shrink instead of pushing the bars off-screen */
-				position: relative;
+				position: fixed;
+				inset: 0;
 			}
 			#stage canvas {
 				display: block;
@@ -79,22 +76,25 @@
 
 			#topbar,
 			#botbar {
-				flex: none;
+				position: absolute;
 				display: flex;
 				align-items: center;
 				gap: 8px;
-				padding: 7px 10px;
-				background: #171f47;
-				border-bottom: 2px solid rgba(255, 248, 236, 0.12);
 			}
-			#botbar {
-				border-bottom: none;
-				border-top: 2px solid rgba(255, 248, 236, 0.12);
-				min-height: 66px;
-				justify-content: center;
+			/* top-left, clear of the fixed #maya-back button that shared/back.js injects at 12,12 */
+			#topbar {
+				top: 10px;
+				left: 72px;
+				right: 10px;
 			}
 			#topbar #hud-top {
 				flex: 1;
+			}
+			/* The day/night action buttons sit in the top-right sky. */
+			#botbar {
+				top: 62px;
+				right: 12px;
+				justify-content: flex-end;
 			}
 
 			/* ---------- UI layer (transient overlays ONLY: banner, tool banner) ---------- */
@@ -1119,15 +1119,10 @@
 		<!-- LAYOUT: top bar / canvas / bottom bar are SIBLINGS in a flex column, so no control
 		     ever sits on top of the play field. Phaser's Scale.FIT shrinks the canvas into
 		     whatever #stage is left. Only transient overlays (banner, shop, endcard) float. -->
+		<!-- NO home button here on purpose. shared/back.js injects its own fixed #maya-back at
+		     top-left (12,12); the game used to draw a second one underneath it, and the pair sat
+		     on top of the Day chip. The bar just reserves the space instead. -->
 		<div id="topbar">
-			<button
-				class="icon-btn"
-				id="home-btn"
-				data-maya-native-back
-				title="Back to Game Lab"
-			>
-				🏠
-			</button>
 			<div id="hud-top">
 				<div
 					class="chip"
