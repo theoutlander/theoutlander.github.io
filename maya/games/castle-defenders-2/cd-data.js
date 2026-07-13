@@ -109,6 +109,28 @@ window.CD = {
   },
   SEED_ORDER: ['oak', 'cherry', 'apple', 'candy', 'rainbow'],
 
+  /* ---------- TREE ANIMALS ----------
+     Every species grows its OWN friend, and only once the tree is big enough to live in
+     (stage >= ANIMAL_MIN_STAGE). That is the whole point: a tree you let grow up gives you a
+     helper, so NOT chopping something immediately is finally worth doing.
+     Tap the animal to call it — it does its trick, then naps for a bit. No shop, no unlock:
+     she just grows a big tree and a friend shows up. */
+  TREE_ANIMALS: {
+    oak:     { emoji: '🐒', name: 'Monkey',  call: 'Bananas away! 🍌', help: 'bananas',
+               desc: 'Throws bananas and chops your other trees!' },
+    cherry:  { emoji: '🐦', name: 'Birdie',  call: 'Tweet tweet! 🎵',  help: 'grow',
+               desc: 'Sings to the garden — everything grows faster!' },
+    apple:   { emoji: '🐝', name: 'Buzzy',   call: 'Bzzzz! 🍎',        help: 'apple',
+               desc: 'Makes an extra apple — a bonus heart tonight!' },
+    candy:   { emoji: '🦜', name: 'Polly',   call: 'Squawk! 🪵',       help: 'wood',
+               desc: 'Drops a beakful of wood!' },
+    rainbow: { emoji: '🦄', name: 'Sparkle', call: 'MAGIC! ✨',        help: 'surprise',
+               desc: 'A magical surprise, every single time!' }
+  },
+  ANIMAL_MIN_STAGE: 2,      // must be a Big Tree before anyone moves in
+  ANIMAL_COOLDOWN: 6000,    // then they nap 😴
+  MONKEY_BANANAS: 3,
+
   GROW_MS: 9000,          // base time per growth stage (× species.grow)
   REGROW_DELAY: 5000,     // stump -> sprout
   WATER_BOOST: 0.5,       // watering completes the current stage in half the REMAINING time

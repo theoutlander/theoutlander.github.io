@@ -181,7 +181,14 @@ function renderStuffGrid(){
         return card(s.emoji, s.name, s.blurb, CD.hasSeed(id), 'Buy in the Garden — 🪵 ' + s.seedCost);
       }).join('')) +
     sect('🤝 Your Helpers', 'Hire them on the Garden tab.',
-      CD.HELPERS.map(h => card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost)).join(''));
+      CD.HELPERS.map(h => card(h.emoji, h.name, h.desc, CD.hasHelper(h.id), 'Hire in the Garden — 🪵 ' + h.cost)).join('')) +
+    sect('🐒 Tree Friends', 'Grow a tree into a BIG tree and a friend moves in. Tap them to call!',
+      CD.SEED_ORDER.map(id => {
+        const a = CD.TREE_ANIMALS[id];
+        const s = CD.TREE_SPECIES[id];
+        if (!a) return '';
+        return card(a.emoji, a.name, a.desc, false, 'Lives in a big ' + s.emoji + ' ' + s.name);
+      }).join(''));
 }
 
 document.addEventListener('click', e => {

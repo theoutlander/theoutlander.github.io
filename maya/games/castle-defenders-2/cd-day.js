@@ -57,6 +57,7 @@ function clearDirt(sp){                       // plot / locked-plot / stump art 
 function clearSpot(sp){
   clearGrow(sp);
   clearDirt(sp);
+  clearAnimal(sp);
   if (sp.tree){ sp.tree.destroy(); sp.tree = null; }
 }
 
@@ -87,7 +88,125 @@ function buildTree(sp, stage){
   S.tweens.add({ targets: t, angle: { from: -0.7, to: 0.7 }, duration: CD.rnd(1800, 2600), yoyo: true, repeat: -1, ease: 'Sine.inOut' });
   if (stage < CD.maxStageFor(sp.idx)) scheduleGrow(sp);
   else clearGrow(sp);
+  ensureAnimal(sp);
   return t;
+}
+
+/* ---------- tree animals ----------
+   A big tree grows a friend. Tap the friend to call it. */
+function clearAnimal(sp){
+  if (sp.animal){ sp.animal.destroy(); sp.animal = null; }
+  if (sp.animalNap){ sp.animalNap.remove(false); sp.animalNap = null; }
+}
+
+function ensureAnimal(sp){
+  clearAnimal(sp);
+  const tree = sp.tree;
+  if (!tree || !tree.treeData) return;
+  const d = tree.treeData;
+  if (d.stage < CD.ANIMAL_MIN_STAGE) return;              // too small to live in
+  const species = CD.speciesOf(sp.idx);
+  const A = CD.TREE_ANIMALS[species];
+  if (!A) return;
+
+  const gy = CD.groundY(sp.idx);
+  const a = CD.Art.buildAnimal(S, tree.x + CD.rnd(-14, 14), gy - d.h + d.canopy * 0.35, species);
+  if (!a) return;
+  a.on('pointerdown', (p, lx, ly, ev) => { if (ev) ev.stopPropagation(); callAnimal(sp); });
+  sp.animal = a;
+
+  /* Announce ONLY while she's actually playing. Day.init() builds the whole garden during the
+     scene's create(), which runs BEFORE cd-game.js installs CD.fxSparkle/floatText — calling them
+     here threw "CD.fxSparkle is not a function" at boot and killed the game. (The e2e suite caught
+     exactly this.) It would also have fired a fanfare at the title screen for a tree she never grew. */
+  const playing = CD.state && CD.state.phase === 'day' && typeof CD.fxSparkle === 'function';
+  if (!playing) return;
+  CDAudio.fx.surprise();
+  CD.fxSparkle(a.x, a.y, 10);
+  CD.floatText(a.x, a.y - 40, A.emoji + ' ' + A.name + ' moved in! Tap to call!', { size: 20, color: '#FFF3B0' });
+}
+
+function callAnimal(sp){
+  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  const a = sp.animal;
+  if (!a || !a.animalData || !a.animalData.ready) {
+    if (a) CD.floatText(a.x, a.y - 34, 'Zzz… napping! 😴', { size: 18, color: '#BFE8FF' });
+    CDAudio.fx.click();
+    return;
+  }
+  const species = a.animalData.species;
+  const A = CD.TREE_ANIMALS[species];
+
+  CD.Art.setAnimalReady(a, false);
+  S.tweens.add({ targets: a, y: a.y - 18, duration: 150, yoyo: true, ease: 'Quad.out' });
+  CD.floatText(a.x, a.y - 40, A.call, { size: 22, color: '#FFD24D' });
+
+  if (A.help === 'bananas') monkeyBananas(sp);
+  else if (A.help === 'grow'){
+    CDAudio.fx.grow();
+    spots.forEach((o, i) => S.time.delayedCall(i * 80, () => {
+      if (CD.state && CD.state.phase === 'day' && !ended) waterTree(o, true);
+    }));
+    CD.floatText(CD.W / 2, 250, '🐦 The whole garden grows faster!', { size: 24, color: '#A8E9FF' });
+  }
+  else if (A.help === 'apple'){
+    CD.state.apples++;
+    CD.save();
+    CDAudio.fx.buy();
+    CD.ui.setWood();                                   // refreshes the apple chip too
+    CD.floatText(a.x, a.y - 70, '🍎 +1 bonus heart tonight!', { size: 22, color: '#FF9EC7' });
+  }
+  else if (A.help === 'wood'){
+    CDAudio.fx.wood();
+    CD.addWood(3);
+    CD.floatText(a.x, a.y - 70, '🪵 +3 wood!', { size: 22, color: '#FFD24D' });
+  }
+  else if (A.help === 'surprise') rainbowSurprise(a.x, a.y);
+
+  // nap, then pop back up ready to be called again
+  sp.animalNap = S.time.delayedCall(CD.ANIMAL_COOLDOWN, () => {
+    sp.animalNap = null;
+    if (sp.animal === a && a.scene){
+      CD.Art.setAnimalReady(a, true);
+      CD.fxSparkle(a.x, a.y, 4);
+    }
+  });
+}
+
+/* The monkey hurls bananas at your OTHER trees and chops them for you. */
+function monkeyBananas(sp){
+  const from = sp.animal;
+  const targets = spots.filter(o => o !== sp && choppable(o));
+  if (!targets.length){
+    CD.floatText(from.x, from.y - 66, 'No trees to chop! 🍌', { size: 18 });
+    return;
+  }
+  for (let i = 0; i < CD.MONKEY_BANANAS; i++){
+    const tgt = CD.pick(targets);
+    S.time.delayedCall(i * 240, () => {
+      if (!CD.state || CD.state.phase !== 'day' || ended || !sp.animal) return;
+      if (!choppable(tgt)) return;
+      const gy = CD.groundY(tgt.idx);
+      const b = CD.Art.emoji(S, from.x, from.y, '🍌', 26).setDepth(CD.GROUND + 80);
+      const sx = b.x, sy = b.y;
+      const tx = tgt.tree.x, ty = gy - Math.min(70, tgt.tree.treeData.h * 0.4);
+      const peak = Math.min(sy, ty) - 80;
+      CDAudio.fx.throwaxe();
+      S.tweens.add({
+        targets: b, angle: 720, duration: 460,
+        onUpdate: (tw) => {
+          const t = tw.progress;
+          b.x = sx + (tx - sx) * t;
+          b.y = (1-t)*(1-t)*sy + 2*(1-t)*t*peak + t*t*ty;
+        },
+        onComplete: () => {
+          b.destroy();
+          CDAudio.fx.acorn();
+          if (choppable(tgt)) applyChopRemote(tgt, 1);
+        }
+      });
+    });
+  }
 }
 
 /* ---------- growth ---------- */
@@ -123,7 +242,7 @@ function growSpot(sp){
 /* ---------- phase control ---------- */
 Day.init = function(scene, knightRef){
   S = scene; knight = knightRef;
-  spots = CD.TREE_SPOTS.map((sp, i) => ({ idx: i, tree: null, stump: null, plot: null, locked: null, timer: null, growEnd: 0 }));
+  spots = CD.TREE_SPOTS.map((sp, i) => ({ idx: i, tree: null, stump: null, plot: null, locked: null, timer: null, growEnd: 0, animal: null, animalNap: null }));
   buildGarden();
 };
 
@@ -423,6 +542,7 @@ function fellTree(sp){
   d.falling = true;
   tree.disableInteractive();
   clearGrow(sp);
+  clearAnimal(sp);        // his house is coming down — he hops off before it falls
   const gy = CD.groundY(sp.idx);
   const golden = CD.hasTool('golden');
   const woodGain = d.wood * (golden ? 2 : 1);

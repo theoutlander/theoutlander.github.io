@@ -462,6 +462,44 @@ Art.face = function(scene, container, dir){
   });
 };
 
+/* A tree friend, perched in the canopy. Big tap target (kid on an iPad), bobs so she notices it,
+   and shows a "!" bubble when it is ready to be called. */
+Art.buildAnimal = function(scene, x, y, species){
+  const A = CD.TREE_ANIMALS[species];
+  if (!A) return null;
+  const c = scene.add.container(x, y).setDepth(y + 200);
+
+  const glow = scene.add.circle(0, 0, 26, 0xFFE082, 0.28);
+  const body = Art.emoji(scene, 0, 0, A.emoji, 36);
+  const zzz  = Art.emoji(scene, 16, -20, '😴', 20).setVisible(false);
+  const bang = scene.add.text(15, -22, '!', {
+    fontFamily: '"Fredoka One", sans-serif', fontSize: '22px',
+    color: '#FFD24D', stroke: '#3B2A45', strokeThickness: 5
+  }).setOrigin(0.5);
+  c.add([glow, body, bang, zzz]);
+
+  // 44px+ hit area — she is 8 and this is a touchscreen
+  c.setSize(56, 56);
+  c.setInteractive(new Phaser.Geom.Rectangle(-28, -28, 56, 56), Phaser.Geom.Rectangle.Contains);
+
+  scene.tweens.add({ targets: c, y: y - 6, duration: CD.rnd(700, 1000), yoyo: true, repeat: -1, ease: 'Sine.inOut' });
+  scene.tweens.add({ targets: glow, alpha: 0.5, scale: 1.15, duration: 900, yoyo: true, repeat: -1 });
+
+  c.animalData = { species, body, zzz, bang, glow, ready: true };
+  return c;
+};
+
+/* Sleeping = called recently. Make it obvious which friends are ready. */
+Art.setAnimalReady = function(a, ready){
+  if (!a || !a.animalData) return;
+  const d = a.animalData;
+  d.ready = ready;
+  d.zzz.setVisible(!ready);
+  d.bang.setVisible(ready);
+  d.glow.setVisible(ready);
+  d.body.setAlpha(ready ? 1 : 0.55);
+};
+
 /* Gardener Gus — small (beaver-sized), three-quarter view facing RIGHT so Art.face() reads. */
 Art.buildGardener = function(scene){
   const c = scene.add.container(240, CD.GROUND + 50);
