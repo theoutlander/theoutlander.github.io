@@ -501,6 +501,7 @@ function enterSecret(){
   S.phase='secret'; updateHUD();
   show('#s-secret');
   sfx('creakopen');
+  if(window.Snd) Snd.ambient('secret');
   if(window.mayaTrack) mayaTrack('er_secret_room',{room:'secret'});
   msg('🤫 A <b>SECRET ROOM!</b> Nobody has been in here for a hundred years...', 4000);
 }
@@ -802,7 +803,7 @@ function buildRoom2(){
 function enterRoom2(){
   S.phase='room2'; updateHUD();
   show('#s-room2');
-  if(window.Snd) Snd.ambient('mansion');
+  if(window.Snd) Snd.ambient('mirrorroom');
   msg(THEME.room2EnterMsg, 4500);
 }
 
@@ -971,7 +972,7 @@ $('#door1').addEventListener('click', doorClick);
 $('#chair-note').addEventListener('click', noteClick);
 $('#portrait').addEventListener('click', portraitClick);
 $('#secret-btn').addEventListener('click', ()=>{ if(S.phase==='room1') enterSecret(); });
-$('#secret-back').addEventListener('click', ()=>{ S.phase='room1'; updateHUD(); show('#s-room1'); msg('Back to the '+THEME.roomNames.room1+'!'); });
+$('#secret-back').addEventListener('click', ()=>{ S.phase='room1'; updateHUD(); show('#s-room1'); if(window.Snd) Snd.ambient('mansion'); msg('Back to the '+THEME.roomNames.room1+'!'); });
 $('#chest').addEventListener('click', chestClick);
 $('#door-k').addEventListener('click', doorKClick);
 $('#cauldron').addEventListener('click', cauldronClick);

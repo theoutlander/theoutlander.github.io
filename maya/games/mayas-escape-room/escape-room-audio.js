@@ -7,7 +7,7 @@ const store = {
   get(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v){ try{ localStorage.setItem(k,v); }catch(e){} },
 };
-let AC=null, master=null, ambGain=null, ambTimer=null, ambNodes=[];
+let AC=null, master=null, ambGain=null, ambTimers=[], ambNodes=[];
 let muted = store.get('mayaEscapeMuted')==='1';
 
 function ctx(){
@@ -133,8 +133,13 @@ const FX={
 };
 
 function stopAmbient(){
-  clearTimeout(ambTimer); ambTimer=null;
+  ambTimers.forEach(s=>clearTimeout(s.id)); ambTimers=[];
   ambNodes.forEach(n=>{ try{n.stop();}catch(e){} }); ambNodes=[];
+}
+/* short melodic phrase — 0 entries are rests */
+function phrase(notes, step, vol, type){
+  const a=ctx(), t=a.currentTime;
+  notes.forEach((f,i)=>{ if(f){ osc(type||'triangle',f,0,t+i*step,step*1.9,vol); osc('sine',f*2,0,t+i*step,step,vol*.18); } });
 }
 function drone(freqs,vol,type){
   const a=ctx();
@@ -150,33 +155,67 @@ function drone(freqs,vol,type){
 function ambient(kind){
   if(!AC && !kind) return;
   ctx(); stopAmbient();
-  const loop=(fn,min,vary,first)=>{ const tick=()=>{ fn(); ambTimer=setTimeout(tick, min+Math.random()*vary); }; ambTimer=setTimeout(tick, first==null?min:first); };
+  const loop=(fn,min,vary,first)=>{
+    const slot={id:0};
+    const tick=()=>{ fn(); slot.id=setTimeout(tick, min+Math.random()*vary); };
+    slot.id=setTimeout(tick, first==null?min:first);
+    ambTimers.push(slot);
+  };
   const pick=arr=>{ // [fn, weight] pairs
     let tot=arr.reduce((s,x)=>s+x[1],0), r=Math.random()*tot;
     for(const [fn,w] of arr){ if((r-=w)<0) return fn; }
     return arr[0][0];
   };
-  // Drones sit WELL under the one-shot critters — kids should clearly hear
-  // the mice/scratches over the room hum (feedback 2026-07-12).
+  // Every room gets its OWN musical identity — melodies over near-silence,
+  // not a gloomy drone (feedback 2026-07-12: "monotonous and depressing").
   if(kind==='mansion'){
-    drone([55,55.7,82.5],.014);
-    loop(()=>pick([[FX.distantcreak,4],[FX.belltoll,2],[FX.scratch,3],[FX.skitter,2],[FX.wolfhowl,1]])(), 5500, 7000, 3500+Math.random()*3500);
+    // parlor: twinkly music-box waltz, high and delicate
+    const waltzes=[
+      [1319,0,0,1047,0,880,0,1047,0,880,0,698,0,0,880,0,0,0],
+      [880,0,0,1047,0,1319,0,1568,0,1319,0,1047,0,0,880,0,0,0],
+    ];
+    let w=0;
+    loop(()=>phrase(waltzes[w++%2], .32, .05), 7000, 4000, 1200);
+    loop(()=>pick([[FX.distantcreak,3],[FX.belltoll,1],[FX.scratch,3],[FX.skitter,2],[FX.wolfhowl,1]])(), 6500, 7000, 4500);
   } else if(kind==='mirror'){
+    // inside the mirror: shimmer pad + happy twinkles
     drone([220,220.9,330],.01);
     loop(FX.twinkle, 2200, 3500, 1200);
+  } else if(kind==='mirrorroom'){
+    // mirror room: rising glassy arpeggios, mysterious and pretty
+    const glass=[[659,0,784,0,988,0,1319],[587,0,740,0,880,0,1175]];
+    let g=0;
+    loop(()=>phrase(glass[g++%2], .30, .04, 'sine'), 6000, 3500, 1500);
+    loop(()=>pick([[FX.whisper,3],[FX.twinkle,4],[FX.skitter,1]])(), 5000, 5000, 3500);
   } else if(kind==='kitchen'){
-    drone([65,65.6,98],.012);
-    loop(()=>pick([[FX.bubble,6],[FX.cackle,1],[FX.skitter,3]])(), 1600, 2600, 1200);
+    // galley groove: bouncy witch's-brew bass plucks under the bubbles
+    const bounce=[[98,0,131,0,110,0,147,131,0,98],[110,0,131,0,165,0,147,0,131,110]];
+    let b=0;
+    loop(()=>phrase(bounce[b++%2], .21, .09), 5200, 3000, 1000);
+    loop(()=>pick([[FX.bubble,6],[FX.cackle,1],[FX.skitter,3]])(), 1600, 2600, 1400);
   } else if(kind==='library'){
-    drone([58,58.5,87],.011);
-    loop(()=>pick([[FX.whisper,4],[FX.rustle,2],[FX.scratch,3],[FX.skitter,1]])(), 4200, 6000, 2500);
+    // grandfather clock: steady tick... tock... + whispery pages
+    let tk=false;
+    loop(()=>{ tk=!tk; const t=ctx().currentTime; osc('triangle', tk?920:690, tk?300:230, t, .07, .05); }, 1550, 100, 800);
+    loop(()=>pick([[FX.whisper,4],[FX.rustle,2],[FX.scratch,3],[FX.skitter,1],[FX.hoot,1]])(), 5200, 6000, 3000);
   } else if(kind==='cellar'){
-    drone([48,48.4,72],.017);
+    // the scary one keeps its heartbeat — but only a whisper of drone
+    drone([48,48.4,72],.015);
     let n=0;
     loop(()=>{ n++; (n%2?FX.heartbeat:pick([[FX.drip,4],[FX.scratch,3],[FX.skitter,2],[FX.growl,1]]))(); }, 1400, 1800, 900);
   } else if(kind==='attic'){
-    drone([52,52.6,78],.013);
-    loop(()=>pick([[FX.wind,4],[FX.whistle,3],[FX.distantcreak,2],[FX.scratch,2],[FX.wolfhowl,1]])(), 4000, 5000, 800);
+    // wind chimes tinkling in the draft
+    const PENT=[1047,1175,1319,1568,1760];
+    loop(()=>{ const t=ctx().currentTime, n=2+Math.floor(Math.random()*3);
+      for(let i=0;i<n;i++) osc('sine', PENT[Math.floor(Math.random()*5)], 0, t+i*(.18+Math.random()*.2), .9, .05);
+    }, 3200, 3500, 900);
+    loop(()=>pick([[FX.wind,4],[FX.whistle,3],[FX.distantcreak,2],[FX.scratch,2],[FX.wolfhowl,1]])(), 5000, 5000, 1600);
+  } else if(kind==='secret'){
+    // Lottie's lullaby — a soft music-box fragment (it's HER song)
+    const lull=[[1047,0,1319,0,1568,0,1319,0,1047],[1319,0,1568,0,2093,0,1568,0,1319]];
+    let l=0;
+    loop(()=>phrase(lull[l++%2], .34, .05), 8000, 4000, 1500);
+    loop(()=>pick([[FX.distantcreak,3],[FX.skitter,2],[FX.rustle,2]])(), 6000, 6000, 4000);
   }
 }
 
