@@ -210,6 +210,23 @@
 				line-height: 1.1;
 				max-width: 74px;
 			}
+			/* Score chip: only shown at night (JS toggles .show). Gold number so it pops. */
+			#score-chip {
+				display: none;
+				background: rgba(255, 248, 236, 0.94);
+			}
+			#score-chip.show {
+				display: flex;
+			}
+			#score-chip .n {
+				font-size: 19px;
+				min-width: 30px;
+				text-align: center;
+				color: #c98a00;
+			}
+			#score-chip.pop .n {
+				animation: pop 0.3s;
+			}
 			#hud-spacer {
 				flex: 1;
 			}
@@ -1162,6 +1179,12 @@
 				>
 					🍎 <span class="n">0</span>
 					<span class="sfx">bonus 💖 tonight</span>
+				</div>
+				<div
+					class="chip"
+					id="score-chip"
+				>
+					🏆 <span class="n">0</span>
 				</div>
 				<div id="hud-spacer"></div>
 				<div

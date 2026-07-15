@@ -66,6 +66,14 @@ ui.setHearts = function(pop){
 
 function phaseChip(txt){ $('phase-chip').textContent = txt; }
 
+/* Score chip — a running campaign total, only shown at night (when it can change). */
+ui.setScore = function(pop){
+  const el = $('score-chip');
+  if (!el || !CD.state) return;
+  el.querySelector('.n').textContent = CD.state.score || 0;
+  if (pop){ el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); }
+};
+
 ui.dayTick = function(frac){
   $('daybar').querySelector('.fill').style.width = Math.min(100, frac * 100) + '%';
 };
@@ -86,6 +94,7 @@ ui.enterDay = function(){
   $('day-controls').classList.add('show');
   $('weapon-bar').classList.remove('show');
   $('hearts').classList.remove('show');
+  $('score-chip').classList.remove('show');
   ui.setWood(); ui.setHearts();
 };
 ui.exitDay = function(){
@@ -100,12 +109,15 @@ ui.enterNight = function(){
   phaseChip('🌙 Night ' + CD.state.day);
   $('hearts').classList.add('show');
   ui.setHearts();
+  $('score-chip').classList.add('show');
+  ui.setScore();
   renderWeaponBar();
   $('weapon-bar').classList.add('show');
 };
 ui.exitNight = function(){
   $('weapon-bar').classList.remove('show');
   $('hearts').classList.remove('show');
+  $('score-chip').classList.remove('show');
 };
 
 /* ---------- banner ---------- */
@@ -485,9 +497,12 @@ function showEnd(cfg){
   p.querySelector('.e').textContent = cfg.e;
   p.querySelector('.t').textContent = cfg.t;
   p.querySelector('.d').textContent = cfg.d;
+  const best = CD.bestScore();
+  const isBest = (CD.state.score || 0) >= best && best > 0;
   $('end-stats').innerHTML =
-    '<div class="st">🪵 ' + CD.state.chopped + ' wood chopped</div>' +
-    '<div class="st">🧟 ' + CD.state.bonked + ' zombies bonked</div>';
+    '<div class="st">🏆 ' + (CD.state.score || 0) + ' points' + (isBest ? ' — NEW BEST! ✨' : '') + '</div>' +
+    '<div class="st">🧟 ' + CD.state.bonked + ' zombies bonked</div>' +
+    '<div class="st">🪵 ' + CD.state.chopped + ' wood chopped</div>';
   const pr = $('end-primary'), se = $('end-secondary');
   pr.textContent = cfg.primary; se.textContent = cfg.secondary;
   pr.onclick = () => { $('endcard').classList.remove('show'); cfg.onPrimary(); };

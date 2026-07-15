@@ -223,7 +223,15 @@ function ensureAnimal(sp){
 }
 
 function callAnimal(sp){
-  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  if (!CD.state) return;
+  // At night, tapping a friend FIRES it at the zombies (cd-night owns that). `ended` is true all
+  // night, so this must come BEFORE the day guard below.
+  if (CD.state.phase === 'night'){
+    const na = sp.animal;
+    if (na && na.animalData && CD.Night.tapFriend) CD.Night.tapFriend(na, na.animalData.species);
+    return;
+  }
+  if (CD.state.phase !== 'day' || ended) return;
   const a = sp.animal;
   if (!a || !a.animalData || !a.animalData.ready) {
     if (a) CD.floatText(a.x, a.y - 34, 'Zzz… napping! 😴', { size: 18, color: '#BFE8FF' });
@@ -381,6 +389,22 @@ Day.stop = function(){
   faceIt(knight.c, 1);          // the horde comes from the RIGHT — never stand facing the castle
 };
 
+/* At night the day loop is stopped, but the tree friends STAY in their trees (Day.stop never
+   destroys them) — and now they fight. cd-night.js owns the zombies and the damage; it just asks
+   us for the live friend sprites and what species each one is, then lobs their treats at the horde.
+   Only friends whose species has a NIGHT_HELP entry count (every current one does). */
+Day.nightAnimals = function(){
+  const out = [];
+  if (!spots) return out;
+  spots.forEach(sp => {
+    const a = sp.animal;
+    if (a && a.scene && a.animalData && CD.NIGHT_HELP[a.animalData.species]){
+      out.push({ sprite: a, species: a.animalData.species });
+    }
+  });
+  return out;
+};
+
 Day.tick = function(dtSec){
   if (CD.state.phase !== 'day' || ended) return;
   dayLeft -= dtSec;
@@ -402,7 +426,10 @@ Day.end = function(){
 
 /* ---------- tool-belt dispatch ---------- */
 Day.onTreeTap = function(sp){
-  if (!CD.state || CD.state.phase !== 'day' || ended) return;
+  if (!CD.state) return;
+  // At night the whole tree is a big tap target for firing its friend (she's 8, on a touchscreen).
+  if (CD.state.phase === 'night'){ if (sp.animal) callAnimal(sp); return; }
+  if (CD.state.phase !== 'day' || ended) return;
   const tree = sp.tree;
   if (!tree || !tree.treeData || tree.treeData.falling) return;
   const gy = CD.groundY(sp.idx);

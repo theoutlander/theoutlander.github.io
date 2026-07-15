@@ -131,6 +131,30 @@ window.CD = {
   ANIMAL_COOLDOWN: 6000,    // then they nap 😴
   MONKEY_BANANAS: 3,
 
+  /* ---------- NIGHT HELP ----------
+     The tree friends don't go to bed when the zombies come — they stay in their trees and pelt the
+     horde. Every friend she GREW is a little auto-turret at night, so a garden she raised in the day
+     literally defends the castle. Each species throws its own thing with its own flavour so it reads
+     as "the monkey AND the others are helping", not one repeated effect. dmg is per hit; slow dazes;
+     splash lets the unicorn's magic clip a whole cluster. All are gentle enough that they only ever
+     TILT a night — she still has to play it. */
+  NIGHT_HELP: {
+    oak:     { emoji: '🍌', dmg: 2, ring: 0xFFD24D },                 // Monkey — steady bananas
+    cherry:  { emoji: '🎵', dmg: 1, ring: 0x6FD3FF, slow: 900 },       // Birdie — a song that dazes
+    apple:   { emoji: '🍯', dmg: 1, ring: 0xFFB347, slow: 700 },       // Buzzy — sticky honey
+    candy:   { emoji: '🥥', dmg: 3, ring: 0xC77DFF },                  // Polly — heavy coconuts
+    rainbow: { emoji: '🌈', dmg: 2, ring: 0xFFFFFF, splash: 66 }       // Sparkle — magic, hits a cluster
+  },
+  /* Tuned by watching a night play ITSELF: at 2300ms three friends cleared night 5 with zero gate
+     damage — they soloed the game and Maya just watched. They must HELP, never autopilot, so the
+     beat is slow enough that the horde still breaks through and her taps/weapons decide the night. */
+  ANIMAL_THROW_MS: 3600,    // AUTO mode only (horde): each grown friend lobs a shot this often
+  ANIMAL_TAP_CD: 1300,      // CAMPAIGN: after she taps a friend to throw, it naps this long
+
+  /* Points: tougher zombies are worth more, so "make it hard" also means "score bigger". */
+  POINTS: { zombo: 10, speedy: 15, chonko: 25, bouncy: 20, king: 250 },
+  GEAR_POINTS: 8,           // bonus for beating one that spawned wearing gear
+
   GROW_MS: 9000,          // base time per growth stage (× species.grow)
   REGROW_DELAY: 5000,     // stump -> sprout
   WATER_BOOST: 0.5,       // watering completes the current stage in half the REMAINING time
@@ -182,7 +206,7 @@ window.CD = {
   GEAR_IDS: ['shield', 'helmet', 'ladder', 'balloon'],
 
   // Gear starts on night 2 and gets commoner. The King never wears gear — he IS the King.
-  gearChance(day){ return day < 2 ? 0 : Math.min(0.55, 0.15 + (day - 2) * 0.10); },
+  gearChance(day){ return day < 2 ? 0 : Math.min(0.65, 0.18 + (day - 2) * 0.12); },
   rollGear(type, day){
     if (type === 'king') return null;
     if (Math.random() >= CD.gearChance(day)) return null;
@@ -193,25 +217,25 @@ window.CD = {
     1: { list: [['zombo',5]], gap: [2200, 3400] },
     2: { list: [['zombo',6],['speedy',2]], gap: [1900, 3000] },
     3: { list: [['zombo',7],['speedy',3],['chonko',1]], gap: [1700, 2700] },
-    4: { list: [['zombo',8],['speedy',4],['chonko',2],['bouncy',2]], gap: [1500, 2400] },
-    5: { list: [['zombo',9],['speedy',5],['chonko',2],['bouncy',3],['king',1]], gap: [1300, 2200] }
+    4: { list: [['zombo',9],['speedy',5],['chonko',2],['bouncy',3]], gap: [1100, 1900] },
+    5: { list: [['zombo',11],['speedy',6],['chonko',3],['bouncy',4],['king',1]], gap: [850, 1550] }
   },
   // endless nights past 5
   makeWave(n){
     if (CD.WAVES[n]) return CD.WAVES[n];
     const k = n - 5;
     return {
-      list: [['zombo', 9 + k*2], ['speedy', 5 + k], ['chonko', 2 + Math.ceil(k/2)], ['bouncy', 3 + k], ['king', Math.ceil(k/2)]],
-      gap: [Math.max(700, 1300 - k*100), Math.max(1200, 2200 - k*150)]
+      list: [['zombo', 11 + k*3], ['speedy', 6 + k*2], ['chonko', 3 + Math.ceil(k/2)], ['bouncy', 4 + k], ['king', Math.ceil(k/2)]],
+      gap: [Math.max(650, 1200 - k*110), Math.max(1100, 2100 - k*160)]
     };
   },
 
   /* ---------- THEY GET HARDER ----------
      Night 1 must stay gentle (she is 8 and it's her first night), so these are all 1.0 on night 1
      and climb from there. Capped, because an unwinnable night is the worst bug in the game. */
-  hpScale(day){ return 1 + Math.min(1.2, (day - 1) * 0.15); },      // up to 2.2x HP
-  speedScale(day){ return 1 + Math.min(0.6, (day - 1) * 0.07); },   // up to 1.6x speed
-  biteScale(day){ return 1 + Math.min(0.8, (day - 1) * 0.10); },    // they chew the gate faster
+  hpScale(day){ return 1 + Math.min(1.8, (day - 1) * 0.20); },      // up to 2.8x HP (the garden helps now)
+  speedScale(day){ return 1 + Math.min(0.7, (day - 1) * 0.08); },   // up to 1.7x speed
+  biteScale(day){ return 1 + Math.min(0.9, (day - 1) * 0.11); },    // they chew the gate faster
 
   /* THEY FIGHT BACK. Bonk one and it doesn't just absorb it — it snarls and surges forward for a
      moment. Hitting things has a consequence now, so the horde feels alive instead of passive. */
@@ -233,7 +257,7 @@ window.CD = {
       apples: 0,               // banked apples -> bonus hearts at NIGHT START only
       garden: CD.freshGarden(),// species planted per plot index
       hearts: CD.MAX_HEARTS, heartCap: CD.MAX_HEARTS, phase: 'title',
-      chopped: 0, bonked: 0, won: false
+      chopped: 0, bonked: 0, score: 0, best: 0, won: false
     };
   },
   freshGarden(){ return CD.TREE_SPOTS.map(() => 'oak'); },
@@ -267,6 +291,19 @@ window.CD = {
     } catch(e){ return null; }
   },
   clearSave(){ CDStore.remove('cdSaveV2'); },
+
+  /* Best score survives a brand-new game (clearSave only wipes the run save), so her all-time high
+     is a thing to chase. Guarded through CDStore like everything else. */
+  bestScore(){ const n = parseInt(CDStore.get('cdBest') || '0', 10); return isNaN(n) ? 0 : n; },
+  saveBest(n){ if (n > CD.bestScore()) CDStore.set('cdBest', String(n)); },
+  /* Award points for a felled zombie and keep the all-time best in step. Returns the points added. */
+  addScore(type, hadGear){
+    const pts = (CD.POINTS[type] || 10) + (hadGear ? CD.GEAR_POINTS : 0);
+    CD.state.score += pts;
+    if (CD.state.score > (CD.state.best || 0)) CD.state.best = CD.state.score;
+    CD.saveBest(CD.state.score);
+    return pts;
+  },
 
   hasTool(id){
     const t = CD.TOOLS.find(t => t.id === id);

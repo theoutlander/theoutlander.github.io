@@ -7,11 +7,17 @@ window.CD.Night = Night;
 let S = null;
 let zombies = [];
 let queue = [];
-let spawnEvt = null, groanEvt = null, hordeEvt = null;
+let spawnEvt = null, groanEvt = null, hordeEvt = null, animalEvt = null;
 let projectiles = [];   // { update(dt) -> false to remove, obj }
 let confettiUsed = false;
 let swordCd = 0;
 let over = false;
+let friendHintShown = false;   // "tap your friends!" — teach it once, not every night
+
+/* Campaign: the friends are HER cannons — they only throw when she taps them (autoAnimals=false),
+   so the monkeys never do all the killing. Horde mode flips this on so the garden auto-defends a
+   flood that no one could tap through. */
+Night.autoAnimals = false;
 let hintsShown = {};    // gear id -> already taught this night (don't spam her)
 
 const GATE_X = 228;
@@ -73,6 +79,24 @@ Night.start = function(){
     CDAudio.fx.horde(Math.max(nightPressure, gatePressure));
     if (CD.state.hearts <= 2) CDAudio.fx.heartbeat();
   }});
+
+  // Wake every friend so she can fire it the moment the night starts (day naps don't carry over).
+  const friends = CD.Day.nightAnimals ? CD.Day.nightAnimals() : [];
+  friends.forEach(f => CD.Art.setAnimalReady(f.sprite, true));
+  // Teach the tap-to-throw ONCE, and only if she actually has a friend to tap.
+  if (friends.length && !friendHintShown && !Night.autoAnimals){
+    friendHintShown = true;
+    S.time.delayedCall(1200, () => {
+      if (CD.state.phase !== 'night') return;
+      const f = friends[0];
+      CD.floatText(f.sprite.x, f.sprite.y - 46, 'Tap me to throw! 🍌', { size: 20, color: '#FFD24D' });
+    });
+  }
+
+  // Horde mode only: the garden auto-fights. In the campaign she taps her friends herself.
+  if (Night.autoAnimals){
+    animalEvt = S.time.addEvent({ delay: CD.ANIMAL_THROW_MS, loop: true, callback: animalVolley });
+  }
 };
 
 function scheduleSpawn(wave, delay){
@@ -88,9 +112,10 @@ Night.stop = function(){
   if (spawnEvt) spawnEvt.remove();
   if (groanEvt) groanEvt.remove();
   if (hordeEvt) hordeEvt.remove();
+  if (animalEvt) animalEvt.remove(); animalEvt = null;
   zombies.forEach(z => z.parts.c.destroy());
   zombies = [];
-  projectiles.forEach(p => p.obj && p.obj.destroy && p.obj.destroy());
+  projectiles.forEach(p => { if (p.cleanup) p.cleanup(); if (p.obj && p.obj.destroy) p.obj.destroy(); });
   projectiles = [];
 };
 
@@ -218,6 +243,9 @@ function defeat(z, opts){
   z.state = 'dead';
   opts = opts || {};
   CD.state.bonked++;
+  const pts = CD.addScore(z.type, !!z.gear);
+  CD.ui.setScore(true);
+  CD.floatText(z.parts.c.x, bodyY(z) - 128 * z.scale, '+' + pts, { size: 20, color: '#FFE59A' });
   if (z.wobble) z.wobble.stop();
   if (z.hopTween) z.hopTween.stop();
   z.parts.c.disableInteractive();
@@ -514,6 +542,116 @@ function fireBubble(){
       }});
     });
   }
+}
+
+/* ---------- tree friends fight (auto) ----------
+   Owned entirely on the NIGHT side: the day module hands us the live friend sprites (Day.nightAnimals)
+   and we do the aiming, the telegraph, the arc and the damage against OUR zombies array. This is the
+   day↔night bridge — the friends never touch `zombies`/`damage` themselves. */
+function anyLiveZombie(){ return zombies.some(z => z.state !== 'dead' && !z.bubbled); }
+
+// The most dangerous zombie = the one nearest the gate (smallest x). Friends always help where it counts.
+function frontZombie(){
+  let best = null;
+  for (const z of zombies){
+    if (z.state === 'dead' || z.bubbled) continue;
+    if (!best || z.parts.c.x < best.parts.c.x) best = z;
+  }
+  return best;
+}
+
+/* CAMPAIGN: she TAPS a friend (or its tree) to fire it. One aimed treat at the most dangerous
+   zombie, then the friend naps briefly (the 😴 you already see in the day). This is what keeps the
+   killing hers, not the garden's. */
+Night.tapFriend = function(a, species){
+  if (over || CD.state.phase !== 'night' || !a || !a.scene) return;
+  const cfg = CD.NIGHT_HELP[species];
+  if (!cfg) return;
+  if (a.animalData && a.animalData.isReady === false){          // still napping from her last tap
+    CD.floatText(a.x, a.y - 36, 'Zzz… 😴', { size: 16, color: '#BFE8FF' });
+    return;
+  }
+  if (!anyLiveZombie()){
+    CD.floatText(a.x, a.y - 36, 'No zombies! ' + cfg.emoji, { size: 16, color: '#FFE59A' });
+    return;
+  }
+  animalThrowOne(a, species);
+  if (a.animalData){
+    CD.Art.setAnimalReady(a, false);
+    S.time.delayedCall(CD.ANIMAL_TAP_CD, () => {
+      if (a.scene && a.animalData && CD.state.phase === 'night') CD.Art.setAnimalReady(a, true);
+    });
+  }
+};
+
+// AUTO (horde mode): every grown friend lobs one treat this beat, staggered into a little volley.
+function animalVolley(){
+  if (over || CD.state.phase !== 'night' || !anyLiveZombie()) return;
+  const friends = (CD.Day.nightAnimals && CD.Day.nightAnimals()) || [];
+  friends.forEach((f, i) => {
+    S.time.delayedCall(i * 170, () => {
+      if (over || CD.state.phase !== 'night' || !anyLiveZombie()) return;
+      if (f.sprite && f.sprite.scene) animalThrowOne(f.sprite, f.species);
+    });
+  });
+}
+
+function onTreatLand(x, y, z, cfg){
+  CDAudio.fx.acorn();
+  CD.fxStars(x, y, 4);
+  const opts = { knock: 8 };
+  if (cfg.slow) opts.slow = cfg.slow;
+  if (z && z.state !== 'dead' && !z.bubbled) damage(z, cfg.dmg, opts);
+  // Sparkle the unicorn's magic clips the whole cluster around where it lands.
+  if (cfg.splash){
+    zombies.slice().forEach(o => {
+      if (o === z || o.state === 'dead' || o.bubbled) return;
+      if (Math.abs(o.parts.c.x - x) < cfg.splash) damage(o, 1, { knock: 6 });
+    });
+  }
+}
+
+function animalThrowOne(a, species){
+  const cfg = CD.NIGHT_HELP[species];
+  if (!cfg) return;
+  let z = frontZombie();
+  if (!z) return;
+
+  // TELL #1 (when): the friend rears back — "here it comes".
+  S.tweens.add({ targets: a, angle: { from: 0, to: -16 }, duration: 150, yoyo: true, ease: 'Quad.out' });
+  S.tweens.add({ targets: a, y: a.y - 10, duration: 150, yoyo: true, ease: 'Quad.out' });
+  CDAudio.fx.throwaxe();
+
+  const sx = a.x, sy = a.y - 6;
+  const b = CD.Art.emoji(S, sx, sy, cfg.emoji, 26).setDepth(960);
+
+  // TELL #2 (which): a pulsing ring snaps onto the exact zombie he's aiming at and rides it the
+  // whole flight, in that friend's colour — so it's obvious who's about to get bonked.
+  const ring = S.add.circle(z.parts.c.x, bodyY(z), 28, cfg.ring, 0)
+    .setStrokeStyle(4, cfg.ring, 0.95).setDepth(958);
+  const ringPulse = S.tweens.add({ targets: ring, scale: { from: 1.7, to: 1.0 }, alpha: { from: 0.4, to: 1 },
+    duration: 240, yoyo: true, repeat: -1, ease: 'Quad.out' });
+  const cleanup = () => { if (ringPulse) ringPulse.stop(); if (ring.scene) ring.destroy(); };
+
+  let t = 0; const FLIGHT = 0.6;
+  projectiles.push({ obj: b, cleanup, update(dt){
+    // The chosen zombie can die (or float away) mid-flight — retarget, or fizzle if the horde's clear.
+    if (z.state === 'dead' || z.bubbled || !z.parts.c.scene){
+      const nz = frontZombie();
+      if (!nz){ cleanup(); b.destroy(); return false; }
+      z = nz;
+    }
+    const tx = z.parts.c.x, ty = bodyY(z) - 8;
+    ring.setPosition(tx, ty);
+    t += dt / FLIGHT;
+    const p = Math.min(1, t);
+    const peak = Math.min(sy, ty) - 90;
+    b.x = sx + (tx - sx) * p;
+    b.y = (1 - p) * (1 - p) * sy + 2 * (1 - p) * p * peak + p * p * ty;
+    b.angle += 760 * dt;
+    if (p >= 1){ cleanup(); onTreatLand(b.x, b.y, z, cfg); b.destroy(); return false; }
+    return true;
+  }});
 }
 
 function fireBanana(){
