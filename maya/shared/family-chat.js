@@ -4,20 +4,15 @@
  * See maya/docs/family-chat-setup.md
  */
 import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.8/+esm';
+import { CHAT_CFG, CHAT_TABLE, CHAT_SESSION_KEY } from './family-chat-config.js';
 
-const CHAT_CFG = {
-	supabaseUrl: 'https://mqmkktxaqmgqbdogozuu.supabase.co',
-	supabaseAnonKey:
-		'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xbWtrdHhhcW1ncWJkb2dvenV1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxOTA4ODIsImV4cCI6MjA5NTc2Njg4Mn0.agbC0-xB0jeetK5i6huDm87O3rDOwqdb4fRvEmNDPYU',
-	// The passwords are NOT here anymore. They live only in Supabase secrets
-	// (MAYA_CHAT_PIN / DAD_CHAT_PIN); the family-chat-auth function validates a
-	// typed password and returns just the role. This is why the password can no
-	// longer be read out of this file by anyone who views the page source.
-	authUrl:
-		'https://mqmkktxaqmgqbdogozuu.supabase.co/functions/v1/family-chat-auth',
-};
+// Connection config now lives in family-chat-config.js so the widget-free poster
+// (family-post.js) can share it without importing this module (which auto-mounts
+// the whole chat widget). The passwords are NOT in either file — they live only in
+// Supabase secrets (MAYA_CHAT_PIN / DAD_CHAT_PIN); family-chat-auth validates a
+// typed password and returns just the role.
 
-const SESSION_KEY = 'maya_family_chat_v3';
+const SESSION_KEY = CHAT_SESSION_KEY;
 const MAX_BODY = 500;
 const MAX_MESSAGES = 120;
 
@@ -177,6 +172,24 @@ function escapeHtml(s) {
 		.replace(/</g, '&lt;')
 		.replace(/>/g, '&gt;')
 		.replace(/"/g, '&quot;');
+}
+
+// Escape FIRST, then linkify the escaped text. Because quotes are already &quot;,
+// a URL can't break out of the href/src attribute. Only https?:// is wrapped —
+// no javascript:/data: reaches an attribute.
+function isImageUrl(u) {
+	return (
+		/^https:\/\/bytebin\.lucko\.me\//.test(u) || // bytebin has no file extension
+		/\.(png|jpe?g|gif|webp)(\?|$)/i.test(u)
+	);
+}
+function renderBody(raw) {
+	const esc = escapeHtml(raw);
+	return esc.replace(/https?:\/\/[^\s<]+/g, (url) => {
+		if (isImageUrl(url))
+			return `<a href="${url}" target="_blank" rel="noopener noreferrer"><img class="chat-img" src="${url}" alt="picture" loading="lazy"></a>`;
+		return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+	});
 }
 
 function playPing() {
@@ -344,7 +357,7 @@ export function initFamilyChat(root, hooks = {}) {
 					const local = String(m.id || '').startsWith('local-');
 					return `<div class="chat-bubble ${mine ? 'mine' : 'theirs'} ${m.author}${local ? ' local-note' : ''}">
             <span class="chat-who">${who}</span>
-            <span class="chat-body">${escapeHtml(m.body)}</span>
+            <span class="chat-body">${renderBody(m.body)}</span>
             <span class="chat-time">${fmtTime(m.created_at)}</span>
           </div>`;
 				})
@@ -381,7 +394,7 @@ export function initFamilyChat(root, hooks = {}) {
 			// every new one the moment the history outgrew MAX_MESSAGES. paint() sorts
 			// back into chronological order for display.
 			const { data, error } = await client
-				.from('maya_chat_messages')
+				.from(CHAT_TABLE)
 				.select('id, author, body, created_at')
 				.order('created_at', { ascending: false })
 				.limit(MAX_MESSAGES);
@@ -427,7 +440,7 @@ export function initFamilyChat(root, hooks = {}) {
 			const btn = form.querySelector('button[type="submit"]');
 			btn.disabled = true;
 			const { data, error } = await client
-				.from('maya_chat_messages')
+				.from(CHAT_TABLE)
 				.insert({ author: myRole, body })
 				.select('id, author, body, created_at')
 				.single();

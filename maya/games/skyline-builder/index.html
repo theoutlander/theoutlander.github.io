@@ -239,12 +239,39 @@ function saveImage() {
   playRising(300, 600, 0.2, 0.06);
 }
 
-// ── Send city to Dad via EmailJS (bytebin upload + fallback) ──
+// ── Send city to Dad — family chat first, EmailJS fallback ──
+// The city reaches Dad through several independent paths so nothing gets lost:
+//   PRIMARY: post the hosted image into the family chat → a DB trigger pushes a
+//            notification to Dad's phone for free (no EmailJS involved).
+//   Always:  a preview tab Maya can save/screenshot/share on the iPad.
+//   FALLBACK (only if chat post didn't happen — not signed in / import failed):
+//            EmailJS with a plain-text link + inline <img> + base64 CID fallback.
 async function sendToDad() {
-  if (!window.emailjs) { showToast('📵 Not ready yet, try again!', 3000); return; }
-  const dataURL = mergeCanvas().toDataURL('image/jpeg', 0.88);
   showToast('📤 Sending to Dad…', 0);
 
+  // Shrink before encoding: keeps the upload fast and the fallback data: URL small.
+  const src = mergeCanvas();
+  const MAX = 800;
+  const scale = Math.min(1, MAX / Math.max(src.width, src.height));
+  const tmp = document.createElement('canvas');
+  tmp.width = Math.max(1, Math.round(src.width * scale));
+  tmp.height = Math.max(1, Math.round(src.height * scale));
+  tmp.getContext('2d').drawImage(src, 0, 0, tmp.width, tmp.height);
+  const dataURL = tmp.toDataURL('image/jpeg', 0.85);
+
+  // Path 1 — preview tab. Opened synchronously (before any await) so the user gesture
+  // still counts and iPad Safari doesn't block the popup.
+  const win = window.open();
+  if (win) {
+    win.document.write(`<!DOCTYPE html><html><head><meta name="viewport" content="width=device-width,initial-scale=1"><title>Maya's City 🏙️</title></head><body style="margin:0;background:#0f0a1e;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:sans-serif;padding:16px;box-sizing:border-box">
+      <h2 style="color:#ff6eb4;font-size:22px;margin:0 0 12px">🏙️ Maya's City!</h2>
+      <img src="${dataURL}" style="max-width:92vw;border-radius:12px;border:3px solid #c77dff"/>
+      <p style="color:#c77dff;margin-top:16px;text-align:center">Press and hold the picture to save or share it 💜</p>
+    </body></html>`);
+    win.document.close();
+  }
+
+  // Path 2/3 — upload for a Gmail-visible URL (data: URLs get blocked by Gmail).
   let imageUrl = null;
   try {
     const b64 = dataURL.split(',')[1];
@@ -254,20 +281,47 @@ async function sendToDad() {
     const res = await fetch('https://bytebin.lucko.me/post', {
       method: 'POST', headers: {'Content-Type': 'image/jpeg'}, body: buf
     });
-    if (res.ok) { const j = await res.json(); imageUrl = `https://bytebin.lucko.me/${j.key}`; }
+    if (res.ok) { const j = await res.json(); if (j && j.key && /^[\w-]+$/.test(j.key)) imageUrl = `https://bytebin.lucko.me/${j.key}`; }
   } catch(e) {}
 
-  const img = imageUrl
-    ? `<img src="${imageUrl}" style="max-width:100%;border-radius:12px;">`
-    : `<img src="${dataURL}" style="max-width:100%;border-radius:12px;">`;
-  const html = `<p style="font-size:18px">🏙️ Maya built a city skyline! Check it out!</p>${img}`;
+  // PRIMARY — post into the family chat (Dad gets a push via the DB trigger).
+  // Dynamic import: sendToDad lives in a classic <script>, and this degrades
+  // gracefully to the EmailJS fallback if the Supabase CDN fails on the iPad.
+  if (imageUrl) {
+    try {
+      const { postCityToDad } = await import('../../shared/family-post.js');
+      const r = await postCityToDad('🏙️ Maya built a city! ' + imageUrl);
+      if (r && r.ok) {
+        showToast('📬 Sent to Dad\'s chat! 🎉', 4000);
+        playRising(400, 900, 0.35, 0.08);
+        return;
+      }
+    } catch(e) {}
+  }
+
+  // FALLBACK — EmailJS (reached only if the chat post did not happen).
+  if (!window.emailjs) { showToast('💬 Open the 💬 chat and say hi to Dad first!', 4000); return; }
+  const imgSrc = imageUrl || dataURL;
+  const html = `<div style="text-align:center;font-family:sans-serif">
+      <p style="font-size:18px;color:#ff6eb4">🏙️ Maya built a city skyline! Check it out!</p>
+      <img src="${imgSrc}" alt="Maya's city" width="500" style="max-width:100%;height:auto;border-radius:12px;border:2px solid #c77dff"/>
+    </div>`;
+
+  // Plain-text fallback so the picture reaches Dad even if the template drops html_content.
+  const lines = ['🏙️ Maya built a city skyline!'];
+  if (imageUrl) lines.push('', 'See it here (tap / open in browser):', imageUrl);
+  else lines.push('', 'Open the preview tab on the iPad to see and save it.');
+
+  const params = {
+    message: lines.join('\n'),
+    from_name: 'Maya',
+    html_content: html,
+    html_message: html,
+  };
+  if (!imageUrl) params.doodle_image = dataURL.split(',')[1]; // base64 for the template's CID fallback
 
   try {
-    await emailjs.send(EJS_SVC, EJS_TPL, {
-      message: 'Maya built a city skyline! 🏙️',
-      html_content: html,
-      html_message: html,
-    });
+    await emailjs.send(EJS_SVC, EJS_TPL, params);
     showToast('📬 Sent to Dad! 🎉', 4000);
     playRising(400, 900, 0.35, 0.08);
   } catch(e) {
