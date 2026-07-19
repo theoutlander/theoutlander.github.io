@@ -26,6 +26,26 @@
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}
 
+	// Per-device opt-out so Nick's own visits don't pollute stats. Visit any page with
+	// ?noanalytics=1 to opt this browser out for good (?noanalytics=0 re-enables).
+	// localStorage is wrapped in try/catch — iPad Safari can throw on access and would
+	// otherwise kill the whole script.
+	function optedOut() {
+		try {
+			var q = window.location.search || '';
+			if (q.indexOf('noanalytics=1') !== -1) localStorage.setItem('analytics_optout', '1');
+			else if (q.indexOf('noanalytics=0') !== -1) localStorage.removeItem('analytics_optout');
+			return localStorage.getItem('analytics_optout') === '1';
+		} catch (e) {
+			return false;
+		}
+	}
+
+	// Single gate for "should we actually record this visitor": prod host AND not opted out.
+	function tracks() {
+		return isProd() && !optedOut();
+	}
+
 	// Shared by every Lab experiment, so the area comes from the URL rather than
 	// being baked in — /judgement reports as judgement, not as lab.
 	function siteArea() {
@@ -38,7 +58,7 @@
 	// call JTrack for the second; it no-ops off prod so local runs aren't counted.
 	// Dual-sends to GA4 and PostHog.
 	window.JTrack = function (name, params) {
-		if (!isProd()) return;
+		if (!tracks()) return;
 		window.gtag('event', name, params || {});
 		if (window.posthog && window.posthog.capture) window.posthog.capture(name, params || {});
 	};
@@ -46,7 +66,7 @@
 	// Attach a stable identity (e.g. the player's chosen name) so PostHog can answer
 	// "how much did THIS person play" without a login. Safe to call repeatedly.
 	window.JIdentify = function (id, props) {
-		if (!isProd() || !id) return;
+		if (!tracks() || !id) return;
 		if (window.posthog && window.posthog.identify) window.posthog.identify(String(id), props || {});
 	};
 
@@ -54,7 +74,7 @@
 		if (window.__gaLoaded) return;
 		window.__gaLoaded = true;
 
-		if (!isProd()) {
+		if (!tracks()) {
 			window['ga-disable-' + MEASUREMENT_ID] = true;
 			return;
 		}
@@ -78,7 +98,7 @@
 	function loadPostHog() {
 		if (window.__phLoaded) return;
 		window.__phLoaded = true;
-		if (!isProd()) return;
+		if (!tracks()) return;
 		if (POSTHOG_KEY.indexOf('phc_') !== 0) return; // not configured yet — stay dormant
 
 		var s = document.createElement('script');

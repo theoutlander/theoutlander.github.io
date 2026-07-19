@@ -554,11 +554,17 @@ setTimeout(()=>{
 },6000);
 
 // ⭐ CONVENTION — read before editing this list ⭐
-// Every game carries `updated:'YYYY-MM-DD'`. WHENEVER YOU CREATE OR CHANGE A GAME, set its
-// `updated` to today's date. The portal reads this to (a) auto-sort the grid newest-first,
-// (b) show a friendly "✨ NEW! / Updated this week" badge for ~3 weeks, and (c) pick "Our
-// Latest Creation". Keep this array roughly newest-first too — a date tie is broken by the
-// order here, so put the game you just touched at the TOP. (See organizeLibrary() below.)
+// Each game carries TWO dates:
+//   `added:'YYYY-MM-DD'`   — the day the game FIRST shipped. Set ONCE, at creation, then never
+//                            change it. Drives the "✨ NEW!" badge (a brand-new game).
+//   `updated:'YYYY-MM-DD'` — the day the game last CHANGED. Bump to today's date on every edit.
+//                            Drives the "Updated…" badge AND the newest-first grid sort.
+// So: CREATING a game → set both to today. CHANGING a game → bump `updated` only, leave `added`.
+// This split is what keeps a game you merely tweaked from masquerading as brand-new (and a truly
+// new game from getting a lesser "Updated" badge just because an older game was touched today).
+// The portal also uses these to pick "Our Latest Creation". Keep this array roughly newest-first
+// (by `updated`) — a date tie is broken by the order here, so put the game you just touched at
+// the TOP. (See organizeLibrary() / freshnessFor() below.)
 const GLIST=[
   {em:'👻',title:'Dust Chasers! 👻',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'games/dust-chasers/index.html',updated:'2026-07-18'},
   {em:'🏙️',title:'City Builder! 🏙️',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html',updated:'2026-07-18'},
