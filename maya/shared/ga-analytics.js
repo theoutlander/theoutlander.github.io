@@ -8,6 +8,13 @@
 	var POSTHOG_KEY = 'phc_oNxUK7hf2mQy9u8eBHEMUcReGahJ44YVnQyaFChHye54'; // paste PostHog project API key here (phc_...)
 	var POSTHOG_HOST = 'https://us.i.posthog.com'; // use https://eu.i.posthog.com for an EU project
 
+	// PostHog loads lazily (requestIdleCallback, ~1.5s after load), but mayaTrack('game_loaded')
+	// and early js_errors fire SYNCHRONOUSLY at script load — before window.posthog exists. Those
+	// hits would reach GA4 but silently miss PostHog, so the loaded->start "dead button" funnel
+	// couldn't be built there. Buffer pre-init events here and flush them once PostHog is ready.
+	var POSTHOG_ON = POSTHOG_KEY.indexOf('phc_') === 0; // key configured?
+	var phEarlyQueue = [];
+
 	// Paste the DSN from sentry.io → your Browser JavaScript project. Empty = Sentry stays off
 	// and everything below degrades to GA-only, so shipping without it is safe.
 	var SENTRY_DSN =
@@ -242,6 +249,12 @@
 				autocapture: false, // we send explicit, meaningful events — no noisy click autocapture
 				loaded: function () {
 					window.posthog.register({ site_area: 'maya' });
+					// Flush events that fired before this lazy init (game_loaded, early errors).
+					// They arrive ~1.5s late (stamped now), which is fine for load-time events.
+					for (var i = 0; i < phEarlyQueue.length; i++) {
+						window.posthog.capture(phEarlyQueue[i][0], phEarlyQueue[i][1]);
+					}
+					phEarlyQueue = [];
 				},
 			});
 		};
@@ -267,8 +280,14 @@
 		if (!SKIP_GA) {
 			loadGA();
 			window.gtag('event', name, payload);
-			// PostHog mirrors GA exactly — same event name, same payload, same gate.
-			if (window.posthog && window.posthog.capture) window.posthog.capture(name, payload);
+			// PostHog mirrors GA exactly — same event name, same payload, same gate. If PostHog
+			// hasn't finished its lazy load yet, buffer the event (capped) so it's flushed on init
+			// instead of lost — this is what gets game_loaded and early errors into PostHog.
+			if (window.posthog && window.posthog.capture) {
+				window.posthog.capture(name, payload);
+			} else if (POSTHOG_ON && phEarlyQueue.length < 50) {
+				phEarlyQueue.push([name, payload]);
+			}
 		}
 		// Breadcrumbs still run for the owner: they're local to a Sentry error report, not an
 		// analytics hit, and they're what makes a crash legible.
