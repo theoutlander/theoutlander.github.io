@@ -17,6 +17,8 @@
 <script src="shared/ga-analytics.js" defer></script>
 <script src="shared/sound.js" defer></script>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="shared/family-chat.css">
 <style>
@@ -64,7 +66,7 @@ html,body{min-height:100%;background:var(--bg);color:var(--text);font-family:'Nu
 
 /* Header */
 header{text-align:center;padding:48px 0 36px}
-.lab-title{font-family:'Fredoka One',cursive;font-size:clamp(44px,10vw,88px);line-height:1.05;background:linear-gradient(135deg,var(--pink) 0%,var(--yellow) 35%,var(--green) 65%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(255,110,180,.2));cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-block}
+.lab-title{font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:clamp(44px,10vw,88px);line-height:1.05;background:linear-gradient(135deg,var(--pink) 0%,var(--yellow) 35%,var(--green) 65%,var(--blue) 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:drop-shadow(0 0 40px rgba(255,110,180,.2));cursor:pointer;user-select:none;-webkit-user-select:none;display:inline-block}
 .lab-title.pop{animation:pop .35s ease-out}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.08) rotate(-2deg)}70%{transform:scale(.97) rotate(1deg)}100%{transform:scale(1) rotate(0)}}
 .lab-sub{font-size:13px;color:var(--muted);letter-spacing:.2em;text-transform:uppercase;margin-top:8px}
@@ -75,7 +77,7 @@ header{text-align:center;padding:48px 0 36px}
 
 /* Section heading */
 .sh{display:flex;align-items:center;gap:12px;margin:36px 0 18px}
-.sh h2{font-family:'Fredoka One',cursive;font-size:24px;color:var(--text);white-space:nowrap}
+.sh h2{font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:24px;color:var(--text);white-space:nowrap}
 .sl{flex:1;height:1px;background:var(--border)}
 
 /* Games grid */
@@ -93,13 +95,13 @@ header{text-align:center;padding:48px 0 36px}
 .ga-p5{background:linear-gradient(135deg,#1a3a1a,#0a2010)}
 .ga-p6{background:linear-gradient(135deg,#2a0840,#4a1060)}
 .gb{flex:1;display:flex;flex-direction:column;padding:12px 14px 16px;min-height:168px}
-.gt{font-family:'Fredoka One',cursive;font-size:18px;line-height:1.1;margin-bottom:3px}
+.gt{font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:18px;line-height:1.1;margin-bottom:3px}
 .gd{flex:1;font-size:11px;color:var(--muted);line-height:1.5}
 .tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
 .tn{background:rgba(255,225,77,.14);color:var(--yellow);border:1px solid rgba(255,225,77,.26)}
 /* ===== Freshness badge (auto, from GLIST `updated`) ===== */
-.fresh-badge{position:absolute;top:8px;right:8px;z-index:3;font-family:'Fredoka One',cursive;font-size:11px;letter-spacing:.02em;padding:3px 9px;border-radius:99px;line-height:1.2;box-shadow:0 3px 10px rgba(0,0,0,.4);white-space:nowrap}
+.fresh-badge{position:absolute;top:8px;right:8px;z-index:3;font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:11px;letter-spacing:.02em;padding:3px 9px;border-radius:99px;line-height:1.2;box-shadow:0 3px 10px rgba(0,0,0,.4);white-space:nowrap}
 .fb-new{background:linear-gradient(135deg,#ffe14d,#ff9a3c);color:#3a1e00;animation:fbpop 1.4s ease-in-out infinite alternate}
 .fb-week{background:rgba(91,200,255,.9);color:#04263a}
 .fb-weeks{background:rgba(199,125,255,.22);color:#e6ccff;border:1px solid rgba(199,125,255,.35)}
@@ -189,7 +191,7 @@ header{text-align:center;padding:48px 0 36px}
 #ptr{position:fixed;top:0;left:50%;transform:translate(-50%,-140%);z-index:550;
   display:flex;align-items:center;gap:9px;
   background:linear-gradient(135deg,#c77dff,#ff6eb4);color:#fff;
-  font-family:'Fredoka One',cursive;font-size:15px;
+  font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:15px;
   padding:10px 20px;border-radius:99px;box-shadow:0 6px 22px rgba(0,0,0,.4);
   white-space:nowrap;pointer-events:none;will-change:transform}
 #ptr.snap{transition:transform .32s cubic-bezier(.2,.85,.3,1)}
@@ -371,10 +373,10 @@ header{text-align:center;padding:48px 0 36px}
   <div style="background:linear-gradient(135deg,#2a0840,#1a1060);border:2px solid rgba(199,125,255,0.3);border-radius:18px;padding:22px 24px;display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:8px">
     <div style="font-size:52px;line-height:1">🛍️📚✨</div>
     <div style="flex:1;min-width:180px">
-      <div style="font-family:'Fredoka One',cursive;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
+      <div style="font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:1.35rem;color:var(--text)">Books, merch &amp; more!</div>
       <div style="color:var(--muted);font-size:.9rem;margin-top:4px">Maya's detective books, cards, mugs, bracelets, necklaces, tees &amp; more</div>
     </div>
-    <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',cursive;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
+    <a href="games/maya-shop/index.html" style="background:linear-gradient(135deg,#ff6eb4,#c77dff);color:#fff;text-decoration:none;font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:1.1rem;padding:12px 24px;border-radius:50px;white-space:nowrap;min-height:44px;display:inline-flex;align-items:center">🛒 Visit Shop</a>
   </div>
 
   <!-- DOODLE -->
@@ -397,10 +399,10 @@ header{text-align:center;padding:48px 0 36px}
     </div>
     <canvas id="dc" height="260"></canvas>
     <div id="doodle-footer" style="padding:12px 14px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-      <button id="send-doodle-btn" onclick="sendDoodle()" style="flex:1;min-width:160px;padding:12px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',cursive;font-size:17px;color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35);min-height:46px">Send to Dad! 🎨</button>
+      <button id="send-doodle-btn" onclick="sendDoodle()" style="flex:1;min-width:160px;padding:12px;background:linear-gradient(135deg,var(--purple),var(--pink));border:none;border-radius:12px;font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:17px;color:#fff;cursor:pointer;box-shadow:0 3px 0 rgba(0,0,0,.35);min-height:46px">Send to Dad! 🎨</button>
       <button class="cb" id="clr2" onclick="document.getElementById('clr').click()" style="padding:12px 16px;min-height:46px">🗑 Clear</button>
     </div>
-    <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',cursive;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
+    <div id="doodle-sent" style="display:none;text-align:center;padding:16px;font-family:'Fredoka One',ui-rounded,system-ui,sans-serif;font-size:18px;color:var(--green)">🎨 Dad got your drawing! 💕</div>
   </div>
 
 </div>

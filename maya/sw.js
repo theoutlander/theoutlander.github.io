@@ -21,7 +21,10 @@ importScripts("shared/extract-asset-urls.js");
 /* v7 -> v8: Dust Chasers 2.0 (endless mode, boss, power-ups) + portal reorg (newest-first,
    Favorites & Jump Back In rows, freshness badges). Both are shell/game changes a cached
    device would otherwise keep serving stale. */
-var CACHE_VERSION = "v11";
+/* v11 -> v12: send-to-Dad moved off bytebin + EmailJS onto Maya's own Worker (R2 image host +
+   Resend email, via shared/maya-api.js). index.html (doodle) and skyline-builder both changed;
+   cached devices must drop the old send code. */
+var CACHE_VERSION = "v12";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 
