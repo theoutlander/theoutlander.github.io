@@ -180,30 +180,66 @@ function confetti(x, y, n){
 }
 
 // ── boot ─────────────────────────────────────────────────────
-const engine = new BABYLON.Engine(canvas, true, { stencil:true, adaptToDeviceRatio:false });
-engine.setHardwareScalingLevel(1 / Math.min(window.devicePixelRatio || 1, 2));
-const scene = new BABYLON.Scene(engine);
+/* This is where the 3D museum is built, and every call here can throw on a device or browser
+   that can't hand us WebGL: a headless CI Safari, an old iPad low on GPU memory, or a moment when
+   the Babylon CDN never arrived (BABYLON is then undefined and the very first line throws a
+   ReferenceError). Left unguarded, any such failure aborts this whole script BEFORE the
+   "Open the doors!" handler at the bottom is attached — the button goes dead and Maya is stranded
+   on the title screen with no way in and (until 🏠 paints) no way out. That dead-start-button
+   defect is the exact reason this codebase's e2e suite exists (Dust Chasers). So the boot is
+   wrapped: if the 3D can't come up we degrade to a title screen she can still dismiss and leave,
+   instead of a silent dead end. */
+let engine, scene, hemi, dir, glow, world, MW, maya, wallAabbs, tapestryOpen;
+try {
+  engine = new BABYLON.Engine(canvas, true, { stencil:true, adaptToDeviceRatio:false });
+  engine.setHardwareScalingLevel(1 / Math.min(window.devicePixelRatio || 1, 2));
+  scene = new BABYLON.Scene(engine);
 
-const hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0.2, 1, 0.1), scene);
-const dir = new BABYLON.DirectionalLight('dir', new BABYLON.Vector3(-0.3, -1, 0.4), scene);
-const glow = new BABYLON.GlowLayer('glow', scene);
-glow.customEmissiveColorSelector = function(mesh, subMesh, material, result){
-  if (material && material.mwNoGlow){ result.set(0,0,0,0); }
-  else if (material && material.emissiveColor){
-    const c = material.emissiveColor; result.set(c.r, c.g, c.b, 1);
-  } else result.set(0,0,0,0);
-};
+  hemi = new BABYLON.HemisphericLight('hemi', new BABYLON.Vector3(0.2, 1, 0.1), scene);
+  dir = new BABYLON.DirectionalLight('dir', new BABYLON.Vector3(-0.3, -1, 0.4), scene);
+  // The glow layer is pure bloom eye-candy and the most fragile piece — it allocates float render
+  // targets that some software / low-end WebGL stacks refuse. If it can't be created the museum
+  // still opens, just without the sparkle. Never let a cosmetic effect abort the whole game.
+  try {
+    glow = new BABYLON.GlowLayer('glow', scene);
+    glow.customEmissiveColorSelector = function(mesh, subMesh, material, result){
+      if (material && material.mwNoGlow){ result.set(0,0,0,0); }
+      else if (material && material.emissiveColor){
+        const c = material.emissiveColor; result.set(c.r, c.g, c.b, 1);
+      } else result.set(0,0,0,0);
+    };
+  } catch (glowErr){ glow = null; }
 
-const world = mwBuildWorld(scene, unlockedSet, ownerName);
-const MW = world.MW;
-const maya = mwMakeMaya(scene);
-maya.root.position.set(0, 0, 4.2);
+  world = mwBuildWorld(scene, unlockedSet, ownerName);
+  MW = world.MW;
+  maya = mwMakeMaya(scene);
+  maya.root.position.set(0, 0, 4.2);
 
-// wall AABBs used for collision (tapestry counts until opened)
-const wallAabbs = world.walls.map(w=>w.aabb);
-let tapestryOpen = !!save.secretFound;
-if (tapestryOpen){ world.secret.tapestry.setEnabled(false); }
-else { wallAabbs.push(world.secret.tapestryAabb); }
+  // wall AABBs used for collision (tapestry counts until opened)
+  wallAabbs = world.walls.map(w=>w.aabb);
+  tapestryOpen = !!save.secretFound;
+  if (tapestryOpen){ world.secret.tapestry.setEnabled(false); }
+  else { wallAabbs.push(world.secret.tapestryAabb); }
+} catch (bootErr){
+  bootFailed3D(bootErr);
+  return;
+}
+
+/* Graceful fallback when the 3D museum can't boot. The one thing that must never happen is a dead
+   Play button: whatever went wrong, tapping it always leaves the title screen so Maya is never
+   trapped. There's no scene to walk, so we also point her at 🏠 (shared/back.js, which mounts
+   independently of this script) to go pick another game. */
+function bootFailed3D(err){
+  try { console.warn('[sewing-museum] 3D museum could not start:', err); } catch(e){}
+  const splash = $('splash'), btn = $('playBtn');
+  if (btn){
+    btn.style.display = '';   // the CDN guard in index.html may have hidden it — bring it back
+    btn.addEventListener('click', function(){
+      if (splash){ splash.classList.add('hide'); setTimeout(function(){ splash.style.display = 'none'; }, 650); }
+      try { toast('🏛️ The 3D museum couldn’t open here — tap 🏠 to go back.'); } catch(e){}
+    });
+  }
+}
 
 // ── day / night ──────────────────────────────────────────────
 let dayT = save.night ? 0 : 1, dayTarget = dayT;
@@ -215,7 +251,7 @@ function applyDayNight(){
   hemi.groundColor = new BABYLON.Color3(lerp(0.25,0.5,t), lerp(0.15,0.44,t), lerp(0.4,0.6,t));
   dir.intensity = lerp(0.35, 0.6, t);
   scene.clearColor = new BABYLON.Color4(lerp(0.05,0.5,t), lerp(0.035,0.45,t), lerp(0.11,0.74,t), 1);
-  glow.intensity = lerp(0.55, 0.2, t);
+  if (glow) glow.intensity = lerp(0.55, 0.2, t);
   const dim = 1 - 0.68*t;
   for (const m of world.bulbMats) m.emissiveColor = m._baseEm.scale(dim);
   world.stripMat.emissiveColor = world.stripMat._baseEm.scale(1 - 0.5*t);
