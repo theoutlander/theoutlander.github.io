@@ -178,10 +178,9 @@ function escapeHtml(s) {
 // a URL can't break out of the href/src attribute. Only https?:// is wrapped —
 // no javascript:/data: reaches an attribute.
 function isImageUrl(u) {
-	return (
-		/^https:\/\/bytebin\.lucko\.me\//.test(u) || // bytebin has no file extension
-		/\.(png|jpe?g|gif|webp)(\?|$)/i.test(u)
-	);
+	// Images are hosted on R2 via the maya-api Worker as `.../i/<key>.jpg`, so the extension
+	// match covers them. (bytebin is fully retired — its old chat URLs were migrated to R2.)
+	return /\.(png|jpe?g|gif|webp)(\?|$)/i.test(u);
 }
 function renderBody(raw) {
 	const esc = escapeHtml(raw);

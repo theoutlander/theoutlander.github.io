@@ -277,7 +277,7 @@ async function sendToDad() {
 
   // PRIMARY — post into the family chat (Dad gets a push via the DB trigger).
   // Dynamic import: sendToDad lives in a classic <script>, and this degrades
-  // gracefully to the EmailJS fallback if the Supabase CDN fails on the iPad.
+  // gracefully to the email fallback (maya-api Worker → Resend) if the Supabase CDN fails on the iPad.
   if (imageUrl) {
     try {
       const { postCityToDad } = await import('../../shared/family-post.js');
