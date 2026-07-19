@@ -21,7 +21,7 @@ importScripts("shared/extract-asset-urls.js");
 /* v7 -> v8: Dust Chasers 2.0 (endless mode, boss, power-ups) + portal reorg (newest-first,
    Favorites & Jump Back In rows, freshness badges). Both are shell/game changes a cached
    device would otherwise keep serving stale. */
-var CACHE_VERSION = "v8";
+var CACHE_VERSION = "v9";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 
