@@ -605,6 +605,7 @@ function recordRecent(file){
   if(a.length>6)a=a.slice(0,6);
   labStore.setJSON('maya_recent',a);
   renderRecentRow(); // refresh the row behind the modal so it's correct when she comes back
+  syncPrefsUp();
 }
 
 // Freshness badge from TWO signals so "new game" and "recently changed" don't collapse into one:
@@ -633,6 +634,7 @@ function toggleFav(file,btn){
   document.querySelectorAll('.fav-btn[data-fav="'+file+'"]').forEach(function(b){ b.classList.toggle('is-fav',on); });
   if(btn){ btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
   renderFavRow();
+  syncPrefsUp();
 }
 
 function shortName(title){ try{ var s=title.replace(/[\s]*[\p{Emoji_Presentation}\p{Extended_Pictographic}️]+$/u,'').trim(); return s||title; }catch(e){ return title; } }
@@ -702,6 +704,42 @@ document.addEventListener('click',function(e){
 });
 
 organizeLibrary();
+
+// ===== D1 SYNC: favorites + recently-played follow her across devices =====
+// localStorage stays primary and offline-safe. When signed in (family PIN) AND online, we merge
+// with D1 through the maya-api Worker. Every call is guarded / fire-and-forget — a dead network
+// never blocks the grid or throws into the page (iPad storage rule + graceful degradation).
+function familyPin(){
+  try{ var s=JSON.parse(localStorage.getItem('maya_family_chat_v3')||'null'); return (s&&s.pin)?String(s.pin):null; }
+  catch(e){ return null; }
+}
+var _prefsUpTimer=null;
+// Write-through: after a local favorite/recent change, debounce a push of the full local state.
+function syncPrefsUp(){
+  var pin=familyPin(); if(!pin)return;
+  clearTimeout(_prefsUpTimer);
+  _prefsUpTimer=setTimeout(function(){
+    import('./shared/maya-api.js')
+      .then(function(m){ return m.savePrefs(pin,{favs:getFavs(),recent:getRecent()}); })
+      .catch(function(){});
+  },1200);
+}
+// Merge-down on load: union remote into local so favorites made on another device appear here,
+// write the merged result back to both localStorage and D1, then re-render the rows.
+function syncPrefsDown(){
+  var pin=familyPin(); if(!pin)return;
+  import('./shared/maya-api.js').then(function(m){
+    return m.fetchPrefs(pin).then(function(remote){
+      if(!remote)return;
+      var merged=m.mergePrefs({favs:getFavs(),recent:getRecent()},remote);
+      labStore.setJSON('maya_favs',merged.favs);
+      labStore.setJSON('maya_recent',merged.recent);
+      renderFavRow(); renderRecentRow();
+      m.savePrefs(pin,merged); // push the union back so remote also has it
+    });
+  }).catch(function(){});
+}
+syncPrefsDown();
 
 // ===== GAME MODAL =====
 const MAYA_PAGE_TITLE=document.title;
