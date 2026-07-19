@@ -24,7 +24,7 @@ importScripts("shared/extract-asset-urls.js");
 /* v11 -> v12: send-to-Dad moved off bytebin + EmailJS onto Maya's own Worker (R2 image host +
    Resend email, via shared/maya-api.js). index.html (doodle) and skyline-builder both changed;
    cached devices must drop the old send code. */
-var CACHE_VERSION = "v12";
+var CACHE_VERSION = "v13";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 

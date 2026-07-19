@@ -32,12 +32,10 @@
 #family-chat-widget{position:fixed;bottom:16px;right:12px;top:auto;left:auto;z-index:450}
 #family-chat-panel,#family-chat-backdrop{opacity:0;visibility:hidden}
 </style>
-<!-- EmailJS is loaded LAZILY (see loadEmailJS below), not here.
-     @emailjs/browser@4 touches localStorage as it initialises, and on Maya's iPad Safari throws
-     SecurityError when site data is blocked. Loading it eagerly meant an uncaught error on EVERY
-     page load — which now also means a Sentry issue on every page load, drowning the one signal
-     that actually matters ("an issue in the inbox means something broke for Maya").
-     Loading it only when she sends a doodle or a wish keeps the lab quiet and loads faster. -->
+<!-- Doodle image hosting and the "send to Dad" email both go through Maya's own Worker
+     (projects/maya/api) via shared/maya-api.js — imported on demand when she sends. This replaced
+     bytebin (image host) and EmailJS. EmailJS used to touch localStorage on init and throw a
+     SecurityError on Maya's iPad; dropping it removed that whole class of iPad crash. -->
 <style>
 :root{
   --bg:#0f0a1e;--card:#1e1440;--border:rgba(255,255,255,0.07);
@@ -440,30 +438,6 @@ header{text-align:center;padding:48px 0 36px}
 </div>
 
 <script>
-// ===== EMAILJS — replace these with your values from emailjs.com =====
-const EJS_KEY  = 'aobGgwT--7krdk9Qv';
-const EJS_SVC  = 'service_08wvsfl';
-const EJS_TPL  = 'template_b7g9ipp';
-
-/* Load EmailJS on demand, not at page load. The library touches localStorage while initialising
-   and THROWS on Maya's iPad when site data is blocked — an uncaught error on every single visit,
-   and now a Sentry issue on every visit too. Deferring it means the lab loads clean (and faster);
-   if the CDN is unreachable or it still throws, the caller's try/catch shows her the friendly
-   "Could not send email" toast instead of breaking anything. */
-let _emailjsLoading = null;
-function loadEmailJS(){
-  if (typeof emailjs !== 'undefined') return Promise.resolve();
-  if (_emailjsLoading) return _emailjsLoading;
-  _emailjsLoading = new Promise(function(resolve, reject){
-    const s = document.createElement('script');
-    s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
-    s.onload = function(){ typeof emailjs !== 'undefined' ? resolve() : reject(new Error('emailjs did not load')); };
-    s.onerror = function(){ reject(new Error('emailjs CDN unreachable')); };
-    document.head.appendChild(s);
-  });
-  return _emailjsLoading;
-}
-
 // ===== STARS =====
 const se=document.getElementById('stars');
 for(let i=0;i<100;i++){
@@ -944,20 +918,12 @@ document.querySelectorAll('.sb').forEach(b=>{
 });
 document.getElementById('clr').addEventListener('click',()=>dx.clearRect(0,0,dc.width,dc.height));
 
-/** Public JPEG URL for email <img> — Gmail blocks data: URLs; CID needs dashboard setup. Bytebin is free, no API key. */
+/** Public JPEG URL for the email <img> — Gmail blocks data: URLs, so the doodle is hosted on
+ *  Maya's R2-backed Worker (shared/maya-api.js). Returns null on failure; the caller falls back
+ *  to the inline preview tab. */
 async function uploadDoodleForEmailUrl(jpegBlob){
-  try{
-    const r=await fetch('https://bytebin.lucko.me/post',{
-      method:'POST',
-      headers:{'Content-Type':'image/jpeg'},
-      body:jpegBlob
-    });
-    const raw=await r.text();
-    let j=null;
-    try{ j=JSON.parse(raw); }catch(_){ /* plain text error */ }
-    if(j&&j.key&&/^[\w-]+$/.test(j.key)) return 'https://bytebin.lucko.me/'+j.key;
-  }catch(e){ console.log('doodle host err',e); }
-  return null;
+  const { uploadImage } = await import('./shared/maya-api.js');
+  return await uploadImage(jpegBlob);
 }
 
 // ===== SEND DOODLE =====
@@ -965,7 +931,7 @@ async function sendDoodle(){
   const btn=document.getElementById('send-doodle-btn');
   btn.disabled=true;btn.textContent='Sending... 🎨';
 
-  // Shrink canvas to stay under EmailJS 50KB limit
+  // Shrink canvas so the hosted doodle stays small and fast to load in the email
   const tmp=document.createElement('canvas');
   const MAX=400;
   const scale=Math.min(1,MAX/Math.max(dc.width,dc.height));
@@ -990,10 +956,6 @@ async function sendDoodle(){
 
   const hostedUrl=jpegBlob ? await uploadDoodleForEmailUrl(jpegBlob) : null;
   const imgSrc=hostedUrl || imgData;
-  const doodleB64=(function(u){
-    const m=/^data:image\/\w+;base64,(.+)$/i.exec(u);
-    return m?m[1]:u;
-  })(imgData);
 
   const msgLines=[
     '🎨 Maya sent you a doodle!',
@@ -1011,18 +973,14 @@ async function sendDoodle(){
     <p style="color:#c77dff;margin-top:16px;font-size:14px">From Maya, with love 💕</p>
   </div>`;
 
-  const params={
-    message:msgText,
-    from_name:'Maya',
-    html_content:htmlBody,
-    html_message:htmlBody
-  };
-  if(!hostedUrl) params.doodle_image=doodleB64;
-
   try{
-    await loadEmailJS();
-    emailjs.init(EJS_KEY);
-    await emailjs.send(EJS_SVC,EJS_TPL,params);
+    const { emailDad } = await import('./shared/maya-api.js');
+    const sent = await emailDad({
+      subject:'🎨 Maya sent you a doodle!',
+      text:msgText,
+      html:htmlBody
+    });
+    if(!sent) showToast('Could not send email — try again');
   }catch(e){
     console.log('email err',e);
     showToast('Could not send email — try again');

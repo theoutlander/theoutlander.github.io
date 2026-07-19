@@ -8,7 +8,6 @@
 <script src="../../shared/portal-bridge.js"></script>
 <script src="../../shared/ios-audio-unlock.js"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
 <!-- Google Analytics -->
 <script src="../../shared/ga-analytics.js" defer></script>
 <script src="../../shared/sound.js" defer></script>
@@ -200,12 +199,6 @@ function soundForTool(type) {
   }
 }
 
-// ── EmailJS ───────────────────────────────────────────────────
-const EJS_KEY = 'aobGgwT--7krdk9Qv';
-const EJS_SVC = 'service_08wvsfl';
-const EJS_TPL = 'template_b7g9ipp';
-(function(){ if (window.emailjs) emailjs.init(EJS_KEY); else window.addEventListener('load', function(){ if (window.emailjs) emailjs.init(EJS_KEY); }); })();
-
 // ── Toast ─────────────────────────────────────────────────────
 let toastTimer = null;
 function showToast(msg, duration) {
@@ -239,13 +232,14 @@ function saveImage() {
   playRising(300, 600, 0.2, 0.06);
 }
 
-// ── Send city to Dad — family chat first, EmailJS fallback ──
+// ── Send city to Dad — family chat first, email fallback ──
 // The city reaches Dad through several independent paths so nothing gets lost:
 //   PRIMARY: post the hosted image into the family chat → a DB trigger pushes a
-//            notification to Dad's phone for free (no EmailJS involved).
+//            notification to Dad's phone for free.
 //   Always:  a preview tab Maya can save/screenshot/share on the iPad.
 //   FALLBACK (only if chat post didn't happen — not signed in / import failed):
-//            EmailJS with a plain-text link + inline <img> + base64 CID fallback.
+//            email via Maya's Worker (Resend) with a plain-text link + inline <img>.
+// Both image hosting and email go through shared/maya-api.js (R2 + Resend).
 async function sendToDad() {
   showToast('📤 Sending to Dad…', 0);
 
@@ -274,14 +268,11 @@ async function sendToDad() {
   // Path 2/3 — upload for a Gmail-visible URL (data: URLs get blocked by Gmail).
   let imageUrl = null;
   try {
-    const b64 = dataURL.split(',')[1];
-    const bin = atob(b64);
-    const buf = new Uint8Array(bin.length);
-    for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
-    const res = await fetch('https://bytebin.lucko.me/post', {
-      method: 'POST', headers: {'Content-Type': 'image/jpeg'}, body: buf
-    });
-    if (res.ok) { const j = await res.json(); if (j && j.key && /^[\w-]+$/.test(j.key)) imageUrl = `https://bytebin.lucko.me/${j.key}`; }
+    const blob = await new Promise(r => tmp.toBlob(r, 'image/jpeg', 0.85));
+    if (blob) {
+      const { uploadImage } = await import('../../shared/maya-api.js');
+      imageUrl = await uploadImage(blob);
+    }
   } catch(e) {}
 
   // PRIMARY — post into the family chat (Dad gets a push via the DB trigger).
@@ -299,31 +290,27 @@ async function sendToDad() {
     } catch(e) {}
   }
 
-  // FALLBACK — EmailJS (reached only if the chat post did not happen).
-  if (!window.emailjs) { showToast('💬 Open the 💬 chat and say hi to Dad first!', 4000); return; }
+  // FALLBACK — email via Maya's Worker (Resend), reached only if the chat post did not happen.
   const imgSrc = imageUrl || dataURL;
   const html = `<div style="text-align:center;font-family:sans-serif">
       <p style="font-size:18px;color:#ff6eb4">🏙️ Maya built a city skyline! Check it out!</p>
       <img src="${imgSrc}" alt="Maya's city" width="500" style="max-width:100%;height:auto;border-radius:12px;border:2px solid #c77dff"/>
     </div>`;
 
-  // Plain-text fallback so the picture reaches Dad even if the template drops html_content.
+  // Plain-text part so the link reaches Dad even if the HTML image is blocked.
   const lines = ['🏙️ Maya built a city skyline!'];
   if (imageUrl) lines.push('', 'See it here (tap / open in browser):', imageUrl);
   else lines.push('', 'Open the preview tab on the iPad to see and save it.');
 
-  const params = {
-    message: lines.join('\n'),
-    from_name: 'Maya',
-    html_content: html,
-    html_message: html,
-  };
-  if (!imageUrl) params.doodle_image = dataURL.split(',')[1]; // base64 for the template's CID fallback
-
   try {
-    await emailjs.send(EJS_SVC, EJS_TPL, params);
-    showToast('📬 Sent to Dad! 🎉', 4000);
-    playRising(400, 900, 0.35, 0.08);
+    const { emailDad } = await import('../../shared/maya-api.js');
+    const sent = await emailDad({ subject: '🏙️ Maya built a city!', text: lines.join('\n'), html });
+    if (sent) {
+      showToast('📬 Sent to Dad! 🎉', 4000);
+      playRising(400, 900, 0.35, 0.08);
+    } else {
+      showToast('😬 Oops! Check your connection.', 3000);
+    }
   } catch(e) {
     showToast('😬 Oops! Check your connection.', 3000);
   }
