@@ -104,3 +104,60 @@ export async function savePrefs(pin, { favs, recent } = {}) {
     return false;
   }
 }
+
+// ---- Per-game state / high-score sync (D1) ----------------------------------
+// Games call syncHighScore() to keep their best score in sync across devices. localStorage stays
+// their primary store; this just merges with D1 when signed in.
+
+/** The family PIN from the chat session, or null. Guarded — localStorage throws on a
+ *  storage-blocked iPad, and is simply absent outside the browser. */
+export function familyPin() {
+  try {
+    const s = JSON.parse(globalThis.localStorage.getItem('maya_family_chat_v3') || 'null');
+    return s && s.pin ? String(s.pin) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+/** GET all of the signed-in identity's per-game state as {ns: {key: value}}, or null on failure. */
+export async function fetchState(pin) {
+  if (!pin) return null;
+  try {
+    const res = await fetch(`${apiBase()}/api/state`, { headers: { 'x-family-pin': pin } });
+    if (!res.ok) return null;
+    return await res.json();
+  } catch (e) {
+    console.log('maya-api state get failed', e);
+    return null;
+  }
+}
+
+/** PUT one (ns, key, value) row. Returns true on success; never throws. */
+export async function putState(pin, ns, key, value) {
+  if (!pin) return false;
+  try {
+    const res = await fetch(`${apiBase()}/api/state`, {
+      method: 'PUT',
+      headers: { 'x-family-pin': pin, 'content-type': 'application/json' },
+      body: JSON.stringify({ ns, key, value: String(value) }),
+    });
+    return res.ok;
+  } catch (e) {
+    console.log('maya-api state put failed', e);
+    return false;
+  }
+}
+
+/** Merge a numeric high score across devices: returns max(local, remote), and pushes the value up
+ *  to D1 when the local score is the new best. Call on load (with the stored best) and again after
+ *  any new high score. Signed-out / offline → just returns the local value. */
+export async function syncHighScore(ns, localBest, pin = familyPin()) {
+  const local = Number(localBest) || 0;
+  if (!pin) return local;
+  const remote = await fetchState(pin);
+  const remoteBest = Number(remote && remote[ns] && remote[ns].best) || 0;
+  const best = Math.max(local, remoteBest);
+  if (best > remoteBest) await putState(pin, ns, 'best', String(best));
+  return best;
+}

@@ -248,6 +248,11 @@ const store=(function(){
   };
 })();
 let best=parseInt(store.get('dc3_best')||'0');
+// Sync the best score across devices via D1 (shared/maya-api.js). Fire-and-forget: when the cloud
+// copy is higher it lifts `best` + the local store; signed-out/offline it does nothing. Never blocks play.
+import('../../shared/maya-api.js').then(m=>m.syncHighScore('dust-chasers',best)).then(merged=>{
+  if(merged>best){best=merged;store.set('dc3_best',best);}
+}).catch(()=>{});
 let frame=0,dangerNear=false,shockCooldown=0,SHOCK_MAX=280,flashLife=0;
 
 function resize(){W=canvas.width=canvas.offsetWidth;H=canvas.height=canvas.offsetHeight;}
@@ -1019,7 +1024,9 @@ function endGame(reason){
   gameRunning=false;cancelAnimationFrame(animId);clearInterval(timerInt);
   if(window.mayaGameEnd)window.mayaGameEnd({score:score,zapped:vacuumed,level:level,outcome:reason});
   const isBest=score>best;
-  if(isBest){best=score;store.set('dc3_best',best);}
+  if(isBest){best=score;store.set('dc3_best',best);
+    import('../../shared/maya-api.js').then(m=>m.syncHighScore('dust-chasers',best)).catch(()=>{});
+  }
   document.getElementById('end-title').textContent='Gotcha! 💨';
   document.getElementById('end-sub').textContent='The ghosts got you — try again!';
   document.getElementById('new-best').style.display=isBest?'block':'none';

@@ -24,7 +24,9 @@ importScripts("shared/extract-asset-urls.js");
 /* v11 -> v12: send-to-Dad moved off bytebin + EmailJS onto Maya's own Worker (R2 image host +
    Resend email, via shared/maya-api.js). index.html (doodle) and skyline-builder both changed;
    cached devices must drop the old send code. */
-var CACHE_VERSION = "v14";
+/* v14 -> v15: high-score sync to D1 — shared/maya-api.js gained syncHighScore(); dust-chasers and
+   pinata-piano now sync their best score across devices. Cached devices must pick up the new code. */
+var CACHE_VERSION = "v15";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 

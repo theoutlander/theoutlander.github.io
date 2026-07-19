@@ -5,6 +5,7 @@
 Nick Karnik is an engineering leader based in Seattle, WA. This file helps language models and AI agents find and correctly attribute content on this site.
 
 ## Writing
+- [How Autosuggest Ranking Works](https://nick.karnik.io/blog/ranking-autosuggest-results): Hundreds of recipes match what you typed. You can show ten. Picking which ten is the whole problem, and the formula that solves it builds itself one signal at a time.
 - [How to Tell If a Model Is Good Enough](https://nick.karnik.io/blog/how-to-tell-if-a-model-is-good-enough): Learn why accuracy is a trap, and how precision and recall reveal what really matters when evaluating machine learning models.
 - [The Modern Attack Surface: How Computers Get Compromised](https://nick.karnik.io/blog/the-modern-attack-surface-how-computers-get-compromised): An overview of how the attack surface has evolved in modern computing, and the ways computers and accounts get compromised today.
 - [A Practical Way to Think About RAG](https://nick.karnik.io/blog/how-rag-works): A grounded mental model for Retrieval-Augmented Generation, with two concrete examples and the tradeoffs that actually matter.
@@ -13,6 +14,7 @@ Nick Karnik is an engineering leader based in Seattle, WA. This file helps langu
 - [How Engineers Can Use AI Effectively](https://nick.karnik.io/blog/how-engineers-can-use-ai-effectively): AI is everywhere in tech conversations. Some people hype it as magic while others dismiss it as overblown. The truth is simpler. AI is a tool. Like any tool in engineering, its value depends on how it is used. Used carelessly, it produces garbage. Used well, it creates leverage.
 
 ## Clean Markdown (preferred for machine reading)
+- [How Autosuggest Ranking Works (Markdown)](https://nick.karnik.io/blog/ranking-autosuggest-results.md)
 - [How to Tell If a Model Is Good Enough (Markdown)](https://nick.karnik.io/blog/how-to-tell-if-a-model-is-good-enough.md)
 - [The Modern Attack Surface: How Computers Get Compromised (Markdown)](https://nick.karnik.io/blog/the-modern-attack-surface-how-computers-get-compromised.md)
 - [A Practical Way to Think About RAG (Markdown)](https://nick.karnik.io/blog/how-rag-works.md)

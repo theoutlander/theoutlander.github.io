@@ -275,6 +275,13 @@ const store=(function(){
   };
 })();
 let saves=JSON.parse(store.get('ppiano')||'{"hs":0,"stars":{}}');
+// Sync the high score across devices via D1 (shared/maya-api.js). Only saves.hs syncs; stars stay
+// local for now. Fire-and-forget — lifts saves.hs when the cloud copy is higher, never blocks play.
+import('../../shared/maya-api.js').then(m=>m.syncHighScore('pinata-piano',saves.hs)).then(merged=>{
+  if(merged>saves.hs){saves.hs=merged;save();
+    var n=document.getElementById('hs-num'); if(n)n.textContent=saves.hs;
+  }
+}).catch(()=>{});
 let mode='normal',song=null,ni,score,combo,streak,hp,over,da,nh,dropEl,dY,curE,isGolden,raf,swT,perfWindow,totalStars=0;
 let currentPinata='🪅',lastMissed=false;
 
@@ -620,6 +627,7 @@ function win(){
   if(starCount>prevBest)saves.stars[song.id]=starCount;
   if(score>saves.hs)saves.hs=score;
   save();
+  import('../../shared/maya-api.js').then(m=>m.syncHighScore('pinata-piano',saves.hs)).catch(()=>{});
 
   const newTotal=getTotalStars();
   let unlockMsg='';
