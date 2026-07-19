@@ -224,6 +224,8 @@ export function initFamilyChat(root, hooks = {}) {
 	let session = loadSession();
 	let client = null;
 	let channel = null;
+	let pollTimer = null;
+	let onVisible = null;
 	let myRole = session?.role || null;
 
 	function render() {
@@ -422,6 +424,45 @@ export function initFamilyChat(root, hooks = {}) {
 			)
 			.subscribe();
 
+		// Polling fallback for realtime. The Realtime WebSocket cannot carry our
+		// `x-family-pin` REST header, so the header-based RLS SELECT policy fails in the
+		// realtime context and every INSERT event is filtered out — messages would only
+		// appear on a manual refresh. This silent REST poll (which DOES carry the header)
+		// catches new messages within a few seconds without a reload. addRow() dedupes by
+		// id, so re-seen rows are no-ops and only genuinely-new incoming ones ping.
+		async function pollMessages() {
+			if (!client) return;
+			try {
+				const { data, error } = await client
+					.from(CHAT_TABLE)
+					.select('id, author, body, created_at')
+					.order('created_at', { ascending: false })
+					.limit(MAX_MESSAGES);
+				if (error || !data) return;
+				// oldest→newest so multiple missed messages ping in chat order
+				data
+					.slice()
+					.reverse()
+					.forEach((r) => {
+						if (!messages.has(r.id)) addRow(r, true);
+					});
+			} catch (e) {}
+		}
+		function startPolling() {
+			if (pollTimer) return;
+			// Only while the tab is visible — a hidden tab relies on Dad's push
+			// notification (the DB trigger), and polling a backgrounded tab wastes battery.
+			pollTimer = setInterval(() => {
+				if (document.visibilityState === 'visible') pollMessages();
+			}, 5000);
+		}
+		onVisible = () => {
+			if (document.visibilityState === 'visible') pollMessages();
+		};
+		document.addEventListener('visibilitychange', onVisible);
+		window.addEventListener('focus', onVisible);
+		startPolling();
+
 		loadHistory();
 
 		// The chat log shows ONLY real messages from the database. The portal's
@@ -463,6 +504,15 @@ export function initFamilyChat(root, hooks = {}) {
 		}
 		channel = null;
 		client = null;
+		if (pollTimer) {
+			clearInterval(pollTimer);
+			pollTimer = null;
+		}
+		if (onVisible) {
+			document.removeEventListener('visibilitychange', onVisible);
+			window.removeEventListener('focus', onVisible);
+			onVisible = null;
+		}
 		if (hooks.setAppendDadNote) hooks.setAppendDadNote(null);
 	}
 

@@ -49,6 +49,14 @@ function create(){
   s.input.on('pointerdown', () => CDAudio.unlockCtx());
   CD.sunArc(0.25);
   CD.ui.onSceneReady();
+
+  // Rapid tap during load can call CDGame.start() before this create() runs
+  // (before CD.scene exists). If so, it deferred itself — replay it now.
+  if (CD.pendingStart){
+    const p = CD.pendingStart;
+    CD.pendingStart = null;
+    window.CDGame.start(p.save);
+  }
 }
 
 function update(time, delta){
@@ -201,6 +209,12 @@ window.CDGame = {
     });
   },
   start(save){
+    if (!CD.scene){
+      // Scene not booted yet (screen mashed during load) — stash the request
+      // and let create() replay it once CD.scene exists.
+      CD.pendingStart = { save: save };
+      return;
+    }
     if (save){
       CD.state = Object.assign(CD.freshState(), save);
       CD.state.phase = 'start';
