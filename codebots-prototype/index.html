@@ -32,10 +32,41 @@
         window.dataLayer = window.dataLayer || [];
         window.gtag = function () { window.dataLayer.push(arguments); };
         window.gtag("js", new Date());
+        // No send_page_view:false here on purpose: this snippet is self-contained
+        // (it fires no manual page_view of its own, unlike /lab/shared/ga-analytics.js),
+        // so the auto page_view from config IS the one and only GA page_view.
         window.gtag("config", ID);
       })();
     </script>
-    <script type="module" crossorigin src="/codebots-prototype/assets/index-CZdZfGDV.js"></script>
+    <!-- PostHog (product analytics + session replay), mirroring /lab/shared/ga-analytics.js.
+         Same prod gate as GA above. The game's cb_ events dual-send to PostHog via
+         src/state/analytics.ts; capture_pageview handles the pageview. -->
+    <script>
+      (function () {
+        var h = location.hostname;
+        if (h === "localhost" || h === "127.0.0.1" || h === "" || location.protocol === "file:") return;
+        var KEY = "phc_oNxUK7hf2mQy9u8eBHEMUcReGahJ44YVnQyaFChHye54";
+        var HOST = "https://us.i.posthog.com";
+        var s = document.createElement("script");
+        s.async = true;
+        // array.js is served from the "-assets" host paired with the ingestion host.
+        s.src = HOST.replace(".i.posthog.com", "-assets.i.posthog.com") + "/static/array.js";
+        s.onload = function () {
+          if (!window.posthog || !window.posthog.init) return;
+          window.posthog.init(KEY, {
+            api_host: HOST,
+            capture_pageview: true,
+            person_profiles: "identified_only", // only create profiles once someone is identified
+            autocapture: false, // cb_ events are explicit and meaningful — no noisy click autocapture
+            loaded: function () {
+              window.posthog.register({ site_area: "codebots-prototype" });
+            },
+          });
+        };
+        document.head.appendChild(s);
+      })();
+    </script>
+    <script type="module" crossorigin src="/codebots-prototype/assets/index-DVndHuDH.js"></script>
     <link rel="stylesheet" crossorigin href="/codebots-prototype/assets/index-hgG31oG-.css">
   </head>
   <body>

@@ -1,6 +1,13 @@
 (function () {
 	var MEASUREMENT_ID = 'G-62FC7BDSGJ';
 
+	// PostHog dual-send: every mayaTrack event and the pageview also go to PostHog, mirroring GA
+	// and respecting the exact same gate (SKIP_GA / opt-out / non-prod). Inert until POSTHOG_KEY is
+	// filled in with the project API key (starts with "phc_") — GA keeps working regardless, so it's
+	// safe to ship before the key exists.
+	var POSTHOG_KEY = 'phc_oNxUK7hf2mQy9u8eBHEMUcReGahJ44YVnQyaFChHye54'; // paste PostHog project API key here (phc_...)
+	var POSTHOG_HOST = 'https://us.i.posthog.com'; // use https://eu.i.posthog.com for an EU project
+
 	// Paste the DSN from sentry.io → your Browser JavaScript project. Empty = Sentry stays off
 	// and everything below degrades to GA-only, so shipping without it is safe.
 	var SENTRY_DSN =
@@ -216,9 +223,37 @@
 		if (!EMBEDDED) trackMayaPageView();
 	}
 
+	function loadPostHog() {
+		if (window.__phLoaded) return;
+		window.__phLoaded = true;
+		if (SKIP_GA) return; // non-prod or opted out — same skip GA uses
+		if (POSTHOG_KEY.indexOf('phc_') !== 0) return; // not configured yet — stay dormant
+
+		var s = document.createElement('script');
+		s.async = true;
+		// array.js is served from the "-assets" host paired with the ingestion host.
+		s.src = POSTHOG_HOST.replace('.i.posthog.com', '-assets.i.posthog.com') + '/static/array.js';
+		s.onload = function () {
+			if (!window.posthog || !window.posthog.init) return;
+			window.posthog.init(POSTHOG_KEY, {
+				api_host: POSTHOG_HOST,
+				capture_pageview: true, // initial pageview; SPA route changes tracked later if needed
+				person_profiles: 'identified_only', // only create profiles once we JIdentify someone
+				autocapture: false, // we send explicit, meaningful events — no noisy click autocapture
+				loaded: function () {
+					window.posthog.register({ site_area: 'maya' });
+				},
+			});
+		};
+		document.head.appendChild(s);
+	}
+
 	(window.requestIdleCallback || function (cb) {
 		setTimeout(cb, 1500);
-	})(loadGA);
+	})(function () {
+		loadGA();
+		loadPostHog();
+	});
 
 	/* ===== EVENT API =====
 	   mayaTrack('game_start', {mode: 'normal'}) — params merge over baseParams. */
@@ -232,6 +267,8 @@
 		if (!SKIP_GA) {
 			loadGA();
 			window.gtag('event', name, payload);
+			// PostHog mirrors GA exactly — same event name, same payload, same gate.
+			if (window.posthog && window.posthog.capture) window.posthog.capture(name, payload);
 		}
 		// Breadcrumbs still run for the owner: they're local to a Sentry error report, not an
 		// analytics hit, and they're what makes a crash legible.
@@ -240,6 +277,13 @@
 		}
 	}
 	window.mayaTrack = mayaTrack;
+
+	// Attach a stable identity (e.g. the player's chosen name) so PostHog can answer "how much did
+	// THIS person play" without a login. Safe to call repeatedly. Gated exactly like tracking.
+	window.JIdentify = function (id, props) {
+		if (SKIP_GA || !id) return;
+		if (window.posthog && window.posthog.identify) window.posthog.identify(String(id), props || {});
+	};
 
 	// Call when play actually begins — the moment the start screen goes away. This is the
 	// event that proves Maya got IN, as opposed to merely loading a game whose start button

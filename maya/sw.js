@@ -18,7 +18,10 @@ importScripts("shared/extract-asset-urls.js");
 /* v3 -> v4: tree friends (the monkeys). BUMP THIS WITH EVERY GAME CHANGE. The fetch handler is
    cache-first, so a cached device keeps running the OLD game .js after a deploy and the new
    feature simply is not there — the deploy looks like it silently did nothing. */
-var CACHE_VERSION = "v7";
+/* v7 -> v8: Dust Chasers 2.0 (endless mode, boss, power-ups) + portal reorg (newest-first,
+   Favorites & Jump Back In rows, freshness badges). Both are shell/game changes a cached
+   device would otherwise keep serving stale. */
+var CACHE_VERSION = "v8";
 var CACHE_NAME = "maya-cache-" + CACHE_VERSION;
 var SCOPE_URL = self.registration.scope;
 

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <!-- Asha's coin — the amber rounded square with a dark C — inline, so
+         the console never logs a favicon 404. -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect x='3' y='3' width='58' height='58' rx='16' fill='%23ffc531' stroke='%231b2a4a' stroke-width='5'/%3E%3Cpath d='M 42 22 A 13.5 13.5 0 1 0 42 42' fill='none' stroke='%231b2a4a' stroke-width='9' stroke-linecap='round'/%3E%3C/svg%3E"
+    />
+    <!-- The visible title is set from theme/strings.ts at boot (copy-behind-keys). -->
+    <title>CodeBots</title>
+    <!-- Site-wide analytics. Injected at runtime rather than declared as <script src="/lab/...">
+         because that path is resolved by the *site* build, not this one — Vite (base /codebots/)
+         would try to find it inside projects/codebots/app/ and fail. It dual-sends GA4 + PostHog,
+         fires page_view on its own, and exposes window.JTrack for gameplay events. Matches Judgement. -->
+    <script>
+      (function () {
+        var s = document.createElement('script');
+        s.src = '/lab/shared/ga-analytics.js';
+        s.defer = true;
+        document.head.appendChild(s);
+      })();
+    </script>
+    <script type="module" crossorigin src="/codebots/assets/index-DKgCZbaj.js"></script>
+    <link rel="modulepreload" crossorigin href="/codebots/assets/storage-BfXXZhPD.js">
+    <link rel="stylesheet" crossorigin href="/codebots/assets/index-LBJ2qSx5.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
+</html>

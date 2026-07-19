@@ -98,6 +98,30 @@ header{text-align:center;padding:48px 0 36px}
 .tag{display:inline-block;font-size:9px;font-weight:900;letter-spacing:.07em;text-transform:uppercase;padding:2px 7px;border-radius:99px;margin-top:7px;align-self:flex-start}
 .tm{background:rgba(93,255,176,.1);color:var(--green);border:1px solid rgba(93,255,176,.18)}
 .tn{background:rgba(255,225,77,.14);color:var(--yellow);border:1px solid rgba(255,225,77,.26)}
+/* ===== Freshness badge (auto, from GLIST `updated`) ===== */
+.fresh-badge{position:absolute;top:8px;right:8px;z-index:3;font-family:'Fredoka One',cursive;font-size:11px;letter-spacing:.02em;padding:3px 9px;border-radius:99px;line-height:1.2;box-shadow:0 3px 10px rgba(0,0,0,.4);white-space:nowrap}
+.fb-new{background:linear-gradient(135deg,#ffe14d,#ff9a3c);color:#3a1e00;animation:fbpop 1.4s ease-in-out infinite alternate}
+.fb-week{background:rgba(91,200,255,.9);color:#04263a}
+.fb-weeks{background:rgba(199,125,255,.22);color:#e6ccff;border:1px solid rgba(199,125,255,.35)}
+@keyframes fbpop{0%{transform:scale(1)}100%{transform:scale(1.08)}}
+/* ===== Favorite star toggle ===== */
+.fav-btn{position:absolute;top:6px;left:6px;z-index:3;width:40px;height:40px;border:none;border-radius:50%;background:rgba(15,10,30,.55);color:#fff;font-size:20px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);touch-action:manipulation;transition:transform .12s}
+.fav-btn:active{transform:scale(.82)}
+.fav-btn .on{display:none}
+.fav-btn.is-fav .on{display:inline}
+.fav-btn.is-fav .off{display:none}
+.fav-btn.is-fav{background:rgba(255,225,77,.22)}
+.fav-btn.pulse{animation:favpulse .4s ease-out}
+@keyframes favpulse{0%{transform:scale(1)}40%{transform:scale(1.4)}100%{transform:scale(1)}}
+/* ===== Mini-tile rows (Favorites / Jump Back In) ===== */
+.row-sec{margin-top:22px}
+.tile-row{display:flex;gap:12px;overflow-x:auto;-webkit-overflow-scrolling:touch;padding:4px 2px 10px;scrollbar-width:none}
+.tile-row::-webkit-scrollbar{display:none}
+.mini-tile{flex:0 0 auto;width:100px;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;text-align:center;min-height:44px;touch-action:manipulation;transition:transform .12s,box-shadow .12s}
+.mini-tile:active{transform:scale(.94)}
+.mini-tile:hover{transform:translateY(-3px);box-shadow:0 10px 30px rgba(0,0,0,.45)}
+.mini-em{font-size:38px;line-height:1}
+.mini-name{font-family:'Nunito',sans-serif;font-weight:900;font-size:11px;color:var(--text);line-height:1.15;max-height:2.4em;overflow:hidden}
 .tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
 .tags-row .tag{margin-top:0}
 .pb{display:flex;align-items:center;justify-content:center;width:100%;margin-top:10px;padding:10px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.09);border-radius:10px;font-family:'Nunito',sans-serif;font-size:13px;font-weight:900;color:var(--text);cursor:pointer;transition:background .1s,transform .1s;min-height:44px;touch-action:manipulation}
@@ -185,6 +209,14 @@ header{text-align:center;padding:48px 0 36px}
     <div class="tap-hint">🤫 tap the title 5 times...</div>
   </header>
 
+  <!-- FAVORITES (filled by JS; hidden when empty) -->
+  <div class="sh row-sec" id="fav-head" style="display:none"><h2>⭐ My Favorites</h2><div class="sl"></div></div>
+  <div class="tile-row" id="fav-row" style="display:none"></div>
+
+  <!-- JUMP BACK IN — recently played (filled by JS; hidden when empty) -->
+  <div class="sh row-sec" id="recent-head" style="display:none"><h2>🕘 Jump Back In</h2><div class="sl"></div></div>
+  <div class="tile-row" id="recent-row" style="display:none"></div>
+
   <!-- ALL GAMES -->
   <div class="sh"><h2>🕹️ Our Games</h2><div class="sl"></div></div>
   <div class="gg">
@@ -193,7 +225,7 @@ header{text-align:center;padding:48px 0 36px}
       <div class="gb">
         <div class="gt">Castle Defenders 2!</div>
         <div class="gd">The bigger, better castle siege! Chop wood by day, forge weapons, then fight off the zombie horde at night!</div>
-        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Tower Defense</span></div>
+        <span class="tag tm">Tower Defense</span>
         <button class="pb" data-game="games/castle-defenders-2/index.html" data-title="Castle Defenders 2! 🏰">▶ Play Now</button>
       </div>
     </div>
@@ -202,7 +234,7 @@ header{text-align:center;padding:48px 0 36px}
       <div class="gb">
         <div class="gt">Maya's Escape Room 🗝️</div>
         <div class="gd">Escape the spooky mansion! Crack the clues, find SECRET rooms behind not-doors, fill your satchel with treasures, and read Lottie's diary... if you dare! 👻</div>
-        <div class="tags-row"><span class="tag tn">✨ New!</span><span class="tag tm">Puzzle</span></div>
+        <span class="tag tm">Puzzle</span>
         <button class="pb" data-game="games/mayas-escape-room/index.html" data-title="Maya's Escape Room 🗝️">▶ Play Now</button>
       </div>
     </div>
@@ -521,33 +553,163 @@ setTimeout(()=>{
   showDadBubble(msgs[Math.floor(Math.random()*msgs.length)]);
 },6000);
 
+// ⭐ CONVENTION — read before editing this list ⭐
+// Every game carries `updated:'YYYY-MM-DD'`. WHENEVER YOU CREATE OR CHANGE A GAME, set its
+// `updated` to today's date. The portal reads this to (a) auto-sort the grid newest-first,
+// (b) show a friendly "✨ NEW! / Updated this week" badge for ~3 weeks, and (c) pick "Our
+// Latest Creation". Keep this array roughly newest-first too — a date tie is broken by the
+// order here, so put the game you just touched at the TOP. (See organizeLibrary() below.)
 const GLIST=[
-  {em:'🏰',title:'Castle Defenders 2! 🏰',desc:'The bigger, better castle siege — chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders-2/index.html'},
-  {em:'🗝️',title:"Maya's Escape Room 🗝️",desc:"Escape the spooky mansion — secret rooms, hidden treasures, jump scares, and a story to collect!",file:'games/mayas-escape-room/index.html'},
-  {em:'🏛️',title:"Maya's Sewing Museum 🏛️",desc:"Walk through three rooms of things Maya sewed, peek at every exhibit, and sell to visitors who fall in love!",file:'games/mayas-sewing-museum/index.html'},
-  {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html'},
-  {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html'},
-  {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html'},
-  {em:'🧵',title:"Maya's Sewing Shop 🧵",desc:'Sew and design cute things, then chat with customers — sell to them or shoo them out!',file:'games/mayas-sewing-shop/index.html'},
-  {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html'},
-  {em:'🐉',title:'Legend of the Rainbow Dragon 🐉',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'games/legend-of-the-rainbow-dragon/index.html'},
-  {em:'💧',title:'Pipe Flow! 💧',desc:'Spin pipes to connect the hose to the garden field!',file:'games/pipe-flow/index.html'},
-  {em:'🍳',title:"Maya's Kitchen! 🍳",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'games/mayas-kitchen/index.html'},
-  {em:'🏙️',title:'City Builder! 🏙️',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html'},
-  {em:'🏰',title:'Castle Defenders! 🏰',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders/index.html'},
-  {em:'🪅',title:'Piñata Piano! 🪅',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'games/pinata-piano/index.html'},
-  {em:'👻',title:'Dust Chasers! 👻',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'games/dust-chasers/index.html'},
-  {em:'🌈',title:'Spell It! 🌈',desc:'Tap falling letters in order to spell the mystery word!',file:'games/spell-it/index.html'},
+  {em:'👻',title:'Dust Chasers! 👻',desc:'Find invisible dust people in the dark! Vacuum them up!',file:'games/dust-chasers/index.html',updated:'2026-07-18'},
+  {em:'🏙️',title:'City Builder! 🏙️',desc:'Build a glittering city skyline brick by brick!',file:'games/skyline-builder/index.html',updated:'2026-07-18'},
+  {em:'🏰',title:'Castle Defenders 2! 🏰',desc:'The bigger, better castle siege — chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders-2/index.html',updated:'2026-07-15'},
+  {em:'🗝️',title:"Maya's Escape Room 🗝️",desc:"Escape the spooky mansion — secret rooms, hidden treasures, jump scares, and a story to collect!",file:'games/mayas-escape-room/index.html',updated:'2026-06-15'},
+  {em:'🏛️',title:"Maya's Sewing Museum 🏛️",desc:"Walk through three rooms of things Maya sewed, peek at every exhibit, and sell to visitors who fall in love!",file:'games/mayas-sewing-museum/index.html',updated:'2026-06-15'},
+  {em:'🧱',title:'Build On! 🧱',desc:"Build anything in your own 3D world — blocks, plants, pets, day & night, space & sea!",file:'games/build-on/index.html',updated:'2026-06-15'},
+  {em:'🌻',title:"Garden Work! 🌻",desc:"Grow your own garden! Plant flowers, fruit and veggies, water them, and watch them grow. 🌻",file:'games/garden-work-update/index.html',updated:'2026-06-15'},
+  {em:'✨',title:'Sparkle Duel 2 ✨',desc:'Cast sparkly spells in a magic duel — beat the rivals and win the Sparkle Crown!',file:'games/sparkle-duel/index.html',updated:'2026-06-15'},
+  {em:'🧵',title:"Maya's Sewing Shop 🧵",desc:'Sew and design cute things, then chat with customers — sell to them or shoo them out!',file:'games/mayas-sewing-shop/index.html',updated:'2026-06-15'},
+  {em:'🚐',title:"Maya's Delivery Service 🚐",desc:'Drive deliveries, earn coins, and unlock vans and pets!',file:'games/mayas-delivery-service/index.html',updated:'2026-06-15'},
+  {em:'🐉',title:'Legend of the Rainbow Dragon 🐉',desc:"Dad's sparkly LORD — daily turns, forest fights, and the Rainbow Dragon boss!",file:'games/legend-of-the-rainbow-dragon/index.html',updated:'2026-06-15'},
+  {em:'💧',title:'Pipe Flow! 💧',desc:'Spin pipes to connect the hose to the garden field!',file:'games/pipe-flow/index.html',updated:'2026-06-15'},
+  {em:'🍳',title:"Maya's Kitchen! 🍳",desc:'Cook yummy food, sell it, and grow your own kitchen business!',file:'games/mayas-kitchen/index.html',updated:'2026-06-15'},
+  {em:'🏰',title:'Castle Defenders! 🏰',desc:'Chop wood, forge weapons, and fight off the zombie horde!',file:'games/castle-defenders/index.html',updated:'2026-06-15'},
+  {em:'🪅',title:'Piñata Piano! 🪅',desc:'Play songs on the piano to pop candy and smash the piñata!',file:'games/pinata-piano/index.html',updated:'2026-06-15'},
+  {em:'🌈',title:'Spell It! 🌈',desc:'Tap falling letters in order to spell the mystery word!',file:'games/spell-it/index.html',updated:'2026-06-15'},
 ];
+// today (YYYY-MM-DD), computed once. Used for relative freshness labels + recency math.
+const MAYA_TODAY=(function(){try{return new Date().toISOString().slice(0,10);}catch(e){return '2026-07-18';}})();
+const GMETA=(function(){var m={};GLIST.forEach(function(g,i){m[g.file]={updated:g.updated||'',order:i,title:g.title,em:g.em};});return m;})();
 const MAYA_GAME_FILES=new Set(GLIST.map(function(g){return g.file;}));
 
-// Wire up all play buttons with pointerdown (no 300ms tap delay on iPad)
-document.querySelectorAll('.pb[data-game]').forEach(function(btn){
-  btn.addEventListener('pointerdown',function(e){
-    e.preventDefault();
-    openGame(btn.dataset.game, btn.dataset.title);
+// ===== LIBRARY ORGANIZER: favorites · recently-played · newest-first · freshness badges =====
+// Guarded, per-visitor storage. iPad Safari THROWS on localStorage when site data is blocked —
+// a bare access here would kill the whole portal script (dead play buttons, the exact defect
+// that made Dust Chasers unplayable). Everything goes through labStore, and keys are namespaced
+// per player (Maya/Ari/Asha share one iPad) the same way shared/ga-analytics.js derives the
+// visitor, so nobody's Favorites clobber Maya's.
+const labStore=(function(){
+  function raw(k){try{return localStorage.getItem(k);}catch(e){return null;}}
+  function put(k,v){try{localStorage.setItem(k,v);}catch(e){}}
+  const who=(function(){
+    try{
+      const q=new URLSearchParams(location.search).get('who');
+      if(q==='nick'||q==='maya')put('maya_visitor',q);
+      const t=raw('maya_visitor'); if(t==='nick'||t==='maya')return t;
+      const s=raw('maya_family_chat_v3');
+      if(s){const r=JSON.parse(s).role; if(r==='dad')return 'nick'; if(r==='maya')return 'maya';}
+    }catch(e){}
+    return 'unknown';
+  })();
+  return {
+    getJSON(k,def){ const v=raw(k+':'+who); if(v===null)return def; try{return JSON.parse(v);}catch(e){return def;} },
+    setJSON(k,v){ put(k+':'+who, JSON.stringify(v)); }
+  };
+})();
+
+function getFavs(){ var a=labStore.getJSON('maya_favs',[]); return Array.isArray(a)?a.filter(function(f){return GMETA[f];}):[]; }
+function getRecent(){ var a=labStore.getJSON('maya_recent',[]); return Array.isArray(a)?a.filter(function(f){return GMETA[f];}):[]; }
+
+function recordRecent(file){
+  if(!GMETA[file])return;
+  var a=getRecent().filter(function(f){return f!==file;});
+  a.unshift(file);
+  if(a.length>6)a=a.slice(0,6);
+  labStore.setJSON('maya_recent',a);
+  renderRecentRow(); // refresh the row behind the modal so it's correct when she comes back
+}
+
+// Relative freshness label from an ISO date. null once a game is older than ~3 weeks.
+function freshnessFor(iso){
+  if(!iso)return null;
+  var days=Math.floor((Date.parse(MAYA_TODAY)-Date.parse(iso))/86400000);
+  if(isNaN(days))return null; if(days<0)days=0;
+  if(days<=3)return {text:'✨ NEW!',cls:'fb-new'};
+  if(days<=7)return {text:'Updated this week',cls:'fb-week'};
+  if(days<=21){var w=Math.round(days/7)||1;return {text:'Updated '+w+(w===1?' week ago':' weeks ago'),cls:'fb-weeks'};}
+  return null;
+}
+
+function fileForCard(card){ var b=card.querySelector('[data-game]'); return b?b.getAttribute('data-game'):null; }
+
+function toggleFav(file,btn){
+  if(!GMETA[file])return;
+  var a=getFavs(); var i=a.indexOf(file);
+  if(i>=0)a.splice(i,1); else a.unshift(file);
+  labStore.setJSON('maya_favs',a);
+  var on=a.indexOf(file)>=0;
+  document.querySelectorAll('.fav-btn[data-fav="'+file+'"]').forEach(function(b){ b.classList.toggle('is-fav',on); });
+  if(btn){ btn.classList.remove('pulse'); void btn.offsetWidth; btn.classList.add('pulse'); }
+  renderFavRow();
+}
+
+function shortName(title){ try{ var s=title.replace(/[\s]*[\p{Emoji_Presentation}\p{Extended_Pictographic}️]+$/u,'').trim(); return s||title; }catch(e){ return title; } }
+function miniTile(file){
+  var m=GMETA[file]; if(!m)return null;
+  var t=document.createElement('div');
+  t.className='mini-tile'; t.setAttribute('data-game',file); t.setAttribute('data-title',m.title);
+  t.innerHTML='<div class="mini-em"></div><div class="mini-name"></div>';
+  t.querySelector('.mini-em').textContent=m.em;
+  t.querySelector('.mini-name').textContent=shortName(m.title);
+  return t;
+}
+function fillRow(rowEl,headEl,files){
+  if(!rowEl||!headEl)return;
+  rowEl.innerHTML=''; var n=0;
+  files.forEach(function(f){ var t=miniTile(f); if(t){rowEl.appendChild(t);n++;} });
+  rowEl.style.display=n?'flex':'none';
+  headEl.style.display=n?'flex':'none';
+}
+function renderFavRow(){ fillRow(document.getElementById('fav-row'),document.getElementById('fav-head'),getFavs()); }
+function renderRecentRow(){ fillRow(document.getElementById('recent-row'),document.getElementById('recent-head'),getRecent()); }
+
+function organizeLibrary(){
+  var gg=document.querySelector('.gg'); if(!gg)return;
+  var cards=Array.prototype.slice.call(gg.querySelectorAll('.gc'));
+  cards.forEach(function(card){
+    var file=fileForCard(card); if(!file)return;
+    var meta=GMETA[file]||{};
+    var art=card.querySelector('.ga'); if(!art)return;
+    if(!art.querySelector('.fav-btn')){
+      var fb=document.createElement('button');
+      fb.type='button'; fb.className='fav-btn'; fb.setAttribute('data-fav',file);
+      fb.setAttribute('aria-label','Add to favorites');
+      fb.innerHTML='<span class="off">☆</span><span class="on">⭐</span>';
+      art.appendChild(fb);
+    }
+    if(!art.querySelector('.fresh-badge')){
+      var fr=freshnessFor(meta.updated);
+      if(fr){ var b=document.createElement('div'); b.className='fresh-badge '+fr.cls; b.textContent=fr.text; art.appendChild(b); }
+    }
   });
+  var favs=getFavs();
+  document.querySelectorAll('.fav-btn').forEach(function(b){ b.classList.toggle('is-fav',favs.indexOf(b.getAttribute('data-fav'))>=0); });
+  // auto-sort newest-first; a date tie is broken by GLIST order
+  cards.sort(function(a,b){
+    var ma=GMETA[fileForCard(a)]||{updated:'',order:999}, mb=GMETA[fileForCard(b)]||{updated:'',order:999};
+    if((ma.updated||'')!==(mb.updated||''))return (mb.updated||'').localeCompare(ma.updated||'');
+    return (ma.order||0)-(mb.order||0);
+  });
+  cards.forEach(function(c){ gg.appendChild(c); });
+  renderFavRow();
+  renderRecentRow();
+}
+
+// One delegated handler set so cloned mini-tiles work without per-node wiring.
+// pointerdown for grid buttons + stars (snappy, no 300ms delay); click for mini-tiles
+// (a horizontal-scroll swipe must NOT fire a play — click won't fire on a drag).
+document.addEventListener('pointerdown',function(e){
+  var fav=e.target.closest&&e.target.closest('.fav-btn');
+  if(fav){ e.preventDefault(); e.stopPropagation(); toggleFav(fav.getAttribute('data-fav'),fav); return; }
+  var pb=e.target.closest&&e.target.closest('.pb[data-game]');
+  if(pb){ e.preventDefault(); openGame(pb.getAttribute('data-game'),pb.getAttribute('data-title')); }
 });
+document.addEventListener('click',function(e){
+  var tile=e.target.closest&&e.target.closest('.mini-tile[data-game]');
+  if(tile){ e.preventDefault(); openGame(tile.getAttribute('data-game'),tile.getAttribute('data-title')||titleForGameFile(tile.getAttribute('data-game'))); }
+});
+
+organizeLibrary();
 
 // ===== GAME MODAL =====
 const MAYA_PAGE_TITLE=document.title;
@@ -648,6 +810,7 @@ function openGame(file,title){
   if(gm.classList.contains('open')){
     closeGameCore();
   }
+  if(typeof recordRecent==='function')recordRecent(file);
   openGameInModal(file,title);
   var url=resolveGameUrl(file);
   if(history.state&&history.state.mayaIframe&&history.state.file===file){
