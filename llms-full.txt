@@ -24,9 +24,9 @@ This is how I worked through it. To keep it concrete, picture a recipe search. S
 
 Someone types "chick" and the first thing that happens is a filter. Every recipe whose name starts with those letters is a candidate. Everything else is not.
 
-    "chick" → "chicken soup"    candidate
-    "chick" → "chickpea stew"   candidate
-    "chick" → "banana bread"    not a candidate
+<pre><code>"chick" → "<span class="match-hit">chick</span>en soup"    <span class="match-yes">✓ candidate</span>
+"chick" → "<span class="match-hit">chick</span>pea stew"   <span class="match-yes">✓ candidate</span>
+"chick" → "banana bread"    <span class="match-no">✗ not a candidate</span></code></pre>
 
 That is a string comparison, and it is the job of your search index. You do not walk a million recipes checking each one. The index is built so that a prefix jumps you straight to the few hundred that start with those letters.
 
@@ -82,9 +82,9 @@ One thing worth knowing before you trust the count too much. It is not a measure
 
 Sorting by count works. The problem is what it does to every signal you add after it.
 
-Chicken curry has a count of 84,000. Chickpea stew has 9,500. That is not a small difference, it is nine times. And it is the kind of difference you see constantly in real data, where a few things are wildly popular and everything else is not.
+Chicken curry has a count of 84,000. Chickpea stew has 9,500. That is not a small difference, it is **nine times**. And it is the kind of difference you see constantly in real data, where a few things are wildly popular and everything else is not.
 
-Now suppose you want to add a second signal. Something that knows this person eats vegetarian, so chickpea stew should climb. That signal has to be strong enough to overcome a nine to one popularity difference, or nothing moves.
+Now suppose you want to add a second signal. Something that knows this person eats vegetarian, so chickpea stew should climb. That signal has to be strong enough to overcome a nine to one popularity difference, or the top of the list never changes.
 
 You cannot make it that strong. If a single preference outweighs nine times the popularity, then popularity has stopped mattering at all, and you have traded one broken ranking for another.
 
@@ -98,14 +98,14 @@ Taking the log fixes this, and it is worth being precise about what it fixes, be
 
 </div>
 
-| Recipe | Count | log(count) |
+| Recipe | log(count) | Result |
 | --- | --- | --- |
-| chicken curry | 84,000 | 4.92 |
-| chicken soup | 52,000 | 4.72 |
-| chicken parmesan | 31,000 | 4.49 |
-| chicken pot pie | 18,000 | 4.26 |
-| chickpea stew | 9,500 | 3.98 |
-| chicken aspic | 12 | 1.08 |
+| chicken curry | log(84,000) | 4.92 |
+| chicken soup | log(52,000) | 4.72 |
+| chicken parmesan | log(31,000) | 4.49 |
+| chicken pot pie | log(18,000) | 4.26 |
+| chickpea stew | log(9,500) | 3.98 |
+| chicken aspic | log(12) | 1.08 |
 
 Chicken curry had nine times the count of chickpea stew. After the log it has about 1.2 times the score. The counts still run in the same direction, they are just no longer nine times apart.
 
@@ -113,20 +113,20 @@ Chicken curry had nine times the count of chickpea stew. After the log it has ab
 
 Notice what did not change. The order. Curry is still first, aspic is still last. A bigger count always produces a bigger log, so taking a log cannot reorder anything by itself. If you thought the log was going to fix the ranking, it does not, and it never could.
 
-What it changed is how far apart everything is. A vegetarian preference cannot overcome nine times the popularity. It can absolutely overcome 1.2 times.
+What it changed is how far apart everything is. A vegetarian preference cannot overcome **nine times** the popularity. It can absolutely overcome **1.2 times**.
 
-The log does not rank anything. It makes it possible for everything else to.
+**The log does not rank anything. It makes it possible for everything else to.**
 
 Two pieces of housekeeping before moving on. A recipe nobody has picked has a count of zero, and there is no log of zero, so treat it as a count of one. log(1) is 0, meaning a brand new recipe contributes nothing from popularity, and it can still earn points from every other term, which is exactly what a brand new recipe should do. And everything you are about to add will be a small number between 0 and 1, so the count needs to be on that scale too. Divide each log by the largest log in the set, which is 4.92.
 
-| Recipe | log(count) | Divided by 4.92 | Score |
-| --- | --- | --- | --- |
-| chicken curry | 4.92 | 4.92 / 4.92 | 1.00 |
-| chicken soup | 4.72 | 4.72 / 4.92 | 0.96 |
-| chicken parmesan | 4.49 | 4.49 / 4.92 | 0.91 |
-| chicken pot pie | 4.26 | 4.26 / 4.92 | 0.86 |
-| chickpea stew | 3.98 | 3.98 / 4.92 | 0.81 |
-| chicken aspic | 1.08 | 1.08 / 4.92 | 0.22 |
+| Recipe | log(count) / 4.92 | Score |
+| --- | --- | --- |
+| chicken curry | 4.92 / 4.92 | 1.00 |
+| chicken soup | 4.72 / 4.92 | 0.96 |
+| chicken parmesan | 4.49 / 4.92 | 0.91 |
+| chicken pot pie | 4.26 / 4.92 | 0.86 |
+| chickpea stew | 3.98 / 4.92 | 0.81 |
+| chicken aspic | 1.08 / 4.92 | 0.22 |
 
 That is the number that goes in the formula.
 
@@ -134,9 +134,9 @@ That is the number that goes in the formula.
 
 The filter is binary, so it cannot tell a good match from a lazy one. Type "chicken" and all three of these are equally valid candidates:
 
-    chicken soup
-    chicken parmesan
-    chicken curry with roasted butternut squash
+<pre><code><span class="match-hit">chicken</span> soup
+<span class="match-hit">chicken</span> parmesan
+<span class="match-hit">chicken</span> curry with roasted butternut squash</code></pre>
 
 They are obviously not equally good. The person typed seven characters. For the first name that accounts for most of it. For the last it accounts for almost none of it. A short name that the query nearly fills is a confident match. A long name where the query is a small prefix is a guess about where the person was heading.
 
@@ -148,11 +148,11 @@ You can measure that directly. Divide the length of what they typed by the lengt
 
 </div>
 
-| Recipe | Name length | Coverage |
+| Recipe | Query / name length | Coverage |
 | --- | --- | --- |
-| chicken soup | 12 | 7 / 12 = 0.58 |
-| chicken parmesan | 16 | 7 / 16 = 0.44 |
-| chicken curry with roasted butternut squash | 43 | 7 / 43 = 0.16 |
+| chicken soup | 7 / 12 | 0.58 |
+| chicken parmesan | 7 / 16 | 0.44 |
+| chicken curry with roasted butternut squash | 7 / 43 | 0.16 |
 
 Now the obvious question. If coverage measures match quality, why not filter on it instead of the prefix test?
 
@@ -166,8 +166,6 @@ So the filter stays binary and coverage joins the relevance score as another ter
 
 </div>
 
-It is the kind of thing nobody notices when it works and everybody notices when it is missing.
-
 ## Every other signal is the same move
 
 Once the shape is there, adding a new signal is always the same move. Another term in the sum, lifting recipes that have some property you care about. Coverage was free, because it comes from the name. Everything below needs a field you have to build and keep accurate, which is where most of the real work turns out to live.
@@ -180,9 +178,7 @@ Recency rewards recipes that are having a moment. It assumes each recipe carries
 
 </div>
 
-That k controls how fast things fade, and picking it directly is guesswork because the number means nothing on its own. Pick the half-life instead. That is the number of days until a recipe counts for half of what it used to, and you actually have an opinion about it.
-
-The two are locked together. Set the decay equal to one half and solve, and you get half-life = 0.69 / k, where 0.69 is just the natural log of 2. Flip it around and you get the number you want:
+That k controls how fast things fade, but the number means nothing on its own. What you do have an opinion about is a half-life: how many days until a recipe counts for half of what it used to. Pick that, and k falls out:
 
 <div class="concept-box">
 
@@ -190,7 +186,7 @@ The two are locked together. Set the decay equal to one half and solve, and you 
 
 </div>
 
-Decide how fast your domain moves and the constant falls out. News fades in hours. Recipes fade over seasons.
+The 0.69 is just the natural log of 2. Decide how fast your domain moves and the constant follows. News fades in hours. Recipes fade over seasons.
 
 | You want a half-life of | So k is |
 | --- | --- |
@@ -200,6 +196,8 @@ Decide how fast your domain moves and the constant falls out. News fades in hour
 | 1 year | 0.69 / 365 = 0.002 |
 
 Take the 140 day half-life and the curve looks like this. Notice the 140 day row lands on exactly 0.50, which is what half-life means.
+
+![Exponential decay with a 140 day half-life, falling to 0.50 at 140 days](/assets/images/blog/ranking-autosuggest-results/decay-curve.png)
 
 | Last trending | Decay value |
 | --- | --- |
@@ -211,7 +209,7 @@ Take the 140 day half-life and the curve looks like this. Notice the 140 day row
 
 Context rewards recipes that fit the situation. It assumes the recipes are tagged, and someone has to decide that chicken soup is a winter dish and shakshuka is breakfast. Editors, the author, or a model reading the ingredients. That is a whole problem of its own.
 
-Once the tags exist, the signal is simple. Each condition you can check is worth a fixed amount, and they stack.
+Once the tags exist, the signal is simple. Each condition you can check is worth a fixed amount, and they stack. Cap the stack at 1, so context stays on the same 0 to 1 scale as every other signal, and its weight in the formula decides what that is worth against popularity.
 
 | Condition | Boost |
 | --- | --- |
@@ -231,7 +229,7 @@ It also has a cold start. A new person has no history, so the term is zero for t
 
 </div>
 
-Every term does the same job. It nudges a recipe up for a reason you can name. That is the whole formula.
+The w's are weights, one per signal, saying how much each term counts. Every term does the same job. It nudges a recipe up for a reason you can name. That is the whole formula.
 
 ## The numbers are precomputed
 
@@ -245,6 +243,8 @@ The expensive work happens before anyone types. The keystroke just reads the ans
 
 There is no formula for the weights. You do not derive them, you guess and correct. But you do not have to guess blindly, because the signals have an obvious pecking order. Popularity is the most reliable thing you know about a recipe, so it gets the largest weight. Everything else adjusts around it.
 
+The weights do not need to add up to 1. Multiply all of them by the same number and not a single position changes, because only their ratios matter. So anchor popularity at 1.0 and read every other weight as a fraction of it. Context at 0.4 means context is worth forty percent of popularity.
+
 | Signal | Weight | Why |
 | --- | --- | --- |
 | log(count) | 1.0 | Popularity is your most reliable signal. Anchor everything to it. |
@@ -253,18 +253,18 @@ There is no formula for the weights. You do not derive them, you guess and corre
 | recency | 0.3 | Trending matters, but a classic should not fall off because it peaked last year. |
 | coverage | 0.2 | Only there to break ties. If it is deciding anything on its own, it is too high. |
 
-Now watch what those weights do. Same query, "chick". It is December, and this person has been browsing vegetarian recipes all week. Every column adds one more signal to the one before it, and each cell shows where the recipe ranks and what it scored.
+Now watch what those weights do. Same query, "chick". It is December, and this person has been browsing vegetarian recipes all week. Personalization sits this one out: browsing this session is context, and this person has no saved history, so the personalization term is zero for every recipe. That is the cold start from the last section. Every column adds one more signal to the one before it. The first column sets the order. After that, each cell just shows the score, an arrow marks where a rank changed, and whoever is in first place is highlighted.
 
 | Recipe | count | + coverage | + recency | + context |
 | --- | --- | --- | --- | --- |
-| chicken curry | **1st** 1.00 | **1st** 1.08 | **1st** 1.37 | 3rd 1.37 |
-| chicken soup | 2nd 0.96 | 2nd 1.04 | 2nd 1.28 | 2nd 1.48 |
-| chicken parmesan | 3rd 0.91 | 3rd 0.97 | 4th 1.14 | 5th 1.14 |
-| chicken pot pie | 4th 0.86 | 4th 0.93 | 5th 1.04 | 4th 1.24 |
-| chickpea stew | 5th 0.81 | 5th 0.88 | 3rd 1.17 | **1st** 1.57 |
-| chicken aspic | 6th 0.22 | 6th 0.30 | 6th 0.30 | 6th 0.30 |
+| chicken curry | <mark>**1st** 1.00</mark> | <mark>1.08</mark> | <mark>1.37</mark> | <span class="rank-down">↓</span> **3rd** 1.37 |
+| chicken soup | **2nd** 0.96 | 1.04 | 1.28 | 1.48 |
+| chicken parmesan | **3rd** 0.91 | 0.97 | <span class="rank-down">↓</span> **4th** 1.14 | <span class="rank-down">↓</span> **5th** 1.14 |
+| chicken pot pie | **4th** 0.86 | 0.93 | <span class="rank-down">↓</span> **5th** 1.04 | <span class="rank-up">↑</span> **4th** 1.24 |
+| chickpea stew | **5th** 0.81 | 0.88 | <span class="rank-up">↑</span> **3rd** 1.17 | <mark><span class="rank-up">↑</span> **1st** 1.57</mark> |
+| chicken aspic | **6th** 0.22 | 0.30 | 0.30 | 0.30 |
 
-Follow chickpea stew across the row. Fifth, fifth, third, first.
+Follow chickpea stew across the row. **Fifth, fifth, third, first.**
 
 ![Chickpea stew climbing from fifth place to first as each signal is added](/assets/images/blog/ranking-autosuggest-results/rank-climb.png)
 
@@ -272,13 +272,24 @@ Popularity alone leaves it in fifth. Coverage does not move it at all, which is 
 
 Chicken curry did not get worse. Its score never dropped, not once, in any column. It went from first to third because two other recipes fit this person and this moment better than it did.
 
-Nudge these numbers, run searches you know the right answers to, and look hard at what comes back wrong. A bad result almost always points at a weight that is too high or too low. Later, once you have data on what people actually cooked, you can learn the weights from behavior instead of intuition.
+One last run, to show the log is what made that climb possible. Same signals, same weights, same person, run twice: once with the popularity term as raw counts divided by the biggest count, once with the log. Here is where everyone finishes in each world.
 
-The formula is principled. The weights are taste.
+| Recipe | Raw counts | With the log |
+| --- | --- | --- |
+| chicken curry | <mark>**1st** 1.37</mark> | 3rd 1.37 |
+| chicken soup | 2nd 1.14 | 2nd 1.48 |
+| chicken parmesan | 4th 0.60 | 5th 1.14 |
+| chicken pot pie | 5th 0.59 | 4th 1.24 |
+| chickpea stew | 3rd 0.87 | <mark>**1st** 1.57</mark> |
+| chicken aspic | 6th 0.08 | 6th 0.30 |
+
+Chickpea stew collects every boost it collected before and stalls in third. Curry scores 1.37 in both worlds, but on raw counts nothing can reach it, because the nine to one popularity gap costs stew nine tenths of a point before the other signals even speak. **The middle of the list wiggles. The top does not move.** That is what stuck means, and the log is the only difference between this table and the one above it.
+
+Nudge these numbers, run searches you know the right answers to, and look hard at what comes back wrong. A bad result almost always points at a weight that is too high or too low. Later, once you have data on what people actually cooked, you can learn the weights from behavior instead of intuition.
 
 ## When it is done
 
-The formula is never really finished. You add a signal the moment a result is visibly wrong and nothing already in the formula explains why. You stop when the results stop looking wrong. That is the whole loop.
+The formula is never really finished, and new terms come from more than one place. Sometimes a result is visibly wrong and nothing already in the formula explains why. Sometimes it is a product call, like deciding seasonal dishes should surface in season. Sometimes new data shows up, ratings, delivery times, repeat cooks, and you ask whether it earns a term. The test is the same for all of them: add the term, rerun searches you know the right answers to, and keep it only if the results get better.
 
 Nobody designs a ranker like this up front. You start with a filter and no ranking at all, look at what it gets wrong, and let each specific failure pull the next term out of you. Count came from every candidate tying. The log came from the popularity gap being too wide for any other signal to cross. Coverage came from the filter treating a barely relevant name as well as a perfect one. Every piece is there because the version before it broke in a way you could see.
 
