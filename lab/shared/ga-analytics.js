@@ -21,7 +21,7 @@
 	// counting localhost traffic as real visits.
 	// NOTE: when a property moves to its own domain (e.g. judgement.karnik.io) it MUST be added
 	// here or analytics silently turns off for it.
-	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
+	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io', 'judgement.karnik.io'];
 	function isProd() {
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}

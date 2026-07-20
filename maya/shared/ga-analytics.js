@@ -152,7 +152,7 @@
 
 	   Storage reads are wrapped, and every fallback favours counting: if storage throws we are
 	   almost certainly on Maya's locked-down iPad. */
-	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io'];
+	var PROD_HOSTS = ['nick.karnik.io', 'maya.karnik.io', 'judgement.karnik.io'];
 	function isProd() {
 		return PROD_HOSTS.indexOf(window.location.hostname) !== -1;
 	}
