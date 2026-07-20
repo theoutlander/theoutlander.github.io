@@ -245,15 +245,15 @@ The weights do not need to add up to 1. Multiply all of them by the same number 
 | recency | 0.3 | Trending matters, but a classic should not fall off because it peaked last year. |
 | coverage | 0.2 | Only there to break ties. If it is deciding anything on its own, it is too high. |
 
-Now watch what those weights do. Same query, "chick". It is December, and this person has been browsing vegetarian recipes all week. Personalization sits this one out: browsing this session is context, and this person has no saved history, so the personalization term is zero for every recipe. That is the cold start from the last section. Every column adds one more signal to the one before it. The first column sets the order. After that, each cell just shows the score, an arrow marks where a rank changed, and whoever is in first place is highlighted.
+Now watch what those weights do. Same query, "chick". It is December, and this person has been browsing vegetarian recipes all week. Personalization sits this one out: browsing this session is context, and this person has no saved history, so the personalization term is zero for every recipe. That is the cold start from the last section. Every column adds one more signal to the one before it. The first column sets the order. After that, each cell just shows the score, an arrow marks where a rank changed, and first place is always labeled.
 
 | Recipe | count | + coverage | + recency | + context |
 | --- | --- | --- | --- | --- |
-| chicken curry | <mark>**1st** 1.00</mark> | <mark>1.08</mark> | <mark>1.37</mark> | <span class="rank-down">↓</span> **3rd** 1.37 |
+| chicken curry | **1st** 1.00 | **1st** 1.08 | **1st** 1.37 | <span class="rank-down">↓</span> **3rd** 1.37 |
 | chicken soup | **2nd** 0.96 | 1.04 | 1.28 | 1.48 |
 | chicken parmesan | **3rd** 0.91 | 0.97 | <span class="rank-down">↓</span> **4th** 1.14 | <span class="rank-down">↓</span> **5th** 1.14 |
 | chicken pot pie | **4th** 0.86 | 0.93 | <span class="rank-down">↓</span> **5th** 1.04 | <span class="rank-up">↑</span> **4th** 1.24 |
-| chickpea stew | **5th** 0.81 | 0.88 | <span class="rank-up">↑</span> **3rd** 1.17 | <mark><span class="rank-up">↑</span> **1st** 1.57</mark> |
+| chickpea stew | **5th** 0.81 | 0.88 | <span class="rank-up">↑</span> **3rd** 1.17 | <span class="rank-up">↑</span> **1st** 1.57 |
 | chicken aspic | **6th** 0.22 | 0.30 | 0.30 | 0.30 |
 
 Follow chickpea stew across the row. **Fifth, fifth, third, first.**
@@ -268,11 +268,11 @@ One last run, to show the log is what made that climb possible. Same signals, sa
 
 | Recipe | Raw counts | With the log |
 | --- | --- | --- |
-| chicken curry | <mark>**1st** 1.37</mark> | 3rd 1.37 |
+| chicken curry | **1st** 1.37 | 3rd 1.37 |
 | chicken soup | 2nd 1.14 | 2nd 1.48 |
 | chicken parmesan | 4th 0.60 | 5th 1.14 |
 | chicken pot pie | 5th 0.59 | 4th 1.24 |
-| chickpea stew | 3rd 0.87 | <mark>**1st** 1.57</mark> |
+| chickpea stew | 3rd 0.87 | **1st** 1.57 |
 | chicken aspic | 6th 0.08 | 6th 0.30 |
 
 Chickpea stew collects every boost it collected before and stalls in third. Curry scores 1.37 in both worlds, but on raw counts nothing can reach it, because the nine to one popularity gap costs stew nine tenths of a point before the other signals even speak. **The middle of the list wiggles. The top does not move.** That is what stuck means, and the log is the only difference between this table and the one above it.

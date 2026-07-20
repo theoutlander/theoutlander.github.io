@@ -1,39 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="theme-color" content="#0c3325" />
-  <title>Judgement</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Hanken+Grotesk:wght@500;600;700;800&display=swap" rel="stylesheet" />
-  <!-- Site-wide analytics. Injected at runtime rather than declared as <script src="/lab/...">
-       because that path is resolved by the *site* build, not this one — Vite would try to find
-       it inside projects/judgement/ and fail.
-
-       Loaded from the ABSOLUTE site origin: this game is served from its own Worker at
-       judgement.karnik.io, which has no /lab/* path, so a root-relative src would 404 there.
-       Skipped on localhost so dev sessions don't send events to prod analytics. -->
-  <script>
-    (function () {
-      var h = location.hostname;
-      if (h === 'localhost' || h === '127.0.0.1') return;
-      var s = document.createElement('script');
-      s.src = 'https://nick.karnik.io/lab/shared/ga-analytics.js';
-      s.defer = true;
-      document.head.appendChild(s);
-    })();
-  </script>
-  <script type="module" crossorigin src="/judgement/assets/index-IvNNKcwV.js"></script>
-  <link rel="stylesheet" crossorigin href="/judgement/assets/index-BlvHVCAE.css">
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+	<title>Redirecting...</title>
+	<meta http-equiv="refresh" content="0;url=https://judgement.karnik.io" />
+	<meta name="robots" content="noindex" />
+	<style>
+		body {
+			font-family: system-ui, -apple-system, sans-serif;
+			text-align: center;
+			padding: 2rem;
+			background: #f7fafc;
+			color: #1a202c;
+		}
+		@media (prefers-color-scheme: dark) {
+			body {
+				background: #1a202c;
+				color: #f7fafc;
+			}
+		}
+		.container {
+			max-width: 600px;
+			margin: 0 auto;
+		}
+		.spinner {
+			display: inline-block;
+			width: 20px;
+			height: 20px;
+			border: 2px solid #e2e8f0;
+			border-radius: 50%;
+			border-top-color: #2563eb;
+			animation: spin 1s ease-in-out infinite;
+			margin-right: 8px;
+		}
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+		.link {
+			color: #2563eb;
+			text-decoration: none;
+		}
+		.link:hover {
+			text-decoration: underline;
+		}
+	</style>
 </head>
 <body>
-  <div id="app"></div>
-
-  <!-- One bundle. React, the engine, and every screen are compiled ahead of time by Vite.
-       This used to be a CDN copy of React plus @babel/standalone (~1MB) transpiling eight
-       game/*.jsx files in the browser on every single page load. -->
+	<div class="container">
+		<div class="spinner"></div>
+		<p>Redirecting to <a href="https://judgement.karnik.io" class="link">https://judgement.karnik.io</a>...</p>
+		<p><small>If you are not redirected automatically, <a href="https://judgement.karnik.io" class="link">click here</a>.</small></p>
+	</div>
+	
+	<script>
+		// Immediate redirect for permanent redirects
+		window.location.replace("https://judgement.karnik.io");
+		
+		// Fallback redirect after delay
+		setTimeout(() => {
+			window.location.replace("https://judgement.karnik.io");
+		}, 0);
+	</script>
 </body>
 </html>
